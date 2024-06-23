@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>opencatalog</id>
+	<name>Open Catalog</name>
+	<summary>The Open Catalog next cloud app provides a framework for federated catalogouses to work together in an open data ecosystem</summary>
+	<description>Zaak Afhandel App biedt een klein doch fijn zaaksysteem dat direct kan worden ingepluged op ZGW registers</description>
+	<version>1.0.0</version>
+	<licence>agpl</licence>
+	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
+	<namespace>opencatalog</namespace>
+	<category>workflow</category>
+	<bugs>https://github.com/ConductionNL/ZaakAfhandelApp/issues</bugs>
+	<dependencies>
+		<nextcloud min-version="30" max-version="30"/>
+	</dependencies>
+	<navigations>
+		<navigation>
+			<id>opencatalog</id>
+			<name>Open Catalog</name>
+			<route>opencatalog.dashboard.index</route>
+			<icon>app.svg</icon>
+			<type>link</type>
+		</navigation>
+	</navigations>
+</info>
