@@ -1,9 +1,9 @@
 <template>
     <NcContent appName="opencatalog">
-        <MainMenu selected="catalogi" />
+        <MainMenu selected="metaData" />
         <NcAppContent>
             <template #list>
-                <CatalogiList />
+                <MetaDataList />
             </template>
             <template #default>
             </template>
@@ -15,15 +15,15 @@
 <script>
 import { NcAppContent, NcContent } from '@nextcloud/vue';
 import MainMenu from '../../navigation/MainMenu.vue';
-import CatalogiList from './list.vue';
+import MetaDataList from './list.vue';
 
 export default {
-    name: 'catalogiIndex',
+    name: 'metaDataIndex',
     components: {
         NcContent,
         NcAppContent,
         MainMenu,
-        CatalogiList
+        MetaDataList
     },
 }
 </script>

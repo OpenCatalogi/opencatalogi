@@ -18,7 +18,7 @@ import MainMenu from '../../navigation/MainMenu.vue';
 import PublicationList from './list.vue';
 
 export default {
-    name: 'metaDataIndex',
+    name: 'publicationIndex',
     components: {
         NcContent,
         NcAppContent,

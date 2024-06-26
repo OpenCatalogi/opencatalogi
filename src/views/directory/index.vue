@@ -15,7 +15,7 @@
 <script>
 import { NcAppContent, NcContent } from '@nextcloud/vue';
 import MainMenu from '../../navigation/MainMenu.vue';
-import DirectoryList from './listist.vue';
+import DirectoryList from './list.vue';
 
 export default {
     name: 'directoryIndex',

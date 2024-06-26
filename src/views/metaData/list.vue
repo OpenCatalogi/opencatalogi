@@ -44,7 +44,7 @@ import Magnify from 'vue-material-design-icons/Magnify';
 import BriefcaseOutline from 'vue-material-design-icons/BriefcaseOutline';
 
 export default {
-    name: "SearchList",
+    name: "MetaDataList",
     components: {
         NcListItem,
         NcListItemIcon,
