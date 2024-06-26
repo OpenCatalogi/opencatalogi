@@ -1,12 +1,10 @@
 <template>
 	<NcContent appName="opencatalog">
-		<MainMenu selected="catalogi" :publication="publication" :metaData="metaData" :catalog="catalog"
+		<MainMenu selected="dashboard" :publication="publication" :metaData="metaData" :catalog="catalog"
 			:externalCatalog="externalCatalog" />
 		<NcAppContent>
-			<template #list>
-			</template>
 			<template #default>
-				<h1>Hello world!</h1>
+				<Dashboard />
 			</template>
 		</NcAppContent>
 		<!-- <ZaakSidebar /> -->
@@ -33,6 +31,7 @@ import AddCatalogModal from './modals/catalogModal/AddCatalogModal.vue';
 import EditCatalogModal from './modals/catalogModal/EditCatalogModal.vue';
 import AddExternalCatalogModal from './modals/externalCatalogModal/AddExternalCatalogModal.vue';
 import EditExternalCatalogModal from './modals/externalCatalogModal/EditExternalCatalogModal.vue';
+import Dashboard from './views/dashboard.vue';
 
 export default {
 	name: 'App',
@@ -48,6 +47,7 @@ export default {
 		EditCatalogModal,
 		AddExternalCatalogModal,
 		EditExternalCatalogModal,
+		Dashboard,
 	},
 	data() {
 		return {

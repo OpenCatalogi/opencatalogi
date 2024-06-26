@@ -59,7 +59,7 @@
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="selected === ' dashboard'" icon="" name="Dashboard"
+			<NcAppNavigationItem :active="selected === 'dashboard'" icon="" name="Dashboard"
 				href="/index.php/apps/opencatalog/Dashboard">
 				<template #icon>
 					<Finance :size="20" />
