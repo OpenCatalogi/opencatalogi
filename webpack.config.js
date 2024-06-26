@@ -15,7 +15,11 @@ webpackConfig.entry = {
   main: {
     import: path.join(__dirname, "src", "main.js"),
     filename: appId + "-main.js",
-  },  
+  },
+  metaData: {
+    import: path.join(__dirname, "src", "metaDataScript.js"),
+    filename: appId + "-metaDataScript.js",
+  },
 };
 
 module.exports = webpackConfig;
