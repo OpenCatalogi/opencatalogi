@@ -3,17 +3,53 @@
 	<NcAppNavigation>
 
 		<NcActions>
-			<NcActionButton>
+			<NcActionButton @click='showModal("addPublicationModal")'>
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Publicatie
 			</NcActionButton>
-			<NcActionButton name="Long button">
+			<NcActionButton @click='showModal("editPublicationModal")' :disabled='publication === ""'>
 				<template #icon>
-					<Delete :size="20" />
+					<CogOutline :size="20" />
 				</template>
-				Add Catalogi
+				Edit Publicatie
+			</NcActionButton>
+			<NcActionButton @click='showModal("addMetaDataModal")'>
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				Add Metadata
+			</NcActionButton>
+			<NcActionButton @click='showModal("editMetaDataModal")' :disabled='metaData === ""'>
+				<template #icon>
+					<CogOutline :size="20" />
+				</template>
+				Edit Metadata
+			</NcActionButton>
+			<NcActionButton @click='showModal("addCatalogModal")'>
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				Add Catalog
+			</NcActionButton>
+			<NcActionButton @click='showModal("editCatalogModal")' :disabled='catalog === ""'>
+				<template #icon>
+					<CogOutline :size="20" />
+				</template>
+				Edit Catalog
+			</NcActionButton>
+			<NcActionButton @click='showModal("addExternalCatalogModal")'>
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				Add External Catalog
+			</NcActionButton>
+			<NcActionButton @click='showModal("editExternalCatalogModal")' :disabled='externalCatalog === ""'>
+				<template #icon>
+					<CogOutline :size="20" />
+				</template>
+				Edit External Catalog
 			</NcActionButton>
 		</NcActions>
 
@@ -24,7 +60,7 @@
 				</template>
 			</NcAppNavigationNewItem>
 			<NcAppNavigationItem :active="selected === 'dashboard'" icon="" name="Dashboard"
-				href="/index.php/apps/opencatalog/">
+				href="/index.php/apps/opencatalog/Dashboard">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
@@ -57,7 +93,7 @@
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem :active="selected === 'metadata'" icon="" name="Metadata"
+			<NcAppNavigationItem :active="selected === 'metaData'" icon="" name="MetaData"
 				href=" /index.php/apps/opencatalog/metadata">
 				<template #icon>
 					<FileTreeOutline :size="20" />
@@ -128,7 +164,7 @@ import {
 	NcButton,
 	NcTextField
 } from '@nextcloud/vue';
-import isModalOpen from '../modals/modalContext.js';
+import { isModalOpen } from '../modals/modalContext.js';
 
 import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -144,7 +180,11 @@ import Finance from 'vue-material-design-icons/Finance'
 export default {
 	name: "MainMenu",
 	props: [
-		'selected'
+		'selected',
+		'publication',
+		'metaData',
+		'catalog',
+		'externalCatalog',
 	],
 	components: {
 		NcActions,
@@ -177,14 +217,18 @@ export default {
 			ztc_location: "",
 			ztc_key: "",
 			drc_location: "",
-			drc_key: ""
+			drc_key: "",
 		}
 	},
 	methods: {
 		save() {
 			this.zrc_location = ''
 			this.zrc_key = ''
-		}
+		},
+		showModal(modalName) {
+			isModalOpen[modalName] = true
+		},
+
 	}
 }
 </script>

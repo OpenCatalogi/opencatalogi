@@ -1,9 +1,14 @@
 import { reactive } from "vue";
 
 export const isModalOpen = reactive({
-  publicatieToevoegenModal: false,
-  metadataToevoegenModal: false,
-  documentToevoegenModal: false,
-  catalogusToevoegenModal: false,
-  directoryBewerkenModal: false,
+  addPublicationModal: false,
+  editPublicationModal: false,
+  addMetaDataModal: false,
+  editMetaDataModal: false,
+  addCatalogModal: false,
+  editCatalogModal: false,
+  addExternalCatalogModal: false,
+  editExternalCatalogModal: false,
+  addDocumentModal: false,
+  editDirectoryModal: false,
 });

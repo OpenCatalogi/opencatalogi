@@ -33,7 +33,7 @@
             </NcButton>
         </div>
     </NcModal>
-    
+
 </template>
 
 <script>
