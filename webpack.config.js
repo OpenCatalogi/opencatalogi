@@ -10,37 +10,12 @@ webpackConfig.stats = {
   modules: false,
 };
 
-const appId = "dsonextcloud";
+const appId = "opencatalog";
 webpackConfig.entry = {
   main: {
-    import: path.join(__dirname, "src", "mainScript.js"),
-    filename: appId + "-mainScript.js",
-  },
-  taken: {
-    import: path.join(__dirname, "src", "takenScript.js"),
-    filename: appId + "-takenScript.js",
-  },
-  zaken: {
-    import: path.join(__dirname, "src", "zakenScript.js"),
-    filename: appId + "-zakenScript.js",
-  },
-	zaakTypen: {
-		import: path.join(__dirname, "src", "zaakTypenScript.js"),
-		filename: appId + "-zaakTypenScript.js",
-	},
-	klanten: {
-		import: path.join(__dirname, "src", "klantenScript.js"),
-		filename: appId + "-klantenScript.js",
-	},
-	contactMomenten: {
-		import: path.join(__dirname, "src", "contactMomentenScript.js"),
-		filename: appId + "-contactMomentenScript.js",
-	},
-
-  zakenDetail: {
-    import: path.join(__dirname, "src", "zakenDetailScript.js"),
-    filename: appId + "-zakenDetailScript.js",
-  },
+    import: path.join(__dirname, "src", "main.js"),
+    filename: appId + "-main.js",
+  },  
 };
 
 module.exports = webpackConfig;
