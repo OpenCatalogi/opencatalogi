@@ -8,3 +8,4 @@ Util::addStyle($appId, 'main');
 ?>
 <div id="opencatalog"></div>
 
+

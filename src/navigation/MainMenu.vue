@@ -59,25 +59,25 @@
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="selected === 'dashboard'" icon="" name="Dashboard"
+			<NcAppNavigationItem :active="selected === 'dashboard'"  name="Dashboard"
 				href="/index.php/apps/opencatalog/Dashboard">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === '5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f'" icon=""
+			<NcAppNavigationItem :active="selected === '5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f'" 
 				name="Catalouge 1" href="/index.php/apps/opencatalog/Catalouge1">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === '4c3edd34-a90d-4d2a-8894-adb5836ecde8'" icon=""
+			<NcAppNavigationItem :active="selected === '4c3edd34-a90d-4d2a-8894-adb5836ecde8'" 
 				name="Catalouge 2" href="/index.php/apps/opencatalog/Catalouge2">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === 'search'" icon="" name="Search"
+			<NcAppNavigationItem :active="selected === 'search'" name="Search"
 				href="/index.php/apps/opencatalog/search">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
@@ -86,14 +86,20 @@
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="selected === 'directory'" icon="" name="Directory"
+			<NcAppNavigationItem :active="selected === 'catalogi'" name="Catalogi"
+				href=" /index.php/apps/opencatalog/catalogi">
+				<template #icon>
+					<DatabaseCogOutline :size="20" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem :active="selected === 'directory'" name="Directory"
 				href=" /index.php/apps/opencatalog/directory">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem :active="selected === 'metaData'" icon="" name="MetaData"
+			<NcAppNavigationItem :active="selected === 'metaData'" name="MetaData"
 				href=" /index.php/apps/opencatalog/metadata">
 				<template #icon>
 					<FileTreeOutline :size="20" />
@@ -170,6 +176,7 @@ import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import DatabaseEyeOutline from 'vue-material-design-icons/DatabaseEyeOutline'
+import DatabaseCogOutline from 'vue-material-design-icons/DatabaseCogOutline'
 import LayersSearchOutline from 'vue-material-design-icons/LayersSearchOutline'
 import LayersOutline from 'vue-material-design-icons/LayersOutline'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
@@ -202,6 +209,7 @@ export default {
 		Plus,
 		Connection,
 		DatabaseEyeOutline,
+		DatabaseCogOutline,
 		LayersSearchOutline,
 		LayersOutline,
 		FileTreeOutline,
