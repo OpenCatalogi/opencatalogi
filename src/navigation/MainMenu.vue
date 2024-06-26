@@ -93,7 +93,7 @@
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem :active="selected === 'metadata'" icon="" name="Metadata"
+			<NcAppNavigationItem :active="selected === 'metaData'" icon="" name="MetaData"
 				href=" /index.php/apps/opencatalog/metadata">
 				<template #icon>
 					<FileTreeOutline :size="20" />
