@@ -1,12 +1,9 @@
-
 <template>
 	<NcContent appName="opencatalog">
-		<MainMenu selected="catalogi"/>
+		<MainMenu selected="dashboard" />
 		<NcAppContent>
-			<template #list>
-			</template>
 			<template #default>
-				<h1>Hello world!</h1>
+				<Dashboard />
 			</template>
 		</NcAppContent>
 		<!-- <ZaakSidebar /> -->
@@ -14,9 +11,10 @@
 </template>
 
 <script>
-import { NcAppContent, NcContent  } from '@nextcloud/vue';
+import { NcAppContent, NcContent } from '@nextcloud/vue';
 import isModalOpen from './modals/modalContext.js';
 import MainMenu from './navigation/MainMenu.vue';
+import Dashboard from './views/dashboard.vue';
 
 export default {
 	name: 'App',
@@ -24,7 +22,7 @@ export default {
 		NcContent,
 		NcAppContent,
 		MainMenu,
+		Dashboard,
 	},
 }
 </script>
-
