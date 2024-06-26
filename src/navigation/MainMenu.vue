@@ -54,7 +54,7 @@
 		</NcActions>
 
 		<NcAppNavigationList>
-			<NcAppNavigationNewItem name="Zaak Aanmaken" @new-item="function (value) { alert(value) }">
+			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="showModal("addPublicationModal")">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
