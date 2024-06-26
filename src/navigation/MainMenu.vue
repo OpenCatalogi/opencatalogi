@@ -65,14 +65,8 @@
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === '5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f'" 
-				name="Catalouge 1" href="/index.php/apps/opencatalog/catalog/5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f">
-				<template #icon>
-					<DatabaseEyeOutline :size="20" />
-				</template>
-			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === '4c3edd34-a90d-4d2a-8894-adb5836ecde8'" 
-				name="Catalouge 2" href="/index.php/apps/opencatalog/catalog/4c3edd34-a90d-4d2a-8894-adb5836ecde8">
+			<NcAppNavigationItem   v-if="!loading" v-for="(catalogus, i) in catalogi.results" :key="`${catalogus}${i}`" :name="catalogus?.name" :active="selected === catalogus?.id" 
+				 :href="'/index.php/apps/opencatalog/catalog/' + catalogus?.id">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
@@ -226,6 +220,8 @@ export default {
 			ztc_key: "",
 			drc_location: "",
 			drc_key: "",
+      		loading: true,
+			catalogi: []
 		}
 	},
 	mounted() {
@@ -235,7 +231,7 @@ export default {
 		fetchData(newPage) {
 			this.loading = true,
 			fetch(
-			'./index.php/apps/opencatalog/catalogi/api',
+				'/index.php/apps/opencatalog/catalogi/api',
 			{
 				method: 'GET'
 			},

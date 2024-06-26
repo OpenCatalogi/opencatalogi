@@ -12,12 +12,22 @@ class CatalogiController extends Controller
     const TEST_ARRAY = [
         "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f" => [
             "id" => "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f",
-            "name" => "one",
+            "name" => "Github",            
             "summery" => "summery for one"
         ],
         "4c3edd34-a90d-4d2a-8894-adb5836ecde8" => [
             "id" => "4c3edd34-a90d-4d2a-8894-adb5836ecde8",
-            "name" => "two",
+            "name" => "Gitlab",
+            "summery" => "summery for two"
+        ],
+        "15551d6f-44e3-43f3-a9d2-59e583c91eb0" => [
+            "id" => "15551d6f-44e3-43f3-a9d2-59e583c91eb0",
+            "name" => "Woo",
+            "summery" => "summery for two"
+        ],
+        "0a3a0ffb-dc03-4aae-b207-0ed1502e60da" => [
+            "id" => "0a3a0ffb-dc03-4aae-b207-0ed1502e60da",
+            "name" => "Decat",
             "summery" => "summery for two"
         ]
     ];
