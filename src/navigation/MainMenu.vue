@@ -228,7 +228,29 @@ export default {
 			drc_key: "",
 		}
 	},
+	mounted() {
+		this.fetchData()
+	},
 	methods: {
+		fetchData(newPage) {
+			this.loading = true,
+			fetch(
+			'./index.php/apps/opencatalog/catalogi/api',
+			{
+				method: 'GET'
+			},
+			)
+			.then((response) => {
+				response.json().then((data) => {
+				this.catalogi = data
+				})
+				this.loading = false
+			})
+			.catch((err) => {
+				console.error(err)
+				this.loading = false
+			})
+		},
 		save() {
 			this.zrc_location = ''
 			this.zrc_key = ''
