@@ -3,17 +3,53 @@
 	<NcAppNavigation>
 
 		<NcActions>
-			<NcActionButton >
+			<NcActionButton @click='showModal("addPublicationModal")'>
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Publicatie
 			</NcActionButton>
-			<NcActionButton name="Long button">
+			<NcActionButton @click='showModal("editPublicationModal")' :disabled='publication === ""'>
 				<template #icon>
-					<Delete :size="20" />
+					<CogOutline :size="20" />
 				</template>
-				Add Catalogi
+				Edit Publicatie
+			</NcActionButton>
+			<NcActionButton @click='showModal("addMetaDataModal")'>
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				Add Metadata
+			</NcActionButton>
+			<NcActionButton @click='showModal("editMetaDataModal")' :disabled='metaData === ""'>
+				<template #icon>
+					<CogOutline :size="20" />
+				</template>
+				Edit Metadata
+			</NcActionButton>
+			<NcActionButton @click='showModal("addCatalogModal")'>
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				Add Catalog
+			</NcActionButton>
+			<NcActionButton @click='showModal("editCatalogModal")' :disabled='catalog === ""'>
+				<template #icon>
+					<CogOutline :size="20" />
+				</template>
+				Edit Catalog
+			</NcActionButton>
+			<NcActionButton @click='showModal("addExternalCatalogModal")'>
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				Add External Catalog
+			</NcActionButton>
+			<NcActionButton @click='showModal("editExternalCatalogModal")' :disabled='externalCatalog === ""'>
+				<template #icon>
+					<CogOutline :size="20" />
+				</template>
+				Edit External Catalog
 			</NcActionButton>
 		</NcActions>
 
@@ -23,26 +59,26 @@
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="selected === 'dashboard'" icon="" name="Catalouge 1"
-				href="/index.php/apps/dsonextcloud/zaken">
+			<NcAppNavigationItem :active="selected === ' dashboard'" icon="" name="Dashboard"
+				href="/index.php/apps/opencatalog/Dashboard">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === '5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f'" icon="" name="Catalouge 1"
-				href="/index.php/apps/dsonextcloud/zaken">
+			<NcAppNavigationItem :active="selected === '5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f'" icon=""
+				name="Catalouge 1" href="/index.php/apps/opencatalog/Catalouge1">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === '4c3edd34-a90d-4d2a-8894-adb5836ecde8'" icon="" name="Catalouge 2"
-				href="/index.php/apps/dsonextcloud/zaken">
+			<NcAppNavigationItem :active="selected === '4c3edd34-a90d-4d2a-8894-adb5836ecde8'" icon=""
+				name="Catalouge 2" href="/index.php/apps/opencatalog/Catalouge2">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 			<NcAppNavigationItem :active="selected === 'search'" icon="" name="Search"
-				href="/index.php/apps/dsonextcloud/zaken">
+				href="/index.php/apps/opencatalog/search">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -51,14 +87,14 @@
 
 		<NcAppNavigationSettings>
 			<NcAppNavigationItem :active="selected === 'directory'" icon="" name="Directory"
-				href=" /index.php/apps/dsonextcloud/zaak_typen">
+				href=" /index.php/apps/opencatalog/directory">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
 			<NcAppNavigationItem :active="selected === 'metadata'" icon="" name="Metadata"
-				href=" /index.php/apps/dsonextcloud/zaak_typen">
+				href=" /index.php/apps/opencatalog/metadata">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
@@ -81,23 +117,23 @@
 					</p>
 
 					<p>
-						<table>
-							<tbody>
-								<tr>
-									<td class="row-name">ZRC</td>		
-									<td>Location</td>
-									<td><NcTextField :value.sync="zrc_location"
-										id="zrc_location"
-										:label-outside="true"
-										placeholder="https://"/></td>
-									<td>Key</td>
-									<td><NcTextField :value.sync="zrc_key"
-										id="zrc_key"
-										:label-outside="true"
-										placeholder="***"/></td>
-								</tr>
-							</tbody>
-						</table>
+					<table>
+						<tbody>
+							<tr>
+								<td class="row-name">ZRC</td>
+								<td>Location</td>
+								<td>
+									<NcTextField :value.sync="zrc_location" id="zrc_location" :label-outside="true"
+										placeholder="https://" />
+								</td>
+								<td>Key</td>
+								<td>
+									<NcTextField :value.sync="zrc_key" id="zrc_key" :label-outside="true"
+										placeholder="***" />
+								</td>
+							</tr>
+						</tbody>
+					</table>
 					</p>
 					<NcButton aria-label="Save" type="primary" wide>
 						<template #icon>
@@ -115,39 +151,44 @@
 	</NcAppNavigation>
 </template>
 <script>
-import { 
+import {
 	NcActions,
-	NcActionButton,	
-	NcAppNavigation, 
-	NcAppNavigationList, 
-	NcAppNavigationItem, 
-	NcAppNavigationNewItem, 
+	NcActionButton,
+	NcAppNavigation,
+	NcAppNavigationList,
+	NcAppNavigationItem,
+	NcAppNavigationNewItem,
 	NcAppNavigationSettings,
 	NcAppSettingsDialog,
 	NcAppSettingsSection,
 	NcButton,
-	NcTextField   } from '@nextcloud/vue';
-import isModalOpen from '../modals/modalContext.js';
+	NcTextField
+} from '@nextcloud/vue';
+import { isModalOpen } from '../modals/modalContext.js';
 
 import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import DatabaseEyeOutline from 'vue-material-design-icons/DatabaseEyeOutline'
 import LayersSearchOutline from 'vue-material-design-icons/LayersSearchOutline'
-import LayersOutline from 'vue-material-design-icons/LayersOutline' 
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline' 
-import CogOutline from 'vue-material-design-icons/CogOutline' 
-import ContentSave from 'vue-material-design-icons/ContentSave' 
-import Finance from 'vue-material-design-icons/Finance' 
+import LayersOutline from 'vue-material-design-icons/LayersOutline'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
+import CogOutline from 'vue-material-design-icons/CogOutline'
+import ContentSave from 'vue-material-design-icons/ContentSave'
+import Finance from 'vue-material-design-icons/Finance'
 
 export default {
 	name: "MainMenu",
 	props: [
-		'selected'
+		'selected',
+		'publication',
+		'metaData',
+		'catalog',
+		'externalCatalog',
 	],
 	components: {
 		NcActions,
-		NcActionButton,	
+		NcActionButton,
 		NcAppNavigation,
 		NcAppNavigationList,
 		NcAppNavigationItem,
@@ -176,14 +217,18 @@ export default {
 			ztc_location: "",
 			ztc_key: "",
 			drc_location: "",
-			drc_key: ""
+			drc_key: "",
 		}
 	},
 	methods: {
 		save() {
 			this.zrc_location = ''
 			this.zrc_key = ''
-		}
+		},
+		showModal(modalName) {
+			isModalOpen[modalName] = true
+		},
+
 	}
 }
 </script>
