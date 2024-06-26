@@ -4,6 +4,7 @@ namespace OCA\OpenCatalog\Controller;
 
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 
 class DashboardController extends Controller
@@ -17,7 +18,7 @@ class DashboardController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function index(?string $getParameter)
+	public function page(?string $getParameter)
 	{
 		// The TemplateResponse loads the 'main.php'
 		// defined in our app's 'templates' folder.
@@ -30,4 +31,14 @@ class DashboardController extends Controller
 			[]
 		);
 	}
+
+    
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function index(): JSONResponse {
+        $params = [['name' => '1'],['name' => '2']] ;
+        return new JSONResponse($params);
+    }
 }
