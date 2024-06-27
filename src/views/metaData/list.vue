@@ -9,10 +9,8 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(metadata, i) in metadatas" :key="`${metadata}${i}`"
-                :name="metadata?.omschrijving" :bold="false" :force-display-actions="true"
-                :active="activeMetaData === metadata.id" :details="'1h'" :counter-number="44"
-                @click="setActive(metadata.id)">
+            <NcListItem v-if="!loading" v-for="(catalogus, i) in metaDataList.results" :key="`${catalogus}${i}`" :name="catalogus?.name" :active="selected === catalogus?.id" :details="'1h'" :counter-number="44"
+                @click="setActive(catalogus.id)">
 
                 <template #icon>
                     <BriefcaseOutline :class="activeMetaData === metadata.id && 'selectedZaakIcon'" disable-menu
@@ -59,26 +57,34 @@ export default {
     data() {
         return {
             search: '',
-            loading: false,
-            activeMetaData: '',
-            metadatas: [
-                {
-                    id: "0219480938",
-                    omschrijving: "metadata1",
-                    subname: "subname",
-                },
-                {
-                    id: "0219480938",
-                    omschrijving: "metadata2",
-                    subname: "subname",
-                }
-            ],
+            loading: true,
+            metaDataList: [],
+            activeMetaData: ''
         }
     },
     mounted() {
         this.fetchData()
     },
     methods: {
+		fetchData(newPage) {
+			this.loading = true,
+			fetch(
+				'/index.php/apps/opencatalog/metadata/api',
+			{
+				method: 'GET'
+			},
+			)
+			.then((response) => {
+				response.json().then((data) => {
+				this.metaDataList = data
+				})
+				this.loading = false
+			})
+			.catch((err) => {
+				console.error(err)
+				this.loading = false
+			})
+		},
         setActive(id) {
             this.activeMetaData = id
             this.$emit('metaData', true)

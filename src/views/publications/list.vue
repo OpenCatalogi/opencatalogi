@@ -54,31 +54,41 @@ export default {
         NcTextField,
         BriefcaseOutline,
         Magnify,
-        NcLoadingIcon
+        NcLoadingIcon,
+        loading: true,
+        publications: []
     },
     data() {
         return {
             search: '',
             loading: false,
             activeMetaData: '',
-            metadatas: [
-                {
-                    id: "0219480938",
-                    omschrijving: "metadata1",
-                    subname: "subname",
-                },
-                {
-                    id: "0219480938",
-                    omschrijving: "metadata2",
-                    subname: "subname",
-                }
-            ],
+            publications: [],
         }
     },
     mounted() {
         this.fetchData()
     },
     methods: {
+		fetchData(newPage) {
+			this.loading = true,
+			fetch(
+				'/index.php/apps/opencatalog/publications/api',
+			{
+				method: 'GET'
+			},
+			)
+			.then((response) => {
+				response.json().then((data) => {
+				this.publications = data
+				})
+				this.loading = false
+			})
+			.catch((err) => {
+				console.error(err)
+				this.loading = false
+			})
+		},
         setActive(id) {
             this.activeMetaData = id
             this.$emit('metaData', true)

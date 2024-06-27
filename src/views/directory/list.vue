@@ -9,17 +9,15 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(metadata, i) in metadatas" :key="`${metadata}${i}`"
-                :name="metadata?.omschrijving" :bold="false" :force-display-actions="true"
-                :active="activeMetaData === metadata.id" :details="'1h'" :counter-number="44"
-                @click="setActive(metadata.id)">
+            <NcListItem v-if="!loading" v-for="(directory, i) in directoryList.results" :key="`${catalogus}${i}`" :name="directory?.name" :active="selected === directory?.id" :details="'1h'" :counter-number="44"
+                @click="setActive(directory.id)">
 
                 <template #icon>
                     <BriefcaseOutline :class="activeMetaData === metadata.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
-                    {{ metadata?.subname }}
+                    {{ directory?.summary }}
                 </template>
                 <template #actions>
                     <NcActionButton>
@@ -54,31 +52,41 @@ export default {
         NcTextField,
         BriefcaseOutline,
         Magnify,
-        NcLoadingIcon
+        NcLoadingIcon,
+        loading: true,
+        directory: []
     },
     data() {
         return {
             search: '',
             loading: false,
-            activeMetaData: '',
-            metadatas: [
-                {
-                    id: "0219480938",
-                    omschrijving: "metadata1",
-                    subname: "subname",
-                },
-                {
-                    id: "0219480938",
-                    omschrijving: "metadata2",
-                    subname: "subname",
-                }
-            ],
+            activeMetaDirectory: '',
+            directoryList: [],
         }
     },
     mounted() {
         this.fetchData()
     },
     methods: {
+		fetchData(newPage) {
+			this.loading = true,
+			fetch(
+				'/index.php/apps/opencatalog/directory/api',
+			{
+				method: 'GET'
+			},
+			)
+			.then((response) => {
+				response.json().then((data) => {
+				this.directoryList = data
+				})
+				this.loading = false
+			})
+			.catch((err) => {
+				console.error(err)
+				this.loading = false
+			})
+		},
         setActive(id) {
             this.activeMetaData = id
             this.$emit('metaData', true)
