@@ -18,7 +18,7 @@
                 @click="setActive(publication.id)">
 
                 <template #icon>
-                    <BriefcaseOutline :class="activePublication === publication.id && 'selectedZaakIcon'" disable-menu
+                    <ListBoxOutline :class="activePublication === publication.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
@@ -44,7 +44,7 @@
 <script>
 import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue';
 import Magnify from 'vue-material-design-icons/Magnify';
-import BriefcaseOutline from 'vue-material-design-icons/BriefcaseOutline';
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline';
 
 export default {
     name: "PublicationList",
@@ -55,7 +55,7 @@ export default {
         NcAvatar,
         NcAppContentList,
         NcTextField,
-        BriefcaseOutline,
+        ListBoxOutline,
         Magnify,
         NcLoadingIcon,
     },
@@ -65,6 +65,8 @@ export default {
             loading: false,
             activeMetaData: '',
             publications: [],
+			activePublication: false,
+			activePublicationId: '',
         }
     },
     mounted() {

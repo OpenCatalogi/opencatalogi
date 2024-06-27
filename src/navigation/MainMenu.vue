@@ -269,7 +269,12 @@ export default {
 			ztc_key: "",
 			drc_location: "",
 			drc_key: "",
+			elastic_location: "",
+			elastic_key: "",
       		loading: true,
+			organisation_name: "",
+			organisation_oin: "",
+			organisation_pki: "",
 			catalogi: []
 		}
 	},

@@ -3,9 +3,17 @@
         <MainMenu selected="publications" />
         <NcAppContent>
             <template #list>
-                <PublicationList />
+                <PublicationList @activePublication="updateActivePublication" @activePublicationId="updateActivePublicationId" />
             </template>
-            <template #default>
+            <template #default>                
+                <NcEmptyContent name="Geen zaak" description="Nog geen zaak geselecteerd" v-if="activePublication !== true" >
+                    <template #icon>
+                        <ListBoxOutline />
+                    </template>
+                    <template #action>
+                    </template>
+                </NcEmptyContent>
+				<PublicationDetails :publicationId="activePublicationId" v-if="activePublication === true && activePublicationId" />
             </template>
         </NcAppContent>
         <!-- <ZaakSidebar /> -->
@@ -16,6 +24,8 @@
 import { NcAppContent, NcContent } from '@nextcloud/vue';
 import MainMenu from '../../navigation/MainMenu.vue';
 import PublicationList from './list.vue';
+import PublicationDetails from './details.vue';
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline';
 
 export default {
     name: 'publicationIndex',
@@ -23,7 +33,23 @@ export default {
         NcContent,
         NcAppContent,
         MainMenu,
-        PublicationList
+        ListBoxOutline,
+        PublicationList,
+        PublicationDetails
     },
+	data() {
+		return {
+			activePublication: false,
+			activePublicationId: '',
+		}
+	},
+	methods: {
+		updateActivePublication(variable) {
+			this.activePublication = variable
+		},
+		updateActivePublicationId(variable) {
+			this.activePublicationId = variable
+		}
+	}
 }
 </script>
