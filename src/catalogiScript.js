@@ -1,6 +1,6 @@
 import Vue from "vue";
-import metaDataIndex from "./views/metaData/metaDataIndex.vue";
+import catalogiaIndex from "./views/catalogi/index.vue";
 Vue.mixin({ methods: { t, n } });
 
-const View = Vue.extend(metaDataIndex);
-new View().$mount("#metaData");
+const View = Vue.extend(catalogiIndex);
+new View().$mount("#catalogi");

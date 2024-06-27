@@ -20,6 +20,22 @@ webpackConfig.entry = {
     import: path.join(__dirname, "src", "metaDataScript.js"),
     filename: appId + "-metaDataScript.js",
   },
+  catalogi: {
+    import: path.join(__dirname, "src", "catalogiScript.js"),
+    filename: appId + "-catalogiScript.js",
+  },
+  directory: {
+    import: path.join(__dirname, "src", "directoryScript.js"),
+    filename: appId + "-directoryScript.js",
+  },
+  publications: {
+    import: path.join(__dirname, "src", "publicationsScript.js"),
+    filename: appId + "-publicationsScript.js",
+  },
+  search: {
+    import: path.join(__dirname, "src", "searchScript.js"),
+    filename: appId + "-searchScript.js",
+  },
 };
 
 module.exports = webpackConfig;
