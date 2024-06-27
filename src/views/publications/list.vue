@@ -14,7 +14,7 @@
                 :name="publication?.name" 
                 :bold="false" :force-display-actions="true"
                 :active="activePublication === publication.id" 
-                :details="'1h'" :counter-number="44"
+                :details="'CC0 1.0'" :counter-number="1"
                 @click="setActive(publication.id)">
 
                 <template #icon>
@@ -26,13 +26,10 @@
                 </template>
                 <template #actions>
                     <NcActionButton>
-                        Button one
+                        Bewerken
                     </NcActionButton>
                     <NcActionButton>
-                        Button two
-                    </NcActionButton>
-                    <NcActionButton>
-                        Button three
+                        Depubliceren
                     </NcActionButton>
                 </template>
             </NcListItem>
@@ -94,7 +91,7 @@ export default {
 		},
         setActive(id) {
             this.activePublication = id
-            this.$emit('publication', true)
+            this.$emit('activePublication', true)
             this.$emit('publicationId', id)
         },
         clearText() {

@@ -1,6 +1,7 @@
 <template>
   <div>
     <div v-if="!loading" id="app-content" class="zakenDetailContainer">
+      bla bla
       <!-- app-content-wrapper is optional, only use if app-content-list  -->
       <div class="zakenContainer">
         <h1 class="h1">{{ publication.name }}</h1>
@@ -45,14 +46,14 @@ export default {
   data() {
     return {
       publication: [],
-      oldZaakId: '',
-      loading: true,
+      publicationId: '',
+      loading: false,
 			activePublication: false,
 			activePublicationId: '',
     }
   },
   mounted() {
-    this.fetchData(this.zaakId)
+    this.fetchData(this.publicationId)
   },
   methods: {
     fetchData(id) {

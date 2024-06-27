@@ -6,13 +6,16 @@
                 <PublicationList @activePublication="updateActivePublication" @activePublicationId="updateActivePublicationId" />
             </template>
             <template #default>                
-                <NcEmptyContent name="Geen zaak" description="Nog geen zaak geselecteerd" v-if="activePublication !== true" >
+                <NcEmptyContent name="Geen publicatie" description="Nog geen publicaite geselecteerd" v-if="activePublication !== true" >
                     <template #icon>
                         <ListBoxOutline />
                     </template>
                     <template #action>
                     </template>
                 </NcEmptyContent>
+                <div v-if="activePublication === true">
+                    Test
+                </div>
 				<PublicationDetails :publicationId="activePublicationId" v-if="activePublication === true && activePublicationId" />
             </template>
         </NcAppContent>
@@ -21,7 +24,7 @@
 </template>
 
 <script>
-import { NcAppContent, NcContent } from '@nextcloud/vue';
+import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue';
 import MainMenu from '../../navigation/MainMenu.vue';
 import PublicationList from './list.vue';
 import PublicationDetails from './details.vue';
@@ -32,6 +35,7 @@ export default {
     components: {
         NcContent,
         NcAppContent,
+        NcEmptyContent,
         MainMenu,
         ListBoxOutline,
         PublicationList,

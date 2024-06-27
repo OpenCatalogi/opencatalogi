@@ -263,10 +263,8 @@ export default {
 	data() {
 		return {
 			settingsOpen: false,
-			zrc_location: "",
-			zrc_key: "",
-			ztc_location: "",
-			ztc_key: "",
+			orc_location: "",
+			orc_key: "",
 			drc_location: "",
 			drc_key: "",
 			elastic_location: "",
