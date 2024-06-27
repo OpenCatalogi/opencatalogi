@@ -9,17 +9,20 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(metadata, i) in metadatas" :key="`${metadata}${i}`"
-                :name="metadata?.omschrijving" :bold="false" :force-display-actions="true"
-                :active="activeMetaData === metadata.id" :details="'1h'" :counter-number="44"
-                @click="setActive(metadata.id)">
+            <NcListItem v-if="!loading" v-for="(publication, i) in publications" 
+                :key="`${publication}${i}`"
+                :name="publication?.name" 
+                :bold="false" :force-display-actions="true"
+                :active="activePublication === publication.id" 
+                :details="'1h'" :counter-number="44"
+                @click="setActive(publication.id)">
 
                 <template #icon>
-                    <BriefcaseOutline :class="activeMetaData === metadata.id && 'selectedZaakIcon'" disable-menu
+                    <BriefcaseOutline :class="activePublication === publication.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
-                    {{ metadata?.subname }}
+                    {{ publication?.summary }}
                 </template>
                 <template #actions>
                     <NcActionButton>
@@ -55,8 +58,6 @@ export default {
         BriefcaseOutline,
         Magnify,
         NcLoadingIcon,
-        loading: true,
-        publications: []
     },
     data() {
         return {
@@ -90,9 +91,9 @@ export default {
 			})
 		},
         setActive(id) {
-            this.activeMetaData = id
-            this.$emit('metaData', true)
-            this.$emit('metaDataId', id)
+            this.activePublication = id
+            this.$emit('publication', true)
+            this.$emit('publicationId', id)
         },
         clearText() {
             this.search = ''

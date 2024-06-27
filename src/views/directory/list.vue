@@ -9,11 +9,16 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(directory, i) in directoryList.results" :key="`${catalogus}${i}`" :name="directory?.name" :active="selected === directory?.id" :details="'1h'" :counter-number="44"
+            <NcListItem v-if="!loading" v-for="(directory, i) in directoryList.results" 
+                :key="`${catalogus}${i}`" 
+                :name="directory?.name" 
+                :active="activeDirectory === directory?.id" 
+                :details="'1h'" 
+                :counter-number="44"
                 @click="setActive(directory.id)">
 
                 <template #icon>
-                    <BriefcaseOutline :class="activeMetaData === metadata.id && 'selectedZaakIcon'" disable-menu
+                    <BriefcaseOutline :class="activeDirectory === directory.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
@@ -60,7 +65,7 @@ export default {
         return {
             search: '',
             loading: false,
-            activeMetaDirectory: '',
+            activeDirectory: '',
             directoryList: [],
         }
     },
@@ -88,9 +93,9 @@ export default {
 			})
 		},
         setActive(id) {
-            this.activeMetaData = id
-            this.$emit('metaData', true)
-            this.$emit('metaDataId', id)
+            this.activeDirectory = id
+            this.$emit('directory', true)
+            this.$emit('directoryId', id)
         },
         clearText() {
             this.search = ''

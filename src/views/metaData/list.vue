@@ -9,15 +9,19 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(catalogus, i) in metaDataList.results" :key="`${catalogus}${i}`" :name="catalogus?.name" :active="selected === catalogus?.id" :details="'1h'" :counter-number="44"
-                @click="setActive(catalogus.id)">
+            <NcListItem v-if="!loading" v-for="(metaData, i) in metaDataList.results" 
+                :key="`${metaData}${i}`" 
+                :name="metaData?.name" 
+                :active="activeMetadata === metaData?.id" 
+                :details="'1h'" :counter-number="44"
+                @click="setActive(metaData.id)">
 
                 <template #icon>
-                    <BriefcaseOutline :class="activeMetaData === metadata.id && 'selectedZaakIcon'" disable-menu
+                    <BriefcaseOutline :class="activeMetaData === metaData.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
-                    {{ metadata?.subname }}
+                    {{ metaData?.summary }}
                 </template>
                 <template #actions>
                     <NcActionButton>

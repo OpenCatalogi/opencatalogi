@@ -9,15 +9,19 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(catalogus, i) in catalogiList.results" :key="`${catalogus}${i}`" :name="catalogus?.name" :active="selected === catalogus?.id" :details="'1h'" :counter-number="44"
+            <NcListItem v-if="!loading" v-for="(catalogus, i) in catalogiList.results" 
+                :key="`${catalogus}${i}`" 
+                :name="catalogus?.name" 
+                :active="activeCatalogi === catalogus?.id" 
+                :details="'1h'" :counter-number="44"
                 @click="setActive(catalogus.id)">
 
                 <template #icon>
-                    <BriefcaseOutline :class="activeMetaData === metadata.id && 'selectedZaakIcon'" disable-menu
+                    <BriefcaseOutline :class="activeCatalogus === catalogus.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
-                    {{ catalogus?.subname }}
+                    {{ catalogus?.summary }}
                 </template>
                 <template #actions>
                     <NcActionButton>
@@ -58,7 +62,7 @@ export default {
         return {
             search: '',
             loading: false,
-            activeMetaData: '',
+            activeCatalogi: '',
             catalogiList: []
         }
     },
@@ -86,9 +90,9 @@ export default {
 			})
 		},
         setActive(id) {
-            this.activeMetaData = id
-            this.$emit('metaData', true)
-            this.$emit('metaDataId', id)
+            this.activeCatalogi = id
+            this.$emit('catalogi', true)
+            this.$emit('catalogiId', id)
         },
         clearText() {
             this.search = ''
