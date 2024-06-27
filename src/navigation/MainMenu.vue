@@ -113,22 +113,48 @@
 					</template>
 
 					<p>
-						Here you can set the details for varius connection
+						Here you can set the details for varius Connections
 					</p>
 
 					<p>
 					<table>
 						<tbody>
 							<tr>
-								<td class="row-name">ZRC</td>
+								<td class="row-name">DRC</td>
 								<td>Location</td>
 								<td>
-									<NcTextField :value.sync="zrc_location" id="zrc_location" :label-outside="true"
+									<NcTextField :value.sync="drc_location" id="drc_location" :label-outside="true"
 										placeholder="https://" />
 								</td>
 								<td>Key</td>
 								<td>
-									<NcTextField :value.sync="zrc_key" id="zrc_key" :label-outside="true"
+									<NcTextField :value.sync="drc_key" id="drc_key" :label-outside="true"
+										placeholder="***" />
+								</td>
+							</tr>
+							<tr>
+								<td class="row-name">ORC</td>
+								<td>Location</td>
+								<td>
+									<NcTextField :value.sync="orc_location" id="orc_location" :label-outside="true"
+										placeholder="https://" />
+								</td>
+								<td>Key</td>
+								<td>
+									<NcTextField :value.sync="orc_key" id="orc_key" :label-outside="true"
+										placeholder="***" />
+								</td>
+							</tr>
+							<tr>
+								<td class="row-name">Elastic</td>
+								<td>Location</td>
+								<td>
+									<NcTextField :value.sync="elastic_location" id="elastic_location" :label-outside="true"
+										placeholder="https://" />
+								</td>
+								<td>Key</td>
+								<td>
+									<NcTextField :value.sync="elastic_key" id="elastic_key" :label-outside="true"
 										placeholder="***" />
 								</td>
 							</tr>
@@ -136,6 +162,27 @@
 					</table>
 					</p>
 					<NcButton aria-label="Save" type="primary" wide>
+						<template #icon>
+							<ContentSave :size="20" />
+						</template>
+						Save
+					</NcButton>
+
+				</NcAppSettingsSection>
+				<NcAppSettingsSection id="sharing" name="Organisation" docUrl="zaakafhandel.app">
+					<template #icon>
+						<Connection :size="20" />
+					</template>
+					
+					<p>
+						Here you can set the details for your organisation
+					</p>
+
+				   <NcTextField :value.sync="organisation_name" id="organisation_name" />
+				   <NcTextField :value.sync="organisation_oin" id="organisation_oin" />
+				   <NcTextArea :value.sync="organisation_pki" id="organisation_pki" />
+
+				   <NcButton aria-label="Save" type="primary" wide>
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
@@ -162,7 +209,8 @@ import {
 	NcAppSettingsDialog,
 	NcAppSettingsSection,
 	NcButton,
-	NcTextField
+	NcTextField,
+	NcTextArea
 } from '@nextcloud/vue';
 import { isModalOpen } from '../modals/modalContext.js';
 
@@ -198,6 +246,7 @@ export default {
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcTextField,
+		NcTextArea,
 		NcButton,
 		Delete,
 		Plus,

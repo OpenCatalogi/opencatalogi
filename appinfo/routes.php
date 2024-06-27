@@ -15,7 +15,7 @@ return [
 		['name' => 'catalogi#page', 'url' => '/catalogi', 'verb' => 'GET'], 
 		['name' => 'search#page', 'url' => '/search', 'verb' => 'GET'],
 		['name' => 'directory#page', 'url' => '/directory', 'verb' => 'GET'],
-        ['name' => 'configuration#page', 'url' => '/configuration', 'verb' => 'GET'],
+        ['name' => 'configuration#index', 'url' => '/configuration', 'verb' => 'GET'],
         ['name' => 'configuration#create', 'url' => '/configuration', 'verb' => 'POST']		
 	],
 ];

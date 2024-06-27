@@ -2,6 +2,7 @@
 
 namespace OCA\OpenCatalog\Controller;
 
+use OCP\IAppConfig;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
@@ -22,9 +23,14 @@ class ConfigurationController extends Controller
         ]
     ];
 
-	public function __construct($appName, IRequest $request)
+	public function __construct(
+        $appName, 
+        IAppConfig $config,
+        IRequest $request)
 	{
 		parent::__construct($appName, $request);
+		$this->config = $config;
+		$this->request = $request;
 	}
     
     /**
@@ -32,8 +38,31 @@ class ConfigurationController extends Controller
      * @NoCSRFRequired
      */
     public function index(): JSONResponse {
-        $params = [['name' => '1'],['name' => '2']] ;
-        return new JSONResponse($params);
+
+        // Getting the config
+		$drcLocation = $this->config->getValueString('opencatalog', 'drc_location', '');
+		$drcKey = $this->config->getValueString('opencatalog', 'drc_key', '');
+		$orcLocation = $this->config->getValueString('opencatalog', 'orc_location', '');
+		$orcKey = $this->config->getValueString('opencatalog', 'orc_key', '');
+		$elasticLocation = $this->config->getValueString('opencatalog', 'elastic_location', '');
+		$elasticKey = $this->config->getValueString('opencatalog', 'elastic_key', '');
+		$organisationName = $this->config->getValueString('opencatalog', 'organisation_name', 'my-organisation');
+		$organisationOin = $this->config->getValueString('opencatalog', 'organisation_oin', '');
+		$organisationPki = $this->config->getValueString('opencatalog', 'organisation_pki', '');
+
+		$data = [
+			'drcLocation' => $drcLocation,
+			'drcKey' => $drcKey,
+			'orcLocation' => $orcLocation,
+			'orcKey' => $orcKey,
+			'elasticLocation' => $elasticLocation,
+			'elasticKey' => $elasticKey,
+			'organisationName' => $organisationName,
+			'organisationPki' => $organisationPki,
+			'organisationOin' => $organisationOin,
+		];
+
+        return new JSONResponse($data);
     }
     
     /**
@@ -43,7 +72,30 @@ class ConfigurationController extends Controller
      * @NoCSRFRequired
      */
     public function create(): JSONResponse {
-        $params = [['name' => '1'],['name' => '2']] ;
-        return new JSONResponse($params);
+		$data = $this->request->getParam();
+        
+		$drcLocation = $this->config->setValueString('opencatalog', 'drc_location', $data['drcLocation']);
+		$drcKey = $this->config->setValueString('opencatalog', 'drc_key', $data['drcKey']);
+		$orcLocation = $this->config->setValueString('opencatalog', 'orc_location', $data['orcLocation']);
+		$orcKey = $this->config->setValueString('opencatalog', 'orc_key', $data['orcKey']);
+		$elasticLocation = $this->config->setValueString('opencatalog', 'elastic_location', $data['elasticLocation']);
+		$elasticKey = $this->config->setValueString('opencatalog', 'elastic_key', $data['elasticKey']);
+		$organisationName = $this->config->setValueString('opencatalog', 'organisation_name', $data['organisationName']);
+		$organisationOin = $this->config->setValueString('opencatalog', 'organisation_oin', $data['organisationOin']);
+		$organisationPki = $this->config->setValueString('opencatalog', 'organisation_pki', $data['organisationPki']);
+        
+		$data = [
+			'drcLocation' => $drcLocation,
+			'drcKey' => $drcKey,
+			'orcLocation' => $orcLocation,
+			'orcKey' => $orcKey,
+			'elasticLocation' => $elasticLocation,
+			'elasticKey' => $elasticKey,
+			'organisationName' => $organisationName,
+			'organisationPki' => $organisationPki,
+			'organisationOin' => $organisationOin,
+		];
+
+        return new JSONResponse($data);
     }
 }
