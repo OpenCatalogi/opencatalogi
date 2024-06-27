@@ -9,7 +9,7 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(publication, i) in publications" 
+            <NcListItem v-if="!loading" v-for="(publication, i) in publications.results" 
                 :key="`${publication}${i}`"
                 :name="publication?.name" 
                 :bold="false" :force-display-actions="true"
