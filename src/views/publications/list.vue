@@ -19,7 +19,7 @@
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
-                    {{ publication?.summery }}
+                    {{ publication?.summary }}
                 </template>
                 <template #actions>
                     <NcActionButton>

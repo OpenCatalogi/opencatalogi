@@ -9,15 +9,12 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(metaData, i) in metaDataList.results" 
-                :key="`${metaData}${i}`" 
-                :name="metaData?.name" 
-                :active="activeMetadata === metaData?.id" 
-                :details="'1h'" :counter-number="44"
+            <NcListItem v-if="!loading" v-for="(metaData, i) in metaDataList.results" :key="`${metaData}${i}`"
+                :name="metaData?.name" :active="activeMetaDataId === metaData?.id" :details="'1h'" :counter-number="44"
                 @click="setActive(metaData.id)">
 
                 <template #icon>
-                    <FileTreeOutline :class="activeMetaData === metaData.id && 'selectedZaakIcon'" disable-menu
+                    <FileTreeOutline :class="activeMetaDataId === metaData.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
@@ -63,35 +60,34 @@ export default {
             search: '',
             loading: true,
             metaDataList: [],
-            activeMetaData: ''
+            activeMetaDataId: ''
         }
     },
     mounted() {
         this.fetchData()
     },
     methods: {
-		fetchData(newPage) {
-			this.loading = true,
-			fetch(
-				'/index.php/apps/opencatalog/metadata/api',
-			{
-				method: 'GET'
-			},
-			)
-			.then((response) => {
-				response.json().then((data) => {
-				this.metaDataList = data
-				})
-				this.loading = false
-			})
-			.catch((err) => {
-				console.error(err)
-				this.loading = false
-			})
-		},
+        fetchData(newPage) {
+            this.loading = true,
+                fetch(
+                    '/index.php/apps/opencatalog/metadata/api',
+                    {
+                        method: 'GET'
+                    },
+                )
+                    .then((response) => {
+                        response.json().then((data) => {
+                            this.metaDataList = data
+                        })
+                        this.loading = false
+                    })
+                    .catch((err) => {
+                        console.error(err)
+                        this.loading = false
+                    })
+        },
         setActive(id) {
-            this.activeMetaData = id
-            this.$emit('metaData', true)
+            this.activeMetaDataId = id
             this.$emit('metaDataId', id)
         },
         clearText() {

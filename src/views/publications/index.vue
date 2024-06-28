@@ -1,6 +1,6 @@
 <template>
     <NcContent appName="opencatalog">
-        <MainMenu selected="publications" />
+        <MainMenu :selected="selectedId" />
         <NcAppContent>
             <template #list>
                 <PublicationList @publicationId="updatePublicationId" />
@@ -42,11 +42,20 @@ export default {
     data() {
         return {
             publicationId: undefined,
+            selectedId: undefined,
         }
+    },
+    mounted() {
+        this.selectedId = this.getIdFromUrl()
     },
     methods: {
         updatePublicationId(variable) {
             this.publicationId = variable
+        },
+        getIdFromUrl() {
+            const url = window.location.href;
+            const lastParam = url.split("/").slice(-1)[0];
+            return lastParam
         }
     }
 }

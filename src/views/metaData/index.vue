@@ -3,17 +3,18 @@
         <MainMenu selected="metaData" />
         <NcAppContent>
             <template #list>
-                <MetaDataList @activePublication="updateMetaDataId" @activeMetaDataIdId="updateMetaDataId"/>
+                <MetaDataList @metaDataId="updateMetaDataId" />
             </template>
             <template #default>
-                <NcEmptyContent name="Geen Metadata" description="Nog geenmetadata geselecteerd" v-if="activeDirectory !== true" >
+                <NcEmptyContent class="detailContainer" name="Geen Metadata" description="Nog geenmetadata geselecteerd"
+                    v-if="metaDataId === undefined">
                     <template #icon>
                         <FileTreeOutline />
                     </template>
                     <template #action>
                     </template>
                 </NcEmptyContent>
-				<DirectoryDetails v-if="MetaDataId === true" />
+                <MetaDataDetails v-if="metaDataId" :metaDataId="metaDataId" />
             </template>
         </NcAppContent>
         <!-- <ZaakSidebar /> -->
@@ -38,19 +39,16 @@ export default {
         MetaDataDetails,
         FileTreeOutline
     },
-	data() {
-		return {
-			activeMetaData: false,
-			activeMetaDataId: '',
-		}
-	},
-	methods: {
-		updateMetaData(variable) {
-			this.activeMetaData = variable
-		},
-		updateMetaDataId(variable) {
-			this.activeMetaDataId = variable
-		}
-	}
+    data() {
+        return {
+            activeMetaData: false,
+            metaDataId: undefined,
+        }
+    },
+    methods: {
+        updateMetaDataId(variable) {
+            this.metaDataId = variable
+        },
+    }
 }
 </script>
