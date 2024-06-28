@@ -54,30 +54,24 @@
 		</NcActions>
 
 		<NcAppNavigationList>
-			<NcAppNavigationNewItem name="Zaak Aanmaken" @new-item="function (value) { alert(value) }">
+			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="showModal('addPublicationModal')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="selected === 'dashboard'" icon="" name="Dashboard"
-				href="/index.php/apps/opencatalog/Dashboard">
+			<NcAppNavigationItem :active="selected === 'dashboard'"  name="Dashboard"
+				href="/index.php/apps/opencatalog">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === '5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f'" icon=""
-				name="Catalouge 1" href="/index.php/apps/opencatalog/Catalouge1">
+			<NcAppNavigationItem   v-if="!loading" v-for="(catalogus, i) in catalogi.results" :key="`${catalogus}${i}`" :name="catalogus?.name" :active="selected === catalogus?.id" 
+				 :href="'/index.php/apps/opencatalog/catalog/' + catalogus?.id">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === '4c3edd34-a90d-4d2a-8894-adb5836ecde8'" icon=""
-				name="Catalouge 2" href="/index.php/apps/opencatalog/Catalouge2">
-				<template #icon>
-					<DatabaseEyeOutline :size="20" />
-				</template>
-			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === 'search'" icon="" name="Search"
+			<NcAppNavigationItem :active="selected === 'search'" name="Search"
 				href="/index.php/apps/opencatalog/search">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
@@ -86,14 +80,20 @@
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="selected === 'directory'" icon="" name="Directory"
+			<NcAppNavigationItem :active="selected === 'catalogi'" name="Catalogi"
+				href=" /index.php/apps/opencatalog/catalogi">
+				<template #icon>
+					<DatabaseCogOutline :size="20" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem :active="selected === 'directory'" name="Directory"
 				href=" /index.php/apps/opencatalog/directory">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem :active="selected === 'metaData'" icon="" name="MetaData"
+			<NcAppNavigationItem :active="selected === 'metaData'" name="MetaData"
 				href=" /index.php/apps/opencatalog/metadata">
 				<template #icon>
 					<FileTreeOutline :size="20" />
@@ -113,22 +113,48 @@
 					</template>
 
 					<p>
-						Here you can set the details for varius connection
+						Here you can set the details for varius Connections
 					</p>
 
 					<p>
 					<table>
 						<tbody>
 							<tr>
-								<td class="row-name">ZRC</td>
+								<td class="row-name">DRC</td>
 								<td>Location</td>
 								<td>
-									<NcTextField :value.sync="zrc_location" id="zrc_location" :label-outside="true"
+									<NcTextField :value.sync="drc_location" id="drc_location" :label-outside="true"
 										placeholder="https://" />
 								</td>
 								<td>Key</td>
 								<td>
-									<NcTextField :value.sync="zrc_key" id="zrc_key" :label-outside="true"
+									<NcTextField :value.sync="drc_key" id="drc_key" :label-outside="true"
+										placeholder="***" />
+								</td>
+							</tr>
+							<tr>
+								<td class="row-name">ORC</td>
+								<td>Location</td>
+								<td>
+									<NcTextField :value.sync="orc_location" id="orc_location" :label-outside="true"
+										placeholder="https://" />
+								</td>
+								<td>Key</td>
+								<td>
+									<NcTextField :value.sync="orc_key" id="orc_key" :label-outside="true"
+										placeholder="***" />
+								</td>
+							</tr>
+							<tr>
+								<td class="row-name">Elastic</td>
+								<td>Location</td>
+								<td>
+									<NcTextField :value.sync="elastic_location" id="elastic_location" :label-outside="true"
+										placeholder="https://" />
+								</td>
+								<td>Key</td>
+								<td>
+									<NcTextField :value.sync="elastic_key" id="elastic_key" :label-outside="true"
 										placeholder="***" />
 								</td>
 							</tr>
@@ -136,6 +162,27 @@
 					</table>
 					</p>
 					<NcButton aria-label="Save" type="primary" wide>
+						<template #icon>
+							<ContentSave :size="20" />
+						</template>
+						Save
+					</NcButton>
+
+				</NcAppSettingsSection>
+				<NcAppSettingsSection id="sharing" name="Organisation" docUrl="zaakafhandel.app">
+					<template #icon>
+						<Connection :size="20" />
+					</template>
+					
+					<p>
+						Here you can set the details for your organisation
+					</p>
+
+				   <NcTextField :value.sync="organisation_name" id="organisation_name" />
+				   <NcTextField :value.sync="organisation_oin" id="organisation_oin" />
+				   <NcTextArea :value.sync="organisation_pki" id="organisation_pki" />
+
+				   <NcButton aria-label="Save" type="primary" wide>
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
@@ -162,7 +209,8 @@ import {
 	NcAppSettingsDialog,
 	NcAppSettingsSection,
 	NcButton,
-	NcTextField
+	NcTextField,
+	NcTextArea
 } from '@nextcloud/vue';
 import { isModalOpen } from '../modals/modalContext.js';
 
@@ -170,6 +218,7 @@ import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import DatabaseEyeOutline from 'vue-material-design-icons/DatabaseEyeOutline'
+import DatabaseCogOutline from 'vue-material-design-icons/DatabaseCogOutline'
 import LayersSearchOutline from 'vue-material-design-icons/LayersSearchOutline'
 import LayersOutline from 'vue-material-design-icons/LayersOutline'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
@@ -197,11 +246,13 @@ export default {
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcTextField,
+		NcTextArea,
 		NcButton,
 		Delete,
 		Plus,
 		Connection,
 		DatabaseEyeOutline,
+		DatabaseCogOutline,
 		LayersSearchOutline,
 		LayersOutline,
 		FileTreeOutline,
@@ -212,15 +263,43 @@ export default {
 	data() {
 		return {
 			settingsOpen: false,
-			zrc_location: "",
-			zrc_key: "",
-			ztc_location: "",
-			ztc_key: "",
+			orc_location: "",
+			orc_key: "",
 			drc_location: "",
 			drc_key: "",
+			elastic_location: "",
+			elastic_key: "",
+      		loading: true,
+			organisation_name: "",
+			organisation_oin: "",
+			organisation_pki: "",
+			catalogi: [],
+            activeMenuItem: ''
 		}
 	},
+	mounted() {
+		this.fetchData()
+	},
 	methods: {
+		fetchData(newPage) {
+			this.loading = true,
+			fetch(
+				'/index.php/apps/opencatalog/catalogi/api',
+			{
+				method: 'GET'
+			},
+			)
+			.then((response) => {
+				response.json().then((data) => {
+				this.catalogi = data
+				})
+				this.loading = false
+			})
+			.catch((err) => {
+				console.error(err)
+				this.loading = false
+			})
+		},
 		save() {
 			this.zrc_location = ''
 			this.zrc_key = ''
@@ -228,6 +307,10 @@ export default {
 		showModal(modalName) {
 			isModalOpen[modalName] = true
 		},
+        setActive(selected) {
+            this.activeMenuItem = selected
+            this.$emit('activeMenuItem', selected)
+        },
 
 	}
 }

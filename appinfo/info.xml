@@ -18,7 +18,7 @@
 		<navigation>
 			<id>opencatalog</id>
 			<name>Open Catalog</name>
-			<route>opencatalog.dashboard.index</route>
+			<route>opencatalog.dashboard.page</route>
 			<icon>app.svg</icon>
 			<type>link</type>
 		</navigation>
