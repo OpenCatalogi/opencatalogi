@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { NcAppContent, NcConten, NcEmptyContentt } from '@nextcloud/vue';
+import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue';
 import MainMenu from '../../navigation/MainMenu.vue';
 import CatalogiList from './list.vue';
 import CatalogiDetails from './details.vue';
