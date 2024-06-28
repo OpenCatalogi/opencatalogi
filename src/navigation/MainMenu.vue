@@ -60,7 +60,7 @@
 				</template>
 			</NcAppNavigationNewItem>
 			<NcAppNavigationItem :active="selected === 'dashboard'"  name="Dashboard"
-				href="/index.php/apps/opencatalog/Dashboard">
+				href="/index.php/apps/opencatalog">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
@@ -273,7 +273,8 @@ export default {
 			organisation_name: "",
 			organisation_oin: "",
 			organisation_pki: "",
-			catalogi: []
+			catalogi: [],
+            activeMenuItem: ''
 		}
 	},
 	mounted() {
@@ -306,6 +307,10 @@ export default {
 		showModal(modalName) {
 			isModalOpen[modalName] = true
 		},
+        setActive(selected) {
+            this.activeMenuItem = selected
+            this.$emit('activeMenuItem', selected)
+        },
 
 	}
 }

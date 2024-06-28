@@ -1,6 +1,10 @@
 <template>
 	<NcContent appName="opencatalog">
-		<MainMenu selected="dashboard" :publication="publication" :metaData="metaData" :catalog="catalog"
+		<MainMenu selected="dashboard" 
+			@activeMenuItem="updateMenuPublication"
+			:publication="publication" 
+			:metaData="metaData" 
+			:catalog="catalog"
 			:externalCatalog="externalCatalog" />
 		<NcAppContent>
 			<template #default>
@@ -55,9 +59,13 @@ export default {
 			metaData: '',
 			catalog: '',
 			externalCatalog: '',
+			activeMenuItem: '',
 		}
 	},
 	methods: {
+		updateMenuPublication(selected) {
+			this.activeMenuItem = selected
+		},
 		updatePublicationModal(variable) {
 			this.publication = variable
 		},

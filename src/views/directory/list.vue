@@ -18,7 +18,7 @@
                 @click="setActive(directory.id)">
 
                 <template #icon>
-                    <BriefcaseOutline :class="activeDirectory === directory.id && 'selectedZaakIcon'" disable-menu
+                    <LayersOutline :class="activeDirectory === directory.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
@@ -44,7 +44,7 @@
 <script>
 import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue';
 import Magnify from 'vue-material-design-icons/Magnify';
-import BriefcaseOutline from 'vue-material-design-icons/BriefcaseOutline';
+import LayersOutline from 'vue-material-design-icons/BriefcaseOutline';
 
 export default {
     name: "DirectoryList",
@@ -55,7 +55,7 @@ export default {
         NcAvatar,
         NcAppContentList,
         NcTextField,
-        BriefcaseOutline,
+        LayersOutline,
         Magnify,
         NcLoadingIcon,
         loading: true,

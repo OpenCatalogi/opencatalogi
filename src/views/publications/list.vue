@@ -34,7 +34,7 @@
                 </template>
             </NcListItem>
 
-            <NcLoadingIcon v-if="loading" class="loadingIcon" :size="64" appearance="dark" name="Zaken aan het laden" />
+            <NcLoadingIcon v-if="loading"  :size="64" class="loadingIcon" appearance="dark" name="Zaken aan het laden" />
         </ul>
     </NcAppContentList>
 </template>

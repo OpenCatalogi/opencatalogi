@@ -17,7 +17,7 @@
                 @click="setActive(catalogus.id)">
 
                 <template #icon>
-                    <BriefcaseOutline :class="activeCatalogus === catalogus.id && 'selectedZaakIcon'" disable-menu
+                    <DatabaseOutline :class="activeCatalogus === catalogus.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
@@ -43,7 +43,7 @@
 <script>
 import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue';
 import Magnify from 'vue-material-design-icons/Magnify';
-import BriefcaseOutline from 'vue-material-design-icons/BriefcaseOutline';
+import DatabaseOutline from 'vue-material-design-icons/BriefcaseOutline';
 
 export default {
     name: "CatalogiList",
@@ -54,7 +54,7 @@ export default {
         NcAvatar,
         NcAppContentList,
         NcTextField,
-        BriefcaseOutline,
+        DatabaseOutline,
         Magnify,
         NcLoadingIcon
     },
