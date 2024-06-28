@@ -3,17 +3,18 @@
         <MainMenu selected="publications" />
         <NcAppContent>
             <template #list>
-                <PublicationList @activePublication="updateActivePublication" @activePublicationId="updateActivePublicationId" />
+                <PublicationList @publicationId="updatePublicationId" />
             </template>
-            <template #default>                
-                <NcEmptyContent name="Geen publicatie" description="Nog geen publicaite geselecteerd" v-if="activePublication !== true" >
+            <template #default>
+                <NcEmptyContent class="detailContainer" name="Geen publicatie"
+                    description="Nog geen publicaite geselecteerd" v-if="publicationId === undefined">
                     <template #icon>
                         <ListBoxOutline />
                     </template>
                     <template #action>
                     </template>
                 </NcEmptyContent>
-				<PublicationDetails v-if="activePublication === true" :publicationId="activePublicationId"/>
+                <PublicationDetails v-if="publicationId" :publicationId="publicationId" />
             </template>
         </NcAppContent>
         <!-- <ZaakSidebar /> -->
@@ -38,19 +39,15 @@ export default {
         PublicationList,
         PublicationDetails
     },
-	data() {
-		return {
-			activePublication: false,
-			activePublicationId: '',
-		}
-	},
-	methods: {
-		updateActivePublication(variable) {
-			this.activePublication = variable
-		},
-		updateActivePublicationId(variable) {
-			this.activePublicationId = variable
-		}
-	}
+    data() {
+        return {
+            publicationId: undefined,
+        }
+    },
+    methods: {
+        updatePublicationId(variable) {
+            this.publicationId = variable
+        }
+    }
 }
 </script>

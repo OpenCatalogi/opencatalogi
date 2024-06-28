@@ -1,20 +1,18 @@
 <template>
-  <div>
-    <div v-if="!loading" id="app-content" class="zakenDetailContainer">
-      bla bla
+  <div class="detailContainer">
+    <div v-if="!loading" id="app-content">
       <!-- app-content-wrapper is optional, only use if app-content-list  -->
-      <div class="zakenContainer">
+      <div>
         <h1 class="h1">{{ publication.name }}</h1>
         <div class="grid">
           <div class="gridContent">
             <h4>Sammenvatting:</h4>
             <span>{{ publication.summary }}</span>
-          </div>          
+          </div>
         </div>
       </div>
     </div>
-    <NcLoadingIcon v-if="loading" class="zakenDetailLoadingContainer" :size="100" appearance="dark"
-      name="Publicatie details aan het laden" />
+    <NcLoadingIcon v-if="loading" :size="100" appearance="dark" name="Publicatie details aan het laden" />
   </div>
 </template>
 
@@ -46,10 +44,7 @@ export default {
   data() {
     return {
       publication: [],
-      publicationId: '',
       loading: false,
-			activePublication: false,
-			activePublicationId: '',
     }
   },
   mounted() {
@@ -82,13 +77,6 @@ export default {
 </script>
 
 <style>
-.zakenDetailContainer,
-.zakenDetailLoadingContainer {
-  margin-block-start: var(--zaa-margin-20);
-  margin-inline-start: var(--zaa-margin-20);
-  margin-inline-end: var(--zaa-margin-20);
-}
-
 h4 {
   font-weight: bold
 }
@@ -102,12 +90,6 @@ h4 {
   margin-inline-end: 0px !important;
   font-weight: bold !important;
   unicode-bidi: isolate !important;
-}
-
-.zakenContainer {
-  margin-block-start: var(--zaa-margin-20);
-  margin-block-end: var(--zaa-margin-50);
-
 }
 
 .grid {

@@ -9,16 +9,13 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(publication, i) in publications.results" 
-                :key="`${publication}${i}`"
-                :name="publication?.name" 
-                :bold="false" :force-display-actions="true"
-                :active="activePublication === publication.id" 
-                :details="'CC0 1.0'" :counter-number="1"
+            <NcListItem v-if="!loading" v-for="(publication, i) in publications.results" :key="`${publication}${i}`"
+                :name="publication?.name" :bold="false" :force-display-actions="true"
+                :active="activePublicationId === publication.id" :details="'CC0 1.0'" :counter-number="1"
                 @click="setActive(publication.id)">
 
                 <template #icon>
-                    <ListBoxOutline :class="activePublication === publication.id && 'selectedZaakIcon'" disable-menu
+                    <ListBoxOutline :class="activePublicationId === publication.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
@@ -34,7 +31,7 @@
                 </template>
             </NcListItem>
 
-            <NcLoadingIcon v-if="loading"  :size="64" class="loadingIcon" appearance="dark" name="Zaken aan het laden" />
+            <NcLoadingIcon v-if="loading" :size="64" class="loadingIcon" appearance="dark" name="Zaken aan het laden" />
         </ul>
     </NcAppContentList>
 </template>
@@ -62,36 +59,34 @@ export default {
             loading: false,
             activeMetaData: '',
             publications: [],
-			activePublication: false,
-			activePublicationId: '',
+            activePublicationId: '',
         }
     },
     mounted() {
         this.fetchData()
     },
     methods: {
-		fetchData(newPage) {
-			this.loading = true,
-			fetch(
-				'/index.php/apps/opencatalog/publications/api',
-			{
-				method: 'GET'
-			},
-			)
-			.then((response) => {
-				response.json().then((data) => {
-				this.publications = data
-				})
-				this.loading = false
-			})
-			.catch((err) => {
-				console.error(err)
-				this.loading = false
-			})
-		},
+        fetchData(newPage) {
+            this.loading = true,
+                fetch(
+                    '/index.php/apps/opencatalog/publications/api',
+                    {
+                        method: 'GET'
+                    },
+                )
+                    .then((response) => {
+                        response.json().then((data) => {
+                            this.publications = data
+                        })
+                        this.loading = false
+                    })
+                    .catch((err) => {
+                        console.error(err)
+                        this.loading = false
+                    })
+        },
         setActive(id) {
-            this.activePublication = id
-            this.$emit('activePublication', true)
+            this.activePublicationId = id
             this.$emit('publicationId', id)
         },
         clearText() {

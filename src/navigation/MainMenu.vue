@@ -59,14 +59,14 @@
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="selected === 'dashboard'"  name="Dashboard"
-				href="/index.php/apps/opencatalog">
+			<NcAppNavigationItem :active="selected === 'dashboard'" name="Dashboard" href="/index.php/apps/opencatalog">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem   v-if="!loading" v-for="(catalogus, i) in catalogi.results" :key="`${catalogus}${i}`" :name="catalogus?.name" :active="selected === catalogus?.id" 
-				 :href="'/index.php/apps/opencatalog/catalog/' + catalogus?.id">
+			<NcAppNavigationItem v-if="!loading" v-for="(catalogus, i) in catalogi.results" :key="`${catalogus}${i}`"
+				:name="catalogus?.name" :active="selected === catalogus?.id"
+				:href="'/index.php/apps/opencatalog/catalog/' + catalogus?.id">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
@@ -149,8 +149,8 @@
 								<td class="row-name">Elastic</td>
 								<td>Location</td>
 								<td>
-									<NcTextField :value.sync="elastic_location" id="elastic_location" :label-outside="true"
-										placeholder="https://" />
+									<NcTextField :value.sync="elastic_location" id="elastic_location"
+										:label-outside="true" placeholder="https://" />
 								</td>
 								<td>Key</td>
 								<td>
@@ -173,16 +173,16 @@
 					<template #icon>
 						<Connection :size="20" />
 					</template>
-					
+
 					<p>
 						Here you can set the details for your organisation
 					</p>
 
-				   <NcTextField :value.sync="organisation_name" id="organisation_name" />
-				   <NcTextField :value.sync="organisation_oin" id="organisation_oin" />
-				   <NcTextArea :value.sync="organisation_pki" id="organisation_pki" />
+					<NcTextField :value.sync="organisation_name" id="organisation_name" />
+					<NcTextField :value.sync="organisation_oin" id="organisation_oin" />
+					<NcTextArea :value.sync="organisation_pki" id="organisation_pki" />
 
-				   <NcButton aria-label="Save" type="primary" wide>
+					<NcButton aria-label="Save" type="primary" wide>
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
@@ -269,12 +269,12 @@ export default {
 			drc_key: "",
 			elastic_location: "",
 			elastic_key: "",
-      		loading: true,
+			loading: true,
 			organisation_name: "",
 			organisation_oin: "",
 			organisation_pki: "",
 			catalogi: [],
-            activeMenuItem: ''
+			activeMenuItem: ''
 		}
 	},
 	mounted() {
@@ -283,22 +283,22 @@ export default {
 	methods: {
 		fetchData(newPage) {
 			this.loading = true,
-			fetch(
-				'/index.php/apps/opencatalog/catalogi/api',
-			{
-				method: 'GET'
-			},
-			)
-			.then((response) => {
-				response.json().then((data) => {
-				this.catalogi = data
-				})
-				this.loading = false
-			})
-			.catch((err) => {
-				console.error(err)
-				this.loading = false
-			})
+				fetch(
+					'/index.php/apps/opencatalog/catalogi/api',
+					{
+						method: 'GET'
+					},
+				)
+					.then((response) => {
+						response.json().then((data) => {
+							this.catalogi = data
+						})
+						this.loading = false
+					})
+					.catch((err) => {
+						console.error(err)
+						this.loading = false
+					})
 		},
 		save() {
 			this.zrc_location = ''
@@ -307,10 +307,10 @@ export default {
 		showModal(modalName) {
 			isModalOpen[modalName] = true
 		},
-        setActive(selected) {
-            this.activeMenuItem = selected
-            this.$emit('activeMenuItem', selected)
-        },
+		setActive(selected) {
+			this.activeMenuItem = selected
+			this.$emit('activeMenuItem', selected)
+		},
 
 	}
 }
