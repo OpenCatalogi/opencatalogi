@@ -43,7 +43,7 @@
 <script>
 import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue';
 import Magnify from 'vue-material-design-icons/Magnify';
-import DatabaseOutline from 'vue-material-design-icons/BriefcaseOutline';
+import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline';
 
 export default {
     name: "CatalogiList",

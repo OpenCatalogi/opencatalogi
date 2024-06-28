@@ -44,7 +44,7 @@
 <script>
 import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue';
 import Magnify from 'vue-material-design-icons/Magnify';
-import LayersOutline from 'vue-material-design-icons/BriefcaseOutline';
+import LayersOutline from 'vue-material-design-icons/LayersOutline';
 
 export default {
     name: "DirectoryList",

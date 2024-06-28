@@ -43,7 +43,7 @@
 <script>
 import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue';
 import Magnify from 'vue-material-design-icons/Magnify';
-import FileTreeOutline from 'vue-material-design-icons/BriefcaseOutline';
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline';
 
 export default {
     name: "MetaDataList",

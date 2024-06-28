@@ -8,7 +8,7 @@
             <template #default>
                 <NcEmptyContent name="Geen Metadata" description="Nog geenmetadata geselecteerd" v-if="activeDirectory !== true" >
                     <template #icon>
-                        <ListBoxOutline />
+                        <FileTreeOutline />
                     </template>
                     <template #action>
                     </template>
@@ -25,7 +25,7 @@ import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue';
 import MainMenu from '../../navigation/MainMenu.vue';
 import MetaDataList from './list.vue';
 import MetaDataDetails from './details.vue';
-import FileTreeOutline from 'vue-material-design-icons/BriefcaseOutline';
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline';
 
 export default {
     name: 'metaDataIndex',

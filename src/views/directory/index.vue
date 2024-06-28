@@ -8,7 +8,7 @@
             <template #default>
                 <NcEmptyContent name="Geen Directory" description="Nog geen directory geselecteerd" v-if="activeDirectory !== true" >
                     <template #icon>
-                        <ListBoxOutline />
+                        <LayersOutline />
                     </template>
                     <template #action>
                     </template>
@@ -25,7 +25,7 @@ import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue';
 import MainMenu from '../../navigation/MainMenu.vue';
 import DirectoryList from './list.vue';
 import DirectoryDetails from './details.vue';
-import FileTreeOutline from 'vue-material-design-icons/BriefcaseOutline';
+import LayersOutline from 'vue-material-design-icons/LayersOutline';
 
 export default {
     name: 'directoryIndex',
@@ -36,7 +36,7 @@ export default {
         MainMenu,
         DirectoryList,
         DirectoryDetails,
-        FileTreeOutline
+        LayersOutline
     },
 	data() {
 		return {

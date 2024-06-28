@@ -8,7 +8,7 @@
             <template #default>
                 <NcEmptyContent name="Geen publicatie" description="Nog geen publicaite geselecteerd" v-if="activePublication !== true" >
                     <template #icon>
-                        <ListBoxOutline />
+                        <DatabaseOutline />
                     </template>
                     <template #action>
                     </template>
@@ -25,7 +25,7 @@ import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue';
 import MainMenu from '../../navigation/MainMenu.vue';
 import CatalogiList from './list.vue';
 import CatalogiDetails from './details.vue';
-import FileTreeOutline from 'vue-material-design-icons/BriefcaseOutline';
+import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline';
 
 export default {
     name: 'catalogiIndex',
@@ -36,7 +36,7 @@ export default {
         MainMenu,
         CatalogiList,
         CatalogiDetails,
-        FileTreeOutline
+        DatabaseOutline
     },
 	data() {
 		return {
