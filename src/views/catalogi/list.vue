@@ -9,15 +9,12 @@
                 </NcTextField>
             </div>
 
-            <NcListItem v-if="!loading" v-for="(catalogus, i) in catalogiList.results" 
-                :key="`${catalogus}${i}`" 
-                :name="catalogus?.name" 
-                :active="activeCatalogi === catalogus?.id" 
-                :details="'1h'" :counter-number="44"
-                @click="setActive(catalogus.id)">
+            <NcListItem v-if="!loading" v-for="(catalogus, i) in catalogiList.results" :key="`${catalogus}${i}`"
+                :name="catalogus?.name" :active="activeCatalogiId === catalogus?.id" :details="'1h'"
+                :counter-number="44" @click="setActive(catalogus.id)">
 
                 <template #icon>
-                    <DatabaseOutline :class="activeCatalogus === catalogus.id && 'selectedZaakIcon'" disable-menu
+                    <DatabaseOutline :class="activeCatalogiId === catalogus.id && 'selectedZaakIcon'" disable-menu
                         :size="44" user="janedoe" display-name="Jane Doe" />
                 </template>
                 <template #subname>
@@ -63,36 +60,36 @@ export default {
             search: '',
             loading: false,
             activeCatalogi: '',
-            catalogiList: []
+            catalogiList: [],
+            activeCatalogiId: '',
         }
     },
     mounted() {
         this.fetchData()
     },
     methods: {
-		fetchData(newPage) {
-			this.loading = true,
-			fetch(
-				'/index.php/apps/opencatalog/catalogi/api',
-			{
-				method: 'GET'
-			},
-			)
-			.then((response) => {
-				response.json().then((data) => {
-				this.catalogiList = data
-				})
-				this.loading = false
-			})
-			.catch((err) => {
-				console.error(err)
-				this.loading = false
-			})
-		},
+        fetchData(newPage) {
+            this.loading = true,
+                fetch(
+                    '/index.php/apps/opencatalog/catalogi/api',
+                    {
+                        method: 'GET'
+                    },
+                )
+                    .then((response) => {
+                        response.json().then((data) => {
+                            this.catalogiList = data
+                        })
+                        this.loading = false
+                    })
+                    .catch((err) => {
+                        console.error(err)
+                        this.loading = false
+                    })
+        },
         setActive(id) {
-            this.activeCatalogi = id
-            this.$emit('catalogi', true)
-            this.$emit('catalogiId', id)
+            this.activeCatalogiId = id
+            this.$emit('catalogId', id)
         },
         clearText() {
             this.search = ''

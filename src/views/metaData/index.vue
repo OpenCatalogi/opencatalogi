@@ -7,7 +7,7 @@
             </template>
             <template #default>
                 <NcEmptyContent class="detailContainer" name="Geen Metadata" description="Nog geenmetadata geselecteerd"
-                    v-if="metaDataId === undefined">
+                    v-if="!metaDataId">
                     <template #icon>
                         <FileTreeOutline />
                     </template>

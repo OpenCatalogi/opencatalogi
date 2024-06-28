@@ -7,7 +7,7 @@
             </template>
             <template #default>
                 <NcEmptyContent class="detailContainer" name="Geen publicatie"
-                    description="Nog geen publicaite geselecteerd" v-if="publicationId === undefined">
+                    description="Nog geen publicaite geselecteerd" v-if="!publicationId">
                     <template #icon>
                         <ListBoxOutline />
                     </template>

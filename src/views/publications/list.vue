@@ -57,7 +57,6 @@ export default {
         return {
             search: '',
             loading: false,
-            activeMetaData: '',
             publications: [],
             activePublicationId: '',
         }

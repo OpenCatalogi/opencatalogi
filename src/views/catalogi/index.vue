@@ -3,17 +3,18 @@
         <MainMenu selected="catalogi" />
         <NcAppContent>
             <template #list>
-                <CatalogiList @activeCatalog="updateActiveCatalog" @activeCatalogId="updateActiveCatalogId"/>
+                <CatalogiList @catalogId="updateCatalogId" />
             </template>
             <template #default>
-                <NcEmptyContent name="Geen publicatie" description="Nog geen publicaite geselecteerd" v-if="activePublication !== true" >
+                <NcEmptyContent class="detailContainer" name="Geen publicatie"
+                    description="Nog geen publicaite geselecteerd" v-if="!catalogId">
                     <template #icon>
                         <DatabaseOutline />
                     </template>
                     <template #action>
                     </template>
                 </NcEmptyContent>
-				<DirectoryDetails v-if="activeCatalog === true" />
+                <CatalogiDetails v-if="catalogId" :catalogId="catalogId" />
             </template>
         </NcAppContent>
         <!-- <ZaakSidebar /> -->
@@ -38,19 +39,15 @@ export default {
         CatalogiDetails,
         DatabaseOutline
     },
-	data() {
-		return {
-			activeCatalog: false,
-			activeCatalogId: '',
-		}
-	},
-	methods: {
-		updateCatalog(variable) {
-			this.activeCatalog = variable
-		},
-		updateCatalogId(variable) {
-			this.activeCatalogId = variable
-		}
-	}
+    data() {
+        return {
+            catalogId: undefined,
+        }
+    },
+    methods: {
+        updateCatalogId(variable) {
+            this.catalogId = variable
+        }
+    }
 }
 </script>
