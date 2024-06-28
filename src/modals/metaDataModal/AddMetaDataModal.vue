@@ -1,50 +1,52 @@
 <template>
-    <NcModal v-if="isModalOpen.addMetaDataModal" ref="modalRef" @close="closeModal">
-        <div class="modal__content">
-            <h2>Add metaData</h2>
-            <div class="form-group">
-                <NcTextField label="Naam" :value.sync="name" />
-            </div>
-            <div v-if="succesMessage" class="success">Succesfully added metaData</div>
+	<NcModal v-if="isModalOpen.addMetaDataModal" ref="modalRef" @close="closeModal">
+		<div class="modal__content">
+			<h2>Add metaData</h2>
+			<div class="form-group">
+				<NcTextField label="Naam" :value.sync="name" />
+			</div>
+			<div v-if="succesMessage" class="success">
+				Succesfully added metaData
+			</div>
 
-            <NcButton :disabled="!name" @click="addMetaData" type="primary">
-                Submit
-            </NcButton>
-        </div>
-    </NcModal>
+			<NcButton :disabled="!name" type="primary" @click="addMetaData">
+				Submit
+			</NcButton>
+		</div>
+	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue';
-import { isModalOpen } from '../modalContext.js';
+import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue'
+import { isModalOpen } from '../modalContext.js'
 
 export default {
-    name: "AddMetaDataModal",
-    data() {
-        return {
-            name: '',
-            succesMessage: false,
-            isModalOpen,
+	name: 'AddMetaDataModal',
+	components: {
+		NcModal,
+		NcTextField,
+		NcTextArea,
+		NcButton,
+	},
+	data() {
+		return {
+			name: '',
+			succesMessage: false,
+			isModalOpen,
 
-        }
-    },
-    components: {
-        NcModal,
-        NcTextField,
-        NcTextArea,
-        NcButton
-    },
-    methods: {
-        closeModal() {
-            isModalOpen.addMetaDataModal = false
-        },
-        addMetaData() {
-            this.$emit('metaData', this.name)
-            this.succesMessage = true
-            setTimeout(() => this.succesMessage = false, 2500);
-            this.name = ''
-        },
-    }
+		}
+	},
+	methods: {
+		closeModal() {
+			isModalOpen.addMetaDataModal = false
+		},
+		addMetaData() {
+			this.$emit('metaData', this.name)
+			this.succesMessage = true
+			setTimeout(() => this.succesMessage = false, 2500)
+			this.name = ''
+		},
+	},
 }
 </script>
 

@@ -1,78 +1,83 @@
 <template>
-  <div class="detailContainer">
-    <div v-if="!loading" id="app-content">
-      <!-- app-content-wrapper is optional, only use if app-content-list  -->
-      <div>
-        <h1 class="h1">{{ metaData.name }}</h1>
-        <div class="grid">
-          <div class="gridContent">
-            <h4>Sammenvatting:</h4>
-            <span>{{ metaData.summary }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <NcLoadingIcon v-if="loading" :size="100" appearance="dark" name="Publicatie details aan het laden" />
-  </div>
+	<div class="detailContainer">
+		<div v-if="!loading" id="app-content">
+			<!-- app-content-wrapper is optional, only use if app-content-list  -->
+			<div>
+				<h1 class="h1">
+					{{ metaData.name }}
+				</h1>
+				<div class="grid">
+					<div class="gridContent">
+						<h4>Sammenvatting:</h4>
+						<span>{{ metaData.summary }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<NcLoadingIcon v-if="loading"
+			:size="100"
+			appearance="dark"
+			name="Publicatie details aan het laden" />
+	</div>
 </template>
 
 <script>
 import { BTabs, BTab } from 'bootstrap-vue'
-import { NcLoadingIcon } from '@nextcloud/vue';
+import { NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
-  name: "metaDataDetail",
-  props: {
-    metaDataId: {
-      type: String,
-      required: true
-    },
-  },
-  watch: {
-    metaDataId: {
-      handler(metaDataId) {
-        this.fetchData(metaDataId)
-      },
-      deep: true
-    }
-  },
-  components: {
-    NcLoadingIcon,
-    BTabs,
-    BTab,
-  },
-  data() {
-    return {
-      metaData: [],
-      loading: false,
-    }
-  },
-  mounted() {
-    this.fetchData(this.metaDataId)
-  },
-  methods: {
-    fetchData(id) {
-      this.loading = true,
-        fetch(
-          `/index.php/apps/opencatalog/metadata/api/${id}`,
-          {
-            method: 'GET'
-          },
-        )
-          .then((response) => {
-            response.json().then((data) => {
-              this.metaData = data
-              //this.oldZaakId = id
-            })
-            this.loading = false
-          })
-          .catch((err) => {
-            console.error(err)
-            //this.oldZaakId = id
-            this.loading = false
-          })
-    },
-  },
+	name: 'MetaDataDetail',
+	components: {
+		NcLoadingIcon,
+		BTabs,
+		BTab,
+	},
+	props: {
+		metaDataId: {
+			type: String,
+			required: true,
+		},
+	},
+	data() {
+		return {
+			metaData: [],
+			loading: false,
+		}
+	},
+	watch: {
+		metaDataId: {
+			handler(metaDataId) {
+				this.fetchData(metaDataId)
+			},
+			deep: true,
+		},
+	},
+	mounted() {
+		this.fetchData(this.metaDataId)
+	},
+	methods: {
+		fetchData(id) {
+			this.loading = true,
+			fetch(
+				`/index.php/apps/opencatalog/metadata/api/${id}`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						this.metaData = data
+						// this.oldZaakId = id
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					// this.oldZaakId = id
+					this.loading = false
+				})
+		},
+	},
 }
 </script>
 
@@ -104,7 +109,6 @@ h4 {
   display: flex;
   gap: 25px;
 }
-
 
 .tabContainer>* ul>li {
   display: flex;

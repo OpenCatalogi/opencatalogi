@@ -1,51 +1,53 @@
 <template>
-    <NcModal v-if="isModalOpen.editCatalogModal" ref="modalRef" @close="closeModal">
-        <div class="modal__content">
-            <h2>Edit catalog</h2>
-            <div class="form-group">
-                <NcTextField label="Naam" :value.sync="catalogName" />
-            </div>
-            <div v-if="succesMessage" class="success">Succesfully updated catalog</div>
+	<NcModal v-if="isModalOpen.editCatalogModal" ref="modalRef" @close="closeModal">
+		<div class="modal__content">
+			<h2>Edit catalog</h2>
+			<div class="form-group">
+				<NcTextField label="Naam" :value.sync="catalogName" />
+			</div>
+			<div v-if="succesMessage" class="success">
+				Succesfully updated catalog
+			</div>
 
-            <NcButton :disabled="!catalogName" @click="editCatalog" type="primary">
-                Submit
-            </NcButton>
-        </div>
-    </NcModal>
+			<NcButton :disabled="!catalogName" type="primary" @click="editCatalog">
+				Submit
+			</NcButton>
+		</div>
+	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue';
-import { isModalOpen } from '../modalContext.js';
+import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue'
+import { isModalOpen } from '../modalContext.js'
 
 export default {
-    name: "EditCatalogModal",
-    props: [
-        'catalogName'
-    ],
-    data() {
-        return {
-            succesMessage: false,
-            isModalOpen,
+	name: 'EditCatalogModal',
+	components: {
+		NcModal,
+		NcTextField,
+		NcTextArea,
+		NcButton,
+	},
+	props: [
+		'catalogName',
+	],
+	data() {
+		return {
+			succesMessage: false,
+			isModalOpen,
 
-        }
-    },
-    components: {
-        NcModal,
-        NcTextField,
-        NcTextArea,
-        NcButton
-    },
-    methods: {
-        closeModal() {
-            isModalOpen.editCatalogModal = false
-        },
-        editCatalog() {
-            this.$emit('catalog', this.catalogName)
-            this.succesMessage = true
-            setTimeout(() => this.succesMessage = false, 2500);
-        },
-    }
+		}
+	},
+	methods: {
+		closeModal() {
+			isModalOpen.editCatalogModal = false
+		},
+		editCatalog() {
+			this.$emit('catalog', this.catalogName)
+			this.succesMessage = true
+			setTimeout(() => this.succesMessage = false, 2500)
+		},
+	},
 }
 </script>
 
