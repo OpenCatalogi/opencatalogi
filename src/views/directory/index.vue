@@ -3,16 +3,19 @@
 		<MainMenu selected="directory" />
 		<NcAppContent>
 			<template #list>
-				<DirectoryList @activeDirectory="updateActiveDirectory" @activePDirectoryId="updateActiveDirectoryId" />
+				<DirectoryList @directoryId="updateDirectoryId" />
 			</template>
 			<template #default>
-				<NcEmptyContent v-if="activeDirectory !== true" name="Geen Directory" description="Nog geen directory geselecteerd">
+				<NcEmptyContent v-if="!directoryId"
+					class="detailContainer"
+					name="Geen Directory"
+					description="Nog geen directory geselecteerd">
 					<template #icon>
 						<LayersOutline />
 					</template>
 					<template #action />
 				</NcEmptyContent>
-				<DirectoryDetails v-if="activeDirectory === true" />
+				<DirectoryDetails v-if="directoryId" :directory-id="directoryId" />
 			</template>
 		</NcAppContent>
 		<!-- <ZaakSidebar /> -->
@@ -39,16 +42,12 @@ export default {
 	},
 	data() {
 		return {
-			activeDirectory: false,
-			activeDirectoryId: '',
+			directoryId: undefined,
 		}
 	},
 	methods: {
-		updateDirectory(variable) {
-			this.activeDirectory = variable
-		},
 		updateDirectoryId(variable) {
-			this.activeDirectoryId = variable
+			this.directoryId = variable
 		},
 	},
 }

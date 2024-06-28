@@ -15,14 +15,14 @@
 
 			<NcListItem v-for="(directory, i) in directoryList.results"
 				v-if="!loading"
-				:key="`${catalogus}${i}`"
+				:key="`${directory}${i}`"
 				:name="directory?.name"
-				:active="activeDirectory === directory?.id"
+				:active="activeDirectoryId === directory?.id"
 				:details="'1h'"
 				:counter-number="44"
 				@click="setActive(directory.id)">
 				<template #icon>
-					<LayersOutline :class="activeDirectory === directory.id && 'selectedZaakIcon'"
+					<LayersOutline :class="activeDirectoryId === directory.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"
@@ -76,8 +76,8 @@ export default {
 		return {
 			search: '',
 			loading: false,
-			activeDirectory: '',
 			directoryList: [],
+			activeDirectoryId: '',
 		}
 	},
 	mounted() {
@@ -104,8 +104,7 @@ export default {
 				})
 		},
 		setActive(id) {
-			this.activeDirectory = id
-			this.$emit('directory', true)
+			this.activeDirectoryId = id
 			this.$emit('directoryId', id)
 		},
 		clearText() {

@@ -1,25 +1,23 @@
 <template>
-	<div>
-		<div v-if="!loading" id="app-content" class="zakenDetailContainer">
-			bla bla
+	<div class="detailContainer">
+		<div v-if="!loading" id="app-content">
 			<!-- app-content-wrapper is optional, only use if app-content-list  -->
-			<div class="zakenContainer">
+			<div>
 				<h1 class="h1">
-					{{ publication.name }}
+					{{ directory.name }}
 				</h1>
 				<div class="grid">
 					<div class="gridContent">
 						<h4>Sammenvatting:</h4>
-						<span>{{ publication.summary }}</span>
+						<span>{{ directory.summary }}</span>
 					</div>
 				</div>
 			</div>
 		</div>
 		<NcLoadingIcon v-if="loading"
-			class="zakenDetailLoadingContainer"
 			:size="100"
 			appearance="dark"
-			name="Publicatie details aan het laden" />
+			name="Directory details aan het laden" />
 	</div>
 </template>
 
@@ -42,36 +40,33 @@ export default {
 	},
 	data() {
 		return {
-			publication: [],
-			publicationId: '',
+			directory: [],
 			loading: false,
-			activePublication: false,
-			activePublicationId: '',
 		}
 	},
 	watch: {
-		publicationId: {
-			handler(publicationId) {
-				this.fetchData(publicationId)
+		directoryId: {
+			handler(directoryId) {
+				this.fetchData(directoryId)
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.fetchData(this.publicationId)
+		this.fetchData(this.directoryId)
 	},
 	methods: {
 		fetchData(id) {
 			this.loading = true,
 			fetch(
-				`/index.php/apps/opencatalog/publications/api/${id}`,
+				`/index.php/apps/opencatalog/directory/api/${id}`,
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.publication = data
+						this.directory = data
 						// this.oldZaakId = id
 					})
 					this.loading = false
@@ -87,13 +82,6 @@ export default {
 </script>
 
 <style>
-.zakenDetailContainer,
-.zakenDetailLoadingContainer {
-  margin-block-start: var(--zaa-margin-20);
-  margin-inline-start: var(--zaa-margin-20);
-  margin-inline-end: var(--zaa-margin-20);
-}
-
 h4 {
   font-weight: bold
 }
@@ -107,12 +95,6 @@ h4 {
   margin-inline-end: 0px !important;
   font-weight: bold !important;
   unicode-bidi: isolate !important;
-}
-
-.zakenContainer {
-  margin-block-start: var(--zaa-margin-20);
-  margin-block-end: var(--zaa-margin-50);
-
 }
 
 .grid {
