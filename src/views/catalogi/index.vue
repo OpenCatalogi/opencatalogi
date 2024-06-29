@@ -15,7 +15,7 @@
 					</template>
 					<template #action />
 				</NcEmptyContent>
-				<CatalogiDetails v-if="catalogId" :catalog-id="catalogId" />
+				<CatalogiDetails v-if="store.item" :catalog-id="catalogId" />
 			</template>
 		</NcAppContent>
 		<!-- <ZaakSidebar /> -->
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { store } from '../../store.js'
 import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue'
 import MainMenu from '../../navigation/MainMenu.vue'
 import CatalogiList from './list.vue'
@@ -39,6 +40,7 @@ export default {
 		CatalogiList,
 		CatalogiDetails,
 		DatabaseOutline,
+		store
 	},
 	data() {
 		return {

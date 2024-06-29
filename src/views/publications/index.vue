@@ -15,7 +15,7 @@
 					</template>
 					<template #action />
 				</NcEmptyContent>
-				<PublicationDetails v-if="publicationId" :publication-id="publicationId" />
+				<PublicationDetails v-if="store.item" :publication-id="publicationId" />
 			</template>
 		</NcAppContent>
 		<!-- <ZaakSidebar /> -->
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { store } from '../../store.js'
 import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue'
 import MainMenu from '../../navigation/MainMenu.vue'
 import PublicationList from './list.vue'
@@ -39,20 +40,7 @@ export default {
 		ListBoxOutline,
 		PublicationList,
 		PublicationDetails,
-	},
-	props: {
-		modal: {
-			type: string,
-			required: true,
-		},
-		item: {
-			type: string,
-			required: true,
-		},
-		selected: {
-			type: string,
-			required: true,
-		}
+		store
 	},
 	data() {
 		return {
@@ -64,18 +52,6 @@ export default {
 		this.selectedId = this.getIdFromUrl()
 	},
 	methods: {
-		setModal(modal) {
-			this.modal = modal
-			this.$emit('modal', modal)
-		},			
-		setSelected(selected) {
-			this.selected = selected
-			this.$emit('selected', selected)
-		},
-		setItem(item) {
-			this.item = item
-			this.$emit('item', item)
-		},
 		// depracticed
 		updatePublicationId(variable) {
 			this.publicationId = variable

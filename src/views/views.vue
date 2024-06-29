@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import { store } from './store.js'
-import Catalogi from './views/catalogi/index.vue'
-import Dashboard from './views/dashboard/index.vue'
-import Directory from './views/directory/index.vue'
-import Matadata from './views/metData/index.vue'
-import Publications from './views/publications/index.vue'
-import Search from './views/search/index.vue'
+import { store } from '../store.js'
+import Catalogi from './catalogi/index.vue'
+import Dashboard from './dashboard/index.vue'
+import Directory from './directory/index.vue'
+import Matadata from './metaData/index.vue'
+import Publications from './publications/index.vue'
+import Search from './search/index.vue'
 
 export default {
 	name: 'Modals',

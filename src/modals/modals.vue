@@ -13,14 +13,14 @@
 </template>
 
 <script>
-import AddPublicationModal from './modals/publicationModal/AddPublicationModal.vue'
-import EditPublicationModal from './modals/publicationModal/EditPublicationModal.vue'
-import AddMetaDataModal from './modals/metaDataModal/AddMetaDataModal.vue'
-import EditMetaDataModal from './modals/metaDataModal/EditMetaDataModal.vue'
-import AddCatalogModal from './modals/catalogModal/AddCatalogModal.vue'
-import EditCatalogModal from './modals/catalogModal/EditCatalogModal.vue'
-import AddExternalCatalogModal from './modals/externalCatalogModal/AddExternalCatalogModal.vue'
-import EditExternalCatalogModal from './modals/externalCatalogModal/EditExternalCatalogModal.vue'
+import AddPublicationModal from './publication/Add.vue'
+import EditPublicationModal from './publication/Edit.vue'
+import AddMetaDataModal from './metaData/Add.vue'
+import EditMetaDataModal from './metaData/Edit.vue'
+import AddCatalogModal from './catalog/Add.vue'
+import EditCatalogModal from './catalog/Edit.vue'
+import AddExternalCatalogModal from './directory/Add.vue'
+import EditExternalCatalogModal from './directory/Edit.vue'
 
 
 export default {

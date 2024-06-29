@@ -228,7 +228,7 @@ import {
 	NcTextField,
 	NcTextArea,
 } from '@nextcloud/vue'
-import { store } from './store.js'
+import { store } from '../store.js'
 
 import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
