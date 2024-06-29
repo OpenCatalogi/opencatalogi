@@ -1,49 +1,51 @@
 <template>
 	<NcAppNavigation>
+		Selected: {{ store.selected }}	
+
 		<NcActions>
-			<NcActionButton @click="showModal(&quot;addPublicationModal&quot;)">
+			<NcActionButton @click="store.modal =  'publicationAdd'">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Publicatie
 			</NcActionButton>
-			<NcActionButton :disabled="publication === &quot;&quot;" @click="showModal(&quot;editPublicationModal&quot;)">
+			<NcActionButton @click="store.modal =  'publicationEdit'">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Publicatie
 			</NcActionButton>
-			<NcActionButton @click="showModal(&quot;addMetaDataModal&quot;)">
+			<NcActionButton @click="store.modal =  'metaDataAdd'">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Metadata
 			</NcActionButton>
-			<NcActionButton :disabled="metaData === &quot;&quot;" @click="showModal(&quot;editMetaDataModal&quot;)">
+			<NcActionButton @click="store.modal =  'metaDataAdd'">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Metadata
 			</NcActionButton>
-			<NcActionButton @click="showModal(&quot;addCatalogModal&quot;)">
+			<NcActionButton @click="store.modal =  'catalogAdd'">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Catalog
 			</NcActionButton>
-			<NcActionButton :disabled="catalog === &quot;&quot;" @click="showModal(&quot;editCatalogModal&quot;)">
+			<NcActionButton @click="store.modal =  'catalogEdit'">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Catalog
 			</NcActionButton>
-			<NcActionButton @click="showModal(&quot;addExternalCatalogModal&quot;)">
+			<NcActionButton @click="store.modal =  'directoryAdd'">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add External Catalog
 			</NcActionButton>
-			<NcActionButton :disabled="externalCatalog === &quot;&quot;" @click="showModal(&quot;editExternalCatalogModal&quot;)">
+			<NcActionButton @click="store.modal =  'directoryEdit'">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
@@ -52,12 +54,12 @@
 		</NcActions>
 
 		<NcAppNavigationList>
-			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="showModal('addPublicationModal')">
+			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="store.modal =  'publicationAdd'">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="store.selected === ''" name="Dashboard" >
+			<NcAppNavigationItem :active="store.selected === 'dashboard'"  @click="store.selected = 'dashboard'" name="Dashboard" >
 				<template #icon>
 					<Finance :size="20" />
 				</template>
@@ -66,13 +68,13 @@
 				v-if="!loading"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="selected === catalogus?.id"
-				:href="'/index.php/apps/opencatalog/catalog/' + catalogus?.id">
+				:active="store.selected === catalogus?.id"
+				@click="store.selected = 'catalogus'; store.item = catalogus?.id">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'search'" name="Search">
+			<NcAppNavigationItem :active="store.selected === 'search'" @click="store.selected = 'search'" name="Search">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -80,24 +82,17 @@
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="selected === 'catalogi'"
-				name="Catalogi"
-				href=" /index.php/apps/opencatalog/catalogi">
+			<NcAppNavigationItem :active="store.selected === 'catalogi'" @click="store.selected = 'catalogi'" name="Catalogi">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === 'directory'"
-				name="Directory"
-				href=" /index.php/apps/opencatalog/directory">
+			<NcAppNavigationItem :active="store.selected === 'directory'" @click="store.selected = 'directory'" name="Directory">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-
-			<NcAppNavigationItem :active="selected === 'metaData'"
-				name="MetaData"
-				href=" /index.php/apps/opencatalog/metadata">
+			<NcAppNavigationItem :active="store.selected === 'metaData'" @click="store.selected = 'metaData'" name="MetaData">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
@@ -214,6 +209,9 @@
 	</NcAppNavigation>
 </template>
 <script>
+
+import { store } from '../store.js'
+
 import {
 	NcActions,
 	NcActionButton,
@@ -228,7 +226,7 @@ import {
 	NcTextField,
 	NcTextArea,
 } from '@nextcloud/vue'
-import { store } from '../store.js'
+
 
 import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -268,7 +266,7 @@ export default {
 		CogOutline,
 		ContentSave,
 		Finance,
-		store,
+		store
 	},
 	data() {
 		return {
@@ -285,6 +283,11 @@ export default {
 			organisation_oin: '',
 			organisation_pki: '',
 			catalogi: [],
+			store: {
+				selected: 'dashboard',
+				modal: false,
+				item: false
+			}
 		}
 	},
 	mounted() {
@@ -314,15 +317,6 @@ export default {
 		save() {
 			this.zrc_location = ''
 			this.zrc_key = ''
-		},
-		setModal(modal) {
-			store.modal = modal
-		},			
-		setSelected(selected) {
-			store.selected = selected
-		},
-		setItem(item) {
-			store.item = item
 		}
 	},
 }

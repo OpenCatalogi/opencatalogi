@@ -1,9 +1,9 @@
 <template>
-	<NcModal v-if="isModalOpen.editMetaDataModal" ref="modalRef" @close="closeModal">
+	<NcModal v-if="store.modal === 'metaDataEdit'" ref="modalRef" @close="closeModal">
 		<div class="modal__content">
 			<h2>Edit metaData</h2>
 			<div class="form-group">
-				<NcTextField label="Naam" :value.sync="metaDataName" />
+				<NcTextField label="Naam" />
 			</div>
 			<div v-if="succesMessage" class="success">
 				Succesfully updated metaData
@@ -18,7 +18,7 @@
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue'
-import { isModalOpen } from '../modalContext.js'
+import { store } from '../../store.js'
 
 export default {
 	name: 'EditMetaDataModal',
@@ -27,20 +27,17 @@ export default {
 		NcTextField,
 		NcTextArea,
 		NcButton,
+		store
 	},
-	props: [
-		'metaDataName',
-	],
 	data() {
 		return {
 			succesMessage: false,
-			isModalOpen,
 
 		}
 	},
 	methods: {
 		closeModal() {
-			isModalOpen.editMetaDataModal = false
+			store.modal = false
 		},
 		editMetaData() {
 			this.$emit('metaData', this.metaDataName)

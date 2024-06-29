@@ -1,9 +1,9 @@
 <template>
-	<NcModal v-if="isModalOpen.addExternalCatalogModal" ref="modalRef" @close="closeModal">
+	<NcModal v-if="store.modal === 'directoryAdd'" ref="modalRef" @close="closeModal">
 		<div class="modal__content">
 			<h2>Add externalCatalog</h2>
 			<div class="form-group">
-				<NcTextField label="Naam" :value.sync="name" />
+				<NcTextField label="Naam" />
 			</div>
 			<div v-if="succesMessage" class="success">
 				Succesfully added externalCatalog
@@ -18,7 +18,7 @@
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue'
-import { isModalOpen } from '../modalContext.js'
+import { store } from '../../store.js'
 
 export default {
 	name: 'AddExternalCatalogModal',
@@ -27,18 +27,17 @@ export default {
 		NcTextField,
 		NcTextArea,
 		NcButton,
+		store
 	},
 	data() {
 		return {
-			name: '',
 			succesMessage: false,
-			isModalOpen,
 
 		}
 	},
 	methods: {
 		closeModal() {
-			isModalOpen.addExternalCatalogModal = false
+			store.modal = false
 		},
 		addExternalCatalog() {
 			this.$emit('externalCatalog', this.name)

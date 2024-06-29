@@ -1,5 +1,5 @@
 <template>
-	<NcModal v-if="isModalOpen.editPublicationModal" ref="modalRef" @close="closeModal">
+	<NcModal v-if="store.modal === 'publicationEdit'" ref="modalRef" @close="closeModal">
 		<div class="modal__content">
 			<h2>Edit publication</h2>
 			<div class="form-group">
@@ -18,7 +18,7 @@
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue'
-import { isModalOpen } from '../modalContext.js'
+import { store } from '../../store.js'
 
 export default {
 	name: 'EditPublicationModal',
@@ -27,20 +27,17 @@ export default {
 		NcTextField,
 		NcTextArea,
 		NcButton,
+		store
 	},
-	props: [
-		'publicationName',
-	],
 	data() {
 		return {
-			succesMessage: false,
-			isModalOpen,
+			succesMessage: false
 
 		}
 	},
 	methods: {
 		closeModal() {
-			isModalOpen.editPublicationModal = false
+			store.modal = false
 		},
 		editPublication() {
 			this.$emit('publication', this.publicationName)

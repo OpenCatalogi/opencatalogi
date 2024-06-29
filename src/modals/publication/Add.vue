@@ -1,9 +1,9 @@
 <template>
-	<NcModal v-if="isModalOpen.addPublicationModal" ref="modalRef" @close="closeModal">
+	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="closeModal">
 		<div class="modal__content">
 			<h2>Add publication</h2>
 			<div class="form-group">
-				<NcTextField label="Naam" :value.sync="name" />
+				<NcTextField label="Naam" />
 			</div>
 			<div v-if="succesMessage" class="success">
 				Succesfully added publication
@@ -18,7 +18,7 @@
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue'
-import { isModalOpen } from '../modalContext.js'
+import { store } from '../../store.js'
 
 export default {
 	name: 'AddPublicationModal',
@@ -27,18 +27,17 @@ export default {
 		NcTextField,
 		NcTextArea,
 		NcButton,
+		store
 	},
 	data() {
 		return {
-			name: '',
-			succesMessage: false,
-			isModalOpen,
+			succesMessage: false
 
 		}
 	},
 	methods: {
 		closeModal() {
-			isModalOpen.addPublicationModal = false
+			store.modal = false
 		},
 		addPublication() {
 			this.$emit('publication', this.name)

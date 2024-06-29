@@ -11,7 +11,7 @@ export default {
 	name: 'Dashboard',
 	components: {
 		store
-	},
+	}
 }
 </script>
 <style>

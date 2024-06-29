@@ -1,9 +1,9 @@
 <template>
-	<NcModal v-if="isModalOpen.editExternalCatalogModal" ref="modalRef" @close="closeModal">
+	<NcModal v-if="store.modal === 'directoryEdit'" ref="modalRef" @close="closeModal">
 		<div class="modal__content">
 			<h2>Edit externalCatalog</h2>
 			<div class="form-group">
-				<NcTextField label="Naam" :value.sync="externalCatalogName" />
+				<NcTextField label="Naam"  />
 			</div>
 			<div v-if="succesMessage" class="success">
 				Succesfully updated externalCatalog
@@ -18,7 +18,7 @@
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue'
-import { isModalOpen } from '../modalContext.js'
+import { store } from '../../store.js'
 
 export default {
 	name: 'EditExternalCatalogModal',
@@ -27,20 +27,17 @@ export default {
 		NcTextField,
 		NcTextArea,
 		NcButton,
+		store
 	},
-	props: [
-		'externalCatalogName',
-	],
 	data() {
 		return {
 			succesMessage: false,
-			isModalOpen,
 
 		}
 	},
 	methods: {
 		closeModal() {
-			isModalOpen.editExternalCatalogModal = false
+			store.modal = false
 		},
 		editExternalCatalog() {
 			this.$emit('externalCatalog', this.externalCatalogName)
