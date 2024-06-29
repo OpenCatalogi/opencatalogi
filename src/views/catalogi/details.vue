@@ -1,94 +1,129 @@
 <template>
-  <div>
-    <div v-if="!loading" id="app-content" class="zakenDetailContainer">
-      bla bla
-      <!-- app-content-wrapper is optional, only use if app-content-list  -->
-      <div class="zakenContainer">
-        <h1 class="h1">{{ publication.name }}</h1>
-        <div class="grid">
-          <div class="gridContent">
-            <h4>Sammenvatting:</h4>
-            <span>{{ publication.summary }}</span>
-          </div>          
-        </div>
-      </div>
-    </div>
-    <NcLoadingIcon v-if="loading" class="zakenDetailLoadingContainer" :size="100" appearance="dark"
-      name="Publicatie details aan het laden" />
-  </div>
+	<div class="detailContainer">
+		<div v-if="!loading" id="app-content">
+			<NcListItem v-for="(publication, i) in publications.results"
+				:key="`${publication}${i}`"
+				:name="publication?.name"
+				:bold="false"
+				:force-display-actions="true"
+				:active="activePublicationId === publication.id"
+				:details="'CC0 1.0'"
+				:counter-number="1"
+				@click="setActive(publication.id)">
+				<template #icon>
+					<ListBoxOutline :class="activePublicationId === publication.id && 'selectedZaakIcon'"
+						disable-menu
+						:size="44"
+						user="janedoe"
+						display-name="Jane Doe" />
+				</template>
+				<template #subname>
+					{{ publication?.summary }}
+				</template>
+				<template #actions>
+					<NcActionButton>
+						Bewerken
+					</NcActionButton>
+					<NcActionButton>
+						Depubliceren
+					</NcActionButton>
+				</template>
+			</NcListItem>
+		</div>
+		<NcLoadingIcon v-if="loading"
+			:size="100"
+			appearance="dark"
+			name="Publicatie details aan het laden" />
+	</div>
 </template>
 
 <script>
 import { BTabs, BTab } from 'bootstrap-vue'
-import { NcLoadingIcon } from '@nextcloud/vue';
+import { NcLoadingIcon, NcListItem, NcActionButton } from '@nextcloud/vue'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
 
 export default {
-  name: "catalogDetail",
-  props: {
-    catalogId: {
-      type: String,
-      required: true
-    },
-  },
-  watch: {
-    publicationId: {
-      handler(catalogId) {
-        this.fetchData(publicationId)
-      },
-      deep: true
-    }
-  },
-  components: {
-    NcLoadingIcon,
-    BTabs,
-    BTab,
-  },
-  data() {
-    return {
-      publication: [],
-      publicationId: '',
-      loading: false,
-			activePublication: false,
-			activePublicationId: '',
-    }
-  },
-  mounted() {
-    this.fetchData(this.publicationId)
-  },
-  methods: {
-    fetchData(id) {
-      this.loading = true,
-        fetch(
-          `/index.php/apps/opencatalog/publications/api/${id}`,
-          {
-            method: 'GET'
-          },
-        )
-          .then((response) => {
-            response.json().then((data) => {
-              this.publication = data
-              //this.oldZaakId = id
-            })
-            this.loading = false
-          })
-          .catch((err) => {
-            console.error(err)
-            //this.oldZaakId = id
-            this.loading = false
-          })
-    },
-  },
+	name: 'CatalogDetail',
+	components: {
+		NcLoadingIcon,
+		BTabs,
+		BTab,
+		NcListItem,
+		NcActionButton,
+		ListBoxOutline,
+	},
+	props: {
+		catalogId: {
+			type: String,
+			required: true,
+		},
+	},
+	data() {
+		return {
+			publications: [],
+			loading: false,
+		}
+	},
+	watch: {
+		catalogId: {
+			handler(catalogId) {
+				this.fetchData(catalogId)
+			},
+			deep: true,
+		},
+	},
+	mounted() {
+		this.fetchData(this.catalogId)
+	},
+	methods: {
+		fetchData() {
+			this.loading = true,
+			fetch(
+				'/index.php/apps/opencatalog/publications/api',
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						this.publications = data
+						// this.oldZaakId = id
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					// this.oldZaakId = id
+					this.loading = false
+				})
+		},
+		// fetchData with ID
+		// fetchData(id) {
+		//   this.loading = true,
+		//     fetch(
+		//       `/index.php/apps/opencatalog/publications/api/${id}`,
+		//       {
+		//         method: 'GET'
+		//       },
+		//     )
+		//       .then((response) => {
+		//         response.json().then((data) => {
+		//           this.publication = data
+		//           //this.oldZaakId = id
+		//         })
+		//         this.loading = false
+		//       })
+		//       .catch((err) => {
+		//         console.error(err)
+		//         //this.oldZaakId = id
+		//         this.loading = false
+		//       })
+		// },
+	},
 }
 </script>
 
 <style>
-.zakenDetailContainer,
-.zakenDetailLoadingContainer {
-  margin-block-start: var(--zaa-margin-20);
-  margin-inline-start: var(--zaa-margin-20);
-  margin-inline-end: var(--zaa-margin-20);
-}
-
 h4 {
   font-weight: bold
 }
@@ -104,12 +139,6 @@ h4 {
   unicode-bidi: isolate !important;
 }
 
-.zakenContainer {
-  margin-block-start: var(--zaa-margin-20);
-  margin-block-end: var(--zaa-margin-50);
-
-}
-
 .grid {
   display: grid;
   grid-gap: 24px;
@@ -122,7 +151,6 @@ h4 {
   display: flex;
   gap: 25px;
 }
-
 
 .tabContainer>* ul>li {
   display: flex;

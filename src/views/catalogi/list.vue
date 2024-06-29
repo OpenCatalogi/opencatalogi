@@ -1,103 +1,115 @@
 <template>
-    <NcAppContentList>
-        <ul>
-            <div class="listHeader">
-                <NcTextField class="searchField" disabled :value.sync="search" label="Search"
-                    trailing-button-icon="close" :show-trailing-button="search !== ''"
-                    @trailing-button-click="clearText">
-                    <Magnify :size="20" />
-                </NcTextField>
-            </div>
+	<NcAppContentList>
+		<ul>
+			<div class="listHeader">
+				<NcTextField class="searchField"
+					disabled
+					:value.sync="search"
+					label="Search"
+					trailing-button-icon="close"
+					:show-trailing-button="search !== ''"
+					@trailing-button-click="clearText">
+					<Magnify :size="20" />
+				</NcTextField>
+			</div>
 
-            <NcListItem v-if="!loading" v-for="(catalogus, i) in catalogiList.results" 
-                :key="`${catalogus}${i}`" 
-                :name="catalogus?.name" 
-                :active="activeCatalogi === catalogus?.id" 
-                :details="'1h'" :counter-number="44"
-                @click="setActive(catalogus.id)">
+			<NcListItem v-for="(catalogus, i) in catalogiList.results"
+				v-if="!loading"
+				:key="`${catalogus}${i}`"
+				:name="catalogus?.name"
+				:active="activeCatalogiId === catalogus?.id"
+				:details="'1h'"
+				:counter-number="44"
+				@click="setActive(catalogus.id)">
+				<template #icon>
+					<DatabaseOutline :class="activeCatalogiId === catalogus.id && 'selectedZaakIcon'"
+						disable-menu
+						:size="44"
+						user="janedoe"
+						display-name="Jane Doe" />
+				</template>
+				<template #subname>
+					{{ catalogus?.summary }}
+				</template>
+				<template #actions>
+					<NcActionButton>
+						Button one
+					</NcActionButton>
+					<NcActionButton>
+						Button two
+					</NcActionButton>
+					<NcActionButton>
+						Button three
+					</NcActionButton>
+				</template>
+			</NcListItem>
 
-                <template #icon>
-                    <DatabaseOutline :class="activeCatalogus === catalogus.id && 'selectedZaakIcon'" disable-menu
-                        :size="44" user="janedoe" display-name="Jane Doe" />
-                </template>
-                <template #subname>
-                    {{ catalogus?.summary }}
-                </template>
-                <template #actions>
-                    <NcActionButton>
-                        Button one
-                    </NcActionButton>
-                    <NcActionButton>
-                        Button two
-                    </NcActionButton>
-                    <NcActionButton>
-                        Button three
-                    </NcActionButton>
-                </template>
-            </NcListItem>
-
-            <NcLoadingIcon v-if="loading" class="loadingIcon" :size="64" appearance="dark" name="Zaken aan het laden" />
-        </ul>
-    </NcAppContentList>
+			<NcLoadingIcon v-if="loading"
+				class="loadingIcon"
+				:size="64"
+				appearance="dark"
+				name="Zaken aan het laden" />
+		</ul>
+	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue';
-import Magnify from 'vue-material-design-icons/Magnify';
-import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline';
+import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import Magnify from 'vue-material-design-icons/Magnify'
+import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline'
 
 export default {
-    name: "CatalogiList",
-    components: {
-        NcListItem,
-        NcListItemIcon,
-        NcActionButton,
-        NcAvatar,
-        NcAppContentList,
-        NcTextField,
-        DatabaseOutline,
-        Magnify,
-        NcLoadingIcon
-    },
-    data() {
-        return {
-            search: '',
-            loading: false,
-            activeCatalogi: '',
-            catalogiList: []
-        }
-    },
-    mounted() {
-        this.fetchData()
-    },
-    methods: {
+	name: 'CatalogiList',
+	components: {
+		NcListItem,
+		NcListItemIcon,
+		NcActionButton,
+		NcAvatar,
+		NcAppContentList,
+		NcTextField,
+		DatabaseOutline,
+		Magnify,
+		NcLoadingIcon,
+	},
+	data() {
+		return {
+			search: '',
+			loading: false,
+			activeCatalogi: '',
+			catalogiList: [],
+			activeCatalogiId: '',
+		}
+	},
+	mounted() {
+		this.fetchData()
+	},
+	methods: {
 		fetchData(newPage) {
 			this.loading = true,
 			fetch(
 				'/index.php/apps/opencatalog/catalogi/api',
-			{
-				method: 'GET'
-			},
+				{
+					method: 'GET',
+				},
 			)
-			.then((response) => {
-				response.json().then((data) => {
-				this.catalogiList = data
+				.then((response) => {
+					response.json().then((data) => {
+						this.catalogiList = data
+					})
+					this.loading = false
 				})
-				this.loading = false
-			})
-			.catch((err) => {
-				console.error(err)
-				this.loading = false
-			})
+				.catch((err) => {
+					console.error(err)
+					this.loading = false
+				})
 		},
-        setActive(id) {
-            this.activeCatalogi = id
-            this.$emit('catalogi', true)
-            this.$emit('catalogiId', id)
-        },
-        clearText() {
-            this.search = ''
-        }
-    },
+		setActive(id) {
+			this.activeCatalogiId = id
+			this.$emit('catalogId', id)
+		},
+		clearText() {
+			this.search = ''
+		},
+	},
 }
 </script>
 <style>

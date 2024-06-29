@@ -1,12 +1,12 @@
 <template>
-    <div class="dashboardContainer">
-        <h1>Titel Dashboard</h1>
-        <p>grafiek hier</p>
-    </div>
+	<div class="dashboardContainer">
+		<h1>Titel Dashboard</h1>
+		<p>grafiek hier</p>
+	</div>
 </template>
 <script>
 export default {
-    name: 'Dashboard',
+	name: 'Dashboard',
 
 }
 </script>

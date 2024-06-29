@@ -1,51 +1,49 @@
 <template>
-
 	<NcAppNavigation>
-
 		<NcActions>
-			<NcActionButton @click='showModal("addPublicationModal")'>
+			<NcActionButton @click="showModal(&quot;addPublicationModal&quot;)">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Publicatie
 			</NcActionButton>
-			<NcActionButton @click='showModal("editPublicationModal")' :disabled='publication === ""'>
+			<NcActionButton :disabled="publication === &quot;&quot;" @click="showModal(&quot;editPublicationModal&quot;)">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Publicatie
 			</NcActionButton>
-			<NcActionButton @click='showModal("addMetaDataModal")'>
+			<NcActionButton @click="showModal(&quot;addMetaDataModal&quot;)">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Metadata
 			</NcActionButton>
-			<NcActionButton @click='showModal("editMetaDataModal")' :disabled='metaData === ""'>
+			<NcActionButton :disabled="metaData === &quot;&quot;" @click="showModal(&quot;editMetaDataModal&quot;)">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Metadata
 			</NcActionButton>
-			<NcActionButton @click='showModal("addCatalogModal")'>
+			<NcActionButton @click="showModal(&quot;addCatalogModal&quot;)">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Catalog
 			</NcActionButton>
-			<NcActionButton @click='showModal("editCatalogModal")' :disabled='catalog === ""'>
+			<NcActionButton :disabled="catalog === &quot;&quot;" @click="showModal(&quot;editCatalogModal&quot;)">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Catalog
 			</NcActionButton>
-			<NcActionButton @click='showModal("addExternalCatalogModal")'>
+			<NcActionButton @click="showModal(&quot;addExternalCatalogModal&quot;)">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add External Catalog
 			</NcActionButton>
-			<NcActionButton @click='showModal("editExternalCatalogModal")' :disabled='externalCatalog === ""'>
+			<NcActionButton :disabled="externalCatalog === &quot;&quot;" @click="showModal(&quot;editExternalCatalogModal&quot;)">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
@@ -59,19 +57,23 @@
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="selected === 'dashboard'"  name="Dashboard"
-				href="/index.php/apps/opencatalog">
+			<NcAppNavigationItem :active="selected === 'dashboard'" name="Dashboard" href="/index.php/apps/opencatalog">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem   v-if="!loading" v-for="(catalogus, i) in catalogi.results" :key="`${catalogus}${i}`" :name="catalogus?.name" :active="selected === catalogus?.id" 
-				 :href="'/index.php/apps/opencatalog/catalog/' + catalogus?.id">
+			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
+				v-if="!loading"
+				:key="`${catalogus}${i}`"
+				:name="catalogus?.name"
+				:active="selected === catalogus?.id"
+				:href="'/index.php/apps/opencatalog/catalog/' + catalogus?.id">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === 'search'" name="Search"
+			<NcAppNavigationItem :active="selected === 'search'"
+				name="Search"
 				href="/index.php/apps/opencatalog/search">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
@@ -80,34 +82,37 @@
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="selected === 'catalogi'" name="Catalogi"
+			<NcAppNavigationItem :active="selected === 'catalogi'"
+				name="Catalogi"
 				href=" /index.php/apps/opencatalog/catalogi">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === 'directory'" name="Directory"
+			<NcAppNavigationItem :active="selected === 'directory'"
+				name="Directory"
 				href=" /index.php/apps/opencatalog/directory">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem :active="selected === 'metaData'" name="MetaData"
+			<NcAppNavigationItem :active="selected === 'metaData'"
+				name="MetaData"
 				href=" /index.php/apps/opencatalog/metadata">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem @click="settingsOpen = true" name="Configuration">
+			<NcAppNavigationItem name="Configuration" @click="settingsOpen = true">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
 			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Application settings">
-				<NcAppSettingsSection id="sharing" name="Connections" docUrl="zaakafhandel.app">
+				<NcAppSettingsSection id="sharing" name="Connections" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
 					</template>
@@ -117,49 +122,67 @@
 					</p>
 
 					<p>
-					<table>
-						<tbody>
-							<tr>
-								<td class="row-name">DRC</td>
-								<td>Location</td>
-								<td>
-									<NcTextField :value.sync="drc_location" id="drc_location" :label-outside="true"
-										placeholder="https://" />
-								</td>
-								<td>Key</td>
-								<td>
-									<NcTextField :value.sync="drc_key" id="drc_key" :label-outside="true"
-										placeholder="***" />
-								</td>
-							</tr>
-							<tr>
-								<td class="row-name">ORC</td>
-								<td>Location</td>
-								<td>
-									<NcTextField :value.sync="orc_location" id="orc_location" :label-outside="true"
-										placeholder="https://" />
-								</td>
-								<td>Key</td>
-								<td>
-									<NcTextField :value.sync="orc_key" id="orc_key" :label-outside="true"
-										placeholder="***" />
-								</td>
-							</tr>
-							<tr>
-								<td class="row-name">Elastic</td>
-								<td>Location</td>
-								<td>
-									<NcTextField :value.sync="elastic_location" id="elastic_location" :label-outside="true"
-										placeholder="https://" />
-								</td>
-								<td>Key</td>
-								<td>
-									<NcTextField :value.sync="elastic_key" id="elastic_key" :label-outside="true"
-										placeholder="***" />
-								</td>
-							</tr>
-						</tbody>
-					</table>
+						<table>
+							<tbody>
+								<tr>
+									<td class="row-name">
+										DRC
+									</td>
+									<td>Location</td>
+									<td>
+										<NcTextField id="drc_location"
+											:value.sync="drc_location"
+											:label-outside="true"
+											placeholder="https://" />
+									</td>
+									<td>Key</td>
+									<td>
+										<NcTextField id="drc_key"
+											:value.sync="drc_key"
+											:label-outside="true"
+											placeholder="***" />
+									</td>
+								</tr>
+								<tr>
+									<td class="row-name">
+										ORC
+									</td>
+									<td>Location</td>
+									<td>
+										<NcTextField id="orc_location"
+											:value.sync="orc_location"
+											:label-outside="true"
+											placeholder="https://" />
+									</td>
+									<td>Key</td>
+									<td>
+										<NcTextField id="orc_key"
+											:value.sync="orc_key"
+											:label-outside="true"
+											placeholder="***" />
+									</td>
+								</tr>
+								<tr>
+									<td class="row-name">
+										Elastic
+									</td>
+									<td>Location</td>
+									<td>
+										<NcTextField id="elastic_location"
+											:value.sync="elastic_location"
+											:label-outside="true"
+											placeholder="https://" />
+									</td>
+									<td>Key</td>
+									<td>
+										<NcTextField id="elastic_key"
+											:value.sync="elastic_key"
+											:label-outside="true"
+											placeholder="***" />
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</p>
 					<NcButton aria-label="Save" type="primary" wide>
 						<template #icon>
@@ -167,33 +190,28 @@
 						</template>
 						Save
 					</NcButton>
-
 				</NcAppSettingsSection>
-				<NcAppSettingsSection id="sharing" name="Organisation" docUrl="zaakafhandel.app">
+				<NcAppSettingsSection id="sharing" name="Organisation" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
 					</template>
-					
+
 					<p>
 						Here you can set the details for your organisation
 					</p>
 
-				   <NcTextField :value.sync="organisation_name" id="organisation_name" />
-				   <NcTextField :value.sync="organisation_oin" id="organisation_oin" />
-				   <NcTextArea :value.sync="organisation_pki" id="organisation_pki" />
+					<NcTextField id="organisation_name" :value.sync="organisation_name" />
+					<NcTextField id="organisation_oin" :value.sync="organisation_oin" />
+					<NcTextArea id="organisation_pki" :value.sync="organisation_pki" />
 
-				   <NcButton aria-label="Save" type="primary" wide>
+					<NcButton aria-label="Save" type="primary" wide>
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
 						Save
 					</NcButton>
-
 				</NcAppSettingsSection>
-
 			</NcAppSettingsDialog>
-
-
 		</NcAppNavigationSettings>
 	</NcAppNavigation>
 </template>
@@ -210,9 +228,9 @@ import {
 	NcAppSettingsSection,
 	NcButton,
 	NcTextField,
-	NcTextArea
-} from '@nextcloud/vue';
-import { isModalOpen } from '../modals/modalContext.js';
+	NcTextArea,
+} from '@nextcloud/vue'
+import { isModalOpen } from '../modals/modalContext.js'
 
 import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -227,14 +245,7 @@ import ContentSave from 'vue-material-design-icons/ContentSave'
 import Finance from 'vue-material-design-icons/Finance'
 
 export default {
-	name: "MainMenu",
-	props: [
-		'selected',
-		'publication',
-		'metaData',
-		'catalog',
-		'externalCatalog',
-	],
+	name: 'MainMenu',
 	components: {
 		NcActions,
 		NcActionButton,
@@ -258,23 +269,30 @@ export default {
 		FileTreeOutline,
 		CogOutline,
 		ContentSave,
-		Finance
+		Finance,
 	},
+	props: [
+		'selected',
+		'publication',
+		'metaData',
+		'catalog',
+		'externalCatalog',
+	],
 	data() {
 		return {
 			settingsOpen: false,
-			orc_location: "",
-			orc_key: "",
-			drc_location: "",
-			drc_key: "",
-			elastic_location: "",
-			elastic_key: "",
-      		loading: true,
-			organisation_name: "",
-			organisation_oin: "",
-			organisation_pki: "",
+			orc_location: '',
+			orc_key: '',
+			drc_location: '',
+			drc_key: '',
+			elastic_location: '',
+			elastic_key: '',
+			loading: true,
+			organisation_name: '',
+			organisation_oin: '',
+			organisation_pki: '',
 			catalogi: [],
-            activeMenuItem: ''
+			activeMenuItem: '',
 		}
 	},
 	mounted() {
@@ -285,20 +303,20 @@ export default {
 			this.loading = true,
 			fetch(
 				'/index.php/apps/opencatalog/catalogi/api',
-			{
-				method: 'GET'
-			},
+				{
+					method: 'GET',
+				},
 			)
-			.then((response) => {
-				response.json().then((data) => {
-				this.catalogi = data
+				.then((response) => {
+					response.json().then((data) => {
+						this.catalogi = data
+					})
+					this.loading = false
 				})
-				this.loading = false
-			})
-			.catch((err) => {
-				console.error(err)
-				this.loading = false
-			})
+				.catch((err) => {
+					console.error(err)
+					this.loading = false
+				})
 		},
 		save() {
 			this.zrc_location = ''
@@ -307,12 +325,12 @@ export default {
 		showModal(modalName) {
 			isModalOpen[modalName] = true
 		},
-        setActive(selected) {
-            this.activeMenuItem = selected
-            this.$emit('activeMenuItem', selected)
-        },
+		setActive(selected) {
+			this.activeMenuItem = selected
+			this.$emit('activeMenuItem', selected)
+		},
 
-	}
+	},
 }
 </script>
 <style>
