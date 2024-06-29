@@ -5,7 +5,7 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<CatalogiList @catalogId="updateCatalogId" />
+			<CatalogiList/>
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!catalogId"

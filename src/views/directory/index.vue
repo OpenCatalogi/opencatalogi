@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcContent app-name="opencatalog">
 		<MainMenu selected="directory" />

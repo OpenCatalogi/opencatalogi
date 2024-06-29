@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcAppContentList>
 		<ul>
@@ -22,7 +26,7 @@
 				:active="activePublicationId === publication.id"
 				:details="'CC0 1.0'"
 				:counter-number="1"
-				@click="setActive(publication.id)">
+				@click="store.setItem(publication.id)">
 				<template #icon>
 					<ListBoxOutline :class="activePublicationId === publication.id && 'selectedZaakIcon'"
 						disable-menu
@@ -74,7 +78,6 @@ export default {
 			search: '',
 			loading: false,
 			publications: [],
-			activePublicationId: '',
 		}
 	},
 	mounted() {

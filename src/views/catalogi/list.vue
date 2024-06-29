@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcAppContentList>
 		<ul>
@@ -13,14 +17,14 @@
 				</NcTextField>
 			</div>
 
-			<NcListItem v-for="(catalogus, i) in catalogiList.results"
+			<NcListItem v-for="(catalogus, i) in catalogi.results"
 				v-if="!loading"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
 				:active="activeCatalogiId === catalogus?.id"
 				:details="'1h'"
 				:counter-number="44"
-				@click="setActive(catalogus.id)">
+				@click="store.setItem(publication.id)">
 				<template #icon>
 					<DatabaseOutline :class="activeCatalogiId === catalogus.id && 'selectedZaakIcon'"
 						disable-menu
@@ -74,9 +78,7 @@ export default {
 		return {
 			search: '',
 			loading: false,
-			activeCatalogi: '',
-			catalogiList: [],
-			activeCatalogiId: '',
+			catalogi: []
 		}
 	},
 	mounted() {
@@ -101,10 +103,6 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
-		},
-		setActive(id) {
-			this.activeCatalogiId = id
-			this.$emit('catalogId', id)
 		},
 		clearText() {
 			this.search = ''
