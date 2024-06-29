@@ -44,7 +44,11 @@ export default {
 	},
 	data() {
 		return {
-			catalogId: undefined,
+			store: {
+				selected: 'dashboard',
+				modal: false,
+				item: false
+			}
 		}
 	},
 	methods: {

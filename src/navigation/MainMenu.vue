@@ -1,7 +1,5 @@
 <template>
 	<NcAppNavigation>
-		Selected: {{ store.selected }}	
-
 		<NcActions>
 			<NcActionButton @click="store.modal =  'publicationAdd'">
 				<template #icon>

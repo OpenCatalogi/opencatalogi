@@ -11,6 +11,15 @@ export default {
 	name: 'Dashboard',
 	components: {
 		store
+	},
+	data() {
+		return {
+			store: {
+				selected: 'dashboard',
+				modal: false,
+				item: false
+			}
+		}
 	}
 }
 </script>
