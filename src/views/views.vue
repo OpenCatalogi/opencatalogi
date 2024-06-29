@@ -1,15 +1,16 @@
 <template>
-	<!-- Placehodel div for all of the vieuws-->
+	<!-- Placeholder div for all of the vieuws-->
 	<div>		
-		<Catalogi v-if="selected === 'catalogi'" :selected="selected" :item="item" :modal="modal" @selected="setSelected" @item="setItem" @modal="setModal" />
-		<Dashboard v-if="selected === ''" :selected="selected" :item="item" :modal="modal" @selected="setSelected" @item="setItem" @modal="setModal" />
-		<Directory v-if="selected === 'directory'" :selected="selected" :item="item" :modal="modal" @selected="setSelected" @item="setItem" @modal="setModal" />
-		<Matadata v-if="selected === 'metaData'" :selected="selected" :item="item" :modal="modal" @selected="setSelected" @item="setItem" @modal="setModal" />
-		<Search v-if="selected === 'search'" :selected="selected" :item="item" :modal="modal" @selected="setSelected" @item="setItem" @modal="setModal" />
+		<Catalogi v-if="store.stroselected === 'catalogi'" />
+		<Dashboard v-if="store.selected === ''" />
+		<Directory v-if="store.selected === 'directory'" />
+		<Matadata v-if="store.selected === 'metaData'" />
+		<Search v-if="store.selected === 'search'" />
 	</div>
 </template>
 
 <script>
+import { store } from './store.js'
 import Catalogi from './views/catalogi/index.vue'
 import Dashboard from './views/dashboard/index.vue'
 import Directory from './views/directory/index.vue'
@@ -25,34 +26,18 @@ export default {
 		Directory,
 		Matadata,
 		Publications,
-		Search
-	},
-	props: {
-		modal: {
-			type: string,
-			required: true,
-		},
-		item: {
-			type: string,
-			required: true,
-		},
-		selected: {
-			type: string,
-			required: true,
-		}
+		Search,
+		store
 	},
 	methods: {
 		setModal(modal) {
-			this.modal = modal
-			this.$emit('modal', modal)
+			store.modal = modal
 		},			
 		setSelected(selected) {
-			this.selected = selected
-			this.$emit('selected', selected)
+			store.selected = selected
 		},
 		setItem(item) {
-			this.item = item
-			this.$emit('item', item)
+			store.item = item
 		}
 	},
 }

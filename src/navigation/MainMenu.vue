@@ -57,7 +57,7 @@
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="selected === 'dashboard'" name="Dashboard" href="/index.php/apps/opencatalog">
+			<NcAppNavigationItem :active="store.selected === ''" name="Dashboard" >
 				<template #icon>
 					<Finance :size="20" />
 				</template>
@@ -72,9 +72,7 @@
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === 'search'"
-				name="Search"
-				href="/index.php/apps/opencatalog/search">
+			<NcAppNavigationItem :active="store.selected === 'search'" name="Search">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -230,7 +228,7 @@ import {
 	NcTextField,
 	NcTextArea,
 } from '@nextcloud/vue'
-import { isModalOpen } from '../modals/modalContext.js'
+import { store } from './store.js'
 
 import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -270,20 +268,7 @@ export default {
 		CogOutline,
 		ContentSave,
 		Finance,
-	},
-	props: {
-		modal: {
-			type: string,
-			required: true,
-		},
-		item: {
-			type: string,
-			required: true,
-		},
-		selected: {
-			type: string,
-			required: true,
-		}
+		store,
 	},
 	data() {
 		return {
@@ -331,16 +316,13 @@ export default {
 			this.zrc_key = ''
 		},
 		setModal(modal) {
-			this.modal = modal
-			this.$emit('modal', modal)
+			store.modal = modal
 		},			
 		setSelected(selected) {
-			this.selected = selected
-			this.$emit('selected', selected)
+			store.selected = selected
 		},
 		setItem(item) {
-			this.item = item
-			this.$emit('item', item)
+			store.item = item
 		}
 	},
 }

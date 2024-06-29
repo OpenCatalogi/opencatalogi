@@ -1,26 +1,8 @@
 <template>
 	<NcContent app-name="opencatalog">
-		<MainMenu selected="dashboard" 
-			:selected="selected"
-			:item="item"
-			:modal="modal"
-			@selected="setSelected"
-			@item="setItem" 
-			@modal="setModal"  />
-		<Views 
-			:selected="selected"
-			:item="item"
-			:modal="modal"
-			@selected="setSelected"
-			@item="setItem" 
-			@modal="setModal"  /> 
-		<Modals 
-			:selected="publication"
-			:item="metaData"
-			:modal="modal"
-			@selected="setSelected"
-			@item="setItem" 
-			@modal="setModal" />
+		<MainMenu />
+		<Views /> 
+		<Modals  />
 	</NcContent>
 </template>
 
@@ -28,6 +10,7 @@
 import MainMenu from './navigation/MainMenu.vue'
 import Modals from './views/modals/modals.vue'
 import Views from './views/views/views.vue'
+import { store } from './store.js'
 
 export default {
 	name: 'App',
@@ -35,34 +18,18 @@ export default {
 		MainMenu,
 		Modals,
 		Views,
-	},
-	props: {
-		modal: {
-			type: string,
-			required: true,
-		},
-		item: {
-			type: string,
-			required: true,
-		},
-		selected: {
-			type: string,
-			required: true,
-		}
+		store,
 	},
 	methods: {
 		setModal(modal) {
-			this.modal = modal
-			this.$emit('modal', modal)
+			store.modal = modal
 		},			
 		setSelected(selected) {
-			this.selected = selected
-			this.$emit('selected', selected)
+			store.selected = selected
 		},
 		setItem(item) {
-			this.item = item
-			this.$emit('item', item)
-		},
-	},
+			store.item = item
+		}
+	}
 }
 </script>
