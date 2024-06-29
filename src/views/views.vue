@@ -1,4 +1,5 @@
 <template>
+	SelectedL {{ store.selected }}
 	<!-- Placeholder div for all of the vieuws-->
 	<div>		
 		<Catalogi v-if="store.stroselected === 'catalogi'" />
@@ -29,17 +30,15 @@ export default {
 		Search,
 		store
 	},
-	methods: {
-		setModal(modal) {
-			store.modal = modal
-		},			
-		setSelected(selected) {
-			store.selected = selected
-		},
-		setItem(item) {
-			store.item = item
+	data() {
+		return {
+			store: {
+				selected: 'dashboard',
+				modal: false,
+				item: false
+			}
 		}
-	},
+	}
 }
 </script>
 
