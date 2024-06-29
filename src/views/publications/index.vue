@@ -40,6 +40,20 @@ export default {
 		PublicationList,
 		PublicationDetails,
 	},
+	props: {
+		modal: {
+			type: string,
+			required: true,
+		},
+		item: {
+			type: string,
+			required: true,
+		},
+		selected: {
+			type: string,
+			required: true,
+		}
+	},
 	data() {
 		return {
 			publicationId: undefined,
@@ -50,6 +64,19 @@ export default {
 		this.selectedId = this.getIdFromUrl()
 	},
 	methods: {
+		setModal(modal) {
+			this.modal = modal
+			this.$emit('modal', modal)
+		},			
+		setSelected(selected) {
+			this.selected = selected
+			this.$emit('selected', selected)
+		},
+		setItem(item) {
+			this.item = item
+			this.$emit('item', item)
+		},
+		// depracticed
 		updatePublicationId(variable) {
 			this.publicationId = variable
 		},

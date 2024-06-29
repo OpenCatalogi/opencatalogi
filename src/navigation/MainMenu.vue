@@ -271,15 +271,23 @@ export default {
 		ContentSave,
 		Finance,
 	},
-	props: [
-		'selected',
-		'publication',
-		'metaData',
-		'catalog',
-		'externalCatalog',
-	],
+	props: {
+		modal: {
+			type: string,
+			required: true,
+		},
+		item: {
+			type: string,
+			required: true,
+		},
+		selected: {
+			type: string,
+			required: true,
+		}
+	},
 	data() {
 		return {
+			// all of this is settings and should be moved
 			settingsOpen: false,
 			orc_location: '',
 			orc_key: '',
@@ -292,13 +300,13 @@ export default {
 			organisation_oin: '',
 			organisation_pki: '',
 			catalogi: [],
-			activeMenuItem: '',
 		}
 	},
 	mounted() {
 		this.fetchData()
 	},
 	methods: {
+		// We use the catalogi in the menu so lets fetch those
 		fetchData(newPage) {
 			this.loading = true,
 			fetch(
@@ -322,14 +330,18 @@ export default {
 			this.zrc_location = ''
 			this.zrc_key = ''
 		},
-		showModal(modalName) {
-			isModalOpen[modalName] = true
+		setModal(modal) {
+			this.modal = modal
+			this.$emit('modal', modal)
+		},			
+		setSelected(selected) {
+			this.selected = selected
+			this.$emit('selected', selected)
 		},
-		setActive(selected) {
-			this.activeMenuItem = selected
-			this.$emit('activeMenuItem', selected)
-		},
-
+		setItem(item) {
+			this.item = item
+			this.$emit('item', item)
+		}
 	},
 }
 </script>

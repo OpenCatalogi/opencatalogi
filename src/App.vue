@@ -1,82 +1,67 @@
 <template>
 	<NcContent app-name="opencatalog">
-		<MainMenu selected="dashboard"
-			:publication="publication"
-			:meta-data="metaData"
-			:catalog="catalog"
-			:external-catalog="externalCatalog"
-			@activeMenuItem="updateMenuPublication" />
-		<NcAppContent>
-			<template #default>
-				<Dashboard />
-			</template>
-		</NcAppContent>
-		<!-- <ZaakSidebar /> -->
-		<AddPublicationModal @publication="updatePublicationModal" />
-		<EditPublicationModal :publication-name="publication" @publication="updatePublicationModal" />
-		<AddMetaDataModal @metaData="updateMetaDataModal" />
-		<EditMetaDataModal :meta-data-name="metaData" @metaData="updateMetaDataModal" />
-		<AddCatalogModal @catalog="updateCatalogModal" />
-		<EditCatalogModal :catalog-name="catalog" @catalog="updateCatalogModal" />
-		<AddExternalCatalogModal @externalCatalog="updateExternalCatalogModal" />
-		<EditExternalCatalogModal :external-catalog-name="externalCatalog"
-			@externalCatalog="updateExternalCatalogModal" />
+		<MainMenu selected="dashboard" 
+			:selected="selected"
+			:item="item"
+			:modal="modal"
+			@selected="setSelected"
+			@item="setItem" 
+			@modal="setModal"  />
+		<Views 
+			:selected="selected"
+			:item="item"
+			:modal="modal"
+			@selected="setSelected"
+			@item="setItem" 
+			@modal="setModal"  /> 
+		<Modals 
+			:selected="publication"
+			:item="metaData"
+			:modal="modal"
+			@selected="setSelected"
+			@item="setItem" 
+			@modal="setModal" />
 	</NcContent>
 </template>
 
 <script>
-import { NcAppContent, NcContent } from '@nextcloud/vue'
 import MainMenu from './navigation/MainMenu.vue'
-import AddPublicationModal from './modals/publicationModal/AddPublicationModal.vue'
-import EditPublicationModal from './modals/publicationModal/EditPublicationModal.vue'
-import AddMetaDataModal from './modals/metaDataModal/AddMetaDataModal.vue'
-import EditMetaDataModal from './modals/metaDataModal/EditMetaDataModal.vue'
-import AddCatalogModal from './modals/catalogModal/AddCatalogModal.vue'
-import EditCatalogModal from './modals/catalogModal/EditCatalogModal.vue'
-import AddExternalCatalogModal from './modals/externalCatalogModal/AddExternalCatalogModal.vue'
-import EditExternalCatalogModal from './modals/externalCatalogModal/EditExternalCatalogModal.vue'
-import Dashboard from './views/dashboard.vue'
+import Modals from './views/modals/modals.vue'
+import Views from './views/views/views.vue'
 
 export default {
 	name: 'App',
 	components: {
-		NcContent,
-		NcAppContent,
 		MainMenu,
-		AddPublicationModal,
-		EditPublicationModal,
-		AddMetaDataModal,
-		EditMetaDataModal,
-		AddCatalogModal,
-		EditCatalogModal,
-		AddExternalCatalogModal,
-		EditExternalCatalogModal,
-		Dashboard,
+		Modals,
+		Views,
 	},
-	data() {
-		return {
-			publication: '',
-			metaData: '',
-			catalog: '',
-			externalCatalog: '',
-			activeMenuItem: '',
+	props: {
+		modal: {
+			type: string,
+			required: true,
+		},
+		item: {
+			type: string,
+			required: true,
+		},
+		selected: {
+			type: string,
+			required: true,
 		}
 	},
 	methods: {
-		updateMenuPublication(selected) {
-			this.activeMenuItem = selected
+		setModal(modal) {
+			this.modal = modal
+			this.$emit('modal', modal)
+		},			
+		setSelected(selected) {
+			this.selected = selected
+			this.$emit('selected', selected)
 		},
-		updatePublicationModal(variable) {
-			this.publication = variable
-		},
-		updateMetaDataModal(variable) {
-			this.metaData = variable
-		},
-		updateCatalogModal(variable) {
-			this.catalog = variable
-		},
-		updateExternalCatalogModal(variable) {
-			this.externalCatalog = variable
+		setItem(item) {
+			this.item = item
+			this.$emit('item', item)
 		},
 	},
 }
