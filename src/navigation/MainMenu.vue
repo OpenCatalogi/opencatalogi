@@ -1,5 +1,6 @@
 <template>
 	<NcAppNavigation>
+		SelectedL {{ store.selected }}
 		<NcActions>
 			<NcActionButton @click="store.modal =  'publicationAdd'">
 				<template #icon>
@@ -182,7 +183,7 @@
 						Save
 					</NcButton>
 				</NcAppSettingsSection>
-				<NcAppSettingsSection id="sharing" name="Organisation" doc-url="zaakafhandel.app">
+				<NcAppSettingsSection id="organisation" name="Organisation" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
 					</template>

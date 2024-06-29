@@ -32,6 +32,11 @@ export default {
 	data() {
 		return {
 			succesMessage: false,
+			store: {
+				selected: 'dashboard',
+				modal: false,
+				item: false
+			}
 
 		}
 	},

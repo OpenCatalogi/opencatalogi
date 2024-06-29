@@ -1,7 +1,7 @@
 <template>
-	SelectedL {{ store.selected }}
 	<!-- Placeholder div for all of the vieuws-->
 	<div>		
+		SelectedL {{ store.selected }}
 		<Catalogi v-if="store.stroselected === 'catalogi'" />
 		<Dashboard v-if="store.selected === ''" />
 		<Directory v-if="store.selected === 'directory'" />

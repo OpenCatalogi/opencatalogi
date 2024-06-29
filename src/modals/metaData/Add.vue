@@ -31,7 +31,12 @@ export default {
 	},
 	data() {
 		return {
-			succesMessage: false
+			succesMessage: false,
+			store: {
+				selected: 'dashboard',
+				modal: false,
+				item: false
+			}
 
 		}
 	},
