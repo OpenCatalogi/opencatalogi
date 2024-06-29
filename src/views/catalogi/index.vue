@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcAppContent>
 		<template #list>
@@ -19,8 +23,7 @@
 </template>
 
 <script>
-import { store } from '../../store.js'
-import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue'
+import { NcAppContent, NcEmptyContent } from '@nextcloud/vue'
 import MainMenu from '../../navigation/MainMenu.vue'
 import CatalogiList from './list.vue'
 import CatalogiDetails from './details.vue'
@@ -29,23 +32,12 @@ import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline'
 export default {
 	name: 'CatalogiIndex',
 	components: {
-		NcContent,
 		NcAppContent,
 		NcEmptyContent,
 		MainMenu,
 		CatalogiList,
 		CatalogiDetails,
-		DatabaseOutline,
-		store
-	},
-	data() {
-		return {
-			store: {
-				selected: 'dashboard',
-				modal: false,
-				item: false
-			}
-		}
+		DatabaseOutline
 	},
 	methods: {
 		updateCatalogId(variable) {

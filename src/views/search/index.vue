@@ -1,28 +1,30 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
-	<NcContent app-name="opencatalog">
-		<MainMenu selected="search" />
-		<NcAppContent>
-			<template #list>
-				<SearchList />
-			</template>
-			<template #default />
-		</NcAppContent>
-		<!-- <ZaakSidebar /> -->
-	</NcContent>
+	<NcAppContent>		
+		<div class="dashboardContainer">
+			<h1>Searc</h1>
+			<p>Search item {{ store.item}}</p>
+		</div>
+	</NcAppContent>
 </template>
 
 <script>
-import { NcAppContent, NcContent } from '@nextcloud/vue'
-import MainMenu from '../../navigation/MainMenu.vue'
-import SearchList from './list.vue'
+
+import { NcAppContent, NcEmptyContent } from '@nextcloud/vue'
 
 export default {
-	name: 'SearchIndex',
+	name: 'Dashboard',
 	components: {
-		NcContent,
-		NcAppContent,
-		MainMenu,
-		SearchList,
-	},
+		NcAppContent
+	}
 }
 </script>
+<style>
+.dashboardContainer {
+    margin-inline-start: 75px;
+    margin-block-start: 20px
+}
+</style>

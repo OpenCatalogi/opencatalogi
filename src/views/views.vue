@@ -1,9 +1,12 @@
+<script setup>
+import { store } from '../store.js'
+</script>
+
 <template>
 	<!-- Placeholder div for all of the vieuws-->
 	<div>		
-		SelectedL {{ store.selected }}
 		<Catalogi v-if="store.stroselected === 'catalogi'" />
-		<Dashboard v-if="store.selected === ''" />
+		<Dashboard v-if="store.selected === 'dashboard'" />
 		<Directory v-if="store.selected === 'directory'" />
 		<Matadata v-if="store.selected === 'metaData'" />
 		<Search v-if="store.selected === 'search'" />
@@ -11,7 +14,7 @@
 </template>
 
 <script>
-import { store } from '../store.js'
+
 import Catalogi from './catalogi/index.vue'
 import Dashboard from './dashboard/index.vue'
 import Directory from './directory/index.vue'
@@ -27,17 +30,7 @@ export default {
 		Directory,
 		Matadata,
 		Publications,
-		Search,
-		store
-	},
-	data() {
-		return {
-			store: {
-				selected: 'dashboard',
-				modal: false,
-				item: false
-			}
-		}
+		Search
 	}
 }
 </script>

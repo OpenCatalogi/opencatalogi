@@ -1,28 +1,24 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcAppContent>		
 		<div class="dashboardContainer">
 			<h1>Titel Dashboard</h1>
-			<p>{{ store.item}}</p>
+			<p>Selected item {{ store.item}}</p>
 		</div>
 	</NcAppContent>
 </template>
 
 <script>
-import { store } from '../../store.js'
+
+import { NcAppContent } from '@nextcloud/vue'
 
 export default {
 	name: 'Dashboard',
 	components: {
-		store
-	},
-	data() {
-		return {
-			store: {
-				selected: 'dashboard',
-				modal: false,
-				item: false
-			}
-		}
+		NcAppContent
 	}
 }
 </script>

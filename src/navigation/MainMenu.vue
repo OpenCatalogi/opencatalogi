@@ -1,6 +1,9 @@
+<script setup>
+import { store } from '../store.js'
+</script>
+
 <template>
 	<NcAppNavigation>
-		SelectedL {{ store.selected }}
 		<NcActions>
 			<NcActionButton @click="store.modal =  'publicationAdd'">
 				<template #icon>
@@ -58,7 +61,7 @@
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="store.selected === 'dashboard'"  @click="store.selected = 'dashboard'" name="Dashboard" >
+			<NcAppNavigationItem :active="store.selected === 'dashboard'"  @click="store.setSelected('dashboard')" name="Dashboard" >
 				<template #icon>
 					<Finance :size="20" />
 				</template>
@@ -73,7 +76,7 @@
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'search'" @click="store.selected = 'search'" name="Search">
+			<NcAppNavigationItem :active="store.selected === 'search'" @click="store.setSelected('search')" name="Search">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -209,7 +212,7 @@
 </template>
 <script>
 
-import { store } from '../store.js'
+import { Store } from '../store.js'
 
 import {
 	NcActions,
@@ -264,8 +267,7 @@ export default {
 		FileTreeOutline,
 		CogOutline,
 		ContentSave,
-		Finance,
-		store
+		Finance
 	},
 	data() {
 		return {
@@ -281,12 +283,7 @@ export default {
 			organisation_name: '',
 			organisation_oin: '',
 			organisation_pki: '',
-			catalogi: [],
-			store: {
-				selected: 'dashboard',
-				modal: false,
-				item: false
-			}
+			catalogi: []
 		}
 	},
 	mounted() {
