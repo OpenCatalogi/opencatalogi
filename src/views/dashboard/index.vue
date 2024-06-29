@@ -1,9 +1,12 @@
-<template #default>
-	<div class="dashboardContainer">
-		<h1>Titel Dashboard</h1>
-		<p>{{ store.item}}</p>
-	</div>
+<template>
+	<NcAppContent>		
+		<div class="dashboardContainer">
+			<h1>Titel Dashboard</h1>
+			<p>{{ store.item}}</p>
+		</div>
+	</NcAppContent>
 </template>
+
 <script>
 import { store } from '../../store.js'
 

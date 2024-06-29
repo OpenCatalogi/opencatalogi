@@ -1,25 +1,21 @@
 <template>
-	<NcContent app-name="opencatalog">
-		<MainMenu selected="catalogi" />
-		<NcAppContent>
-			<template #list>
-				<CatalogiList @catalogId="updateCatalogId" />
-			</template>
-			<template #default>
-				<NcEmptyContent v-if="!catalogId"
-					class="detailContainer"
-					name="Geen publicatie"
-					description="Nog geen publicaite geselecteerd">
-					<template #icon>
-						<DatabaseOutline />
-					</template>
-					<template #action />
-				</NcEmptyContent>
-				<CatalogiDetails v-if="store.item" :catalog-id="catalogId" />
-			</template>
-		</NcAppContent>
-		<!-- <ZaakSidebar /> -->
-	</NcContent>
+	<NcAppContent>
+		<template #list>
+			<CatalogiList @catalogId="updateCatalogId" />
+		</template>
+		<template #default>
+			<NcEmptyContent v-if="!catalogId"
+				class="detailContainer"
+				name="Geen publicatie"
+				description="Nog geen publicaite geselecteerd">
+				<template #icon>
+					<DatabaseOutline />
+				</template>
+				<template #action />
+			</NcEmptyContent>
+			<CatalogiDetails v-if="store.item" :catalog-id="catalogId" />
+		</template>
+	</NcAppContent>
 </template>
 
 <script>

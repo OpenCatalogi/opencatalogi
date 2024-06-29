@@ -1,9 +1,7 @@
 <template>
 	<NcContent app-name="opencatalog">
 		<MainMenu />
-		<NcAppContent>
-			<Views /> 
-		</NcAppContent>
+		<Views /> 
 		<Modals  />
 	</NcContent>
 </template>
