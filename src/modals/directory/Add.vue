@@ -1,5 +1,9 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
-	<NcModal v-if="store.modal === 'directoryAdd'" ref="modalRef" @close="closeModal">
+	<NcModal v-if="store.modal === 'directoryAdd'" ref="modalRef" @close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>Add externalCatalog</h2>
 			<div class="form-group">
@@ -26,24 +30,14 @@ export default {
 		NcModal,
 		NcTextField,
 		NcTextArea,
-		NcButton,
-		store
+		NcButton
 	},
 	data() {
 		return {
-			succesMessage: false,
-			store: {
-				selected: 'dashboard',
-				modal: false,
-				item: false
-			}
-
+			succesMessage: false
 		}
 	},
 	methods: {
-		closeModal() {
-			store.modal = false
-		},
 		addExternalCatalog() {
 			this.$emit('externalCatalog', this.name)
 			this.succesMessage = true

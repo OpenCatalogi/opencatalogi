@@ -5,7 +5,7 @@ import { store } from '../store.js'
 <template>
 	<!-- Placeholder div for all of the vieuws-->
 	<div>		
-		<Catalogi v-if="store.stroselected === 'catalogi'" />
+		<Catalogi v-if="store.selected === 'catalogi'" />
 		<Dashboard v-if="store.selected === 'dashboard'" />
 		<Directory v-if="store.selected === 'directory'" />
 		<Matadata v-if="store.selected === 'metaData'" />

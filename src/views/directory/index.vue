@@ -3,27 +3,23 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcContent app-name="opencatalog">
-		<MainMenu selected="directory" />
-		<NcAppContent>
-			<template #list>
-				<DirectoryList @directoryId="updateDirectoryId" />
-			</template>
-			<template #default>
-				<NcEmptyContent v-if="!directoryId"
-					class="detailContainer"
-					name="Geen Directory"
-					description="Nog geen directory geselecteerd">
-					<template #icon>
-						<LayersOutline />
-					</template>
-					<template #action />
-				</NcEmptyContent>
-				<DirectoryDetails v-if="directoryId" :directory-id="directoryId" />
-			</template>
-		</NcAppContent>
-		<!-- <ZaakSidebar /> -->
-	</NcContent>
+	<NcAppContent>
+		<template #list>
+			<DirectoryList @directoryId="updateDirectoryId" />
+		</template>
+		<template #default>
+			<NcEmptyContent v-if="!store.item || store.selected != 'directory' "
+				class="detailContainer"
+				name="Geen Directory"
+				description="Nog geen directory geselecteerd">
+				<template #icon>
+					<LayersOutline />
+				</template>
+				<template #action />
+			</NcEmptyContent>
+			<DirectoryDetails v-if="store.item && store.selected === 'directory'" :directory-id="directoryId" />
+		</template>
+	</NcAppContent>
 </template>
 
 <script>

@@ -1,53 +1,53 @@
 <script setup>
-import { store } from '../store.js'
+ import { store } from '../store.js'
 </script>
 
 <template>
 	<NcAppNavigation>
 		<NcActions>
-			<NcActionButton @click="store.modal =  'publicationAdd'">
+			<NcActionButton @click="store.setModal('publicationAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Publicatie
 			</NcActionButton>
-			<NcActionButton @click="store.modal =  'publicationEdit'">
+			<NcActionButton @click="store.setModal('publicationEdit')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Publicatie
 			</NcActionButton>
-			<NcActionButton @click="store.modal =  'metaDataAdd'">
+			<NcActionButton @click="store.setModal('metaDataAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Metadata
 			</NcActionButton>
-			<NcActionButton @click="store.modal =  'metaDataAdd'">
+			<NcActionButton @click="store.setModal('metaDataEdit')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Metadata
 			</NcActionButton>
-			<NcActionButton @click="store.modal =  'catalogAdd'">
+			<NcActionButton @click="store.setModal('catalogAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Catalog
 			</NcActionButton>
-			<NcActionButton @click="store.modal =  'catalogEdit'">
+			<NcActionButton @click="store.setModal('catalogEdit')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Catalog
 			</NcActionButton>
-			<NcActionButton @click="store.modal =  'directoryAdd'">
+			<NcActionButton @click="store.setModal('directoryAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add External Catalog
 			</NcActionButton>
-			<NcActionButton @click="store.modal =  'directoryEdit'">
+			<NcActionButton @click="store.setModal('directoryEdit')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
@@ -84,29 +84,29 @@ import { store } from '../store.js'
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="store.selected === 'catalogi'" @click="store.selected = 'catalogi'" name="Catalogi">
+			<NcAppNavigationItem :active="store.selected === 'catalogi'" @click="store.setSelected('catalogi')" name="Catalogi">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'directory'" @click="store.selected = 'directory'" name="Directory">
+			<NcAppNavigationItem :active="store.selected === 'directory'" @click="store.setSelected('directory')" name="Directory">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'metaData'" @click="store.selected = 'metaData'" name="MetaData">
+			<NcAppNavigationItem :active="store.selected === 'metaData'" @click="store.setSelected('metaData')" name="MetaData">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem name="Configuration" @click="settingsOpen = true">
+			<NcAppNavigationItem name="Configuration"  @click="store.setSelected('settings')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Application settings">
+			<NcAppSettingsDialog :open.sync="store.selected === 'setting'" :show-navigation="true" name="Application settings">
 				<NcAppSettingsSection id="sharing" name="Connections" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />

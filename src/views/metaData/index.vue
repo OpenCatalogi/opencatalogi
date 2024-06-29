@@ -1,25 +1,21 @@
 <template>
-	<NcContent app-name="opencatalog">
-		<MainMenu selected="metaData" />
-		<NcAppContent>
-			<template #list>
-				<MetaDataList @metaDataId="updateMetaDataId" />
-			</template>
-			<template #default>
-				<NcEmptyContent v-if="!metaDataId"
-					class="detailContainer"
-					name="Geen Metadata"
-					description="Nog geenmetadata geselecteerd">
-					<template #icon>
-						<FileTreeOutline />
-					</template>
-					<template #action />
-				</NcEmptyContent>
-				<MetaDataDetails v-if="metaDataId" :meta-data-id="metaDataId" />
-			</template>
-		</NcAppContent>
-		<!-- <ZaakSidebar /> -->
-	</NcContent>
+	<NcAppContent>
+		<template #list>
+			<MetaDataList @metaDataId="updateMetaDataId" />
+		</template>
+		<template #default>
+			<NcEmptyContent v-if="!store.item || store.selected != 'metaData' "
+				class="detailContainer"
+				name="Geen Metadata"
+				description="Nog geenmetadata geselecteerd">
+				<template #icon>
+					<FileTreeOutline />
+				</template>
+				<template #action />
+			</NcEmptyContent>
+			<MetaDataDetails v-if="store.item && store.selected === 'metaData'" :meta-data-id="metaDataId" />
+		</template>
+	</NcAppContent>
 </template>
 
 <script>

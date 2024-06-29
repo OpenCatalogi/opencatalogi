@@ -1,5 +1,9 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
-	<NcModal v-if="store.modal === 'meteDataEdit'" ref="modalRef" @close="closeModal">
+	<NcModal v-if="store.modal === 'metaDataAdd'" ref="modalRef" @close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>Add metaData</h2>
 			<div class="form-group">
@@ -26,17 +30,11 @@ export default {
 		NcModal,
 		NcTextField,
 		NcTextArea,
-		NcButton,
-		store
+		NcButton
 	},
 	data() {
 		return {
-			succesMessage: false,
-			store: {
-				selected: 'dashboard',
-				modal: false,
-				item: false
-			}
+			succesMessage: false
 
 		}
 	},

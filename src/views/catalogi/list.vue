@@ -95,7 +95,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.catalogiList = data
+						this.catalogi = data
 					})
 					this.loading = false
 				})
