@@ -26,7 +26,7 @@ import { store } from '../../store.js'
 				:counter-number="44"
 				@click="setActive(catalogus.id)">
 				<template #icon>
-					<DatabaseOutline :class="activeCatalogiId === catalogus.id && 'selectedZaakIcon'"
+					<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"

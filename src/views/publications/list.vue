@@ -28,7 +28,7 @@ import { store } from '../../store.js'
 				:counter-number="1"
 				@click="setActive(publication.id)">
 				<template #icon>
-					<ListBoxOutline :class="activePublicationId === publication.id && 'selectedZaakIcon'"
+					<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"

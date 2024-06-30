@@ -26,7 +26,7 @@ import { store } from '../../store.js'
 				:counter-number="44"
 				@click="setActive(metaData.id)">
 				<template #icon>
-					<FileTreeOutline :class="activeMetaDataId === metaData.id && 'selectedZaakIcon'"
+					<FileTreeOutline :class="store.metadataItem === metaData.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"
@@ -79,7 +79,6 @@ export default {
 			search: '',
 			loading: true,
 			metaDataList: [],
-			activeMetaDataId: '',
 		}
 	},
 	mounted() {

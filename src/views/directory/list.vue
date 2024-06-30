@@ -26,7 +26,7 @@ import { store } from '../../store.js'
 				:counter-number="44"
 				@click="setActive(directory.id)">
 				<template #icon>
-					<LayersOutline :class="activeDirectoryId === directory.id && 'selectedZaakIcon'"
+					<LayersOutline :class="store.directoryItem === directory.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"
@@ -81,7 +81,6 @@ export default {
 			search: '',
 			loading: false,
 			directoryList: [],
-			activeDirectoryId: '',
 		}
 	},
 	mounted() {
