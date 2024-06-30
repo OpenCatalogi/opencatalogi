@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<div class="detailContainer">
 		<div v-if="!loading" id="app-content">
@@ -32,12 +36,6 @@ export default {
 		BTabs,
 		BTab,
 	},
-	props: {
-		directoryId: {
-			type: String,
-			required: true,
-		},
-	},
 	data() {
 		return {
 			directory: [],
@@ -53,13 +51,13 @@ export default {
 		},
 	},
 	mounted() {
-		this.fetchData(this.directoryId)
+		this.fetchData()
 	},
 	methods: {
-		fetchData(id) {
+		fetchData() {
 			this.loading = true,
 			fetch(
-				`/index.php/apps/opencatalog/directory/api/${id}`,
+				'/index.php/apps/opencatalog/directory/api/' + store.item,
 				{
 					method: 'GET',
 				},

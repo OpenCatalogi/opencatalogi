@@ -15,7 +15,11 @@ import { store } from '../../store.js'
 				<template #icon>
 					<ListBoxOutline />
 				</template>
-				<template #action />
+				<template #action>
+					<NcButton type="primary" @click="store.setModal('publicationAdd')">
+						Publicatie toevoegen
+					</NcButton>
+				</template>
 			</NcEmptyContent>
 			<PublicationDetails v-if="store.item && store.selected === 'publication'" :publication-id="publicationId" />
 		</template>

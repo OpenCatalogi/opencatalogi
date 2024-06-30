@@ -24,7 +24,7 @@ import { store } from '../../store.js'
 				:active="activeCatalogiId === catalogus?.id"
 				:details="'1h'"
 				:counter-number="44"
-				@click="store.setItem(publication.id)">
+				@click="store.setItem(catalogus.id)">
 				<template #icon>
 					<DatabaseOutline :class="activeCatalogiId === catalogus.id && 'selectedZaakIcon'"
 						disable-menu

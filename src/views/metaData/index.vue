@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcAppContent>
 		<template #list>
@@ -7,11 +11,15 @@
 			<NcEmptyContent v-if="!store.item || store.selected != 'metaData' "
 				class="detailContainer"
 				name="Geen Metadata"
-				description="Nog geenmetadata geselecteerd">
+				description="Nog geen metadata beschrijving geselecteerd">
 				<template #icon>
 					<FileTreeOutline />
 				</template>
-				<template #action />
+				<template #action>
+					<NcButton type="primary" @click="store.setModal('metaDataAdd')">
+						Metadata beschrijving toevoegen
+					</NcButton>
+				</template>
 			</NcEmptyContent>
 			<MetaDataDetails v-if="store.item && store.selected === 'metaData'" :meta-data-id="metaDataId" />
 		</template>

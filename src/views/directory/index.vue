@@ -15,7 +15,11 @@ import { store } from '../../store.js'
 				<template #icon>
 					<LayersOutline />
 				</template>
-				<template #action />
+				<template #action>
+					<NcButton type="primary" @click="store.setModal('directoryAdd')">
+						Directory toevoegen
+					</NcButton>
+				</template>
 			</NcEmptyContent>
 			<DirectoryDetails v-if="store.item && store.selected === 'directory'" :directory-id="directoryId" />
 		</template>

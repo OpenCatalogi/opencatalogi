@@ -10,12 +10,16 @@ import { store } from '../../store.js'
 		<template #default>
 			<NcEmptyContent v-if="!store.item || store.selected != 'catalogi' "
 				class="detailContainer"
-				name="Geen publicatie"
-				description="Nog geen publicaite geselecteerd">
+				name="Geen Catalogi"
+				description="Nog geen catalogi geselecteerd">
 				<template #icon>
 					<DatabaseOutline />
 				</template>
-				<template #action />
+				<template #action>
+					<NcButton type="primary" @click="store.setModal('catalogiAdd')">
+						Catalogi toevoegen
+					</NcButton>
+				</template>
 			</NcEmptyContent>
 			<CatalogiDetails v-if="store.item && store.selected === 'catalogi'" :catalog-id="catalogId" />
 		</template>
