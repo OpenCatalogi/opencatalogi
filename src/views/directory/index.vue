@@ -27,7 +27,7 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue'
+import { NcAppContent, NcEmptyContent,NcButton } from '@nextcloud/vue'
 import MainMenu from '../../navigation/MainMenu.vue'
 import DirectoryList from './list.vue'
 import DirectoryDetails from './details.vue'
@@ -36,9 +36,9 @@ import LayersOutline from 'vue-material-design-icons/LayersOutline'
 export default {
 	name: 'DirectoryIndex',
 	components: {
-		NcContent,
 		NcAppContent,
 		NcEmptyContent,
+		NcButton,
 		MainMenu,
 		DirectoryList,
 		DirectoryDetails,

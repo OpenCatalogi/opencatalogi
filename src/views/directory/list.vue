@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 				v-if="!loading"
 				:key="`${directory}${i}`"
 				:name="directory?.name"
-				:active="activeDirectoryId === directory?.id"
+				:active="store.directoryItem === directory?.id"
 				:details="'1h'"
 				:counter-number="44"
 				@click="setActive(directory.id)">
@@ -108,8 +108,8 @@ export default {
 				})
 		},
 		setActive(id) {
-			this.activeDirectoryId = id
-			this.$emit('directoryId', id)
+			store.setDirectoryItem(id)
+			this.$emit('directoryItem', id)
 		},
 		clearText() {
 			this.search = ''

@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 				v-if="!loading"
 				:key="`${metaData}${i}`"
 				:name="metaData?.name"
-				:active="activeMetaDataId === metaData?.id"
+				:active="store.metadataItem === metaData?.id"
 				:details="'1h'"
 				:counter-number="44"
 				@click="setActive(metaData.id)">
@@ -52,7 +52,7 @@ import { store } from '../../store.js'
 				class="loadingIcon"
 				:size="64"
 				appearance="dark"
-				name="Zaken aan het laden" />
+				name="Metadata aan het laden" />
 		</ul>
 	</NcAppContentList>
 </template>
@@ -106,8 +106,8 @@ export default {
 				})
 		},
 		setActive(id) {
-			this.activeMetaDataId = id
-			this.$emit('metaDataId', id)
+			store.setMetadataItem(id);
+			this.$emit('metadataItem', id)
 		},
 		clearText() {
 			this.search = ''

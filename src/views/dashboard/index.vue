@@ -13,12 +13,13 @@ import { store } from '../../store.js'
 
 <script>
 
-import { NcAppContent } from '@nextcloud/vue'
+import { NcAppContent, NcButton } from '@nextcloud/vue'
 
 export default {
 	name: 'Dashboard',
 	components: {
-		NcAppContent
+		NcAppContent,
+		NcButton
 	}
 }
 </script>

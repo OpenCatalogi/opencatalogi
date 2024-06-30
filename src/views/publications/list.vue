@@ -23,10 +23,10 @@ import { store } from '../../store.js'
 				:name="publication?.name"
 				:bold="false"
 				:force-display-actions="true"
-				:active="activePublicationId === publication.id"
+				:active="store.publicationItem === publication.id"
 				:details="'CC0 1.0'"
 				:counter-number="1"
-				@click="store.setItem(publication.id)">
+				@click="setActive(publication.id)">
 				<template #icon>
 					<ListBoxOutline :class="activePublicationId === publication.id && 'selectedZaakIcon'"
 						disable-menu
@@ -104,8 +104,8 @@ export default {
 				})
 		},
 		setActive(id) {
-			this.activePublicationId = id
-			this.$emit('publicationId', id)
+			store.setPublicationItem(id)
+			this.$emit('publicationItem', id)
 		},
 		clearText() {
 			this.search = ''

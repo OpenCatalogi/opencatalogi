@@ -21,10 +21,10 @@ import { store } from '../../store.js'
 				v-if="!loading"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="activeCatalogiId === catalogus?.id"
+				:active="store.catalogItem === catalogus?.id"
 				:details="'1h'"
 				:counter-number="44"
-				@click="store.setItem(catalogus.id)">
+				@click="setActive(catalogus.id)">
 				<template #icon>
 					<DatabaseOutline :class="activeCatalogiId === catalogus.id && 'selectedZaakIcon'"
 						disable-menu
@@ -103,6 +103,10 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+		},
+		setActive(id) {
+			store.setCatalogItem(id);
+			this.$emit('catalogItem', id)
 		},
 		clearText() {
 			this.search = ''

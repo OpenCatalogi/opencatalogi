@@ -27,7 +27,7 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcAppContent, NcEmptyContent } from '@nextcloud/vue'
+import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
 import MainMenu from '../../navigation/MainMenu.vue'
 import CatalogiList from './list.vue'
 import CatalogiDetails from './details.vue'
@@ -38,6 +38,7 @@ export default {
 	components: {
 		NcAppContent,
 		NcEmptyContent,
+		NcButton,
 		MainMenu,
 		CatalogiList,
 		CatalogiDetails,

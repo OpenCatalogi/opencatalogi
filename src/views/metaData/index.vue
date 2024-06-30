@@ -27,7 +27,7 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue'
+import { NcAppContent, NcEmptyContent,NcButton } from '@nextcloud/vue'
 import MainMenu from '../../navigation/MainMenu.vue'
 import MetaDataList from './list.vue'
 import MetaDataDetails from './details.vue'
@@ -36,9 +36,9 @@ import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
 export default {
 	name: 'MetaDataIndex',
 	components: {
-		NcContent,
 		NcAppContent,
 		NcEmptyContent,
+		NcButton,
 		MainMenu,
 		MetaDataList,
 		MetaDataDetails,
