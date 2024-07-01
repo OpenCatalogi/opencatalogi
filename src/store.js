@@ -1,4 +1,4 @@
-// The store script handles app whide variables (or state), for the use of these variables and there governing concepts read the design.md 
+// The store script handles app whide variables (or state), for the use of these variables and there governing concepts read the design.md
 import { reactive } from 'vue'
 
 export const store = reactive({
@@ -14,32 +14,32 @@ export const store = reactive({
 	metadataItem: false,
 	publicationItem: false,
 	// Lets add some setters
-	setSelected(selected){
+	setSelected(selected) {
 		this.selected = selected
 		console.log('Active menu item set to ' + selected)
 	},
-	setModal(modal){
+	setModal(modal) {
 		this.modal = modal
 		console.log('Active modal item set to ' + modal)
 	},
-	setItem(item){
+	setItem(item) {
 		this.item = item
 		console.log('Active object item set to ' + item)
 	},
-	setCatalogItem(catalogItem){
+	setCatalogItem(catalogItem) {
 		this.catalogItem = catalogItem
-		console.log('Active catalog item set to ' + catalogItem)			
+		console.log('Active catalog item set to ' + catalogItem)
 	},
-	setDirectoryItem(directoryItem){
+	setDirectoryItem(directoryItem) {
 		this.directoryItem = directoryItem
 		console.log('Active directory item set to ' + directoryItem)
 	},
-	setMetadataItem(metadataItem){
+	setMetadataItem(metadataItem) {
 		this.metadataItem = metadataItem
 		console.log('Active metadata item set to ' + metadataItem)
 	},
-	setPublicationItem(publicationItem){
+	setPublicationItem(publicationItem) {
 		this.publicationItem = publicationItem
 		console.log('Active publication item set to ' + publicationItem)
-	}
+	},
 })
