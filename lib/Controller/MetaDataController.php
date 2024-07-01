@@ -13,12 +13,12 @@ class MetaDataController extends Controller
         "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f" => [
             "id" => "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f",
             "name" => "MetaData one",
-            "summery" => "summery for one"
+            "summary" => "summary for one"
         ],
         "4c3edd34-a90d-4d2a-8894-adb5836ecde8" => [
             "id" => "4c3edd34-a90d-4d2a-8894-adb5836ecde8",
             "name" => "MetaData two",
-            "summery" => "summery for two"
+            "summary" => "summary for two"
         ]
     ];
 
@@ -44,49 +44,54 @@ class MetaDataController extends Controller
             []
         );
     }
-    
+
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function index(): JSONResponse {
-        $results = ["results"=>self::TEST_ARRAY] ;
+    public function index(): JSONResponse
+    {
+        $results = ["results" => self::TEST_ARRAY];
         return new JSONResponse($results);
     }
-    
+
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function show(string $id): JSONResponse {
-        $result = self::TEST_ARRAY[$id] ;
+    public function show(string $id): JSONResponse
+    {
+        $result = self::TEST_ARRAY[$id];
         return new JSONResponse($result);
     }
-    
-    
+
+
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function create(): JSONResponse {
+    public function create(): JSONResponse
+    {
         // get post from requests
         return new JSONResponse([]);
     }
-    
+
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function update(string $id): JSONResponse {
-        $result = self::TEST_ARRAY[$id] ;
+    public function update(string $id): JSONResponse
+    {
+        $result = self::TEST_ARRAY[$id];
         return new JSONResponse($result);
     }
-    
+
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function destroy(string $id): JSONResponse {
+    public function destroy(string $id): JSONResponse
+    {
         return new JSONResponse([]);
     }
 }

@@ -1,24 +1,32 @@
 <template>
 	<NcAppContentList>
-	  <ul>
-      <div class="listHeader">
-        <NcTextField class="searchField" disabled :value.sync="search" label="Search" trailing-button-icon="close"
-          :show-trailing-button="search !== ''" @trailing-button-click="clearText">
-          <Magnify :size="20" />
-        </NcTextField>
-      </div>      
-	  
-	  <NcLoadingIcon v-if="loading" class="loadingIcon" :size="64" appearance="dark"
-        name="Zaken aan het laden" />
-    </ul>
-  </NcAppContentList>
+		<ul>
+			<div class="listHeader">
+				<NcTextField class="searchField"
+					disabled
+					:value.sync="search"
+					label="Search"
+					trailing-button-icon="close"
+					:show-trailing-button="search !== ''"
+					@trailing-button-click="clearText">
+					<Magnify :size="20" />
+				</NcTextField>
+			</div>
+
+			<NcLoadingIcon v-if="loading"
+				class="loadingIcon"
+				:size="64"
+				appearance="dark"
+				name="Zaken aan het laden" />
+		</ul>
+	</NcAppContentList>
 </template>
 
 <script>
 
-import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue';
+import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
 
-import MainMenu from './navigation/MainMenu.vue';
+import MainMenu from './navigation/MainMenu.vue'
 
 export default {
 	name: 'PublicationList',
@@ -29,11 +37,10 @@ export default {
 		NcAvatar,
 		NcAppContentList,
 		NcTextField,
-		NcLoadingIcon
+		NcLoadingIcon,
 	},
 }
 </script>
-
 
 <style>
 .listHeader {
@@ -58,4 +65,3 @@ export default {
   margin-block-start: var(--zaa-margin-20);
 }
 </style>
-

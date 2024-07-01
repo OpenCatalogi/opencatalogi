@@ -1,50 +1,52 @@
 <template>
-    <NcModal v-if="isModalOpen.addPublicationModal" ref="modalRef" @close="closeModal">
-        <div class="modal__content">
-            <h2>Add publication</h2>
-            <div class="form-group">
-                <NcTextField label="Naam" :value.sync="name" />
-            </div>
-            <div v-if="succesMessage" class="success">Succesfully added publication</div>
+	<NcModal v-if="isModalOpen.addPublicationModal" ref="modalRef" @close="closeModal">
+		<div class="modal__content">
+			<h2>Add publication</h2>
+			<div class="form-group">
+				<NcTextField label="Naam" :value.sync="name" />
+			</div>
+			<div v-if="succesMessage" class="success">
+				Succesfully added publication
+			</div>
 
-            <NcButton :disabled="!name" @click="addPublication" type="primary">
-                Submit
-            </NcButton>
-        </div>
-    </NcModal>
+			<NcButton :disabled="!name" type="primary" @click="addPublication">
+				Submit
+			</NcButton>
+		</div>
+	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue';
-import { isModalOpen } from '../modalContext.js';
+import { NcButton, NcModal, NcTextField, NcTextArea } from '@nextcloud/vue'
+import { isModalOpen } from '../modalContext.js'
 
 export default {
-    name: "AddPublicationModal",
-    data() {
-        return {
-            name: '',
-            succesMessage: false,
-            isModalOpen,
+	name: 'AddPublicationModal',
+	components: {
+		NcModal,
+		NcTextField,
+		NcTextArea,
+		NcButton,
+	},
+	data() {
+		return {
+			name: '',
+			succesMessage: false,
+			isModalOpen,
 
-        }
-    },
-    components: {
-        NcModal,
-        NcTextField,
-        NcTextArea,
-        NcButton
-    },
-    methods: {
-        closeModal() {
-            isModalOpen.addPublicationModal = false
-        },
-        addPublication() {
-            this.$emit('publication', this.name)
-            this.succesMessage = true
-            setTimeout(() => this.succesMessage = false, 2500);
-            this.name = ''
-        },
-    }
+		}
+	},
+	methods: {
+		closeModal() {
+			isModalOpen.addPublicationModal = false
+		},
+		addPublication() {
+			this.$emit('publication', this.name)
+			this.succesMessage = true
+			setTimeout(() => this.succesMessage = false, 2500)
+			this.name = ''
+		},
+	},
 }
 </script>
 

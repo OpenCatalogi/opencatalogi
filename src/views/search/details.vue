@@ -1,83 +1,88 @@
 <template>
-  <div>
-    <div v-if="!loading" id="app-content" class="zakenDetailContainer">
-      bla bla
-      <!-- app-content-wrapper is optional, only use if app-content-list  -->
-      <div class="zakenContainer">
-        <h1 class="h1">{{ publication.name }}</h1>
-        <div class="grid">
-          <div class="gridContent">
-            <h4>Sammenvatting:</h4>
-            <span>{{ publication.summary }}</span>
-          </div>          
-        </div>
-      </div>
-    </div>
-    <NcLoadingIcon v-if="loading" class="zakenDetailLoadingContainer" :size="100" appearance="dark"
-      name="Publicatie details aan het laden" />
-  </div>
+	<div>
+		<div v-if="!loading" id="app-content" class="zakenDetailContainer">
+			bla bla
+			<!-- app-content-wrapper is optional, only use if app-content-list  -->
+			<div class="zakenContainer">
+				<h1 class="h1">
+					{{ publication.name }}
+				</h1>
+				<div class="grid">
+					<div class="gridContent">
+						<h4>Sammenvatting:</h4>
+						<span>{{ publication.summary }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<NcLoadingIcon v-if="loading"
+			class="zakenDetailLoadingContainer"
+			:size="100"
+			appearance="dark"
+			name="Publicatie details aan het laden" />
+	</div>
 </template>
 
 <script>
 import { BTabs, BTab } from 'bootstrap-vue'
-import { NcLoadingIcon } from '@nextcloud/vue';
+import { NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
-  name: "publicationDetail",
-  props: {
-    publicationId: {
-      type: String,
-      required: true
-    },
-  },
-  watch: {
-    publicationId: {
-      handler(publicationId) {
-        this.fetchData(publicationId)
-      },
-      deep: true
-    }
-  },
-  components: {
-    NcLoadingIcon,
-    BTabs,
-    BTab,
-  },
-  data() {
-    return {
-      publication: [],
-      publicationId: '',
-      loading: false,
+	name: 'PublicationDetail',
+	components: {
+		NcLoadingIcon,
+		BTabs,
+		BTab,
+	},
+	props: {
+		publicationId: {
+			type: String,
+			required: true,
+		},
+	},
+	data() {
+		return {
+			publication: [],
+			publicationId: '',
+			loading: false,
 			activePublication: false,
 			activePublicationId: '',
-    }
-  },
-  mounted() {
-    this.fetchData(this.publicationId)
-  },
-  methods: {
-    fetchData(id) {
-      this.loading = true,
-        fetch(
-          `/index.php/apps/opencatalog/publications/api/${id}`,
-          {
-            method: 'GET'
-          },
-        )
-          .then((response) => {
-            response.json().then((data) => {
-              this.publication = data
-              //this.oldZaakId = id
-            })
-            this.loading = false
-          })
-          .catch((err) => {
-            console.error(err)
-            //this.oldZaakId = id
-            this.loading = false
-          })
-    },
-  },
+		}
+	},
+	watch: {
+		publicationId: {
+			handler(publicationId) {
+				this.fetchData(publicationId)
+			},
+			deep: true,
+		},
+	},
+	mounted() {
+		this.fetchData(this.publicationId)
+	},
+	methods: {
+		fetchData(id) {
+			this.loading = true,
+			fetch(
+				`/index.php/apps/opencatalog/publications/api/${id}`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						this.publication = data
+						// this.oldZaakId = id
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					// this.oldZaakId = id
+					this.loading = false
+				})
+		},
+	},
 }
 </script>
 
@@ -122,7 +127,6 @@ h4 {
   display: flex;
   gap: 25px;
 }
-
 
 .tabContainer>* ul>li {
   display: flex;
