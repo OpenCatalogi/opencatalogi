@@ -1,49 +1,53 @@
+<script setup>
+import { store } from '../store.js'
+</script>
+
 <template>
 	<NcAppNavigation>
 		<NcActions>
-			<NcActionButton @click="showModal(&quot;addPublicationModal&quot;)">
+			<NcActionButton @click="store.setModal('publicationAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Publicatie
 			</NcActionButton>
-			<NcActionButton :disabled="publication === &quot;&quot;" @click="showModal(&quot;editPublicationModal&quot;)">
+			<NcActionButton @click="store.setModal('publicationEdit')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Publicatie
 			</NcActionButton>
-			<NcActionButton @click="showModal(&quot;addMetaDataModal&quot;)">
+			<NcActionButton @click="store.setModal('metaDataAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Metadata
 			</NcActionButton>
-			<NcActionButton :disabled="metaData === &quot;&quot;" @click="showModal(&quot;editMetaDataModal&quot;)">
+			<NcActionButton @click="store.setModal('metaDataEdit')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Metadata
 			</NcActionButton>
-			<NcActionButton @click="showModal(&quot;addCatalogModal&quot;)">
+			<NcActionButton @click="store.setModal('catalogAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add Catalog
 			</NcActionButton>
-			<NcActionButton :disabled="catalog === &quot;&quot;" @click="showModal(&quot;editCatalogModal&quot;)">
+			<NcActionButton @click="store.setModal('catalogEdit')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 				Edit Catalog
 			</NcActionButton>
-			<NcActionButton @click="showModal(&quot;addExternalCatalogModal&quot;)">
+			<NcActionButton @click="store.setModal('directoryAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 				Add External Catalog
 			</NcActionButton>
-			<NcActionButton :disabled="externalCatalog === &quot;&quot;" @click="showModal(&quot;editExternalCatalogModal&quot;)">
+			<NcActionButton @click="store.setModal('directoryEdit')">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
@@ -52,12 +56,12 @@
 		</NcActions>
 
 		<NcAppNavigationList>
-			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="showModal('addPublicationModal')">
+			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="store.modal = 'publicationAdd'">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="selected === 'dashboard'" name="Dashboard" href="/index.php/apps/opencatalog">
+			<NcAppNavigationItem :active="store.selected === 'dashboard'" name="Dashboard" @click="store.setSelected('dashboard')">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
@@ -66,15 +70,13 @@
 				v-if="!loading"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="selected === catalogus?.id"
-				:href="'/index.php/apps/opencatalog/catalog/' + catalogus?.id">
+				:active="store.selected === catalogus?.id"
+				@click="store.selected = 'catalogus'; store.item = catalogus?.id">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === 'search'"
-				name="Search"
-				href="/index.php/apps/opencatalog/search">
+			<NcAppNavigationItem :active="store.selected === 'search'" name="Search" @click="store.setSelected('search')">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -82,24 +84,17 @@
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="selected === 'catalogi'"
-				name="Catalogi"
-				href=" /index.php/apps/opencatalog/catalogi">
+			<NcAppNavigationItem :active="store.selected === 'catalogi'" name="Catalogi" @click="store.setSelected('catalogi')">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="selected === 'directory'"
-				name="Directory"
-				href=" /index.php/apps/opencatalog/directory">
+			<NcAppNavigationItem :active="store.selected === 'directory'" name="Directory" @click="store.setSelected('directory')">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-
-			<NcAppNavigationItem :active="selected === 'metaData'"
-				name="MetaData"
-				href=" /index.php/apps/opencatalog/metadata">
+			<NcAppNavigationItem :active="store.selected === 'metaData'" name="MetaData" @click="store.setSelected('metaData')">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
@@ -120,7 +115,6 @@
 					<p>
 						Here you can set the details for varius Connections
 					</p>
-
 					<p>
 						<table>
 							<tbody>
@@ -130,15 +124,15 @@
 									</td>
 									<td>Location</td>
 									<td>
-										<NcTextField id="drc_location"
-											:value.sync="drc_location"
+										<NcTextField id="drcLocation"
+											:value.sync="configuration.drcLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
-										<NcTextField id="drc_key"
-											:value.sync="drc_key"
+										<NcTextField id="drcKey"
+											:value.sync="configuration.drcKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -149,15 +143,15 @@
 									</td>
 									<td>Location</td>
 									<td>
-										<NcTextField id="orc_location"
-											:value.sync="orc_location"
+										<NcTextField id="orcLocation"
+											:value.sync="configuration.orcLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
-										<NcTextField id="orc_key"
-											:value.sync="orc_key"
+										<NcTextField id="orcKey"
+											:value.sync="configuration.orcKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -168,15 +162,34 @@
 									</td>
 									<td>Location</td>
 									<td>
-										<NcTextField id="elastic_location"
-											:value.sync="elastic_location"
+										<NcTextField id="elasticLocation"
+											:value.sync="configuration.elasticLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
-										<NcTextField id="elastic_key"
-											:value.sync="elastic_key"
+										<NcTextField id="elasticKey"
+											:value.sync="configuration.elasticKey"
+											:label-outside="true"
+											placeholder="***" />
+									</td>
+								</tr>
+								<tr>
+									<td class="row-name">
+										Mongo DB
+									</td>
+									<td>Location</td>
+									<td>
+										<NcTextField id="mongodbLocation"
+											:value.sync="configuration.mongodbLocation"
+											:label-outside="true"
+											placeholder="https://" />
+									</td>
+									<td>Key</td>
+									<td>
+										<NcTextField id="mongodbKey"
+											:value.sync="configuration.mongodbKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -184,14 +197,17 @@
 							</tbody>
 						</table>
 					</p>
-					<NcButton aria-label="Save" type="primary" wide>
+					<NcButton aria-label="Save"
+						type="primary"
+						wide
+						@click="saveConfig()">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
 						Save
 					</NcButton>
 				</NcAppSettingsSection>
-				<NcAppSettingsSection id="sharing" name="Organisation" doc-url="zaakafhandel.app">
+				<NcAppSettingsSection id="organisation" name="Organisation" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
 					</template>
@@ -200,11 +216,14 @@
 						Here you can set the details for your organisation
 					</p>
 
-					<NcTextField id="organisation_name" :value.sync="organisation_name" />
-					<NcTextField id="organisation_oin" :value.sync="organisation_oin" />
-					<NcTextArea id="organisation_pki" :value.sync="organisation_pki" />
+					<NcTextField id="organisationName" :value.sync="configuration.organisationName" />
+					<NcTextField id="organisationOin" :value.sync="configuration.organisationOin" />
+					<NcTextArea id="organisationPki" :value.sync="configuration.organisationPki" />
 
-					<NcButton aria-label="Save" type="primary" wide>
+					<NcButton aria-label="Save"
+						type="primary"
+						wide
+						@click="saveConfig()">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
@@ -216,6 +235,7 @@
 	</NcAppNavigation>
 </template>
 <script>
+
 import {
 	NcActions,
 	NcActionButton,
@@ -230,7 +250,6 @@ import {
 	NcTextField,
 	NcTextArea,
 } from '@nextcloud/vue'
-import { isModalOpen } from '../modals/modalContext.js'
 
 import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -271,15 +290,9 @@ export default {
 		ContentSave,
 		Finance,
 	},
-	props: [
-		'selected',
-		'publication',
-		'metaData',
-		'catalog',
-		'externalCatalog',
-	],
 	data() {
 		return {
+			// all of this is settings and should be moved
 			settingsOpen: false,
 			orc_location: '',
 			orc_key: '',
@@ -292,14 +305,28 @@ export default {
 			organisation_oin: '',
 			organisation_pki: '',
 			catalogi: [],
-			activeMenuItem: '',
+			configuration: {
+				drcLocation: '',
+				drcKey: '',
+				orcLocation: '',
+				orcKey: '',
+				elasticLocation: '',
+				elasticKey: '',
+				mongodbLocation: '',
+				mongodbKey: '',
+				organisationName: '',
+				organisationOin: '',
+				organisationPki: '',
+			},
 		}
 	},
 	mounted() {
 		this.fetchData()
 	},
 	methods: {
+		// We use the catalogi in the menu so lets fetch those
 		fetchData(newPage) {
+			// Catalogi details
 			this.loading = true,
 			fetch(
 				'/index.php/apps/opencatalog/catalogi/api',
@@ -317,19 +344,40 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
-		},
-		save() {
-			this.zrc_location = ''
-			this.zrc_key = ''
-		},
-		showModal(modalName) {
-			isModalOpen[modalName] = true
-		},
-		setActive(selected) {
-			this.activeMenuItem = selected
-			this.$emit('activeMenuItem', selected)
-		},
 
+			fetch(
+				'/index.php/apps/opencatalog/configuration',
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						this.configuration = data
+					})
+				})
+				.catch((err) => {
+					console.error(err)
+				})
+		},
+		saveConfig() {
+			 // Simple POST request with a JSON body using fetch
+			const requestOptions = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(this.configuration),
+			}
+
+			fetch('/index.php/apps/opencatalog/configuration', requestOptions)
+				.then((response) => {
+					response.json().then((data) => {
+						this.configuration = data
+					})
+				})
+				.catch((err) => {
+					console.error(err)
+				})
+		},
 	},
 }
 </script>

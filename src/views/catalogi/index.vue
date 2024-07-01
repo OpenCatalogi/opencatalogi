@@ -1,29 +1,33 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
-	<NcContent app-name="opencatalog">
-		<MainMenu selected="catalogi" />
-		<NcAppContent>
-			<template #list>
-				<CatalogiList @catalogId="updateCatalogId" />
-			</template>
-			<template #default>
-				<NcEmptyContent v-if="!catalogId"
-					class="detailContainer"
-					name="Geen publicatie"
-					description="Nog geen publicaite geselecteerd">
-					<template #icon>
-						<DatabaseOutline />
-					</template>
-					<template #action />
-				</NcEmptyContent>
-				<CatalogiDetails v-if="catalogId" :catalog-id="catalogId" />
-			</template>
-		</NcAppContent>
-		<!-- <ZaakSidebar /> -->
-	</NcContent>
+	<NcAppContent>
+		<template #list>
+			<CatalogiList/>
+		</template>
+		<template #default>
+			<NcEmptyContent v-if="!store.item || store.selected != 'catalogi' "
+				class="detailContainer"
+				name="Geen Catalogi"
+				description="Nog geen catalogi geselecteerd">
+				<template #icon>
+					<DatabaseOutline />
+				</template>
+				<template #action>
+					<NcButton type="primary" @click="store.setModal('catalogiAdd')">
+						Catalogi toevoegen
+					</NcButton>
+				</template>
+			</NcEmptyContent>
+			<CatalogiDetails v-if="store.item && store.selected === 'catalogi'" :catalog-id="catalogId" />
+		</template>
+	</NcAppContent>
 </template>
 
 <script>
-import { NcAppContent, NcContent, NcEmptyContent } from '@nextcloud/vue'
+import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
 import MainMenu from '../../navigation/MainMenu.vue'
 import CatalogiList from './list.vue'
 import CatalogiDetails from './details.vue'
@@ -32,18 +36,13 @@ import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline'
 export default {
 	name: 'CatalogiIndex',
 	components: {
-		NcContent,
 		NcAppContent,
 		NcEmptyContent,
+		NcButton,
 		MainMenu,
 		CatalogiList,
 		CatalogiDetails,
-		DatabaseOutline,
-	},
-	data() {
-		return {
-			catalogId: undefined,
-		}
+		DatabaseOutline
 	},
 	methods: {
 		updateCatalogId(variable) {

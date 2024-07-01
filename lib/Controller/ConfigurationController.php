@@ -40,28 +40,26 @@ class ConfigurationController extends Controller
 	public function index(): JSONResponse
 	{
 
+		$data = [];
+		$defaults = [
 		// Getting the config
-		$drcLocation = $this->config->getValueString('opencatalog', 'drc_location', '');
-		$drcKey = $this->config->getValueString('opencatalog', 'drc_key', '');
-		$orcLocation = $this->config->getValueString('opencatalog', 'orc_location', '');
-		$orcKey = $this->config->getValueString('opencatalog', 'orc_key', '');
-		$elasticLocation = $this->config->getValueString('opencatalog', 'elastic_location', '');
-		$elasticKey = $this->config->getValueString('opencatalog', 'elastic_key', '');
-		$organisationName = $this->config->getValueString('opencatalog', 'organisation_name', 'my-organisation');
-		$organisationOin = $this->config->getValueString('opencatalog', 'organisation_oin', '');
-		$organisationPki = $this->config->getValueString('opencatalog', 'organisation_pki', '');
-
-		$data = [
-			'drcLocation' => $drcLocation,
-			'drcKey' => $drcKey,
-			'orcLocation' => $orcLocation,
-			'orcKey' => $orcKey,
-			'elasticLocation' => $elasticLocation,
-			'elasticKey' => $elasticKey,
-			'organisationName' => $organisationName,
-			'organisationPki' => $organisationPki,
-			'organisationOin' => $organisationOin,
+			'drcLocation'=>'',
+			'drcKey'=>'',
+			'orcLocation'=>'',
+			'orcKey'=>'',
+			'elasticLocation'=>'',
+			'elasticKey'=>'',
+			'mongodbLocation'=>'',
+			'mongodbKey'=>'',
+			'organisationName'=>'my-organisation',
+			'organisationOin'=> '',
+			'organisationPki'=>''
 		];
+
+		// We should filter out unwanted values before this
+		foreach($defaults as $key => $value){
+			$data[$key] =  $this->config->getValueString('opencatalog', $key, $value);
+		}
 
 		return new JSONResponse($data);
 	}
@@ -74,29 +72,13 @@ class ConfigurationController extends Controller
 	 */
 	public function create(): JSONResponse
 	{
-		$data = $this->request->getParam();
+		$data = $this->request->getParams();
 
-		$drcLocation = $this->config->setValueString('opencatalog', 'drc_location', $data['drcLocation']);
-		$drcKey = $this->config->setValueString('opencatalog', 'drc_key', $data['drcKey']);
-		$orcLocation = $this->config->setValueString('opencatalog', 'orc_location', $data['orcLocation']);
-		$orcKey = $this->config->setValueString('opencatalog', 'orc_key', $data['orcKey']);
-		$elasticLocation = $this->config->setValueString('opencatalog', 'elastic_location', $data['elasticLocation']);
-		$elasticKey = $this->config->setValueString('opencatalog', 'elastic_key', $data['elasticKey']);
-		$organisationName = $this->config->setValueString('opencatalog', 'organisation_name', $data['organisationName']);
-		$organisationOin = $this->config->setValueString('opencatalog', 'organisation_oin', $data['organisationOin']);
-		$organisationPki = $this->config->setValueString('opencatalog', 'organisation_pki', $data['organisationPki']);
-
-		$data = [
-			'drcLocation' => $drcLocation,
-			'drcKey' => $drcKey,
-			'orcLocation' => $orcLocation,
-			'orcKey' => $orcKey,
-			'elasticLocation' => $elasticLocation,
-			'elasticKey' => $elasticKey,
-			'organisationName' => $organisationName,
-			'organisationPki' => $organisationPki,
-			'organisationOin' => $organisationOin,
-		];
+		// We should filter out unwanted values before this
+		foreach($data as $key => $value){
+			$this->config->setValueString('opencatalog', $key, $value);
+			$data[$key] =  $this->config->getValueString('opencatalog', $key);
+		}
 
 		return new JSONResponse($data);
 	}

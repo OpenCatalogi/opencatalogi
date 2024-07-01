@@ -1,12 +1,17 @@
 <template>
 	<div class="dashboardContainer">
 		<h1>Titel Dashboard</h1>
-		<p>grafiek hier</p>
+		<p>{{store.selected}}</p>
 	</div>
 </template>
 <script>
+import { store } from './store.js'
+
 export default {
 	name: 'Dashboard',
+	components: {
+		store
+	}
 
 }
 </script>

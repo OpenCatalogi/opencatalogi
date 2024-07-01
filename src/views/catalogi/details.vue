@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<div class="detailContainer">
 		<div v-if="!loading" id="app-content">
@@ -52,12 +56,6 @@ export default {
 		NcActionButton,
 		ListBoxOutline,
 	},
-	props: {
-		catalogId: {
-			type: String,
-			required: true,
-		},
-	},
 	data() {
 		return {
 			publications: [],
@@ -73,13 +71,13 @@ export default {
 		},
 	},
 	mounted() {
-		this.fetchData(this.catalogId)
+		this.fetchData()
 	},
 	methods: {
 		fetchData() {
 			this.loading = true,
 			fetch(
-				'/index.php/apps/opencatalog/publications/api',
+				'/index.php/apps/opencatalog/publications/api/' + store.item,
 				{
 					method: 'GET',
 				},

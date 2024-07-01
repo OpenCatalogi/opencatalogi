@@ -1,41 +1,18 @@
 <template>
 	<NcContent app-name="opencatalog">
-		<MainMenu selected="dashboard"
-			:publication="publication"
-			:meta-data="metaData"
-			:catalog="catalog"
-			:external-catalog="externalCatalog"
-			@activeMenuItem="updateMenuPublication" />
-		<NcAppContent>
-			<template #default>
-				<Dashboard />
-			</template>
-		</NcAppContent>
-		<!-- <ZaakSidebar /> -->
-		<AddPublicationModal @publication="updatePublicationModal" />
-		<EditPublicationModal :publication-name="publication" @publication="updatePublicationModal" />
-		<AddMetaDataModal @metaData="updateMetaDataModal" />
-		<EditMetaDataModal :meta-data-name="metaData" @metaData="updateMetaDataModal" />
-		<AddCatalogModal @catalog="updateCatalogModal" />
-		<EditCatalogModal :catalog-name="catalog" @catalog="updateCatalogModal" />
-		<AddExternalCatalogModal @externalCatalog="updateExternalCatalogModal" />
-		<EditExternalCatalogModal :external-catalog-name="externalCatalog"
-			@externalCatalog="updateExternalCatalogModal" />
+		<MainMenu />
+		<Views /> 
+		<Modals  />
 	</NcContent>
 </template>
 
 <script>
-import { NcAppContent, NcContent } from '@nextcloud/vue'
+
+import { NcContent, NcAppContent } from '@nextcloud/vue'
 import MainMenu from './navigation/MainMenu.vue'
-import AddPublicationModal from './modals/publicationModal/AddPublicationModal.vue'
-import EditPublicationModal from './modals/publicationModal/EditPublicationModal.vue'
-import AddMetaDataModal from './modals/metaDataModal/AddMetaDataModal.vue'
-import EditMetaDataModal from './modals/metaDataModal/EditMetaDataModal.vue'
-import AddCatalogModal from './modals/catalogModal/AddCatalogModal.vue'
-import EditCatalogModal from './modals/catalogModal/EditCatalogModal.vue'
-import AddExternalCatalogModal from './modals/externalCatalogModal/AddExternalCatalogModal.vue'
-import EditExternalCatalogModal from './modals/externalCatalogModal/EditExternalCatalogModal.vue'
-import Dashboard from './views/dashboard.vue'
+import Modals from './modals/modals.vue'
+import Views from './views/views.vue'
+import { store } from './store.js'
 
 export default {
 	name: 'App',
@@ -43,41 +20,20 @@ export default {
 		NcContent,
 		NcAppContent,
 		MainMenu,
-		AddPublicationModal,
-		EditPublicationModal,
-		AddMetaDataModal,
-		EditMetaDataModal,
-		AddCatalogModal,
-		EditCatalogModal,
-		AddExternalCatalogModal,
-		EditExternalCatalogModal,
-		Dashboard,
-	},
-	data() {
-		return {
-			publication: '',
-			metaData: '',
-			catalog: '',
-			externalCatalog: '',
-			activeMenuItem: '',
-		}
+		Modals,
+		Views,
+		store,
 	},
 	methods: {
-		updateMenuPublication(selected) {
-			this.activeMenuItem = selected
+		setModal(modal) {
+			store.modal = modal
+		},			
+		setSelected(selected) {
+			store.selected = selected
 		},
-		updatePublicationModal(variable) {
-			this.publication = variable
-		},
-		updateMetaDataModal(variable) {
-			this.metaData = variable
-		},
-		updateCatalogModal(variable) {
-			this.catalog = variable
-		},
-		updateExternalCatalogModal(variable) {
-			this.externalCatalog = variable
-		},
-	},
+		setItem(item) {
+			store.item = item
+		}
+	}
 }
 </script>

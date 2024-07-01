@@ -1,3 +1,8 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
+
 <template>
 	<div class="detailContainer">
 		<div v-if="!loading" id="app-content">
@@ -30,13 +35,7 @@ export default {
 	components: {
 		NcLoadingIcon,
 		BTabs,
-		BTab,
-	},
-	props: {
-		metaDataId: {
-			type: String,
-			required: true,
-		},
+		BTab
 	},
 	data() {
 		return {
@@ -53,13 +52,13 @@ export default {
 		},
 	},
 	mounted() {
-		this.fetchData(this.metaDataId)
+		this.fetchData()
 	},
 	methods: {
-		fetchData(id) {
+		fetchData() {
 			this.loading = true,
 			fetch(
-				`/index.php/apps/opencatalog/metadata/api/${id}`,
+				'/index.php/apps/opencatalog/metadata/api/' + store.item,
 				{
 					method: 'GET',
 				},

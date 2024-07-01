@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcAppContentList>
 		<ul>
@@ -19,12 +23,12 @@
 				:name="publication?.name"
 				:bold="false"
 				:force-display-actions="true"
-				:active="activePublicationId === publication.id"
+				:active="store.publicationItem === publication.id"
 				:details="'CC0 1.0'"
 				:counter-number="1"
 				@click="setActive(publication.id)">
 				<template #icon>
-					<ListBoxOutline :class="activePublicationId === publication.id && 'selectedZaakIcon'"
+					<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"
@@ -74,7 +78,6 @@ export default {
 			search: '',
 			loading: false,
 			publications: [],
-			activePublicationId: '',
 		}
 	},
 	mounted() {
@@ -101,8 +104,8 @@ export default {
 				})
 		},
 		setActive(id) {
-			this.activePublicationId = id
-			this.$emit('publicationId', id)
+			store.setPublicationItem(id)
+			this.$emit('publicationItem', id)
 		},
 		clearText() {
 			this.search = ''

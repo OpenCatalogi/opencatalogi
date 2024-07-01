@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcAppContentList>
 		<ul>
@@ -17,12 +21,12 @@
 				v-if="!loading"
 				:key="`${metaData}${i}`"
 				:name="metaData?.name"
-				:active="activeMetaDataId === metaData?.id"
+				:active="store.metadataItem === metaData?.id"
 				:details="'1h'"
 				:counter-number="44"
 				@click="setActive(metaData.id)">
 				<template #icon>
-					<FileTreeOutline :class="activeMetaDataId === metaData.id && 'selectedZaakIcon'"
+					<FileTreeOutline :class="store.metadataItem === metaData.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"
@@ -48,7 +52,7 @@
 				class="loadingIcon"
 				:size="64"
 				appearance="dark"
-				name="Zaken aan het laden" />
+				name="Metadata aan het laden" />
 		</ul>
 	</NcAppContentList>
 </template>
@@ -75,7 +79,6 @@ export default {
 			search: '',
 			loading: true,
 			metaDataList: [],
-			activeMetaDataId: '',
 		}
 	},
 	mounted() {
@@ -102,8 +105,8 @@ export default {
 				})
 		},
 		setActive(id) {
-			this.activeMetaDataId = id
-			this.$emit('metaDataId', id)
+			store.setMetadataItem(id);
+			this.$emit('metadataItem', id)
 		},
 		clearText() {
 			this.search = ''

@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<NcAppContentList>
 		<ul>
@@ -17,12 +21,12 @@
 				v-if="!loading"
 				:key="`${directory}${i}`"
 				:name="directory?.name"
-				:active="activeDirectoryId === directory?.id"
+				:active="store.directoryItem === directory?.id"
 				:details="'1h'"
 				:counter-number="44"
 				@click="setActive(directory.id)">
 				<template #icon>
-					<LayersOutline :class="activeDirectoryId === directory.id && 'selectedZaakIcon'"
+					<LayersOutline :class="store.directoryItem === directory.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"
@@ -77,7 +81,6 @@ export default {
 			search: '',
 			loading: false,
 			directoryList: [],
-			activeDirectoryId: '',
 		}
 	},
 	mounted() {
@@ -104,8 +107,8 @@ export default {
 				})
 		},
 		setActive(id) {
-			this.activeDirectoryId = id
-			this.$emit('directoryId', id)
+			store.setDirectoryItem(id)
+			this.$emit('directoryItem', id)
 		},
 		clearText() {
 			this.search = ''

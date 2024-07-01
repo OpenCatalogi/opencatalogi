@@ -1,3 +1,7 @@
+<script setup>
+import { store } from '../../store.js'
+</script>
+
 <template>
 	<div class="detailContainer">
 		<div v-if="!loading" id="app-content">

@@ -5,20 +5,21 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>		
 		<div class="dashboardContainer">
-			<h1>Searc</h1>
-			<p>Search item {{ store.item}}</p>
+			<h1>Titel Dashboard</h1>
+			<p>Selected item {{ store.item}}</p>
 		</div>
 	</NcAppContent>
 </template>
 
 <script>
 
-import { NcAppContent, NcEmptyContent } from '@nextcloud/vue'
+import { NcAppContent, NcButton } from '@nextcloud/vue'
 
 export default {
 	name: 'Dashboard',
 	components: {
-		NcAppContent
+		NcAppContent,
+		NcButton
 	}
 }
 </script>
