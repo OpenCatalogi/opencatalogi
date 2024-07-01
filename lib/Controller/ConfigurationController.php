@@ -51,6 +51,7 @@ class ConfigurationController extends Controller
 			'elasticKey'=>'',
 			'mongodbLocation'=>'',
 			'mongodbKey'=>'',
+			'mongodbCluster' => '',
 			'organisationName'=>'my-organisation',
 			'organisationOin'=> '',
 			'organisationPki'=>''
@@ -66,7 +67,7 @@ class ConfigurationController extends Controller
 
 	/**
 	 * Handling the post request
-	 * 
+	 *
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
