@@ -1,5 +1,5 @@
 <script setup>
- import { store } from '../store.js'
+import { store } from '../store.js'
 </script>
 
 <template>
@@ -56,12 +56,12 @@
 		</NcActions>
 
 		<NcAppNavigationList>
-			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="store.modal =  'publicationAdd'">
+			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="store.modal = 'publicationAdd'">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNewItem>
-			<NcAppNavigationItem :active="store.selected === 'dashboard'"  @click="store.setSelected('dashboard')" name="Dashboard" >
+			<NcAppNavigationItem :active="store.selected === 'dashboard'" name="Dashboard" @click="store.setSelected('dashboard')">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
@@ -76,7 +76,7 @@
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'search'" @click="store.setSelected('search')" name="Search">
+			<NcAppNavigationItem :active="store.selected === 'search'" name="Search" @click="store.setSelected('search')">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -84,23 +84,23 @@
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="store.selected === 'catalogi'" @click="store.setSelected('catalogi')" name="Catalogi">
+			<NcAppNavigationItem :active="store.selected === 'catalogi'" name="Catalogi" @click="store.setSelected('catalogi')">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'directory'" @click="store.setSelected('directory')" name="Directory">
+			<NcAppNavigationItem :active="store.selected === 'directory'" name="Directory" @click="store.setSelected('directory')">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'metaData'" @click="store.setSelected('metaData')" name="MetaData">
+			<NcAppNavigationItem :active="store.selected === 'metaData'" name="MetaData" @click="store.setSelected('metaData')">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem name="Configuration"   @click="settingsOpen = true">
+			<NcAppNavigationItem name="Configuration" @click="settingsOpen = true">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
@@ -125,14 +125,14 @@
 									<td>Location</td>
 									<td>
 										<NcTextField id="drcLocation"
-											:value.sync="this.configuration.drcLocation"
+											:value.sync="configuration.drcLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
 										<NcTextField id="drcKey"
-											:value.sync="this.configuration.drcKey"
+											:value.sync="configuration.drcKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -144,14 +144,14 @@
 									<td>Location</td>
 									<td>
 										<NcTextField id="orcLocation"
-											:value.sync="this.configuration.orcLocation"
+											:value.sync="configuration.orcLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
 										<NcTextField id="orcKey"
-											:value.sync="this.configuration.orcKey"
+											:value.sync="configuration.orcKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -163,14 +163,14 @@
 									<td>Location</td>
 									<td>
 										<NcTextField id="elasticLocation"
-											:value.sync="this.configuration.elasticLocation"
+											:value.sync="configuration.elasticLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
 										<NcTextField id="elasticKey"
-											:value.sync="this.configuration.elasticKey"
+											:value.sync="configuration.elasticKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -182,14 +182,14 @@
 									<td>Location</td>
 									<td>
 										<NcTextField id="mongodbLocation"
-											:value.sync="this.configuration.mongodbLocation"
+											:value.sync="configuration.mongodbLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
 										<NcTextField id="mongodbKey"
-											:value.sync="this.configuration.mongodbKey"
+											:value.sync="configuration.mongodbKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -197,7 +197,10 @@
 							</tbody>
 						</table>
 					</p>
-					<NcButton aria-label="Save" type="primary" wide  @click="saveConfig()">
+					<NcButton aria-label="Save"
+						type="primary"
+						wide
+						@click="saveConfig()">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
@@ -213,11 +216,14 @@
 						Here you can set the details for your organisation
 					</p>
 
-					<NcTextField id="organisationName" :value.sync="this.configuration.organisationName" />
-					<NcTextField id="organisationOin" :value.sync="this.configuration.organisationOin" />
-					<NcTextArea id="organisationPki" :value.sync="this.configuration.organisationPki" />
+					<NcTextField id="organisationName" :value.sync="configuration.organisationName" />
+					<NcTextField id="organisationOin" :value.sync="configuration.organisationOin" />
+					<NcTextArea id="organisationPki" :value.sync="configuration.organisationPki" />
 
-					<NcButton aria-label="Save" type="primary" wide @click="saveConfig()">
+					<NcButton aria-label="Save"
+						type="primary"
+						wide
+						@click="saveConfig()">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
@@ -229,8 +235,6 @@
 	</NcAppNavigation>
 </template>
 <script>
-
-import { Store } from '../store.js'
 
 import {
 	NcActions,
@@ -246,7 +250,6 @@ import {
 	NcTextField,
 	NcTextArea,
 } from '@nextcloud/vue'
-
 
 import Connection from 'vue-material-design-icons/Connection'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -285,7 +288,7 @@ export default {
 		FileTreeOutline,
 		CogOutline,
 		ContentSave,
-		Finance
+		Finance,
 	},
 	data() {
 		return {
@@ -303,18 +306,18 @@ export default {
 			organisation_pki: '',
 			catalogi: [],
 			configuration: {
-				drcLocation: "",
-				drcKey: "",
-				orcLocation: "",
-				orcKey: "",
-				elasticLocation: "",
-				elasticKey: "",
-				mongodbLocation: "",
-				mongodbKey: "",
-				organisationName: "",
-				organisationOin: "",
-				organisationPki: ""
-			}
+				drcLocation: '',
+				drcKey: '',
+				orcLocation: '',
+				orcKey: '',
+				elasticLocation: '',
+				elasticKey: '',
+				mongodbLocation: '',
+				mongodbKey: '',
+				organisationName: '',
+				organisationOin: '',
+				organisationPki: '',
+			},
 		}
 	},
 	mounted() {
@@ -341,40 +344,40 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
-			
+
 			fetch(
 				'/index.php/apps/opencatalog/configuration',
 				{
 					method: 'GET',
 				},
-			)	
+			)
 				.then((response) => {
 					response.json().then((data) => {
-					this.configuration = data
+						this.configuration = data
 					})
 				})
 				.catch((err) => {
 					console.error(err)
-				});
+				})
 		},
 		saveConfig() {
 			 // Simple POST request with a JSON body using fetch
 			const requestOptions = {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(this.configuration)
-			};
-				
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(this.configuration),
+			}
+
 			fetch('/index.php/apps/opencatalog/configuration', requestOptions)
 				.then((response) => {
 					response.json().then((data) => {
-					this.configuration = data
+						this.configuration = data
 					})
 				})
 				.catch((err) => {
 					console.error(err)
-				});		
-		}
+				})
+		},
 	},
 }
 </script>
