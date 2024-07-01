@@ -4,17 +4,19 @@ import { store } from '../store.js'
 
 <template>
 	<!-- Placeholder div for all of the vieuws-->
-	<div>		
-		<Catalogi v-if="store.selected === 'catalogi'" />
-		<Dashboard v-if="store.selected === 'dashboard'" />
-		<Directory v-if="store.selected === 'directory'" />
-		<Matadata v-if="store.selected === 'metaData'" />
-		<Search v-if="store.selected === 'search'" />
-	</div>
+	<NcAppContent>
+		<template #default>
+			<Catalogi v-if="store.selected === 'catalogi'" />
+			<Dashboard v-if="store.selected === 'dashboard'" />
+			<Directory v-if="store.selected === 'directory'" />
+			<Matadata v-if="store.selected === 'metaData'" />
+			<Search v-if="store.selected === 'search'" />
+		</template>
+	</NcAppContent>
 </template>
 
 <script>
-
+import { NcAppContent } from '@nextcloud/vue'
 import Catalogi from './catalogi/index.vue'
 import Dashboard from './dashboard/index.vue'
 import Directory from './directory/index.vue'
@@ -30,9 +32,8 @@ export default {
 		Directory,
 		Matadata,
 		Publications,
-		Search
-	}
+		Search,
+		NcAppContent,
+	},
 }
 </script>
-
-
