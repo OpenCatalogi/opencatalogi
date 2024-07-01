@@ -100,13 +100,13 @@
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem name="Configuration"  @click="store.setSelected('settings')">
+			<NcAppNavigationItem name="Configuration"   @click="settingsOpen = true">
 				<template #icon>
 					<CogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppSettingsDialog :open.sync="store.selected === 'setting'" :show-navigation="true" name="Application settings">
+			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Application settings">
 				<NcAppSettingsSection id="sharing" name="Connections" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
@@ -115,7 +115,6 @@
 					<p>
 						Here you can set the details for varius Connections
 					</p>
-
 					<p>
 						<table>
 							<tbody>
@@ -125,15 +124,15 @@
 									</td>
 									<td>Location</td>
 									<td>
-										<NcTextField id="drc_location"
-											:value.sync="drc_location"
+										<NcTextField id="drcLocation"
+											:value.sync="this.configuration.drcLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
-										<NcTextField id="drc_key"
-											:value.sync="drc_key"
+										<NcTextField id="drcKey"
+											:value.sync="this.configuration.drcKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -144,15 +143,15 @@
 									</td>
 									<td>Location</td>
 									<td>
-										<NcTextField id="orc_location"
-											:value.sync="orc_location"
+										<NcTextField id="orcLocation"
+											:value.sync="this.configuration.orcLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
-										<NcTextField id="orc_key"
-											:value.sync="orc_key"
+										<NcTextField id="orcKey"
+											:value.sync="this.configuration.orcKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -163,15 +162,34 @@
 									</td>
 									<td>Location</td>
 									<td>
-										<NcTextField id="elastic_location"
-											:value.sync="elastic_location"
+										<NcTextField id="elasticLocation"
+											:value.sync="this.configuration.elasticLocation"
 											:label-outside="true"
 											placeholder="https://" />
 									</td>
 									<td>Key</td>
 									<td>
-										<NcTextField id="elastic_key"
-											:value.sync="elastic_key"
+										<NcTextField id="elasticKey"
+											:value.sync="this.configuration.elasticKey"
+											:label-outside="true"
+											placeholder="***" />
+									</td>
+								</tr>
+								<tr>
+									<td class="row-name">
+										Mongo DB
+									</td>
+									<td>Location</td>
+									<td>
+										<NcTextField id="mongodbLocation"
+											:value.sync="this.configuration.mongodbLocation"
+											:label-outside="true"
+											placeholder="https://" />
+									</td>
+									<td>Key</td>
+									<td>
+										<NcTextField id="mongodbKey"
+											:value.sync="this.configuration.mongodbKey"
 											:label-outside="true"
 											placeholder="***" />
 									</td>
@@ -179,7 +197,7 @@
 							</tbody>
 						</table>
 					</p>
-					<NcButton aria-label="Save" type="primary" wide>
+					<NcButton aria-label="Save" type="primary" wide  @click="saveConfig()">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
@@ -195,11 +213,11 @@
 						Here you can set the details for your organisation
 					</p>
 
-					<NcTextField id="organisation_name" :value.sync="organisation_name" />
-					<NcTextField id="organisation_oin" :value.sync="organisation_oin" />
-					<NcTextArea id="organisation_pki" :value.sync="organisation_pki" />
+					<NcTextField id="organisationName" :value.sync="this.configuration.organisationName" />
+					<NcTextField id="organisationOin" :value.sync="this.configuration.organisationOin" />
+					<NcTextArea id="organisationPki" :value.sync="this.configuration.organisationPki" />
 
-					<NcButton aria-label="Save" type="primary" wide>
+					<NcButton aria-label="Save" type="primary" wide @click="saveConfig()">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
@@ -283,7 +301,20 @@ export default {
 			organisation_name: '',
 			organisation_oin: '',
 			organisation_pki: '',
-			catalogi: []
+			catalogi: [],
+			configuration: {
+				drcLocation: "",
+				drcKey: "",
+				orcLocation: "",
+				orcKey: "",
+				elasticLocation: "",
+				elasticKey: "",
+				mongodbLocation: "",
+				mongodbKey: "",
+				organisationName: "",
+				organisationOin: "",
+				organisationPki: ""
+			}
 		}
 	},
 	mounted() {
@@ -292,6 +323,7 @@ export default {
 	methods: {
 		// We use the catalogi in the menu so lets fetch those
 		fetchData(newPage) {
+			// Catalogi details
 			this.loading = true,
 			fetch(
 				'/index.php/apps/opencatalog/catalogi/api',
@@ -309,10 +341,39 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+			
+			fetch(
+				'/index.php/apps/opencatalog/configuration',
+				{
+					method: 'GET',
+				},
+			)	
+				.then((response) => {
+					response.json().then((data) => {
+					this.configuration = data
+					})
+				})
+				.catch((err) => {
+					console.error(err)
+				});
 		},
-		save() {
-			this.zrc_location = ''
-			this.zrc_key = ''
+		saveConfig() {
+			 // Simple POST request with a JSON body using fetch
+			const requestOptions = {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(this.configuration)
+			};
+				
+			fetch('/index.php/apps/opencatalog/configuration', requestOptions)
+				.then((response) => {
+					response.json().then((data) => {
+					this.configuration = data
+					})
+				})
+				.catch((err) => {
+					console.error(err)
+				});		
 		}
 	},
 }
