@@ -40,8 +40,9 @@ class ConfigurationController extends Controller
 	public function index(): JSONResponse
 	{
 
-		// Getting the config -> should be a class wide constant for re use
+		$data = [];
 		$defaults = [
+		// Getting the config
 			'drcLocation'=>'',
 			'drcKey'=>'',
 			'orcLocation'=>'',
@@ -56,7 +57,6 @@ class ConfigurationController extends Controller
 		];
 
 		// We should filter out unwanted values before this
-		$data = [];
 		foreach($defaults as $key => $value){
 			$data[$key] =  $this->config->getValueString('opencatalog', $key, $value);
 		}
@@ -76,7 +76,8 @@ class ConfigurationController extends Controller
 
 		// We should filter out unwanted values before this
 		foreach($data as $key => $value){
-			$data[$key] =  $this->config->setValueString('opencatalog', $key, $value);
+			$this->config->setValueString('opencatalog', $key, $value);
+			$data[$key] =  $this->config->getValueString('opencatalog', $key);
 		}
 
 		return new JSONResponse($data);
