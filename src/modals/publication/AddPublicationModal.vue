@@ -66,13 +66,15 @@ export default {
 			succesMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
+			hasUpdated: false,
 		}
 	},
 	updated() {
-		// eslint-disable-next-line no-undef, no-console
-		console.log({ publication })
-		this.fetchCatalogi()
-		this.fetchMetaData()
+		if (!this.hasUpdated) {
+			this.fetchCatalogi()
+			this.fetchMetaData()
+			this.hasUpdated = true
+		}
 	},
 	methods: {
 		fetchCatalogi() {
