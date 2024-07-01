@@ -17,6 +17,9 @@ import { store } from '../../store.js'
 					</div>
 				</div>
 			</div>
+			<NcButton type="primary" @click="store.setModal('publicationEdit')">
+				Publicatie toevoegen
+			</NcButton>
 		</div>
 		<NcLoadingIcon v-if="loading"
 			:size="100"
@@ -26,15 +29,13 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { BTabs, BTab } from 'bootstrap-vue'
-import { NcLoadingIcon } from '@nextcloud/vue'
+import { NcLoadingIcon, NcButton } from '@nextcloud/vue'
 
 export default {
 	name: 'PublicationDetail',
 	components: {
 		NcLoadingIcon,
-		BTabs,
-		BTab,
+		NcButton,
 	},
 	props: {
 		publicationId: {
@@ -61,7 +62,7 @@ export default {
 	},
 	methods: {
 		fetchData(id) {
-			this.loading = true,
+			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalog/publications/api/${id}`,
 				{

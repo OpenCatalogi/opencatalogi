@@ -10,13 +10,13 @@ use OCP\IRequest;
 class MetaDataController extends Controller
 {
     const TEST_ARRAY = [
-        "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f" => [
-            "id" => "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f",
+        "6892aeb1-d92d-4da5-ad41-f1c3278f40c2" => [
+            "id" => "6892aeb1-d92d-4da5-ad41-f1c3278f40c2",
             "name" => "MetaData one",
             "summary" => "summary for one"
         ],
-        "4c3edd34-a90d-4d2a-8894-adb5836ecde8" => [
-            "id" => "4c3edd34-a90d-4d2a-8894-adb5836ecde8",
+        "a375d626-ffe8-4a26-a024-1ad452d1b931" => [
+            "id" => "a375d626-ffe8-4a26-a024-1ad452d1b931",
             "name" => "MetaData two",
             "summary" => "summary for two"
         ]

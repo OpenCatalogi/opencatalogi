@@ -27,21 +27,20 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcAppContent, NcEmptyContent } from '@nextcloud/vue'
-import MainMenu from '../../navigation/MainMenu.vue'
+import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
 import PublicationList from './list.vue'
 import PublicationDetails from './details.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 
 export default {
 	name: 'PublicationIndex',
 	components: {
 		NcAppContent,
 		NcEmptyContent,
-		MainMenu,
 		ListBoxOutline,
 		PublicationList,
 		PublicationDetails,
+		NcButton,
 	},
 	methods: {
 		getIdFromUrl() {

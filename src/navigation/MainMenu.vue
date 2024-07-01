@@ -250,17 +250,16 @@ import {
 	NcTextArea,
 } from '@nextcloud/vue'
 
-import Connection from 'vue-material-design-icons/Connection'
-import Delete from 'vue-material-design-icons/Delete.vue'
+import Connection from 'vue-material-design-icons/Connection.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import DatabaseEyeOutline from 'vue-material-design-icons/DatabaseEyeOutline'
-import DatabaseCogOutline from 'vue-material-design-icons/DatabaseCogOutline'
-import LayersSearchOutline from 'vue-material-design-icons/LayersSearchOutline'
-import LayersOutline from 'vue-material-design-icons/LayersOutline'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
-import CogOutline from 'vue-material-design-icons/CogOutline'
-import ContentSave from 'vue-material-design-icons/ContentSave'
-import Finance from 'vue-material-design-icons/Finance'
+import DatabaseEyeOutline from 'vue-material-design-icons/DatabaseEyeOutline.vue'
+import DatabaseCogOutline from 'vue-material-design-icons/DatabaseCogOutline.vue'
+import LayersSearchOutline from 'vue-material-design-icons/LayersSearchOutline.vue'
+import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import CogOutline from 'vue-material-design-icons/CogOutline.vue'
+import ContentSave from 'vue-material-design-icons/ContentSave.vue'
+import Finance from 'vue-material-design-icons/Finance.vue'
 
 export default {
 	name: 'MainMenu',
@@ -277,7 +276,6 @@ export default {
 		NcTextField,
 		NcTextArea,
 		NcButton,
-		Delete,
 		Plus,
 		Connection,
 		DatabaseEyeOutline,
@@ -325,8 +323,8 @@ export default {
 	methods: {
 		// We use the catalogi in the menu so lets fetch those
 		fetchData(newPage) {
+			this.loading = true
 			// Catalogi details
-			this.loading = true,
 			fetch(
 				'/index.php/apps/opencatalog/catalogi/api',
 				{

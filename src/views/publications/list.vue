@@ -17,35 +17,36 @@ import { store } from '../../store.js'
 				</NcTextField>
 			</div>
 
-			<NcListItem v-for="(publication, i) in publications.results"
-				v-if="!loading"
-				:key="`${publication}${i}`"
-				:name="publication?.name"
-				:bold="false"
-				:force-display-actions="true"
-				:active="store.publicationItem === publication.id"
-				:details="'CC0 1.0'"
-				:counter-number="1"
-				@click="store.setPublicationItem(publication.id)">
-				<template #icon>
-					<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
-						disable-menu
-						:size="44"
-						user="janedoe"
-						display-name="Jane Doe" />
-				</template>
-				<template #subname>
-					{{ publication?.summary }}
-				</template>
-				<template #actions>
-					<NcActionButton>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton>
-						Depubliceren
-					</NcActionButton>
-				</template>
-			</NcListItem>
+			<div v-if="!loading">
+				<NcListItem v-for="(publication, i) in publications.results"
+					:key="`${publication}${i}`"
+					:name="publication?.name"
+					:bold="false"
+					:force-display-actions="true"
+					:active="store.publicationItem === publication.id"
+					:details="'CC0 1.0'"
+					:counter-number="1"
+					@click="store.setPublicationItem(publication.id)">
+					<template #icon>
+						<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
+							disable-menu
+							:size="44"
+							user="janedoe"
+							display-name="Jane Doe" />
+					</template>
+					<template #subname>
+						{{ publication?.summary }}
+					</template>
+					<template #actions>
+						<NcActionButton>
+							Bewerken
+						</NcActionButton>
+						<NcActionButton>
+							Depubliceren
+						</NcActionButton>
+					</template>
+				</NcListItem>
+			</div>
 
 			<NcLoadingIcon v-if="loading"
 				:size="64"
@@ -56,17 +57,15 @@ import { store } from '../../store.js'
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
-import Magnify from 'vue-material-design-icons/Magnify'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
+import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 
 export default {
 	name: 'PublicationList',
 	components: {
 		NcListItem,
-		NcListItemIcon,
 		NcActionButton,
-		NcAvatar,
 		NcAppContentList,
 		NcTextField,
 		ListBoxOutline,
@@ -85,7 +84,7 @@ export default {
 	},
 	methods: {
 		fetchData(newPage) {
-			this.loading = true,
+			this.loading = true
 			fetch(
 				'/index.php/apps/opencatalog/publications/api',
 				{
@@ -102,10 +101,6 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
-		},
-		setActive(id) {
-			store.setPublicationItem(id)
-			this.$emit('publicationItem', id)
 		},
 		clearText() {
 			this.search = ''

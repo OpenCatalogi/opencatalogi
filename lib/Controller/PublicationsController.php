@@ -10,16 +10,16 @@ use OCP\IRequest;
 class PublicationsController extends Controller
 {
     const TEST_ARRAY = [
-        "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f" => [
-            "id" => "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f",
+        "354980e5-c967-4ba5-989b-65c2b0cd2ff4" => [
+            "id" => "354980e5-c967-4ba5-989b-65c2b0cd2ff4",
             "name" => "Input voor OpenCatalogi",
             "summary" => "Dit is een selectie van high-value datasets in DCAT-AP 2.0 standaard x"
-        ] //,
-        //"4c3edd34-a90d-4d2a-8894-adb5836ecde8" => [
-        //    "id" => "4c3edd34-a90d-4d2a-8894-adb5836ecde8",
-        //    "name" => "Publication two",
-        //    "summary" => "summary for two"
-        //]
+        ],
+        "2ab0011e-9b4c-4c50-a50d-a16fc0be0178" => [
+            "id" => "2ab0011e-9b4c-4c50-a50d-a16fc0be0178",
+            "title" => "Publication two",
+            "description" => "summary for two"
+        ]
     ];
 
     public function __construct($appName, IRequest $request)

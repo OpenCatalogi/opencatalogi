@@ -3,17 +3,16 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'publicationEdit'"
+		v-if="store.modal === 'publicationAdd'"
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div class="modal__content">
-			<h2>Edit publication</h2>
-			<h1>title: {{ publication.title }}</h1>
+			<h2>Add publication</h2>
 			<div class="form-group">
-				<NcTextField label="Naam" :value.sync="publication.title" :loading="publicationLoading" />
+				<NcTextField label="Naam" :value.sync="title" />
 			</div>
 			<div class="form-group">
-				<NcTextArea label="Beschrijving" :value.sync="publication.description" />
+				<NcTextArea label="Beschrijving" :value.sync="description" />
 			</div>
 			<div class="form-group">
 				<NcSelect v-bind="catalogi"
@@ -50,7 +49,7 @@ import {
 } from '@nextcloud/vue'
 
 export default {
-	name: 'EditPublicationModal',
+	name: 'AddPublicationModal',
 	components: {
 		NcModal,
 		NcTextField,
@@ -60,50 +59,22 @@ export default {
 	},
 	data() {
 		return {
-			publication: {
-				title: '',
-				description: '',
-			},
+			title: '',
+			description: '',
 			catalogi: {},
 			metaData: {},
 			succesMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
-			hasUpdated: false,
-			publicationLoading: false,
 		}
 	},
 	updated() {
-		if (!this.hasUpdated) {
-			this.fetchData(store.publicationItem)
-			this.fetchCatalogi()
-			this.fetchMetaData()
-			this.hasUpdated = true
-		}
+		// eslint-disable-next-line no-undef, no-console
+		console.log({ publication })
+		this.fetchCatalogi()
+		this.fetchMetaData()
 	},
 	methods: {
-		fetchData(id) {
-			this.publicationLoading = true
-			fetch(
-				`/index.php/apps/opencatalog/publications/api/${id}`,
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.publication = data
-						console.log(data)
-						// this.oldZaakId = id
-					})
-					this.publicationLoading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					// this.oldZaakId = id
-					this.publicationLoading = false
-				})
-		},
 		fetchCatalogi() {
 			this.catalogiLoading = true
 			fetch('/index.php/apps/opencatalog/catalogi/api', {

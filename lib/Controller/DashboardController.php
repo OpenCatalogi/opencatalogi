@@ -10,13 +10,13 @@ use OCP\IRequest;
 class DashboardController extends Controller
 {
 	const TEST_ARRAY = [
-		"5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f" => [
-			"id" => "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f",
+		"d021c5ff-a254-4114-a1fb-7a18db152270" => [
+			"id" => "d021c5ff-a254-4114-a1fb-7a18db152270",
 			"name" => "Dashboard one",
 			"summary" => "summary for one"
 		],
-		"4c3edd34-a90d-4d2a-8894-adb5836ecde8" => [
-			"id" => "4c3edd34-a90d-4d2a-8894-adb5836ecde8",
+		"79c02b33-78ba-4d65-aabd-ff9aae6654f7" => [
+			"id" => "79c02b33-78ba-4d65-aabd-ff9aae6654f7",
 			"name" => "Dashboard two",
 			"summary" => "summary for two"
 		]
