@@ -195,9 +195,9 @@ import { store } from '../store.js'
 									<td>Cluster name</td>
 									<td>
 										<NcTextField id="mongodbCluster"
-											 :value.sync="configuration.mongodbCluster"
-											 :label-outside="true"
-											 placeholder="***" />
+											:value.sync="configuration.mongodbCluster"
+											:label-outside="true"
+											placeholder="***" />
 									</td>
 								</tr>
 							</tbody>
