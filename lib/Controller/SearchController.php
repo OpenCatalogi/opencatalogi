@@ -45,7 +45,6 @@ class SearchController extends Controller
         );
     }
 
-
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
