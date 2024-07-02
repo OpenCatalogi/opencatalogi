@@ -8,36 +8,43 @@ import { store } from '../../store.js'
 		@close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>Edit publication</h2>
-			<div class="form-group">
-				<NcTextField :disabled="loading"
-					label="Naam"
-					:value.sync="publication.title"
-					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
-				<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
-			</div>
-			<div class="selectGrid">
+			<div v-if="!publicationLoading">
 				<div class="form-group">
-					<NcSelect v-bind="catalogi"
-						v-model="catalogi.value"
-						:loading="catalogiLoading"
-						:disabled="loading"
-						required />
-				</div>
-				<div class="form-group">
-					<NcTextField :disabled="true"
-						label="MetaData"
-						:value.sync="publication.metaData"
+					<NcTextField :disabled="loading"
+						label="Naam"
+						:value.sync="publication.title"
 						:loading="publicationLoading" />
 				</div>
+				<div class="form-group">
+					<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
+				</div>
+				<div class="selectGrid">
+					<div class="form-group">
+						<NcSelect v-bind="catalogi"
+							v-model="catalogi.value"
+							:loading="catalogiLoading"
+							:disabled="loading"
+							required />
+					</div>
+					<div class="form-group">
+						<NcTextField :disabled="true"
+							label="MetaData"
+							:value.sync="publication.metaData"
+							:loading="publicationLoading" />
+					</div>
+				</div>
+				<div class="form-group">
+					<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
+				</div>
+				<div v-if="succesMessage" class="success">
+					Succesfully updated publication
+				</div>
 			</div>
-			<div class="form-group">
-				<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
-			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully updated publication
-			</div>
+			<NcLoadingIcon
+				v-if="publicationLoading"
+				:size="100"
+				appearance="dark"
+				name="Publicatie details aan het laden" />
 
 			<NcButton :disabled="!publication.title" type="primary" @click="udpatePublication(publication.id)">
 				Submit
@@ -53,6 +60,7 @@ import {
 	NcTextField,
 	NcTextArea,
 	NcSelect,
+	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 export default {
@@ -63,6 +71,7 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcSelect,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
@@ -178,8 +187,8 @@ export default {
 					body: JSON.stringify({
 						title: this.publication.title,
 						description: this.publication.description,
-						catalogi: this.publication.catalogi?.value?.id,
-						metaData: this.publication.metaData?.value?.id,
+						catalogi: this.publication.catalogi,
+						metaData: this.publication.metaData,
 						data: JSON.parse(this.publication.data),
 					}),
 				},
