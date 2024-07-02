@@ -18,15 +18,13 @@ import { store } from '../../store.js'
 				<NcSelect v-bind="catalogi"
 					v-model="catalogi.value"
 					:loading="catalogiLoading"
-					required
-					:value.sync="test" />
+					required />
 			</div>
 			<div class="form-group">
 				<NcSelect v-bind="metaData"
 					v-model="metaData.value"
 					:loading="metaDataLoading"
-					required
-					:value.sync="test2" />
+					required />
 			</div>
 			<div v-if="succesMessage" class="success">
 				Succesfully added publication
