@@ -10,7 +10,7 @@
 
 import { NcContent } from '@nextcloud/vue'
 import MainMenu from './navigation/MainMenu.vue'
-import Modals from './modals/modals.vue'
+import Modals from './modals/Modals.vue'
 import Views from './views/views.vue'
 import { store } from './store.js'
 

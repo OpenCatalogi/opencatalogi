@@ -8,17 +8,17 @@ import { store } from '../../store.js'
 			<!-- app-content-wrapper is optional, only use if app-content-list  -->
 			<div>
 				<h1 class="h1">
-					{{ publication.name }}
+					{{ publication.title }}
 				</h1>
 				<div class="grid">
 					<div class="gridContent">
-						<h4>Sammenvatting:</h4>
-						<span>{{ publication.summary }}</span>
+						<h4>Beschrijving:</h4>
+						<span>{{ publication.description }}</span>
 					</div>
 				</div>
 			</div>
 			<NcButton type="primary" @click="store.setModal('publicationEdit')">
-				Publicatie toevoegen
+				Publicatie bewerken
 			</NcButton>
 		</div>
 		<NcLoadingIcon v-if="loading"

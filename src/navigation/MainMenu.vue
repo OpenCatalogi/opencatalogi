@@ -69,8 +69,8 @@ import { store } from '../store.js'
 			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="store.selected === 'catalogus' && store.item === catalogus?.id"
-				@click="store.setSelected('catalogus'); store.setItem(catalogus?.id)">
+				:active="store.selected === 'catalogus' && store.item === catalogus?._id"
+				@click="store.setSelected('catalogus'); store.setItem(catalogus?._id)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
