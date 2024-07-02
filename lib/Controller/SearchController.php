@@ -51,6 +51,7 @@ class SearchController extends Controller
      */
     public function index(): JSONResponse
     {
+
         $results = ["results" => self::TEST_ARRAY];
         return new JSONResponse($params);
     }
