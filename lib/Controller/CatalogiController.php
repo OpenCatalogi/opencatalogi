@@ -61,6 +61,10 @@ class CatalogiController extends Controller
         );
     }
 
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
 	public function index(ObjectService $objectService): JSONResponse
 	{
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
