@@ -23,7 +23,7 @@ import AddExternalCatalogModal from './directory/Add.vue'
 import EditExternalCatalogModal from './directory/Edit.vue'
 
 export default {
-	name: 'Moodals',
+	name: 'Modals',
 	components: {
 		AddPublicationModal,
 		EditPublicationModal,
