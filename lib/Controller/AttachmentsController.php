@@ -9,22 +9,11 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
 
-class MetaDataController extends Controller
+class AttachmentsController extends Controller
 {
-    const TEST_ARRAY = [
-        "6892aeb1-d92d-4da5-ad41-f1c3278f40c2" => [
-            "id" => "6892aeb1-d92d-4da5-ad41-f1c3278f40c2",
-            "name" => "MetaData one",
-            "summary" => "summary for one"
-        ],
-        "a375d626-ffe8-4a26-a024-1ad452d1b931" => [
-            "id" => "a375d626-ffe8-4a26-a024-1ad452d1b931",
-            "name" => "MetaData two",
-            "summary" => "summary for two"
-        ]
-    ];
 
-    public function __construct(
+    public function __construct
+	(
 		$appName,
 		IRequest $request,
 		private readonly IAppConfig $config
@@ -46,7 +35,27 @@ class MetaDataController extends Controller
         return new TemplateResponse(
             //Application::APP_ID,
             'opencatalog',
-            'metaDataIndex',
+            'AttachmentsIndex',
+            []
+        );
+    }
+
+    /**
+     * Taking it from a catalogue point of view is just adding a filter
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function catalog(string $id): TemplateResponse
+    {
+        // The TemplateResponse loads the 'main.php'
+        // defined in our app's 'templates' folder.
+        // We pass the $getParameter variable to the template
+        // so that the value is accessible in the template.
+        return new TemplateResponse(
+            //Application::APP_ID,
+            'opencatalog',
+            'AttachmentsIndex',
             []
         );
     }
@@ -55,8 +64,8 @@ class MetaDataController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-	public function index(ObjectService $objectService): JSONResponse
-	{
+    public function index(ObjectService $objectService): JSONResponse
+    {
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -71,20 +80,20 @@ class MetaDataController extends Controller
 
 
 
-		$filters['_schema'] = 'metadata';
+		$filters['_schema'] = 'attachment';
 
 		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
 
-		$results = ["results" => $result['documents']];
-		return new JSONResponse($results);
-	}
+        $results = ["results" => $result['documents']];
+        return new JSONResponse($results);
+    }
 
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function show(string $id, ObjectService $objectService): JSONResponse
-	{
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function show(string $id, ObjectService $objectService): JSONResponse
+    {
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -93,16 +102,16 @@ class MetaDataController extends Controller
 
 		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
 
-		return new JSONResponse($result);
-	}
+        return new JSONResponse($result);
+    }
 
 
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function create(ObjectService $objectService): JSONResponse
-	{
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function create(ObjectService $objectService): JSONResponse
+    {
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -115,23 +124,23 @@ class MetaDataController extends Controller
 			}
 		}
 
-		$data['_schema'] = 'metadata';
+		$data['_schema'] = 'attachment';
 
 		$returnData = $objectService->saveObject(
 			data: $data,
 			config: $dbConfig
 		);
 
-		// get post from requests
-		return new JSONResponse($returnData);
-	}
+        // get post from requests
+        return new JSONResponse($returnData);
+    }
 
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function update(string $id, ObjectService $objectService): JSONResponse
-	{
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function update(string $id, ObjectService $objectService): JSONResponse
+    {
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -156,14 +165,14 @@ class MetaDataController extends Controller
 
 		// get post from requests
 		return new JSONResponse($returnData);
-	}
+    }
 
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function destroy(string $id, ObjectService $objectService): JSONResponse
-	{
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function destroy(string $id, ObjectService $objectService): JSONResponse
+    {
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -176,5 +185,5 @@ class MetaDataController extends Controller
 
 		// get post from requests
 		return new JSONResponse($returnData);
-	}
+    }
 }
