@@ -8,32 +8,38 @@ import { store } from '../../store.js'
 		@close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>Edit publication</h2>
-			<h1>title: {{ publication.title }}</h1>
 			<div class="form-group">
-				<NcTextField label="Naam" :value.sync="publication.title" :loading="publicationLoading" />
+				<NcTextField :disabled="loading"
+					label="Naam"
+					:value.sync="publication.title"
+					:loading="publicationLoading" />
 			</div>
 			<div class="form-group">
-				<NcTextArea label="Beschrijving" :value.sync="publication.description" />
+				<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
+			</div>
+			<div class="selectGrid">
+				<div class="form-group">
+					<NcSelect v-bind="catalogi"
+						v-model="catalogi.value"
+						:loading="catalogiLoading"
+						:disabled="loading"
+						required />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="true"
+						label="MetaData"
+						:value.sync="publication.metaData"
+						:loading="publicationLoading" />
+				</div>
 			</div>
 			<div class="form-group">
-				<NcSelect v-bind="catalogi"
-					v-model="catalogi.value"
-					:loading="catalogiLoading"
-					required
-					:value.sync="test" />
-			</div>
-			<div class="form-group">
-				<NcSelect v-bind="metaData"
-					v-model="metaData.value"
-					:loading="metaDataLoading"
-					required
-					:value.sync="test2" />
+				<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
 			</div>
 			<div v-if="succesMessage" class="success">
-				Succesfully added publication
+				Succesfully updated publication
 			</div>
 
-			<NcButton :disabled="!title" type="primary" @click="addPublication">
+			<NcButton :disabled="!publication.title" type="primary" @click="udpatePublication(publication.id)">
 				Submit
 			</NcButton>
 		</div>
@@ -63,9 +69,17 @@ export default {
 			publication: {
 				title: '',
 				description: '',
+				catalogi: '',
+				metaData: '',
+				data: '',
+				id: '',
 			},
-			catalogi: {},
+			catalogi: {
+				value: [],
+				options: [],
+			},
 			metaData: {},
+			loading: false,
 			succesMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
@@ -75,9 +89,9 @@ export default {
 	},
 	updated() {
 		if (!this.hasUpdated) {
-			this.fetchData(store.publicationItem)
 			this.fetchCatalogi()
 			this.fetchMetaData()
+			this.fetchData(store.publicationItem)
 			this.hasUpdated = true
 		}
 	},
@@ -93,14 +107,13 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						this.publication = data
-						console.log(data)
-						// this.oldZaakId = id
+						this.publication.data = JSON.stringify(data.data)
+						this.catalogi.value = [data.catalogi]
 					})
 					this.publicationLoading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					// this.oldZaakId = id
 					this.publicationLoading = false
 				})
 		},
@@ -113,9 +126,10 @@ export default {
 					response.json().then((data) => {
 
 						this.catalogi = {
+							value: this.catalogi.value,
 							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
-								id: catalog[0],
+								id: catalog[1]._id,
 								label: catalog[1].name,
 							})),
 
@@ -139,7 +153,7 @@ export default {
 						this.metaData = {
 							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[0],
+								id: metaData[1]._id,
 								label: metaData[1].name,
 							})),
 
@@ -155,25 +169,28 @@ export default {
 		closeModal() {
 			store.modal = false
 		},
-		addPublication() {
-			this.$emit('publication', this.name)
+		udpatePublication(id) {
+			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/publications/api',
+				`/index.php/apps/opencatalog/publications/api/${id}`,
 				{
-					method: 'POST',
+					method: 'PUT',
 					body: JSON.stringify({
-						title: this.title,
-						description: this.description,
-						catalogi: this.catalogi.value.id,
-						metaData: this.metaData.value.id,
+						title: this.publication.title,
+						description: this.publication.description,
+						catalogi: this.publication.catalogi?.value?.id,
+						metaData: this.publication.metaData?.value?.id,
+						data: JSON.parse(this.publication.data),
 					}),
 				},
 			)
 				.then((response) => {
 					this.succesMessage = true
+					this.loading = false
 					setTimeout(() => (this.succesMessage = false), 2500)
 				})
 				.catch((err) => {
+					this.loading = false
 					console.error(err)
 				})
 		},
