@@ -8,3 +8,26 @@
   margin-inline-start: var(--zaa-margin-20);
   margin-inline-end: var(--zaa-margin-20);
 }
+
+.listHeader {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: var(--color-main-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.searchField {
+  padding-inline-start: 65px;
+  padding-inline-end: 20px;
+  margin-block-start: 11px !important;
+  margin-block-end: 11px !important;
+}
+
+.selectedZaakIcon>svg {
+  fill: white;
+}
+
+/* .loadingIcon {
+  margin-block-start: var(--zaa-margin-20);
+} */
