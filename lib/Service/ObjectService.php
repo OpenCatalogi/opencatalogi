@@ -43,7 +43,7 @@ class ObjectService
 		$object 			      = self::BASE_OBJECT;
 		$object['dataSource']     = $config['mongodbCluster'];
 		$object['document']       = $data;
-		$object['document']['_id'] = Uuid::v4();
+		$object['document']['id'] = $object['document']['_id'] = Uuid::v4();
 
 		$result = $client->post(
 			uri: 'action/insertOne',
