@@ -86,7 +86,7 @@ export default {
 						this.catalogi = {
 							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
-								id: catalog[0],
+								id: catalog[1]._id,
 								label: catalog[1].name,
 							})),
 
@@ -110,7 +110,7 @@ export default {
 						this.metaData = {
 							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[0],
+								id: metaData[1]._id,
 								label: metaData[1].name,
 							})),
 
@@ -132,6 +132,9 @@ export default {
 				'/index.php/apps/opencatalog/publications/api',
 				{
 					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({
 						title: this.title,
 						description: this.description,

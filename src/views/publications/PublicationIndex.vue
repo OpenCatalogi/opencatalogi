@@ -28,8 +28,8 @@ import { store } from '../../store.js'
 
 <script>
 import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
-import PublicationList from './list.vue'
-import PublicationDetails from './details.vue'
+import PublicationList from './PublicationList.vue'
+import PublicationDetails from './PublicationDetail.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 
 export default {

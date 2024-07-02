@@ -22,7 +22,7 @@ import Catalogi from './catalogi/index.vue'
 import Dashboard from './dashboard/index.vue'
 import Directory from './directory/index.vue'
 import Matadata from './metaData/index.vue'
-import Publications from './publications/index.vue'
+import Publications from './publications/PublicationIndex.vue'
 import Search from './search/index.vue'
 
 export default {

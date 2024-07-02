@@ -16,26 +16,25 @@ import { store } from '../../store.js'
 					<Magnify :size="20" />
 				</NcTextField>
 			</div>
-
 			<div v-if="!loading">
 				<NcListItem v-for="(publication, i) in publications.results"
 					:key="`${publication}${i}`"
-					:name="publication?.name"
+					:name="publication?.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="store.publicationItem === publication.id"
+					:active="store.publicationItem === publication._id"
 					:details="'CC0 1.0'"
 					:counter-number="1"
-					@click="store.setPublicationItem(publication.id)">
+					@click="store.setPublicationItem(publication._id)">
 					<template #icon>
-						<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
+						<ListBoxOutline :class="store.publicationItem === publication._id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
 							display-name="Jane Doe" />
 					</template>
 					<template #subname>
-						{{ publication?.summary }}
+						{{ publication?.description }}
 					</template>
 					<template #actions>
 						<NcActionButton>
@@ -43,6 +42,9 @@ import { store } from '../../store.js'
 						</NcActionButton>
 						<NcActionButton>
 							Depubliceren
+						</NcActionButton>
+						<NcActionButton @click="deletePublication(publication._id)">
+							Verwijderen
 						</NcActionButton>
 					</template>
 				</NcListItem>
@@ -100,6 +102,25 @@ export default {
 				.catch((err) => {
 					console.error(err)
 					this.loading = false
+				})
+		},
+		deletePublication(id) {
+			fetch(
+				`/index.php/apps/opencatalog/publications/api/${id}`,
+				{
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			)
+				.then((response) => {
+					console.warn('publication removed')
+					// this.succesMessage = true
+					// setTimeout(() => (this.succesMessage = false), 2500)
+				})
+				.catch((err) => {
+					console.error(err)
 				})
 		},
 		clearText() {
