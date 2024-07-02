@@ -92,7 +92,7 @@ class PublicationsController extends Controller
 
 
 
-		$filters['_entity'] = 'publication';
+		$filters['_schema'] = 'publication';
 
 		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
 
@@ -136,7 +136,7 @@ class PublicationsController extends Controller
 			}
 		}
 
-		$data['_entity'] = 'publication';
+		$data['_schema'] = 'publication';
 
 		$returnData = $objectService->saveObject(
 			data: $data,
