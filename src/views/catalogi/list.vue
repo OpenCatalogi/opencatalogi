@@ -78,7 +78,7 @@ export default {
 		return {
 			search: '',
 			loading: false,
-			catalogi: []
+			catalogi: [],
 		}
 	},
 	mounted() {
@@ -88,7 +88,7 @@ export default {
 		fetchData(newPage) {
 			this.loading = true,
 			fetch(
-				'/index.php/apps/opencatalog/catalogi/api',
+				'/index.php/apps/opencatalog/api/catalogi',
 				{
 					method: 'GET',
 				},
@@ -105,7 +105,7 @@ export default {
 				})
 		},
 		setActive(id) {
-			store.setCatalogItem(id);
+			store.setCatalogItem(id)
 			this.$emit('catalogItem', id)
 		},
 		clearText() {
