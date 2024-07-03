@@ -50,7 +50,8 @@ class SearchService
 			return $localResults;
 		}
 
-		$results = $localResults;
+		$results = $localResults['results'];
+		$aggregations = $localResults['facets'];
 
 		$promises = [];
 		foreach($directory['documents'] as $instance) {
@@ -75,7 +76,7 @@ class SearchService
 			}
 		}
 
-		return $results;
+		return ['results' => $results, 'facets' => $aggregations];
 	}
 
 }

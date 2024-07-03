@@ -106,7 +106,14 @@ class ElasticSearchService
 			$body['query']['bool']['must'][] = ['query_string' => ['query' => '*'.$filters['_search'].'*']];
 		}
 
-		unset($filters['_search']);
+		if(isset($filters['_queries']) === true) {
+			foreach($filters['_queries'] as $query) {
+				$body['runtime_mappings'][$query] = ['type' => 'keyword'];
+				$body['aggs'][$query] = ['terms' => ['field' => $query]];
+			}
+		}
+
+		unset($filters['_search'], $filters['_queries']);
 
 		foreach ($filters as $name => $filter) {
 			$body['query']['bool']['must'][] = ['match' => [$name => $filter]];
@@ -126,6 +133,39 @@ class ElasticSearchService
 
 	}//end formatResults()
 
+	/**
+	 * Rename the items in an aggregation bucket according to the response standard for aggregations.
+	 *
+	 * @param array $bucketItem The item to rewrite
+	 *
+	 * @return array The rewritten array.
+	 */
+	private function renameBucketItems(array $bucketItem): array
+	{
+		return [
+			'_id'   => $bucketItem['key'],
+			'count' => $bucketItem['doc_count'],
+		];
+
+	}//end renameBucketItems()
+
+	/**
+	 * Map aggregation results to comply to the existing standard for aggregation results.
+	 *
+	 * @param array $result The result to map.
+	 *
+	 * @return array The mapped result.
+	 */
+	private function mapAggregationResults(array $result): array
+	{
+		$buckets = $result['buckets'];
+
+		$result = array_map([$this, 'renameBucketItems'], $buckets);
+
+		return $result;
+
+	}//end mapAggregationResults()
+
 	public function searchObject(array $filters, array $config): array
 	{
 		$body = $this->parseFilters(filters: $filters);
@@ -137,6 +177,6 @@ class ElasticSearchService
 			'body'  => $body
 		]);
 
-		return array_map(callback: [$this, 'formatResults'], array: $result['hits']['hits']);
+		return ['results' => array_map(callback: [$this, 'formatResults'], array: $result['hits']['hits']), 'facets' => array_map([$this, 'mapAggregationResults'], $result['aggregations'])];
 	}
 }

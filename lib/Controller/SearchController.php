@@ -68,6 +68,6 @@ class SearchController extends Controller
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 
-        return new JSONResponse(['results' => $data]);
+        return new JSONResponse($data);
     }
 }
