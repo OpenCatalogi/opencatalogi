@@ -46,7 +46,7 @@ import { store } from '../../store.js'
 				appearance="dark"
 				name="Publicatie details aan het laden" />
 
-			<NcButton :disabled="!publication.title" type="primary" @click="udpatePublication(publication.id)">
+			<NcButton :disabled="!publication.title" type="primary" @click="updatePublication(publication.id)">
 				Submit
 			</NcButton>
 		</div>
@@ -178,12 +178,15 @@ export default {
 		closeModal() {
 			store.modal = false
 		},
-		udpatePublication(id) {
+		updatePublication(id) {
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalog/publications/api/${id}`,
 				{
 					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({
 						title: this.publication.title,
 						description: this.publication.description,

@@ -21,10 +21,10 @@ import { store } from '../../store.js'
 							required />
 					</div>
 					<div class="form-group">
-						<NcTextField :disabled="true"
-							label="MetaData"
-							:value.sync="publication.metaData"
-							:loading="publicationLoading" />
+						<NcSelect v-bind="metaData"
+								  v-model="metaData.value"
+								  :loading="metaDataLoading"
+								  required />
 					</div>
 				</div>
 				<div class="form-group">
