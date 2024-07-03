@@ -49,8 +49,8 @@ class SearchController extends Controller
     }
 
     /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
+     * @PublicPage
+	 * @NoCSRFRequired
      */
     public function index(SearchService $searchService): JSONResponse
     {
