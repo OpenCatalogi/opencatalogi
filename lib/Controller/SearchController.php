@@ -3,6 +3,7 @@
 namespace OCA\OpenCatalog\Controller;
 
 use OCA\OpenCatalog\Service\ElasticSearchService;
+use OCA\OpenCatalog\Service\SearchService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
@@ -51,19 +52,21 @@ class SearchController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function index(ElasticSearchService $elasticSearchService): JSONResponse
+    public function index(SearchService $searchService): JSONResponse
     {
 		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
 		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
 		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
 
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
 		$filters = $this->request->getParams();
 
 		unset($filters['_route']);
 
-
-
-		$data = $elasticSearchService->searchObject(filters: $filters, config: $elasticConfig);
+		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 
         return new JSONResponse(['results' => $data]);
     }

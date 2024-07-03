@@ -38,20 +38,44 @@ class SearchService
 	/**
 	 *
 	 */
-	public function search(array $parameters, $dbConfig): array
+	public function search(array $parameters, array $elasticConfig, array $dbConfig): array
 	{
-//		$client    = $this->getClient(config: []);
-//		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
-//
-//		$promises = [];
-//		foreach($directory as $instance) {
-//			$url = $instance['url'];
-//			$promises[] = $client->getAsync($url.'/publications');
-//		}
-//
-//		$responses = Utils::settle($promises);
-//
-//
+		$elasticService = new ElasticSearchService();
+		$localResults = $elasticService->searchObject($parameters, $elasticConfig);
+
+		$client    = $this->getClient(config: []);
+		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
+
+		if(count($directory['documents']) === 0) {
+			return $localResults;
+		}
+
+		$results = $localResults;
+
+		$promises = [];
+		foreach($directory['documents'] as $instance) {
+			if($instance['default'] === false) {
+				continue;
+			}
+			$url = $instance['search'];
+			$promises[] = $client->getAsync($url, ['query' => $parameters]);
+		}
+
+		$responses = Utils::settle($promises)->wait();
+
+		foreach($responses as $response) {
+			if($response['state'] === 'fulfilled') {
+				$results = array_merge(
+					$results,
+					json_decode(
+						json: $response['value']->getBody()->getContents(),
+						associative: true
+					)['results']
+				);
+			}
+		}
+
+		return $results;
 	}
 
 }
