@@ -2,9 +2,11 @@
 
 namespace OCA\OpenCatalog\Controller;
 
+use OCA\OpenCatalog\Service\ElasticSearchService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\IAppConfig;
 use OCP\IRequest;
 
 class SearchController extends Controller
@@ -22,7 +24,7 @@ class SearchController extends Controller
         ]
     ];
 
-    public function __construct($appName, IRequest $request)
+    public function __construct($appName, IRequest $request, private readonly IAppConfig $config)
     {
         parent::__construct($appName, $request);
     }
@@ -49,10 +51,20 @@ class SearchController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function index(): JSONResponse
+    public function index(ElasticSearchService $elasticSearchService): JSONResponse
     {
+		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
 
-        $results = ["results" => self::TEST_ARRAY];
-        return new JSONResponse($params);
+		$filters = $this->request->getParams();
+
+		unset($filters['_route']);
+
+
+
+		$data = $elasticSearchService->searchObject(filters: $filters, config: $elasticConfig);
+
+        return new JSONResponse(['results' => $data]);
     }
 }

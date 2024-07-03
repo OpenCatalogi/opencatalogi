@@ -80,7 +80,7 @@ export default {
 	methods: {
 		fetchData(id) {
 			this.loading = true
-			fetch(`/index.php/apps/opencatalog/publications/api/${id}`, {
+			fetch(`/index.php/apps/opencatalog/api/publications/${id}`, {
 				method: 'GET',
 			})
 				.then((response) => {

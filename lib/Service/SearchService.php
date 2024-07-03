@@ -40,18 +40,18 @@ class SearchService
 	 */
 	public function search(array $parameters, $dbConfig): array
 	{
-		$client    = $this->getClient(config: []);
-		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
-
-		$promises = [];
-		foreach($directory as $instance) {
-			$url = $instance['url'];
-			$promises[] = $client->getAsync($url.'/publications');
-		}
-
-		$responses = Utils::settle($promises);
-
-		
+//		$client    = $this->getClient(config: []);
+//		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
+//
+//		$promises = [];
+//		foreach($directory as $instance) {
+//			$url = $instance['url'];
+//			$promises[] = $client->getAsync($url.'/publications');
+//		}
+//
+//		$responses = Utils::settle($promises);
+//
+//
 	}
 
 }

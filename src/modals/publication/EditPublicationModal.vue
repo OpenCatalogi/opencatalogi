@@ -108,7 +108,7 @@ export default {
 		fetchData(id) {
 			this.publicationLoading = true
 			fetch(
-				`/index.php/apps/opencatalog/publications/api/${id}`,
+				`/index.php/apps/opencatalog/api/publications/${id}`,
 				{
 					method: 'GET',
 				},
@@ -128,7 +128,7 @@ export default {
 		},
 		fetchCatalogi() {
 			this.catalogiLoading = true
-			fetch('/index.php/apps/opencatalog/catalogi/api', {
+			fetch('/index.php/apps/opencatalog/api/catalogi', {
 				method: 'GET',
 			})
 				.then((response) => {
@@ -153,7 +153,7 @@ export default {
 		},
 		fetchMetaData() {
 			this.metaDataLoading = true
-			fetch('/index.php/apps/opencatalog/metadata/api', {
+			fetch('/index.php/apps/opencatalog/api/metadata', {
 				method: 'GET',
 			})
 				.then((response) => {
@@ -181,7 +181,7 @@ export default {
 		updatePublication(id) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalog/publications/api/${id}`,
+				`/index.php/apps/opencatalog/api/publications/${id}`,
 				{
 					method: 'PUT',
 					headers: {
