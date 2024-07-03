@@ -16,8 +16,8 @@ class ConfigurationController extends Controller
 			"name" => "Configuration one",
 			"summary" => "summary for one"
 		],
-		"4c3edd34-a90d-4d2a-8894-adb5836ecde8" => [
-			"id" => "4c3edd34-a90d-4d2a-8894-adb5836ecde8",
+		"7782b511-7034-4d49-a005-e827d5ae603f" => [
+			"id" => "7782b511-7034-4d49-a005-e827d5ae603f",
 			"name" => "Configuration two",
 			"summary" => "summary for two"
 		]
@@ -51,6 +51,7 @@ class ConfigurationController extends Controller
 			'elasticKey'=>'',
 			'mongodbLocation'=>'',
 			'mongodbKey'=>'',
+			'mongodbCluster' => '',
 			'organisationName'=>'my-organisation',
 			'organisationOin'=> '',
 			'organisationPki'=>''
@@ -66,7 +67,7 @@ class ConfigurationController extends Controller
 
 	/**
 	 * Handling the post request
-	 * 
+	 *
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */

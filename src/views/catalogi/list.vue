@@ -16,37 +16,37 @@ import { store } from '../../store.js'
 					<Magnify :size="20" />
 				</NcTextField>
 			</div>
-
-			<NcListItem v-for="(catalogus, i) in catalogi.results"
-				v-if="!loading"
-				:key="`${catalogus}${i}`"
-				:name="catalogus?.name"
-				:active="store.catalogItem === catalogus?.id"
-				:details="'1h'"
-				:counter-number="44"
-				@click="setActive(catalogus.id)">
-				<template #icon>
-					<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
-						disable-menu
-						:size="44"
-						user="janedoe"
-						display-name="Jane Doe" />
-				</template>
-				<template #subname>
-					{{ catalogus?.summary }}
-				</template>
-				<template #actions>
-					<NcActionButton>
-						Button one
-					</NcActionButton>
-					<NcActionButton>
-						Button two
-					</NcActionButton>
-					<NcActionButton>
-						Button three
-					</NcActionButton>
-				</template>
-			</NcListItem>
+			<div v-if="!loading">
+				<NcListItem v-for="(catalogus, i) in catalogi.results"
+					:key="`${catalogus}${i}`"
+					:name="catalogus?.name"
+					:active="store.catalogItem === catalogus?.id"
+					:details="'1h'"
+					:counter-number="44"
+					@click="setActive(catalogus.id)">
+					<template #icon>
+						<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
+							disable-menu
+							:size="44"
+							user="janedoe"
+							display-name="Jane Doe" />
+					</template>
+					<template #subname>
+						{{ catalogus?.summary }}
+					</template>
+					<template #actions>
+						<NcActionButton>
+							Button one
+						</NcActionButton>
+						<NcActionButton>
+							Button two
+						</NcActionButton>
+						<NcActionButton>
+							Button three
+						</NcActionButton>
+					</template>
+				</NcListItem>
+			</div>
 
 			<NcLoadingIcon v-if="loading"
 				class="loadingIcon"

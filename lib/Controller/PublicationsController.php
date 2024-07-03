@@ -2,27 +2,34 @@
 
 namespace OCA\OpenCatalog\Controller;
 
+use OCA\OpenCatalog\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\IAppConfig;
 use OCP\IRequest;
 
 class PublicationsController extends Controller
 {
     const TEST_ARRAY = [
-        "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f" => [
-            "id" => "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f",
+        "354980e5-c967-4ba5-989b-65c2b0cd2ff4" => [
+            "id" => "354980e5-c967-4ba5-989b-65c2b0cd2ff4",
             "name" => "Input voor OpenCatalogi",
             "summary" => "Dit is een selectie van high-value datasets in DCAT-AP 2.0 standaard x"
-        ] //,
-        //"4c3edd34-a90d-4d2a-8894-adb5836ecde8" => [
-        //    "id" => "4c3edd34-a90d-4d2a-8894-adb5836ecde8",
-        //    "name" => "Publication two",
-        //    "summary" => "summary for two"
-        //]
+        ],
+        "2ab0011e-9b4c-4c50-a50d-a16fc0be0178" => [
+            "id" => "2ab0011e-9b4c-4c50-a50d-a16fc0be0178",
+            "title" => "Publication two",
+            "description" => "summary for two"
+        ]
     ];
 
-    public function __construct($appName, IRequest $request)
+    public function __construct
+	(
+		$appName,
+		IRequest $request,
+		private readonly IAppConfig $config
+	)
     {
         parent::__construct($appName, $request);
     }
@@ -47,7 +54,7 @@ class PublicationsController extends Controller
 
     /**
      * Taking it from a catalogue point of view is just adding a filter
-     * 
+     *
      * @NoAdminRequired
      * @NoCSRFRequired
      */
@@ -69,9 +76,27 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function index(): JSONResponse
+    public function index(ObjectService $objectService): JSONResponse
     {
-        $results = ["results" => self::TEST_ARRAY];
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters = $this->request->getParams();
+
+		foreach($filters as $key => $value) {
+			if(str_starts_with($key, '_')) {
+				unset($filters[$key]);
+			}
+		}
+
+
+
+		$filters['_schema'] = 'publication';
+
+		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
+
+        $results = ["results" => $result['documents']];
         return new JSONResponse($results);
     }
 
@@ -79,9 +104,16 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function show(string $id): JSONResponse
+    public function show(string $id, ObjectService $objectService): JSONResponse
     {
-        $result = self::TEST_ARRAY[$id];
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters['_id'] = $id;
+
+		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
+
         return new JSONResponse($result);
     }
 
@@ -90,28 +122,80 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function create(): JSONResponse
+    public function create(ObjectService $objectService): JSONResponse
     {
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$data = $this->request->getParams();
+
+		foreach($data as $key => $value) {
+			if(str_starts_with($key, '_')) {
+				unset($data[$key]);
+			}
+		}
+
+		$data['_schema'] = 'publication';
+
+		$returnData = $objectService->saveObject(
+			data: $data,
+			config: $dbConfig
+		);
+
         // get post from requests
-        return new JSONResponse([]);
+        return new JSONResponse($returnData);
     }
 
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function update(string $id): JSONResponse
+    public function update(string $id, ObjectService $objectService): JSONResponse
     {
-        $result = self::TEST_ARRAY[$id];
-        return new JSONResponse($result);
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$data = $this->request->getParams();
+
+		foreach($data as $key => $value) {
+			if(str_starts_with($key, '_')) {
+				unset($data[$key]);
+			}
+		}
+		if (isset($data['id'])) {
+			unset( $data['id']);
+		}
+
+		$filters['_id'] = $id;
+		$returnData = $objectService->updateObject(
+			filters: $filters,
+			update: $data,
+			config: $dbConfig
+		);
+
+		// get post from requests
+		return new JSONResponse($returnData);
     }
 
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function destroy(string $id): JSONResponse
+    public function destroy(string $id, ObjectService $objectService): JSONResponse
     {
-        return new JSONResponse([]);
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters['_id'] = $id;
+		$returnData = $objectService->deleteObject(
+			filters: $filters,
+			config: $dbConfig
+		);
+
+		// get post from requests
+		return new JSONResponse($returnData);
     }
 }
