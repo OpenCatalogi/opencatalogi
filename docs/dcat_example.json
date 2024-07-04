@@ -9,7 +9,9 @@
 	"modified": "2020-12-29",
 	"featured": false,
 	"organization": {
-		"name": "Gemeente Rotterdam"
+		"id": "9d8309c4-a244-4482-95db-e1488c643bb8",
+		"title": "Gemeente Rotterdam",
+		"image": "https://avatars.githubusercontent.com/u/93453128?v=4"
 	},
 	"schema": "https://openwoo.app/schemas/metadata.dcat_catalog.schema.json",
 	"status": "published",
