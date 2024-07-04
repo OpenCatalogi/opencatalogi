@@ -7,35 +7,96 @@ import { store } from '../../store.js'
 		<div v-if="!loading" id="app-content">
 			<!-- app-content-wrapper is optional, only use if app-content-list  -->
 			<div>
-				<h1 class="h1">
-					{{ publication.title }}
-				</h1>
-				<div>
-					<div>
-						<h4>Beschrijving:</h4>
-						<span>{{ publication.description }}</span>
-					</div>
-					<div>
-						<h4>Catalogi:</h4>
-						<span>{{ publication.catalogi }}</span>
-					</div>
-					<div>
-						<h4>Metadata:</h4>
-						<span>{{ publication.metaData }}</span>
-					</div>
-					<div>
-						<h4>Data:</h4>
-						<div class="dataContent">
-							<span v-for="(value, name, i) in publication.data" :key="`${name, value}${i}`">{{
-								`${name}: ${value}`
-							}}</span>
-						</div>
-					</div>
+				<div class="head">
+					<h1 class="h1">
+						{{ publication.title }}
+					</h1>
+					<NcActions>
+						<NcActionButton @click="store.setModal('publicationEdit')">
+							<template #icon>
+								<CogOutline :size="20" />
+							</template>
+							Bewerken
+						</NcActionButton>
+					</NcActions>
+				</div>
+				<div class="tabContainer">
+					<BTabs content-class="mt-3" justified>
+						<BTab title="Publicatie" active>
+							<div>
+								<h4>Beschrijving:</h4>
+								<span>{{ publication.description }}</span>
+							</div>
+							<div>
+								<h4>Catalogi:</h4>
+								<span>{{ publication.catalogi }}</span>
+							</div>
+							<div>
+								<h4>Metadata:</h4>
+								<span>{{ publication.metaData }}</span>
+							</div>
+							<div>
+								<h4>Data:</h4>
+								<div class="dataContent">
+									<span
+										v-for="(value, name, i) in publication.data"
+										:key="`${(name, value)}${i}`">{{ `${name}: ${value}` }}</span>
+								</div>
+							</div>
+						</BTab>
+						<BTab title="Bijlagen">
+							<div
+								v-if="publication?.data.attachments?.length > 0"
+								class="tabPanel">
+								<table
+									ref="table"
+									class="vld-parent table"
+									:current-page="currentPage">
+									<tr>
+										<th>Titel</th>
+										<th>Beschrijving</th>
+										<th>Licentie</th>
+										<th>Type</th>
+										<th>Gepubliseerd</th>
+										<th>bewerkt</th>
+										<th>download</th>
+									</tr>
+									<tr
+										v-for="(attachment, i) in publication?.data?.attachments"
+										:key="i"
+										class="table-rows">
+										<td class="td">
+											{{ attachment.title }}
+										</td>
+										<td class="td">
+											{{ attachment.description }}
+										</td>
+										<td class="td">
+											{{ attachment.license }}
+										</td>
+										<td class="td">
+											{{ attachment.type }}
+										</td>
+										<td class="td">
+											{{ attachment.published }}
+										</td>
+										<td class="td">
+											{{ attachment.modified }}
+										</td>
+										<td class="td">
+											<a class="link"
+												:href="attachment.downloadURL">Download</a>
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div v-else class="tabPanel">
+								Geen eigenschappen gevonden
+							</div>
+						</BTab>
+					</BTabs>
 				</div>
 			</div>
-			<NcButton type="primary" @click="store.setModal('publicationEdit')">
-				Publicatie bewerken
-			</NcButton>
 		</div>
 		<NcLoadingIcon
 			v-if="loading"
@@ -46,13 +107,18 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcButton } from '@nextcloud/vue'
+import { NcLoadingIcon, NcButton, NcActions, NcActionButton } from '@nextcloud/vue'
+import { BTabs, BTab } from 'bootstrap-vue'
+import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
 	components: {
 		NcLoadingIcon,
 		NcButton,
+		NcActionButton,
+		NcActions,
+		CogOutline,
 	},
 	props: {
 		publicationId: {
@@ -103,6 +169,15 @@ export default {
 <style>
 h4 {
   font-weight: bold;
+}
+
+.head{
+	display: flex;
+	justify-content: space-between;
+}
+
+.button{
+	max-height: 10px;
 }
 
 .h1 {

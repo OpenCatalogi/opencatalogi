@@ -23,6 +23,9 @@ import { store } from '../../store.js'
 						Ververs
 					</NcActionButton>
 					<NcActionButton>
+						<template #icon>
+							<Plus :size="20" />
+						</template>
 						publicatie toevoegen
 					</NcActionButton>
 				</NcActions>
@@ -73,6 +76,7 @@ import { store } from '../../store.js'
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 
 export default {
@@ -87,6 +91,7 @@ export default {
 		NcLoadingIcon,
 		NcActions,
 		Refresh,
+		Plus,
 	},
 	data() {
 		return {
