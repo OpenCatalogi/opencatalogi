@@ -70,4 +70,29 @@ class SearchController extends Controller
 
         return new JSONResponse($data);
     }
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 */
+	public function show(string $id, SearchService $searchService): JSONResponse
+	{
+		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters = ['_id' => $id];
+
+		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
+
+		if(count($data['results']) > 0) {
+			return new JSONResponse($data['results'][0]);
+		}
+
+		return new JSONResponse(data: ['error' => ['code' => 404, 'message' => 'the requested resource could not be found']], statusCode: 404);
+	}
 }
