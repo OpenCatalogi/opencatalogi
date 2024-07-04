@@ -10,13 +10,13 @@ use OCP\IRequest;
 class DirectoryController extends Controller
 {
     const TEST_ARRAY = [
-        "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f" => [
-            "id" => "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f",
+        "64996753-5109-4396-9f07-17040d7fb137" => [
+            "id" => "64996753-5109-4396-9f07-17040d7fb137",
             "name" => "Directory one",
             "summary" => "summary for one"
         ],
-        "4c3edd34-a90d-4d2a-8894-adb5836ecde8" => [
-            "id" => "4c3edd34-a90d-4d2a-8894-adb5836ecde8",
+        "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea" => [
+            "id" => "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea",
             "name" => "Directory two",
             "summary" => "summary for two"
         ]

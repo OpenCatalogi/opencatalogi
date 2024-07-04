@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // The store script handles app whide variables (or state), for the use of these variables and there governing concepts read the design.md
 import { reactive } from 'vue'
 
