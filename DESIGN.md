@@ -9,3 +9,6 @@
 - modals schould be importerd through /src/modals/Modals.vue
 
 ## Views
+
+- Views must have the same file name as the exported name and is a correlation to the map the file is in. 
+    - For example, if the file is a detail page, and it is in the directory `publications` the file must be named `PublicationDetail.vue`.
