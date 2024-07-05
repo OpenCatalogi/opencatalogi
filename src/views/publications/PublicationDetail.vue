@@ -46,7 +46,7 @@ import { store } from '../../store.js'
 						</BTab>
 						<BTab title="Bijlagen">
 							<div
-								v-if="publication?.data.attachments?.length > 0"
+								v-if="publication?.data?.attachments?.length > 0"
 								class="tabPanel">
 								<table
 									ref="table"
@@ -91,7 +91,7 @@ import { store } from '../../store.js'
 								</table>
 							</div>
 							<div v-else class="tabPanel">
-								Geen eigenschappen gevonden
+								Geen bijlagen gevonden
 							</div>
 						</BTab>
 					</BTabs>
@@ -107,7 +107,7 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcButton, NcActions, NcActionButton } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 
@@ -115,7 +115,6 @@ export default {
 	name: 'PublicationDetail',
 	components: {
 		NcLoadingIcon,
-		NcButton,
 		NcActionButton,
 		NcActions,
 		CogOutline,

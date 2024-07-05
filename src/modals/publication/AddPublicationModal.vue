@@ -7,34 +7,37 @@ import { store } from '../../store.js'
 			<h2>Add publication</h2>
 			<div class="formContainer">
 				<div class="form-group">
-					<NcTextField :disabled="loading" label="Naam" :value.sync="title" />
+					<NcTextField :disabled="publicationLoading" label="Naam" :value.sync="title" />
 				</div>
 				<div class="form-group">
-					<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="description" />
+					<NcTextArea :disabled="publicationLoading" label="Beschrijving" :value.sync="description" />
 				</div>
 				<div class="selectGrid">
 					<div class="form-group">
 						<NcSelect v-bind="catalogi"
 							v-model="catalogi.value"
+							input-label="Catalogi"
 							:loading="catalogiLoading"
-							:disabled="loading"
+							:disabled="publicationLoading"
 							required />
 					</div>
 					<div class="form-group">
-						<NcTextField :disabled="true"
-							label="MetaData"
-							:value.sync="publication.metaData"
-							:loading="publicationLoading" />
+						<NcSelect v-bind="metaData"
+							v-model="metaData.value"
+							input-label="MetaData"
+							:loading="metaDataLoading"
+							:disabled="publicationLoading"
+							required />
 					</div>
 				</div>
 				<div class="form-group">
-					<NcTextArea :disabled="loading" label="Data" :value.sync="data" />
+					<NcTextArea :disabled="publicationLoading" label="Data" :value.sync="data" />
 				</div>
 				<div v-if="succesMessage" class="success">
 					Succesfully added publication
 				</div>
 			</div>
-			<NcButton :disabled="!title && !catalogi?.value?.id && !metaData?.value?.id || loading" type="primary" @click="addPublication">
+			<NcButton :disabled="!title && !catalogi?.value?.id && !metaData?.value?.id || publicationLoading" type="primary" @click="addPublication">
 				Submit
 			</NcButton>
 		</div>
@@ -66,15 +69,15 @@ export default {
 			data: '',
 			catalogi: {},
 			metaData: {},
-			loading: false,
 			succesMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
+			publicationLoading: false,
 			hasUpdated: false,
 		}
 	},
 	updated() {
-		if (!this.hasUpdated) {
+		if (store.modal === 'publicationAdd' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
 			this.hasUpdated = true
@@ -90,7 +93,6 @@ export default {
 					response.json().then((data) => {
 
 						this.catalogi = {
-							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
 								id: catalog[1]._id,
 								label: catalog[1].name,
@@ -114,7 +116,6 @@ export default {
 					response.json().then((data) => {
 
 						this.metaData = {
-							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
 								id: metaData[1]._id,
 								label: metaData[1].name,
@@ -133,8 +134,7 @@ export default {
 			store.modal = false
 		},
 		addPublication() {
-			this.loading = true
-			this.$emit('publication', this.name)
+			this.publicationLoading = true
 			fetch(
 				'/index.php/apps/opencatalog/publications/api',
 				{
@@ -153,11 +153,11 @@ export default {
 			)
 				.then((response) => {
 					this.succesMessage = true
-					this.loading = false
+					this.publicationLoading = false
 					setTimeout(() => (this.succesMessage = false), 2500)
 				})
 				.catch((err) => {
-					this.loading = false
+					this.publicationLoading = false
 					console.error(err)
 				})
 		},
