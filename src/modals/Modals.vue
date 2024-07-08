@@ -15,8 +15,8 @@
 <script>
 import AddPublicationModal from './publication/AddPublicationModal.vue'
 import EditPublicationModal from './publication/EditPublicationModal.vue'
-import AddMetaDataModal from './metaData/Add.vue'
-import EditMetaDataModal from './metaData/Edit.vue'
+import AddMetaDataModal from './metaData/AddMetaDataModal.vue'
+import EditMetaDataModal from './metaData/EditMetaDataModal.vue'
 import AddCatalogModal from './catalog/Add.vue'
 import EditCatalogModal from './catalog/Edit.vue'
 import AddExternalCatalogModal from './directory/Add.vue'

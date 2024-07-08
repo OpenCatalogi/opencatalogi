@@ -17,36 +17,37 @@ import { store } from '../../store.js'
 				</NcTextField>
 			</div>
 
-			<NcListItem v-for="(metaData, i) in metaDataList.results"
-				v-if="!loading"
-				:key="`${metaData}${i}`"
-				:name="metaData?.name"
-				:active="store.metadataItem === metaData?.id"
-				:details="'1h'"
-				:counter-number="44"
-				@click="setActive(metaData.id)">
-				<template #icon>
-					<FileTreeOutline :class="store.metadataItem === metaData.id && 'selectedZaakIcon'"
-						disable-menu
-						:size="44"
-						user="janedoe"
-						display-name="Jane Doe" />
-				</template>
-				<template #subname>
-					{{ metaData?.summary }}
-				</template>
-				<template #actions>
-					<NcActionButton>
-						Button one
-					</NcActionButton>
-					<NcActionButton>
-						Button two
-					</NcActionButton>
-					<NcActionButton>
-						Button three
-					</NcActionButton>
-				</template>
-			</NcListItem>
+			<div v-if="!loading">
+				<NcListItem v-for="(metaData, i) in metaDataList.results"
+					:key="`${metaData}${i}`"
+					:name="metaData?.name"
+					:active="store.metaDataItem === metaData?._id"
+					:details="'1h'"
+					:counter-number="44"
+					@click="store.setMetadataItem(metaData._id)">
+					<template #icon>
+						<FileTreeOutline :class="store.metaDataItem === metaData._id && 'selectedZaakIcon'"
+							disable-menu
+							:size="44"
+							user="janedoe"
+							display-name="Jane Doe" />
+					</template>
+					<template #subname>
+						{{ metaData?.summary }}
+					</template>
+					<template #actions>
+						<NcActionButton>
+							Bewerken
+						</NcActionButton>
+						<NcActionButton>
+							Depubliceren
+						</NcActionButton>
+						<NcActionButton @click="deleteMetaData(metaData._id)">
+							Verwijderen
+						</NcActionButton>
+					</template>
+				</NcListItem>
+			</div>
 
 			<NcLoadingIcon v-if="loading"
 				class="loadingIcon"
@@ -104,10 +105,10 @@ export default {
 					this.loading = false
 				})
 		},
-		setActive(id) {
-			store.setMetadataItem(id);
-			this.$emit('metadataItem', id)
-		},
+		// setActive(id) {
+		// 	store.setMetadataItem(id)
+		// 	this.$emit('metaDataItem', id)
+		// },
 		clearText() {
 			this.search = ''
 		},
