@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\OpenCatalog\Controller;
+namespace OCA\OpenCatalogi\Controller;
 
 use OCP\IAppConfig;
 use OCP\AppFramework\Controller;
@@ -60,7 +60,7 @@ class ConfigurationController extends Controller
 
 		// We should filter out unwanted values before this
 		foreach($defaults as $key => $value){
-			$data[$key] =  $this->config->getValueString('opencatalog', $key, $value);
+			$data[$key] =  $this->config->getValueString($this->appName, $key, $value);
 		}
 
 		return new JSONResponse($data);
@@ -78,8 +78,8 @@ class ConfigurationController extends Controller
 
 		// We should filter out unwanted values before this
 		foreach($data as $key => $value){
-			$this->config->setValueString('opencatalog', $key, $value);
-			$data[$key] =  $this->config->getValueString('opencatalog', $key);
+			$this->config->setValueString($this->appName, $key, $value);
+			$data[$key] =  $this->config->getValueString($this->appName, $key);
 		}
 
 		return new JSONResponse($data);

@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\OpenCatalog\Controller;
+namespace OCA\OpenCatalogi\Controller;
 
 use OCA\OpenCatalog\Service\ObjectService;
 use OCP\AppFramework\Controller;
@@ -44,8 +44,7 @@ class MetaDataController extends Controller
         // We pass the $getParameter variable to the template
         // so that the value is accessible in the template.
         return new TemplateResponse(
-            //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'metaDataIndex',
             []
         );

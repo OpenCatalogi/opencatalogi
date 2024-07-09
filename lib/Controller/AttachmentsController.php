@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\OpenCatalog\Controller;
+namespace OCA\OpenCatalogi\Controller;
 
 use GuzzleHttp\Exception\GuzzleException;
 use OCA\OpenCatalog\Service\ElasticSearchService;
@@ -57,7 +57,7 @@ class AttachmentsController extends Controller
         // so that the value is accessible in the template.
         return new TemplateResponse(
             //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'AttachmentsIndex',
             []
         );
@@ -77,7 +77,7 @@ class AttachmentsController extends Controller
         // so that the value is accessible in the template.
         return new TemplateResponse(
             //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'AttachmentsIndex',
             []
         );
