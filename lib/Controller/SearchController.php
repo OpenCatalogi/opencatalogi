@@ -2,8 +2,8 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use OCA\OpenCatalog\Service\ElasticSearchService;
-use OCA\OpenCatalog\Service\SearchService;
+use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
