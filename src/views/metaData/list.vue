@@ -88,7 +88,7 @@ export default {
 		fetchData(newPage) {
 			this.loading = true,
 			fetch(
-				'/index.php/apps/opencatalog/metadata/api',
+				'/index.php/apps/opencatalog/api/metadata',
 				{
 					method: 'GET',
 				},
@@ -105,7 +105,7 @@ export default {
 				})
 		},
 		setActive(id) {
-			store.setMetadataItem(id);
+			store.setMetadataItem(id)
 			this.$emit('metadataItem', id)
 		},
 		clearText() {

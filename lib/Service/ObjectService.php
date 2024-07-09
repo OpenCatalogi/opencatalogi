@@ -2,7 +2,9 @@
 
 namespace OCA\OpenCatalog\Service;
 
+use Adbar\Dot;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Uid\Uuid;
 
 class ObjectService
@@ -131,15 +133,20 @@ class ObjectService
 	{
 		$client = $this->getClient(config: $config);
 
+		$dotUpdate = new Dot($update);
+
 		$object                   = self::BASE_OBJECT;
 		$object['filter']         = $filters;
 		$object['update']['$set'] = $update;
+		$object['upsert']		  = true;
 		$object['dataSource']     = $config['mongodbCluster'];
 
-		$returnData = $client->post(
-			uri: 'action/updateOne',
-			options: ['json' => $object]
-		);
+
+
+			$returnData = $client->post(
+				uri: 'action/updateOne',
+				options: ['json' => $object]
+			);
 
 		return $this->findObject($filters, $config);
 	}

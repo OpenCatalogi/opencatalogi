@@ -1,0 +1,39 @@
+{
+	"id": "33f88aa9-6ac0-4f6c-967e-ecf787fd6a3d",
+	"reference": "string",
+	"title": "Advice on soil remediation due to PFAS",
+	"summary": "This report provides expert advice on soil remediation strategies to address contamination from PFAS (Per- and Polyfluoroalkyl Substances), highlighting effective techniques and safety measures for environmental restoration.",
+	"description": "This comprehensive report addresses the pressing issue of soil contamination at the site of the now-demolished Raintree Industrial Complex, located on the outskirts of the fictional municipality of Greenborough. The industrial activities previously conducted at Raintree, primarily involving the manufacture of high-performance coatings, have left a significant environmental footprint, primarily due to the presence of Per- and Polyfluoroalkyl Substances (PFAS) in the soil.\n\nPFAS, commonly referred to as \"forever chemicals,\" are a group of man-made compounds known for their persistence in the environment and in the human body, where they can accumulate over time. The demolition of the Raintree Industrial Complex offers a unique opportunity to address this contamination before the land is repurposed for residential development.\n\nThe primary focus of this report is to offer detailed advice on the remediation strategies necessary to ensure the site is safe for future residential use. The following key actions are recommended:\n\nComprehensive Site Assessment: A thorough environmental assessment must be conducted to map the extent of PFAS contamination. This should include soil, groundwater, and surface water testing throughout the entire site.\nSelection of Remediation Techniques: Based on the levels and types of PFAS found, appropriate remediation techniques should be employed. Techniques such as soil washing, on-site thermal desorption, and the use of activated carbon filters can be effective in removing or containing PFAS compounds.\nCommunity Engagement and Transparency: Keeping the local community informed and involved through the remediation process is crucial. Regular updates, public consultations, and transparent reporting of findings and progress should be mandated.\nRegulatory Compliance and Monitoring: The project must comply with all local and national environmental regulations. A long-term monitoring plan should be established to ensure that the remediation efforts are sustained and that no further pollution occurs.\nPreparation for Residential Development: Once the site has been certified as meeting all safety standards for residential use, planning can commence for housing development. This phase should include an assessment of infrastructure needs and the potential impacts on local traffic, schools, and healthcare services.\nThis report underscores the necessity of a careful, scientifically-grounded approach to soil remediation, particularly in areas affected by industrial pollutants such as PFAS. By adhering to the outlined strategies, Greenborough can safely transform the former industrial site into a vibrant residential community, ensuring a safe and healthy environment for future generations.",
+	"image": "string",
+	"category": "adviezen",
+	"portal": "httpsL//open.zuid-drecht.nl/publicaties/33f88aa9-6ac0-4f6c-967e-ecf787fd6a3d",
+	"publicationDate": "now",
+	"featured": false,
+	"organization": null,
+	"schema": "https://openwoo.app/schemas/metadata.dcat_adviezen.schema.json",
+	"status": "string",
+	"attachments": [
+	  null
+	],
+	"attachment_count": 0,
+	"themes": [],
+	"data": {
+	  "tooiCategorieNaam": "wetten en algemeen verbindende voorschriften",
+	  "tooiCategorieId": "c_139c6280",
+	  "tooiCategorieUri": "https://identifier.overheid.nl/tooi/def/thes/kern/c_139c6280",
+	  "tooiThemaNaam": "string",
+	  "tooiThemaId": "string",
+	  "tooiThemaUri": "string",
+	  "values": [
+		{}
+	  ]
+	},
+	"anonymization": {
+	  "anonymized": true,
+	  "results": "string"
+	},
+	"language": {
+	  "code": "en-us",
+	  "level": "A1"
+	}
+  }

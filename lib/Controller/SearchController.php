@@ -2,9 +2,12 @@
 
 namespace OCA\OpenCatalog\Controller;
 
+use OCA\OpenCatalog\Service\ElasticSearchService;
+use OCA\OpenCatalog\Service\SearchService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\IAppConfig;
 use OCP\IRequest;
 
 class SearchController extends Controller
@@ -22,7 +25,7 @@ class SearchController extends Controller
         ]
     ];
 
-    public function __construct($appName, IRequest $request)
+    public function __construct($appName, IRequest $request, private readonly IAppConfig $config)
     {
         parent::__construct($appName, $request);
     }
@@ -46,12 +49,50 @@ class SearchController extends Controller
     }
 
     /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
+     * @PublicPage
+	 * @NoCSRFRequired
      */
-    public function index(): JSONResponse
+    public function index(SearchService $searchService): JSONResponse
     {
-        $results = ["results" => self::TEST_ARRAY];
-        return new JSONResponse($params);
+		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters = $this->request->getParams();
+
+		unset($filters['_route']);
+
+		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
+
+        return new JSONResponse($data);
     }
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 */
+	public function show(string $id, SearchService $searchService): JSONResponse
+	{
+		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters = ['_id' => $id];
+
+		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
+
+		if(count($data['results']) > 0) {
+			return new JSONResponse($data['results'][0]);
+		}
+
+		return new JSONResponse(data: ['error' => ['code' => 404, 'message' => 'the requested resource could not be found']], statusCode: 404);
+	}
 }

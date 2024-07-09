@@ -2,35 +2,39 @@
 import { store } from '../../store.js'
 </script>
 <template>
-	<NcModal
-		v-if="store.modal === 'publicationAdd'"
-		ref="modalRef"
-		@close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>Add publication</h2>
-			<div class="form-group">
-				<NcTextField label="Naam" :value.sync="title" />
+			<div class="formContainer">
+				<div class="form-group">
+					<NcTextField :disabled="loading" label="Naam" :value.sync="title" />
+				</div>
+				<div class="form-group">
+					<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="description" />
+				</div>
+				<div class="selectGrid">
+					<div class="form-group">
+						<NcSelect v-bind="catalogi"
+							v-model="catalogi.value"
+							:loading="catalogiLoading"
+							:disabled="loading"
+							required />
+					</div>
+					<div class="form-group">
+						<NcSelect v-bind="metaData"
+								  v-model="metaData.value"
+								  :loading="metaDataLoading"
+								  required />
+					</div>
+				</div>
+				<div class="form-group">
+					<NcTextArea :disabled="loading" label="Data" :value.sync="data" />
+				</div>
+				<div v-if="succesMessage" class="success">
+					Succesfully added publication
+				</div>
 			</div>
-			<div class="form-group">
-				<NcTextArea label="Beschrijving" :value.sync="description" />
-			</div>
-			<div class="form-group">
-				<NcSelect v-bind="catalogi"
-					v-model="catalogi.value"
-					:loading="catalogiLoading"
-					required />
-			</div>
-			<div class="form-group">
-				<NcSelect v-bind="metaData"
-					v-model="metaData.value"
-					:loading="metaDataLoading"
-					required />
-			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully added publication
-			</div>
-
-			<NcButton :disabled="!title" type="primary" @click="addPublication">
+			<NcButton :disabled="!title && !catalogi?.value?.id && !metaData?.value?.id || loading" type="primary" @click="addPublication">
 				Submit
 			</NcButton>
 		</div>
@@ -59,8 +63,10 @@ export default {
 		return {
 			title: '',
 			description: '',
+			data: '',
 			catalogi: {},
 			metaData: {},
+			loading: false,
 			succesMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
@@ -77,7 +83,7 @@ export default {
 	methods: {
 		fetchCatalogi() {
 			this.catalogiLoading = true
-			fetch('/index.php/apps/opencatalog/catalogi/api', {
+			fetch('/index.php/apps/opencatalog/api/catalogi', {
 				method: 'GET',
 			})
 				.then((response) => {
@@ -101,7 +107,7 @@ export default {
 		},
 		fetchMetaData() {
 			this.metaDataLoading = true
-			fetch('/index.php/apps/opencatalog/metadata/api', {
+			fetch('/index.php/apps/opencatalog/api/metadata', {
 				method: 'GET',
 			})
 				.then((response) => {
@@ -127,9 +133,10 @@ export default {
 			store.modal = false
 		},
 		addPublication() {
+			this.loading = true
 			this.$emit('publication', this.name)
 			fetch(
-				'/index.php/apps/opencatalog/publications/api',
+				'/index.php/apps/opencatalog/api/publications',
 				{
 					method: 'POST',
 					headers: {
@@ -140,14 +147,17 @@ export default {
 						description: this.description,
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
+						data: JSON.parse(this.data),
 					}),
 				},
 			)
 				.then((response) => {
 					this.succesMessage = true
+					this.loading = false
 					setTimeout(() => (this.succesMessage = false), 2500)
 				})
 				.catch((err) => {
+					this.loading = false
 					console.error(err)
 				})
 		},
@@ -157,17 +167,27 @@ export default {
 
 <style>
 .modal__content {
-  margin: var(--zaa-margin-50);
-  text-align: center;
+	margin: var(--zaa-margin-50);
+	text-align: center;
+}
+
+.formContainer>* {
+	margin-block-end: 10px;
+}
+
+.selectGrid {
+	display: grid;
+	grid-gap: 5px;
+	grid-template-columns: 1fr 1fr;
 }
 
 .zaakDetailsContainer {
-  margin-block-start: var(--zaa-margin-20);
-  margin-inline-start: var(--zaa-margin-20);
-  margin-inline-end: var(--zaa-margin-20);
+	margin-block-start: var(--zaa-margin-20);
+	margin-inline-start: var(--zaa-margin-20);
+	margin-inline-end: var(--zaa-margin-20);
 }
 
 .success {
-  color: green;
+	color: green;
 }
 </style>

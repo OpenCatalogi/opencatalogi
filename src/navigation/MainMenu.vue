@@ -173,6 +173,13 @@ import { store } from '../store.js'
 											:label-outside="true"
 											placeholder="***" />
 									</td>
+									<td>Index</td>
+									<td>
+										<NcTextField id="elasticIndex"
+													 :value.sync="configuration.elasticIndex"
+													 :label-outside="true"
+													 placeholder="objects" />
+									</td>
 								</tr>
 								<tr>
 									<td class="row-name">
@@ -316,6 +323,7 @@ export default {
 				orcKey: '',
 				elasticLocation: '',
 				elasticKey: '',
+				elasticIndex: '',
 				mongodbLocation: '',
 				mongodbKey: '',
 				mongodbCluster: '',
@@ -334,7 +342,7 @@ export default {
 			this.loading = true
 			// Catalogi details
 			fetch(
-				'/index.php/apps/opencatalog/catalogi/api',
+				'/index.php/apps/opencatalog/api/catalogi',
 				{
 					method: 'GET',
 				},

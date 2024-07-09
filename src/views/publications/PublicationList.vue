@@ -15,6 +15,17 @@ import { store } from '../../store.js'
 					@trailing-button-click="clearText">
 					<Magnify :size="20" />
 				</NcTextField>
+				<NcActions>
+					<NcActionButton @click="fetchData">
+						<template #icon>
+							<Refresh :size="20" />
+						</template>
+						Ververs
+					</NcActionButton>
+					<NcActionButton>
+						publicatie toevoegen
+					</NcActionButton>
+				</NcActions>
 			</div>
 			<div v-if="!loading">
 				<NcListItem v-for="(publication, i) in publications.results"
@@ -22,12 +33,12 @@ import { store } from '../../store.js'
 					:name="publication?.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="store.publicationItem === publication._id"
+					:active="store.publicationItem === publication.id"
 					:details="'CC0 1.0'"
 					:counter-number="1"
-					@click="store.setPublicationItem(publication._id)">
+					@click="store.publicationItem !== publication.id ? store.setPublicationItem(publication.id) : store.setPublicationItem(false)">
 					<template #icon>
-						<ListBoxOutline :class="store.publicationItem === publication._id && 'selectedZaakIcon'"
+						<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -43,7 +54,7 @@ import { store } from '../../store.js'
 						<NcActionButton>
 							Depubliceren
 						</NcActionButton>
-						<NcActionButton @click="deletePublication(publication._id)">
+						<NcActionButton @click="deletePublication(publication.id)">
 							Verwijderen
 						</NcActionButton>
 					</template>
@@ -59,8 +70,9 @@ import { store } from '../../store.js'
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
+import Refresh from 'vue-material-design-icons/Refresh.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 
 export default {
@@ -73,6 +85,8 @@ export default {
 		ListBoxOutline,
 		Magnify,
 		NcLoadingIcon,
+		NcActions,
+		Refresh,
 	},
 	data() {
 		return {
@@ -88,7 +102,7 @@ export default {
 		fetchData(newPage) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/publications/api',
+				'/index.php/apps/opencatalog/api/publications',
 				{
 					method: 'GET',
 				},
@@ -106,7 +120,7 @@ export default {
 		},
 		deletePublication(id) {
 			fetch(
-				`/index.php/apps/opencatalog/publications/api/${id}`,
+				`/index.php/apps/opencatalog/api/publications/${id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -130,25 +144,13 @@ export default {
 }
 </script>
 <style>
-.listHeader {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background-color: var(--color-main-background);
-    border-bottom: 1px solid var(--color-border);
+.listHeader{
+	display: flex;
 }
 
-.searchField {
-    padding-inline-start: 65px;
-    padding-inline-end: 20px;
-    margin-block-end: 6px;
-}
-
-.selectedZaakIcon>svg {
-    fill: white;
-}
-
-.loadingIcon {
-    margin-block-start: var(--zaa-margin-20);
+.refresh{
+	margin-block-start: 11px !important;
+    margin-block-end: 11px !important;
+    margin-inline-end: 10px;
 }
 </style>
