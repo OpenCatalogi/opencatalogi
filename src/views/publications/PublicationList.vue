@@ -107,7 +107,7 @@ export default {
 		fetchData(newPage) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/api/publications',
+				'/index.php/apps/opencatalogi/api/publications',
 				{
 					method: 'GET',
 				},
@@ -125,7 +125,7 @@ export default {
 		},
 		deletePublication(id) {
 			fetch(
-				`/index.php/apps/opencatalog/api/publications/${id}`,
+				`/index.php/apps/api/publications/${id}`,
 				{
 					method: 'DELETE',
 					headers: {

@@ -88,9 +88,9 @@ export default {
 	},
 	methods: {
 		fetchData(newPage) {
-			this.loading = true,
+			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/api/directory',
+				'/index.php/apps/opencatalogi/api/directory',
 				{
 					method: 'GET',
 				},

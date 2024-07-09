@@ -75,9 +75,9 @@ export default {
 	},
 	methods: {
 		fetchData() {
-			this.loading = true,
+			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/api/publications/' + store.item,
+				'/index.php/apps/opencatalogi/api/publications/' + store.item,
 				{
 					method: 'GET',
 				},
@@ -99,7 +99,7 @@ export default {
 		// fetchData(id) {
 		//   this.loading = true,
 		//     fetch(
-		//       `/index.php/apps/opencatalog/api/publications/${id}`,
+		//       `/index.php/apps/opencatalogi/api/publications/${id}`,
 		//       {
 		//         method: 'GET'
 		//       },

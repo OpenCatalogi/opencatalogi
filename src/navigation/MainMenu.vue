@@ -176,9 +176,9 @@ import { store } from '../store.js'
 									<td>Index</td>
 									<td>
 										<NcTextField id="elasticIndex"
-													 :value.sync="configuration.elasticIndex"
-													 :label-outside="true"
-													 placeholder="objects" />
+											:value.sync="configuration.elasticIndex"
+											:label-outside="true"
+											placeholder="objects" />
 									</td>
 								</tr>
 								<tr>
@@ -342,7 +342,7 @@ export default {
 			this.loading = true
 			// Catalogi details
 			fetch(
-				'/index.php/apps/opencatalog/api/catalogi',
+				'/index.php/apps/opencatalogi/api/catalogi',
 				{
 					method: 'GET',
 				},
@@ -359,7 +359,7 @@ export default {
 				})
 
 			fetch(
-				'/index.php/apps/opencatalog/configuration',
+				'/index.php/apps/opencatalogi/configuration',
 				{
 					method: 'GET',
 				},
@@ -381,7 +381,7 @@ export default {
 				body: JSON.stringify(this.configuration),
 			}
 
-			fetch('/index.php/apps/opencatalog/configuration', requestOptions)
+			fetch('/index.php/apps/opencatalogi/configuration', requestOptions)
 				.then((response) => {
 					response.json().then((data) => {
 						this.configuration = data

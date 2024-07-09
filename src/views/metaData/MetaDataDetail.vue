@@ -57,7 +57,7 @@ export default {
 		fetchData() {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/metadata/api/' + store.metaDataItem,
+				'/index.php/apps/opencatalogi/metadata/api/' + store.metaDataItem,
 				{
 					method: 'GET',
 				},

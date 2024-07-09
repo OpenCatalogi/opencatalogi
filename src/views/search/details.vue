@@ -62,9 +62,9 @@ export default {
 	},
 	methods: {
 		fetchData(id) {
-			this.loading = true,
+			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalog/api/publications/${id}`,
+				`/index.php/apps/opencatalogi/api/publications/${id}`,
 				{
 					method: 'GET',
 				},

@@ -55,9 +55,9 @@ export default {
 	},
 	methods: {
 		fetchData() {
-			this.loading = true,
+			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/directory/api/' + store.item,
+				'/index.php/apps/opencatalogi/directory/api/' + store.item,
 				{
 					method: 'GET',
 				},
