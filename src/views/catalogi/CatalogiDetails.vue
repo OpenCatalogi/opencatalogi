@@ -47,7 +47,7 @@ import { NcLoadingIcon, NcListItem, NcActionButton } from '@nextcloud/vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
 
 export default {
-	name: 'CatalogDetail',
+	name: 'CatalogiDetails',
 	components: {
 		NcLoadingIcon,
 		NcListItem,

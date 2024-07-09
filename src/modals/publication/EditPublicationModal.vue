@@ -6,7 +6,7 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'publicationEdit'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div class="modal__content">
+		<div v-if="!loading" class="modal__content">
 			<h2>Edit publication</h2>
 			<div v-if="!publicationLoading">
 				<div class="form-group">
@@ -53,6 +53,9 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
@@ -204,9 +207,7 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.succesMessage = true
-					this.loading = false
-					setTimeout(() => (this.succesMessage = false), 2500)
+					this.closeModal()
 				})
 				.catch((err) => {
 					this.loading = false

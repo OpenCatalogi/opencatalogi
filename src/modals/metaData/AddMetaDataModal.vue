@@ -4,10 +4,10 @@ import { store } from '../../store.js'
 
 <template>
 	<NcModal
-	v-if="store.modal === 'metaDataAdd'"
-	ref="modalRef"
-	@close="store.setModal(false)">
-		<div class="modal__content">
+		v-if="store.modal === 'metaDataAdd'"
+		ref="modalRef"
+		@close="store.setModal(false)">
+		<div v-if="!loading" class="modal__content">
 			<h2>Add MetaData</h2>
 			<div class="form-group">
 				<NcTextField label="Tooi categorie naam" :value.sync="tooiCategorieNaam" />
@@ -32,11 +32,14 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
 	name: 'AddMetaDataModal',
@@ -44,6 +47,7 @@ export default {
 		NcModal,
 		NcTextField,
 		NcButton,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
@@ -53,6 +57,7 @@ export default {
 			tooiThemaNaam: '',
 			tooiThemaUri: '',
 			succesMessage: false,
+			loading: false,
 		}
 	},
 	methods: {
@@ -60,10 +65,7 @@ export default {
 			store.modal = false
 		},
 		addMetaData() {
-			this.$emit('metaData', this.name)
-			this.succesMessage = true
-			setTimeout(() => this.succesMessage = false, 2500)
-			this.name = ''
+			this.closeModal()
 		},
 	},
 }

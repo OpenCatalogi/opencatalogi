@@ -5,7 +5,7 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<DirectoryList @directoryId="updateDirectoryId" />
+			<DirectoryList />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!store.item || store.selected != 'directory' "

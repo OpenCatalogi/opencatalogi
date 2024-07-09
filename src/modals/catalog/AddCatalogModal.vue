@@ -4,7 +4,7 @@ import { store } from '../../store.js'
 
 <template>
 	<NcModal v-if="store.modal === 'catalogAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div class="modal__content">
+		<div v-if="!loading" class="modal__content">
 			<h2>Add catalog</h2>
 			<div class="form-group">
 				<NcTextField label="Naam" />
@@ -17,11 +17,14 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
 	name: 'AddCatalogModal',
@@ -29,10 +32,12 @@ export default {
 		NcModal,
 		NcTextField,
 		NcButton,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
 			succesMessage: false,
+			loading: false,
 
 		}
 	},
@@ -41,10 +46,7 @@ export default {
 			store.modal = false
 		},
 		addCatalog() {
-			this.$emit('catalog', this.name)
-			this.succesMessage = true
-			setTimeout(() => this.succesMessage = false, 2500)
-			this.name = ''
+			this.closeModal()
 		},
 	},
 }

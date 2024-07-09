@@ -57,17 +57,17 @@ import { store } from '../../store.js'
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+// eslint-disable-next-line n/no-missing-import
 import Magnify from 'vue-material-design-icons/Magnify'
+// eslint-disable-next-line n/no-missing-import
 import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline'
 
 export default {
 	name: 'CatalogiList',
 	components: {
 		NcListItem,
-		NcListItemIcon,
 		NcActionButton,
-		NcAvatar,
 		NcAppContentList,
 		NcTextField,
 		DatabaseOutline,
@@ -106,7 +106,6 @@ export default {
 		},
 		setActive(id) {
 			store.setCatalogItem(id)
-			this.$emit('catalogItem', id)
 		},
 		clearText() {
 			this.search = ''

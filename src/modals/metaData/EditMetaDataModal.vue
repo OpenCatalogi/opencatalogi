@@ -7,7 +7,7 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'metaDataEdit'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div class="modal__content">
+		<div v-if="!loading" class="modal__content">
 			<h2>Edit MetaData</h2>
 			<div class="form-group">
 				<NcTextField label="Tooi categorie naam" :value.sync="metaData.tooiCategorieNaam" />
@@ -32,11 +32,14 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
 	name: 'EditMetaDataModal',
@@ -44,6 +47,7 @@ export default {
 		NcModal,
 		NcTextField,
 		NcButton,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
@@ -56,6 +60,7 @@ export default {
 			},
 			succesMessage: false,
 			hasUpdated: false,
+			loading: false,
 		}
 	},
 	updated() {
@@ -88,9 +93,7 @@ export default {
 			store.modal = false
 		},
 		editMetaData() {
-			this.$emit('metaData', this.metaDataName)
-			this.succesMessage = true
-			setTimeout(() => this.succesMessage = false, 2500)
+			this.closeModal()
 		},
 	},
 }

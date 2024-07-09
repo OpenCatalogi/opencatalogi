@@ -3,7 +3,7 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div class="modal__content">
+		<div v-if="!loading" class="modal__content">
 			<h2>Add publication</h2>
 			<div class="formContainer">
 				<div class="form-group">
@@ -41,6 +41,9 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
@@ -152,9 +155,7 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.succesMessage = true
-					this.publicationLoading = false
-					setTimeout(() => (this.succesMessage = false), 2500)
+					this.closeModal()
 				})
 				.catch((err) => {
 					this.publicationLoading = false

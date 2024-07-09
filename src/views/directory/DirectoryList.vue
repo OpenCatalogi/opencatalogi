@@ -4,7 +4,7 @@ import { store } from '../../store.js'
 
 <template>
 	<NcAppContentList>
-		<ul>
+		<ul v-if="!loading">
 			<div class="listHeader">
 				<NcTextField class="searchField"
 					disabled
@@ -18,7 +18,6 @@ import { store } from '../../store.js'
 			</div>
 
 			<NcListItem v-for="(directory, i) in directoryList.results"
-				v-if="!loading"
 				:key="`${directory}${i}`"
 				:name="directory?.name"
 				:active="store.directoryItem === directory?.id"
@@ -47,34 +46,31 @@ import { store } from '../../store.js'
 					</NcActionButton>
 				</template>
 			</NcListItem>
-
-			<NcLoadingIcon v-if="loading"
-				class="loadingIcon"
-				:size="64"
-				appearance="dark"
-				name="Zaken aan het laden" />
 		</ul>
+		<NcLoadingIcon v-if="loading"
+			class="loadingIcon"
+			:size="64"
+			appearance="dark"
+			name="Lisitngs aan het laden" />
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+// eslint-disable-next-line n/no-missing-import
 import Magnify from 'vue-material-design-icons/Magnify'
+// eslint-disable-next-line n/no-missing-import
 import LayersOutline from 'vue-material-design-icons/LayersOutline'
 
 export default {
 	name: 'DirectoryList',
 	components: {
 		NcListItem,
-		NcListItemIcon,
 		NcActionButton,
-		NcAvatar,
 		NcAppContentList,
 		NcTextField,
 		LayersOutline,
 		Magnify,
 		NcLoadingIcon,
-		loading: true,
-		directory: [],
 	},
 	data() {
 		return {
@@ -108,7 +104,6 @@ export default {
 		},
 		setActive(id) {
 			store.setDirectoryItem(id)
-			this.$emit('directoryItem', id)
 		},
 		clearText() {
 			this.search = ''
