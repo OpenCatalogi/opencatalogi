@@ -22,11 +22,11 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton>
+					<NcActionButton @click="store.setModal('publicationAdd')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						publicatie toevoegen
+						Publicatie toevoegen
 					</NcActionButton>
 				</NcActions>
 			</div>

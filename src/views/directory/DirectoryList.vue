@@ -15,6 +15,20 @@ import { store } from '../../store.js'
 					@trailing-button-click="clearText">
 					<Magnify :size="20" />
 				</NcTextField>
+				<NcActions>
+					<NcActionButton @click="fetchData">
+						<template #icon>
+							<Refresh :size="20" />
+						</template>
+						Ververs
+					</NcActionButton>
+					<NcActionButton @click="store.setModal('listingAdd')">
+						<template #icon>
+							<Plus :size="20" />
+						</template>
+						Listing toevoegen
+					</NcActionButton>
+				</NcActions>
 			</div>
 
 			<NcListItem v-for="(directory, i) in directoryList.results"
@@ -55,22 +69,27 @@ import { store } from '../../store.js'
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
 // eslint-disable-next-line n/no-missing-import
 import Magnify from 'vue-material-design-icons/Magnify'
 // eslint-disable-next-line n/no-missing-import
 import LayersOutline from 'vue-material-design-icons/LayersOutline'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
 	name: 'DirectoryList',
 	components: {
 		NcListItem,
+		NcActions,
 		NcActionButton,
 		NcAppContentList,
 		NcTextField,
 		LayersOutline,
 		Magnify,
 		NcLoadingIcon,
+		Refresh,
+		Plus,
 	},
 	data() {
 		return {

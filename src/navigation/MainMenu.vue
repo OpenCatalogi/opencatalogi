@@ -4,57 +4,6 @@ import { store } from '../store.js'
 
 <template>
 	<NcAppNavigation>
-		<NcActions>
-			<NcActionButton @click="store.setModal('publicationAdd')">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-				Add Publicatie
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('publicationEdit')">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-				Edit Publicatie
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('metaDataAdd')">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-				Add Metadata
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('metaDataEdit')">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-				Edit Metadata
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('catalogAdd')">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-				Add Catalog
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('catalogEdit')">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-				Edit Catalog
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('directoryAdd')">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-				Add External Catalog
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('directoryEdit')">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-				Edit External Catalog
-			</NcActionButton>
-		</NcActions>
-
 		<NcAppNavigationList>
 			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="store.modal = 'publicationAdd'">
 				<template #icon>
@@ -250,8 +199,6 @@ import { store } from '../store.js'
 <script>
 
 import {
-	NcActions,
-	NcActionButton,
 	NcAppNavigation,
 	NcAppNavigationList,
 	NcAppNavigationItem,
@@ -278,8 +225,6 @@ import Finance from 'vue-material-design-icons/Finance.vue'
 export default {
 	name: 'MainMenu',
 	components: {
-		NcActions,
-		NcActionButton,
 		NcAppNavigation,
 		NcAppNavigationList,
 		NcAppNavigationItem,
