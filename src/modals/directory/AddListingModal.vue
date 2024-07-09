@@ -3,7 +3,7 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'directoryAdd'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'listingAdd'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
 			<h2>Add externalCatalog</h2>
 			<div class="form-group">

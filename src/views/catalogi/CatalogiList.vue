@@ -22,7 +22,7 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('catalogiAdd')">
+					<NcActionButton @click="store.setModal('catalogusAdd')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
