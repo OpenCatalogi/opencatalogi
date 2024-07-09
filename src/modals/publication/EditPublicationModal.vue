@@ -22,15 +22,18 @@ import { store } from '../../store.js'
 					<div class="form-group">
 						<NcSelect v-bind="catalogi"
 							v-model="catalogi.value"
+							input-label="Catalogi"
 							:loading="catalogiLoading"
 							:disabled="loading"
 							required />
 					</div>
 					<div class="form-group">
-						<NcTextField :disabled="true"
-							label="MetaData"
-							:value.sync="publication.metaData"
-							:loading="publicationLoading" />
+						<NcSelect
+							v-bind="metaData"
+							v-model="metaData.value"
+							input-label="MetaData"
+							:loading="catalogiLoading"
+							:disabled="true" />
 					</div>
 				</div>
 				<div class="form-group">
@@ -87,7 +90,10 @@ export default {
 				value: [],
 				options: [],
 			},
-			metaData: {},
+			metaData: {
+				value: [],
+				options: [],
+			},
 			loading: false,
 			succesMessage: false,
 			catalogiLoading: false,
@@ -97,7 +103,7 @@ export default {
 		}
 	},
 	updated() {
-		if (!this.hasUpdated) {
+		if (store.modal === 'publicationEdit' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
 			this.fetchData(store.publicationItem)
@@ -118,6 +124,7 @@ export default {
 						this.publication = data
 						this.publication.data = JSON.stringify(data.data)
 						this.catalogi.value = [data.catalogi]
+						this.metaData.value = [data.metaData]
 					})
 					this.publicationLoading = false
 				})
