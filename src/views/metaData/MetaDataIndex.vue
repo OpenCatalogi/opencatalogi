@@ -8,7 +8,7 @@ import { store } from '../../store.js'
 			<MetaDataList @metaDataId="updateMetaDataId" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.item || store.selected != 'metaData' "
+			<NcEmptyContent v-if="!store.metaDataItem"
 				class="detailContainer"
 				name="Geen Metadata"
 				description="Nog geen metadata beschrijving geselecteerd">
@@ -21,16 +21,17 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<MetaDataDetails v-if="store.item && store.selected === 'metaData'" :meta-data-id="metaDataId" />
+			<!-- <MetaDataDetails v-if="store.item && store.selected === 'metaData'" :meta-data-id="metaDataId" /> -->
+			<MetaDataDetails v-if="store.metaDataItem" :meta-data-id="store.metaDataItem" />
 		</template>
 	</NcAppContent>
 </template>
 
 <script>
-import { NcAppContent, NcEmptyContent,NcButton } from '@nextcloud/vue'
+import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
 import MainMenu from '../../navigation/MainMenu.vue'
-import MetaDataList from './list.vue'
-import MetaDataDetails from './details.vue'
+import MetaDataList from './MetaDataList.vue'
+import MetaDataDetails from './MetaDataDetail.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
 
 export default {

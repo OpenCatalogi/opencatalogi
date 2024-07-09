@@ -2,7 +2,6 @@
 import { store } from '../../store.js'
 </script>
 
-
 <template>
 	<div class="detailContainer">
 		<div v-if="!loading" id="app-content">
@@ -56,9 +55,9 @@ export default {
 	},
 	methods: {
 		fetchData() {
-			this.loading = true,
+			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/api/metadata/' + store.item,
+				'/index.php/apps/opencatalog/metadata/api/' + store.metaDataItem,
 				{
 					method: 'GET',
 				},

@@ -21,7 +21,7 @@ import { NcAppContent } from '@nextcloud/vue'
 import Catalogi from './catalogi/index.vue'
 import Dashboard from './dashboard/index.vue'
 import Directory from './directory/index.vue'
-import Matadata from './metaData/index.vue'
+import Matadata from './metaData/MetaDataIndex.vue'
 import Publications from './publications/PublicationIndex.vue'
 import Search from './search/index.vue'
 

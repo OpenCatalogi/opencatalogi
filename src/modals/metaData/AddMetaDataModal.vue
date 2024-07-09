@@ -3,17 +3,32 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'metaDataAdd'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal
+	v-if="store.modal === 'metaDataAdd'"
+	ref="modalRef"
+	@close="store.setModal(false)">
 		<div class="modal__content">
-			<h2>Add metaData</h2>
+			<h2>Add MetaData</h2>
 			<div class="form-group">
-				<NcTextField label="Naam"  />
+				<NcTextField label="Tooi categorie naam" :value.sync="tooiCategorieNaam" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Tooi categorie id" :value.sync="tooiCategorieId" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Tooi categorie uri" :value.sync="tooiCategorieUri" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Tooi thema naam" :value.sync="tooiThemaNaam" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Tooi thema uri" :value.sync="tooiThemaUri" />
 			</div>
 			<div v-if="succesMessage" class="success">
-				Succesfully added metaData
+				Succesfully added MetaData
 			</div>
 
-			<NcButton :disabled="!name" type="primary" @click="addMetaData">
+			<NcButton :disabled="!tooiCategorieNaam" type="primary" @click="addMetaData">
 				Submit
 			</NcButton>
 		</div>
@@ -34,8 +49,12 @@ export default {
 	},
 	data() {
 		return {
+			tooiCategorieNaam: '',
+			tooiCategorieId: '',
+			tooiCategorieUri: '',
+			tooiThemaNaam: '',
+			tooiThemaUri: '',
 			succesMessage: false
-
 		}
 	},
 	methods: {

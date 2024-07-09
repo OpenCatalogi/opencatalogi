@@ -12,7 +12,7 @@ export const store = reactive({
 	item: false,
 	catalogItem: false,
 	directoryItem: false,
-	metadataItem: false,
+	metaDataItem: false,
 	publicationItem: false,
 	// Lets add some setters
 	setSelected(selected) {
@@ -35,9 +35,9 @@ export const store = reactive({
 		this.directoryItem = directoryItem
 		console.log('Active directory item set to ' + directoryItem)
 	},
-	setMetadataItem(metadataItem) {
-		this.metadataItem = metadataItem
-		console.log('Active metadata item set to ' + metadataItem)
+	setMetadataItem(metaDataItem) {
+		this.metaDataItem = metaDataItem
+		console.log('Active metadata item set to ' + metaDataItem)
 	},
 	setPublicationItem(publicationItem) {
 		this.publicationItem = publicationItem
