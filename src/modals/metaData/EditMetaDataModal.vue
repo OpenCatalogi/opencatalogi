@@ -43,7 +43,7 @@ export default {
 	components: {
 		NcModal,
 		NcTextField,
-		NcButton
+		NcButton,
 	},
 	data() {
 		return {
@@ -76,14 +76,11 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						this.metaData = data
-						console.log(data)
-						// this.oldZaakId = id
 					})
 					this.metaDataLoading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					// this.oldZaakId = id
 					this.metaDataLoading = false
 				})
 		},

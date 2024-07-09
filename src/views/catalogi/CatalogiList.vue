@@ -16,34 +16,33 @@ import { store } from '../../store.js'
 					<Magnify :size="20" />
 				</NcTextField>
 			</div>
-
 			<div v-if="!loading">
-				<NcListItem v-for="(metaData, i) in metaDataList.results"
-					:key="`${metaData}${i}`"
-					:name="metaData?.name"
-					:active="store.metaDataItem === metaData?._id"
+				<NcListItem v-for="(catalogus, i) in catalogi.results"
+					:key="`${catalogus}${i}`"
+					:name="catalogus?.name"
+					:active="store.catalogItem === catalogus?.id"
 					:details="'1h'"
 					:counter-number="44"
-					@click="store.setMetadataItem(metaData._id)">
+					@click="setActive(catalogus.id)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataItem === metaData._id && 'selectedZaakIcon'"
+						<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
 							display-name="Jane Doe" />
 					</template>
 					<template #subname>
-						{{ metaData?.summary }}
+						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
 						<NcActionButton>
-							Bewerken
+							Button one
 						</NcActionButton>
 						<NcActionButton>
-							Depubliceren
+							Button two
 						</NcActionButton>
-						<NcActionButton @click="deleteMetaData(metaData._id)">
-							Verwijderen
+						<NcActionButton>
+							Button three
 						</NcActionButton>
 					</template>
 				</NcListItem>
@@ -53,33 +52,33 @@ import { store } from '../../store.js'
 				class="loadingIcon"
 				:size="64"
 				appearance="dark"
-				name="Metadata aan het laden" />
+				name="Zaken aan het laden" />
 		</ul>
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
-// eslint-disable-next-line n/no-missing-import
+import { NcListItem, NcListItemIcon, NcActionButton, NcAvatar, NcAppContentList, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
 import Magnify from 'vue-material-design-icons/Magnify'
-// eslint-disable-next-line n/no-missing-import
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
+import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline'
 
 export default {
-	name: 'MetaDataList',
+	name: 'CatalogiList',
 	components: {
 		NcListItem,
+		NcListItemIcon,
 		NcActionButton,
+		NcAvatar,
 		NcAppContentList,
 		NcTextField,
-		FileTreeOutline,
+		DatabaseOutline,
 		Magnify,
 		NcLoadingIcon,
 	},
 	data() {
 		return {
 			search: '',
-			loading: true,
-			metaDataList: [],
+			loading: false,
+			catalogi: [],
 		}
 	},
 	mounted() {
@@ -89,14 +88,14 @@ export default {
 		fetchData(newPage) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/metadata',
+				'/index.php/apps/opencatalogi/api/catalogi',
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaDataList = data
+						this.catalogi = data
 					})
 					this.loading = false
 				})
@@ -104,6 +103,10 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+		},
+		setActive(id) {
+			store.setCatalogItem(id)
+			this.$emit('catalogItem', id)
 		},
 		clearText() {
 			this.search = ''

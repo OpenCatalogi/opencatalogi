@@ -3,32 +3,17 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal
-	v-if="store.modal === 'metaDataAdd'"
-	ref="modalRef"
-	@close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'catalogAdd'" ref="modalRef" @close="store.setModal(false)">
 		<div class="modal__content">
-			<h2>Add MetaData</h2>
+			<h2>Add catalog</h2>
 			<div class="form-group">
-				<NcTextField label="Tooi categorie naam" :value.sync="tooiCategorieNaam" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi categorie id" :value.sync="tooiCategorieId" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi categorie uri" :value.sync="tooiCategorieUri" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi thema naam" :value.sync="tooiThemaNaam" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi thema uri" :value.sync="tooiThemaUri" />
+				<NcTextField label="Naam" />
 			</div>
 			<div v-if="succesMessage" class="success">
-				Succesfully added MetaData
+				Succesfully added catalog
 			</div>
 
-			<NcButton :disabled="!tooiCategorieNaam" type="primary" @click="addMetaData">
+			<NcButton :disabled="!name" type="primary" @click="addCatalog">
 				Submit
 			</NcButton>
 		</div>
@@ -39,7 +24,7 @@ import { store } from '../../store.js'
 import { NcButton, NcModal, NcTextField } from '@nextcloud/vue'
 
 export default {
-	name: 'AddMetaDataModal',
+	name: 'AddCatalogModal',
 	components: {
 		NcModal,
 		NcTextField,
@@ -47,20 +32,16 @@ export default {
 	},
 	data() {
 		return {
-			tooiCategorieNaam: '',
-			tooiCategorieId: '',
-			tooiCategorieUri: '',
-			tooiThemaNaam: '',
-			tooiThemaUri: '',
 			succesMessage: false,
+
 		}
 	},
 	methods: {
 		closeModal() {
 			store.modal = false
 		},
-		addMetaData() {
-			this.$emit('metaData', this.name)
+		addCatalog() {
+			this.$emit('catalog', this.name)
 			this.succesMessage = true
 			setTimeout(() => this.succesMessage = false, 2500)
 			this.name = ''

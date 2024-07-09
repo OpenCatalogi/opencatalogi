@@ -5,18 +5,34 @@ import { store } from '../../store.js'
 <template>
 	<div class="detailContainer">
 		<div v-if="!loading" id="app-content">
-			<!-- app-content-wrapper is optional, only use if app-content-list  -->
-			<div>
-				<h1 class="h1">
-					{{ metaData.name }}
-				</h1>
-				<div class="grid">
-					<div class="gridContent">
-						<h4>Sammenvatting:</h4>
-						<span>{{ metaData.summary }}</span>
-					</div>
-				</div>
-			</div>
+			<NcListItem v-for="(publication, i) in publications.results"
+				:key="`${publication}${i}`"
+				:name="publication?.name"
+				:bold="false"
+				:force-display-actions="true"
+				:active="activePublicationId === publication.id"
+				:details="'CC0 1.0'"
+				:counter-number="1"
+				@click="setActive(publication.id)">
+				<template #icon>
+					<ListBoxOutline :class="activePublicationId === publication.id && 'selectedZaakIcon'"
+						disable-menu
+						:size="44"
+						user="janedoe"
+						display-name="Jane Doe" />
+				</template>
+				<template #subname>
+					{{ publication?.summary }}
+				</template>
+				<template #actions>
+					<NcActionButton>
+						Bewerken
+					</NcActionButton>
+					<NcActionButton>
+						Depubliceren
+					</NcActionButton>
+				</template>
+			</NcListItem>
 		</div>
 		<NcLoadingIcon v-if="loading"
 			:size="100"
@@ -26,23 +42,28 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon } from '@nextcloud/vue'
+import { NcLoadingIcon, NcListItem, NcActionButton } from '@nextcloud/vue'
+// eslint-disable-next-line n/no-missing-import
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
 
 export default {
-	name: 'MetaDataDetail',
+	name: 'CatalogDetail',
 	components: {
 		NcLoadingIcon,
+		NcListItem,
+		NcActionButton,
+		ListBoxOutline,
 	},
 	data() {
 		return {
-			metaData: [],
+			publications: [],
 			loading: false,
 		}
 	},
 	watch: {
-		metaDataId: {
-			handler(metaDataId) {
-				this.fetchData(metaDataId)
+		catalogId: {
+			handler(catalogId) {
+				this.fetchData(catalogId)
 			},
 			deep: true,
 		},
@@ -54,14 +75,14 @@ export default {
 		fetchData() {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/metadata/api/' + store.metaDataItem,
+				'/index.php/apps/opencatalogi/api/publications/' + store.item,
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaData = data
+						this.publications = data
 						// this.oldZaakId = id
 					})
 					this.loading = false

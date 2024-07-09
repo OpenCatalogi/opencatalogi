@@ -29,9 +29,9 @@ import { store } from '../../store.js'
 
 <script>
 import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
-import MainMenu from '../../navigation/MainMenu.vue'
 import MetaDataList from './MetaDataList.vue'
 import MetaDataDetails from './MetaDataDetail.vue'
+// eslint-disable-next-line n/no-missing-import
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
 
 export default {
@@ -40,7 +40,6 @@ export default {
 		NcAppContent,
 		NcEmptyContent,
 		NcButton,
-		MainMenu,
 		MetaDataList,
 		MetaDataDetails,
 		FileTreeOutline,

@@ -8,12 +8,12 @@ import { store } from '../../store.js'
 			<!-- app-content-wrapper is optional, only use if app-content-list  -->
 			<div>
 				<h1 class="h1">
-					{{ metaData.name }}
+					{{ directory.name }}
 				</h1>
 				<div class="grid">
 					<div class="gridContent">
 						<h4>Sammenvatting:</h4>
-						<span>{{ metaData.summary }}</span>
+						<span>{{ directory.summary }}</span>
 					</div>
 				</div>
 			</div>
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 		<NcLoadingIcon v-if="loading"
 			:size="100"
 			appearance="dark"
-			name="Publicatie details aan het laden" />
+			name="Directory details aan het laden" />
 	</div>
 </template>
 
@@ -29,20 +29,20 @@ import { store } from '../../store.js'
 import { NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
-	name: 'MetaDataDetail',
+	name: 'DirectoryDetails',
 	components: {
 		NcLoadingIcon,
 	},
 	data() {
 		return {
-			metaData: [],
+			directory: [],
 			loading: false,
 		}
 	},
 	watch: {
-		metaDataId: {
-			handler(metaDataId) {
-				this.fetchData(metaDataId)
+		directoryId: {
+			handler(directoryId) {
+				this.fetchData(directoryId)
 			},
 			deep: true,
 		},
@@ -54,14 +54,14 @@ export default {
 		fetchData() {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/metadata/api/' + store.metaDataItem,
+				'/index.php/apps/opencatalogi/directory/api/' + store.item,
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaData = data
+						this.directory = data
 						// this.oldZaakId = id
 					})
 					this.loading = false
