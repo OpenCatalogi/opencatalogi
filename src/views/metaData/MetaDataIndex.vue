@@ -5,10 +5,10 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<MetaDataList @metaDataId="updateMetaDataId" />
+			<MetaDataList />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.metaDataItem"
+			<NcEmptyContent v-if="!store.metaDataItem || store.selected != 'metaData'"
 				class="detailContainer"
 				name="Geen Metadata"
 				description="Nog geen metadata beschrijving geselecteerd">
@@ -21,8 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<!-- <MetaDataDetails v-if="store.item && store.selected === 'metaData'" :meta-data-id="metaDataId" /> -->
-			<MetaDataDetails v-if="store.metaDataItem" :meta-data-id="store.metaDataItem" />
+			<MetaDataDetails v-if="store.metaDataItem && store.selected === 'metaData'" :meta-data-id="store.metaDataItem" />
 		</template>
 	</NcAppContent>
 </template>
@@ -49,11 +48,6 @@ export default {
 			activeMetaData: false,
 			metaDataId: undefined,
 		}
-	},
-	methods: {
-		updateMetaDataId(variable) {
-			this.metaDataId = variable
-		},
 	},
 }
 </script>

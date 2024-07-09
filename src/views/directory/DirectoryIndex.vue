@@ -8,7 +8,7 @@ import { store } from '../../store.js'
 			<DirectoryList />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.item || store.selected != 'directory' "
+			<NcEmptyContent v-if="!store.directoryItem || store.selected != 'directory' "
 				class="detailContainer"
 				name="Geen Directory"
 				description="Nog geen directory geselecteerd">
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<DirectoryDetails v-if="store.item && store.selected === 'directory'" :directory-id="directoryId" />
+			<DirectoryDetails v-if="store.directoryItem && store.selected === 'directory'" :directory-id="directoryId" />
 		</template>
 	</NcAppContent>
 </template>
@@ -47,11 +47,6 @@ export default {
 		return {
 			directoryId: undefined,
 		}
-	},
-	methods: {
-		updateDirectoryId(variable) {
-			this.directoryId = variable
-		},
 	},
 }
 </script>
