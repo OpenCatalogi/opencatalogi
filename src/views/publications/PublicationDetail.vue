@@ -280,7 +280,9 @@ h4 {
 }
 
 .active.publicationDetails-actionsDelete {
-    color: var(--color-main-text) !important;
     background-color: var(--color-error) !important;
+}
+.active.publicationDetails-actionsDelete button {
+    color: #EBEBEB !important;
 }
 </style>

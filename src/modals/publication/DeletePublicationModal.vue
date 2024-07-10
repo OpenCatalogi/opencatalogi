@@ -8,24 +8,19 @@ import { store } from '../../store.js'
 		@close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
 			<h2>Verwijder publicatie:</h2>
-			<div v-if="!publicationLoading">
+
+			<div class="deletePublication-info">
 				<h3>{{ publication.title }}</h3>
 				<span>{{ publication.description }}</span>
-
-				<h4>Weet je zeker dat je dit wilt verwijderen?</h4>
-
-				<div v-if="succesMessage" class="success">
-					Successfully deleted publication
-				</div>
 			</div>
-			<NcLoadingIcon
-				v-if="publicationLoading"
-				:size="100"
-				appearance="dark"
-				name="Publicatie details aan het laden" />
+
+			<div class="deletePublication-warnings">
+				<p>Weet u zeker dat u de publicatie definitief wilt verwijderen?</p>
+				<p>Let Op: deze actie is onomkeerbaar.</p>
+			</div>
 
 			<div class="deletePublication-buttons">
-				<NcButton type="primary" @click="deletePublication(store.publicationId)">
+				<NcButton type="error" @click="deletePublication(store.publicationId)">
 					Delete!
 				</NcButton>
 				<NcButton type="secondary" @click="() => store.modal = false">
@@ -33,9 +28,6 @@ import { store } from '../../store.js'
 				</NcButton>
 			</div>
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
 	</NcModal>
 </template>
 
@@ -43,7 +35,6 @@ import { store } from '../../store.js'
 import {
 	NcButton,
 	NcModal,
-	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 export default {
@@ -51,17 +42,11 @@ export default {
 	components: {
 		NcModal,
 		NcButton,
-		NcLoadingIcon,
 	},
 	data() {
 		return {
 			publication: [],
-			loading: false,
-			succesMessage: false,
-			catalogiLoading: false,
-			metaDataLoading: false,
 			hasUpdated: false,
-			publicationLoading: false,
 		}
 	},
 	updated() {
@@ -112,6 +97,20 @@ export default {
 
 .success {
   color: green;
+}
+
+.deletePublication-info {
+    margin-block: 1rem 2rem;
+}
+.deletePublication-info > h3 {
+    margin: 0
+}
+
+.deletePublication-warnings {
+    margin-block: 1rem;
+}
+.deletePublication-warnings > * {
+    font-weight: bold;
 }
 
 .deletePublication-buttons {

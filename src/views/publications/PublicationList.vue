@@ -160,8 +160,10 @@ export default {
     margin-inline-end: 10px;
 }
 
-.active.publicationsList-actionsDelete {
-    color: var(--color-main-text) !important;
+.active.publicationDetails-actionsDelete {
     background-color: var(--color-error) !important;
+}
+.active.publicationDetails-actionsDelete button {
+    color: #EBEBEB !important;
 }
 </style>
