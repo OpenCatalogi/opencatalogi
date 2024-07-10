@@ -108,8 +108,8 @@ h4 {
   display: grid;
   grid-gap: 24px;
   grid-template-columns: 1fr 1fr;
-  margin-block-start: var(--zaa-margin-50);
-  margin-block-end: var(--zaa-margin-50);
+  margin-block-start: var(--OC-margin-50);
+  margin-block-end: var(--OC-margin-50);
 }
 
 .gridContent {

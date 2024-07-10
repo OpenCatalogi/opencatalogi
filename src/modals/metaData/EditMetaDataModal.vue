@@ -120,14 +120,14 @@ export default {
 
 <style>
 .modal__content {
-    margin: var(--zaa-margin-50);
+    margin: var(--OC-margin-50);
     text-align: center;
 }
 
 .zaakDetailsContainer {
-    margin-block-start: var(--zaa-margin-20);
-    margin-inline-start: var(--zaa-margin-20);
-    margin-inline-end: var(--zaa-margin-20);
+    margin-block-start: var(--OC-margin-20);
+    margin-inline-start: var(--OC-margin-20);
+    margin-inline-end: var(--OC-margin-20);
 }
 
 .success {
