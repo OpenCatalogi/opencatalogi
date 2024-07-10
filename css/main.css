@@ -28,13 +28,14 @@
   fill: white;
 }
 
+.detailGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
 .publishedIcon>svg {
   fill: green;
 }
 .warningIcon>svg {
   fill: yellow;
 }
-
-/* .loadingIcon {
-  margin-block-start: var(--zaa-margin-20);
-} */

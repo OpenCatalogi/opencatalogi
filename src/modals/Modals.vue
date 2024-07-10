@@ -9,6 +9,7 @@
 		<EditCatalogModal />
 		<AddListingModal />
 		<EditListingModal />
+		<EditPublicationDataModal />
 	</div>
 </template>
 
@@ -21,6 +22,7 @@ import AddCatalogModal from './catalog/AddCatalogModal.vue'
 import EditCatalogModal from './catalog/EditCatalogModal.vue'
 import AddListingModal from './directory/AddListingModal.vue'
 import EditListingModal from './directory/EditListingModal.vue'
+import EditPublicationDataModal from './publicationData/EditPublicationDataModal.vue'
 
 export default {
 	name: 'Modals',
@@ -33,6 +35,7 @@ export default {
 		EditCatalogModal,
 		AddListingModal,
 		EditListingModal,
+		EditPublicationDataModal,
 	},
 }
 </script>

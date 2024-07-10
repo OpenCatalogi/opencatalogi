@@ -20,80 +20,100 @@ import { store } from '../../store.js'
 						</NcActionButton>
 					</NcActions>
 				</div>
-				<div class="tabContainer">
-					<BTabs content-class="mt-3" justified>
-						<BTab title="Publicatie" active>
-							<div>
-								<h4>Beschrijving:</h4>
-								<span>{{ publication.description }}</span>
-							</div>
-							<div>
-								<h4>Catalogi:</h4>
-								<span>{{ publication.catalogi }}</span>
-							</div>
-							<div>
-								<h4>Metadata:</h4>
-								<span>{{ publication.metaData }}</span>
-							</div>
-							<div>
-								<h4>Data:</h4>
-								<div class="dataContent">
-									<span
-										v-for="(value, name, i) in publication.data"
-										:key="`${(name, value)}${i}`">{{ `${name}: ${value}` }}</span>
-								</div>
-							</div>
-						</BTab>
-						<BTab title="Bijlagen">
-							<div
-								v-if="publication?.data?.attachments?.length > 0"
-								class="tabPanel">
-								<NcListItem v-for="(attachment, i) in publication?.data?.attachments"
-									:key="`${attachment}${i}`"
-									:name="attachment?.title"
+				<div class="container">
+					<div class="detailGrid">
+						<div>
+							<h4>Beschrijving:</h4>
+							<span>{{ publication.description }}</span>
+						</div>
+						<div>
+							<h4>Catalogi:</h4>
+							<span>{{ publication.catalogi }}</span>
+						</div>
+						<div>
+							<h4>Metadata:</h4>
+							<span>{{ publication.metaData }}</span>
+						</div>
+					</div>
+					<div class="tabContainer">
+						<BTabs content-class="mt-3" justified>
+							<BTab title="Eigenschappen" active>
+								<NcListItem v-for="(value, key, i) in publication.data"
+									:key="`${key}${i}`"
+									:name="key"
 									:bold="false"
-									:active="store.attachmentId === attachment.id"
-									:force-display-actions="true"
-									:details="attachment?.published ? 'Published' : 'Not Published'"
-									@click="store.setAttachmentId(attachment.id)">
+									:force-display-actions="true">
 									<template #icon>
-										<CheckCircle v-if="attachment?.published"
-											:class="attachment?.published && 'publishedIcon'"
-											disable-menu
-											:size="44"
-											user="janedoe"
-											display-name="Jane Doe" />
-
-										<ExclamationThick v-if="!attachment?.published"
-											:class="!attachment?.published && 'warningIcon'"
+										<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
 											disable-menu
 											:size="44"
 											user="janedoe"
 											display-name="Jane Doe" />
 									</template>
 									<template #subname>
-										{{ attachment?.description }}
+										{{ value }}
 									</template>
 									<template #actions>
-										<NcActionButton>
+										<NcActionButton @click="editPublicationDataItem(key)">
+											<template #icon>
+												<Pencil :size="20" />
+											</template>
 											Bewerken
 										</NcActionButton>
 									</template>
 								</NcListItem>
-							</div>
-							<div v-else class="tabPanel">
-								Geen bijlagen gevonden
-							</div>
-						</BTab>
-					</BTabs>
+							</BTab>
+							<BTab title="Bijlagen">
+								<div
+									v-if="publication?.data?.attachments?.length > 0"
+									class="tabPanel">
+									<NcListItem v-for="(attachment, i) in publication?.data?.attachments"
+										:key="`${attachment}${i}`"
+										:name="attachment?.title"
+										:bold="false"
+										:active="store.attachmentId === attachment.id"
+										:force-display-actions="true"
+										:details="attachment?.published ? 'Published' : 'Not Published'"
+										@click="store.setAttachmentId(attachment.id)">
+										<template #icon>
+											<CheckCircle v-if="attachment?.published"
+												:class="attachment?.published && 'publishedIcon'"
+												disable-menu
+												:size="44"
+												user="janedoe"
+												display-name="Jane Doe" />
+
+											<ExclamationThick v-if="!attachment?.published"
+												:class="!attachment?.published && 'warningIcon'"
+												disable-menu
+												:size="44"
+												user="janedoe"
+												display-name="Jane Doe" />
+										</template>
+										<template #subname>
+											{{ attachment?.description }}
+										</template>
+										<template #actions>
+											<NcActionButton>
+												Bewerken
+											</NcActionButton>
+										</template>
+									</NcListItem>
+								</div>
+								<div v-else class="tabPanel">
+									Geen bijlagen gevonden
+								</div>
+							</BTab>
+						</BTabs>
+					</div>
 				</div>
 			</div>
+			<NcLoadingIcon
+				v-if="loading"
+				:size="100"
+				appearance="dark"
+				name="Publicatie details aan het laden" />
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100"
-			appearance="dark"
-			name="Publicatie details aan het laden" />
 	</div>
 </template>
 
@@ -106,6 +126,8 @@ import { BTabs, BTab } from 'bootstrap-vue'
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
 import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -119,6 +141,7 @@ export default {
 		CogOutline,
 		CheckCircle,
 		ExclamationThick,
+		ListBoxOutline,
 	},
 	props: {
 		publicationId: {
@@ -144,6 +167,11 @@ export default {
 		this.fetchData(this.publicationId)
 	},
 	methods: {
+		editPublicationDataItem(key) {
+			store.setPublicationId(this.publicationId)
+			store.setPublicationDataKey(key)
+			store.setModal('editPublicationDataModal')
+		},
 		fetchData(id) {
 			this.loading = true
 			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
