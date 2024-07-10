@@ -34,9 +34,10 @@ import { store } from '../../store.js'
 			<div v-if="!loading">
 				<NcListItem v-for="(metaData, i) in metaDataList.results"
 					:key="`${metaData}${i}`"
-					:name="metaData?.title"
+					:name="metaData?.title ?? metaData?.name"
 					:active="store.metaDataId === metaData?.id"
-					:details="'1h'"
+					:details="metaData.version ?? '1h'"
+					:force-display-actions="true"
 					:counter-number="44"
 					@click="storeMetaData(metaData)">
 					<template #icon>
@@ -48,6 +49,7 @@ import { store } from '../../store.js'
 					</template>
 					<template #subname>
 						{{ metaData?.summary }}
+						{{ metaData?.description }}
 					</template>
 					<template #actions>
 						<NcActionButton @click="editMetaData(metaData)">
@@ -72,25 +74,28 @@ import { store } from '../../store.js'
 	</NcAppContentList>
 </template>
 <script>
+// Components
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
-// eslint-disable-next-line n/no-missing-import
-import Magnify from 'vue-material-design-icons/Magnify'
-// eslint-disable-next-line n/no-missing-import
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
+
+// Icons
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
 	name: 'MetaDataList',
 	components: {
+		// Components
 		NcListItem,
 		NcActions,
 		NcActionButton,
 		NcAppContentList,
 		NcTextField,
+		NcLoadingIcon,
+		// Icons
 		FileTreeOutline,
 		Magnify,
-		NcLoadingIcon,
 		Refresh,
 		Plus,
 	},
