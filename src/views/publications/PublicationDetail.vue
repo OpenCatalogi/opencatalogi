@@ -108,12 +108,12 @@ import { store } from '../../store.js'
 					</div>
 				</div>
 			</div>
-			<NcLoadingIcon
-				v-if="loading"
-				:size="100"
-				appearance="dark"
-				name="Publicatie details aan het laden" />
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100"
+			appearance="dark"
+			name="Publicatie details aan het laden" />
 	</div>
 </template>
 
