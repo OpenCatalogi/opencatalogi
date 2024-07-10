@@ -36,12 +36,12 @@ import { store } from '../../store.js'
 					:name="publication?.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="store.publicationItem === publication.id"
+					:active="store.publicationId === publication.id"
 					:details="'CC0 1.0'"
 					:counter-number="1"
 					@click="store.setPublicationId(publication.id)">
 					<template #icon>
-						<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
+						<ListBoxOutline :class="store.publicationId === publication.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -140,6 +140,7 @@ export default {
 			store.setModal('publicationEdit')
 		},
 		deletePublication(publication) {
+			store.setPublicationId(publication.id)
 			store.setPublicationItem(publication)
 			store.setModal('deletePublication')
 		},
