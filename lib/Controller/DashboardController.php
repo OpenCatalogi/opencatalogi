@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\OpenCatalog\Controller;
+namespace OCA\OpenCatalogi\Controller;
 
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -39,7 +39,7 @@ class DashboardController extends Controller
 		// so that the value is accessible in the template.
 		return new TemplateResponse(
 			//Application::APP_ID,
-			'opencatalog',
+			$this->appName,
 			'index',
 			[]
 		);

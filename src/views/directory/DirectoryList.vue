@@ -4,7 +4,7 @@ import { store } from '../../store.js'
 
 <template>
 	<NcAppContentList>
-		<ul>
+		<ul v-if="!loading">
 			<div class="listHeader">
 				<NcTextField class="searchField"
 					disabled
@@ -22,53 +22,50 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('metaDataAdd')">
+					<NcActionButton @click="store.setModal('listingAdd')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						Metadata toevoegen
+						Listing toevoegen
 					</NcActionButton>
 				</NcActions>
 			</div>
 
-			<div v-if="!loading">
-				<NcListItem v-for="(metaData, i) in metaDataList.results"
-					:key="`${metaData}${i}`"
-					:name="metaData?.name"
-					:active="store.metaDataItem === metaData?._id"
-					:details="'1h'"
-					:counter-number="44"
-					@click="store.setMetadataItem(metaData._id)">
-					<template #icon>
-						<FileTreeOutline :class="store.metaDataItem === metaData._id && 'selectedZaakIcon'"
-							disable-menu
-							:size="44"
-							user="janedoe"
-							display-name="Jane Doe" />
-					</template>
-					<template #subname>
-						{{ metaData?.summary }}
-					</template>
-					<template #actions>
-						<NcActionButton>
-							Bewerken
-						</NcActionButton>
-						<NcActionButton>
-							Depubliceren
-						</NcActionButton>
-						<NcActionButton @click="deleteMetaData(metaData._id)">
-							Verwijderen
-						</NcActionButton>
-					</template>
-				</NcListItem>
-			</div>
-
-			<NcLoadingIcon v-if="loading"
-				class="loadingIcon"
-				:size="64"
-				appearance="dark"
-				name="Metadata aan het laden" />
+			<NcListItem v-for="(directory, i) in directoryList.results"
+				:key="`${directory}${i}`"
+				:name="directory?.name"
+				:active="store.directoryItem === directory?.id"
+				:details="'1h'"
+				:counter-number="44"
+				@click="setListItem(directory.id)">
+				<template #icon>
+					<LayersOutline :class="store.directoryItem === directory.id && 'selectedZaakIcon'"
+						disable-menu
+						:size="44"
+						user="janedoe"
+						display-name="Jane Doe" />
+				</template>
+				<template #subname>
+					{{ directory?.summary }}
+				</template>
+				<template #actions>
+					<NcActionButton>
+						Button one
+					</NcActionButton>
+					<NcActionButton>
+						Button two
+					</NcActionButton>
+					<NcActionButton>
+						Button three
+					</NcActionButton>
+				</template>
+			</NcListItem>
 		</ul>
+		<NcLoadingIcon v-if="loading"
+			class="loadingIcon"
+			:size="64"
+			appearance="dark"
+			name="Lisitngs aan het laden" />
 	</NcAppContentList>
 </template>
 <script>
@@ -76,19 +73,19 @@ import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIco
 // eslint-disable-next-line n/no-missing-import
 import Magnify from 'vue-material-design-icons/Magnify'
 // eslint-disable-next-line n/no-missing-import
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
+import LayersOutline from 'vue-material-design-icons/LayersOutline'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
-	name: 'MetaDataList',
+	name: 'DirectoryList',
 	components: {
 		NcListItem,
 		NcActions,
 		NcActionButton,
 		NcAppContentList,
 		NcTextField,
-		FileTreeOutline,
+		LayersOutline,
 		Magnify,
 		NcLoadingIcon,
 		Refresh,
@@ -97,8 +94,8 @@ export default {
 	data() {
 		return {
 			search: '',
-			loading: true,
-			metaDataList: [],
+			loading: false,
+			directoryList: [],
 		}
 	},
 	mounted() {
@@ -108,14 +105,14 @@ export default {
 		fetchData(newPage) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/metadata',
+				'/index.php/apps/opencatalogi/api/directory',
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaDataList = data
+						this.directoryList = data
 					})
 					this.loading = false
 				})
@@ -123,6 +120,9 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+		},
+		setActive(id) {
+			store.setDirectoryItem(id)
 		},
 		clearText() {
 			this.search = ''

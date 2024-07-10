@@ -6,7 +6,7 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'publicationEdit'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div class="modal__content">
+		<div v-if="!loading" class="modal__content">
 			<h2>Edit publication</h2>
 			<div v-if="!publicationLoading">
 				<div class="form-group">
@@ -53,6 +53,9 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
@@ -114,7 +117,7 @@ export default {
 		fetchData(id) {
 			this.publicationLoading = true
 			fetch(
-				`/index.php/apps/opencatalog/api/publications/${id}`,
+				`/index.php/apps/opencatalogi/api/publications/${id}`,
 				{
 					method: 'GET',
 				},
@@ -135,7 +138,7 @@ export default {
 		},
 		fetchCatalogi() {
 			this.catalogiLoading = true
-			fetch('/index.php/apps/opencatalog/api/catalogi', {
+			fetch('/index.php/apps/opencatalogi/api/catalogi', {
 				method: 'GET',
 			})
 				.then((response) => {
@@ -160,7 +163,7 @@ export default {
 		},
 		fetchMetaData() {
 			this.metaDataLoading = true
-			fetch('/index.php/apps/opencatalog/api/metadata', {
+			fetch('/index.php/apps/opencatalogi/api/metadata', {
 				method: 'GET',
 			})
 				.then((response) => {
@@ -188,7 +191,7 @@ export default {
 		updatePublication(id) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalog/api/publications/${id}`,
+				`/index.php/apps/opencatalogi/api/publications/${id}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -204,9 +207,7 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.succesMessage = true
-					this.loading = false
-					setTimeout(() => (this.succesMessage = false), 2500)
+					this.closeModal()
 				})
 				.catch((err) => {
 					this.loading = false

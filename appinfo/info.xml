@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-	<id>opencatalog</id>
-	<name>Open Catalog</name>
-	<summary>The Open Catalog next cloud app provides a framework for federated catalogouses to work together in an open data ecosystem</summary>
-	<description>Zaak Afhandel App biedt een klein doch fijn zaaksysteem dat direct kan worden ingepluged op ZGW registers</description>
-	<version>1.0.0</version>
+	<id>opencatalogi</id>
+	<name>Open Catalogi</name>
+	<summary>The Open Catalogi next cloud app provides a framework for federated catalogouses to work together in an open data ecosystem</summary>
+	<description>Hmmm what could we say</description>
+	<version>0.6.0</version>
 	<licence>agpl</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
-	<namespace>OpenCatalog</namespace>
+	<namespace>OpenCatalogi</namespace>
 	<category>workflow</category>
 	<bugs>https://github.com/ConductionNL/ZaakAfhandelApp/issues</bugs>
 	<dependencies>
@@ -16,9 +16,9 @@
 	</dependencies>
 	<navigations>
 		<navigation>
-			<id>opencatalog</id>
-			<name>Open Catalog</name>
-			<route>opencatalog.dashboard.page</route>
+			<id>opencatalogi</id>
+			<name>Open Catalogi</name>
+			<route>opencatalogi.dashboard.page</route>
 			<icon>app.svg</icon>
 			<type>link</type>
 		</navigation>

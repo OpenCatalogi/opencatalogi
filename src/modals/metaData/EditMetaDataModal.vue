@@ -7,8 +7,19 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'metaDataEdit'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div class="modal__content">
-			<h2>Edit MetaData</h2>
+		<div v-if="!loading" class="modal__content">
+			<h2>MetaData bewerken</h2>
+			<div class="form-group">
+				<NcTextField :disabled="loading"
+					label="Naam"
+					maxlength="255"
+					:value.sync="name"
+					required />
+				<NcTextField :disabled="loading"
+					label="Samenvatting"
+					maxlength="255"
+					:value.sync="summery" />
+			</div>
 			<div class="form-group">
 				<NcTextField label="Tooi categorie naam" :value.sync="metaData.tooiCategorieNaam" />
 			</div>
@@ -32,21 +43,27 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
 	name: 'EditMetaDataModal',
 	components: {
 		NcModal,
 		NcTextField,
-		NcButton
+		NcButton,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
+			name: '',
+			summery: '',
 			metaData: {
 				tooiCategorieNaam: '',
 				tooiCategorieId: '',
@@ -56,6 +73,7 @@ export default {
 			},
 			succesMessage: false,
 			hasUpdated: false,
+			loading: false,
 		}
 	},
 	updated() {
@@ -68,7 +86,7 @@ export default {
 		fetchData(id) {
 			this.metaDataLoading = true
 			fetch(
-				`/index.php/apps/opencatalog/metadata/api/${id}`,
+				`/index.php/apps/opencatalogi/metadata/api/${id}`,
 				{
 					method: 'GET',
 				},
@@ -76,14 +94,11 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						this.metaData = data
-						console.log(data)
-						// this.oldZaakId = id
 					})
 					this.metaDataLoading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					// this.oldZaakId = id
 					this.metaDataLoading = false
 				})
 		},
@@ -91,9 +106,7 @@ export default {
 			store.modal = false
 		},
 		editMetaData() {
-			this.$emit('metaData', this.metaDataName)
-			this.succesMessage = true
-			setTimeout(() => this.succesMessage = false, 2500)
+			this.closeModal()
 		},
 	},
 }

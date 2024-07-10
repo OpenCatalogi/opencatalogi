@@ -1,11 +1,11 @@
 <?php
 
-namespace OCA\OpenCatalog\Controller;
+namespace OCA\OpenCatalogi\Controller;
 
 use Elastic\Elasticsearch\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use OCA\OpenCatalog\Service\ElasticSearchService;
-use OCA\OpenCatalog\Service\ObjectService;
+use OCA\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
@@ -70,8 +70,7 @@ class PublicationsController extends Controller
         // We pass the $getParameter variable to the template
         // so that the value is accessible in the template.
         return new TemplateResponse(
-            //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'PublicationsIndex',
             []
         );
@@ -90,8 +89,7 @@ class PublicationsController extends Controller
         // We pass the $getParameter variable to the template
         // so that the value is accessible in the template.
         return new TemplateResponse(
-            //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'PublicationsIndex',
             []
         );

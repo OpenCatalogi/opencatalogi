@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\OpenCatalog\Service;
+namespace OCA\OpenCatalogi\Service;
 
 use Adbar\Dot;
 use GuzzleHttp\Client;

@@ -4,57 +4,6 @@ import { store } from '../store.js'
 
 <template>
 	<NcAppNavigation>
-		<NcActions>
-			<NcActionButton @click="store.setModal('publicationAdd')">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-				Add Publicatie
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('publicationEdit')">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-				Edit Publicatie
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('metaDataAdd')">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-				Add Metadata
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('metaDataEdit')">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-				Edit Metadata
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('catalogAdd')">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-				Add Catalog
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('catalogEdit')">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-				Edit Catalog
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('directoryAdd')">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-				Add External Catalog
-			</NcActionButton>
-			<NcActionButton @click="store.setModal('directoryEdit')">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-				Edit External Catalog
-			</NcActionButton>
-		</NcActions>
-
 		<NcAppNavigationList>
 			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="store.modal = 'publicationAdd'">
 				<template #icon>
@@ -69,8 +18,8 @@ import { store } from '../store.js'
 			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="store.selected === 'catalogus' && store.item === catalogus?._id"
-				@click="store.setSelected('catalogus'); store.setItem(catalogus?._id)">
+				:active="store.selected === 'publication' && store.item === catalogus?._id"
+				@click="store.setSelected('publication'); store.setItem(catalogus?._id)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
@@ -176,9 +125,9 @@ import { store } from '../store.js'
 									<td>Index</td>
 									<td>
 										<NcTextField id="elasticIndex"
-													 :value.sync="configuration.elasticIndex"
-													 :label-outside="true"
-													 placeholder="objects" />
+											:value.sync="configuration.elasticIndex"
+											:label-outside="true"
+											placeholder="objects" />
 									</td>
 								</tr>
 								<tr>
@@ -250,8 +199,6 @@ import { store } from '../store.js'
 <script>
 
 import {
-	NcActions,
-	NcActionButton,
 	NcAppNavigation,
 	NcAppNavigationList,
 	NcAppNavigationItem,
@@ -278,8 +225,6 @@ import Finance from 'vue-material-design-icons/Finance.vue'
 export default {
 	name: 'MainMenu',
 	components: {
-		NcActions,
-		NcActionButton,
 		NcAppNavigation,
 		NcAppNavigationList,
 		NcAppNavigationItem,
@@ -342,7 +287,7 @@ export default {
 			this.loading = true
 			// Catalogi details
 			fetch(
-				'/index.php/apps/opencatalog/api/catalogi',
+				'/index.php/apps/opencatalogi/api/catalogi',
 				{
 					method: 'GET',
 				},
@@ -359,7 +304,7 @@ export default {
 				})
 
 			fetch(
-				'/index.php/apps/opencatalog/configuration',
+				'/index.php/apps/opencatalogi/configuration',
 				{
 					method: 'GET',
 				},
@@ -381,7 +326,7 @@ export default {
 				body: JSON.stringify(this.configuration),
 			}
 
-			fetch('/index.php/apps/opencatalog/configuration', requestOptions)
+			fetch('/index.php/apps/opencatalogi/configuration', requestOptions)
 				.then((response) => {
 					response.json().then((data) => {
 						this.configuration = data

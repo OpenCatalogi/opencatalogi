@@ -3,12 +3,9 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal
-		v-if="store.modal === 'metaDataAdd'"
-		ref="modalRef"
-		@close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'listinEdit'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
-			<h2>MetaData toevoegen</h2>
+			<h2>Listing bewerken</h2>
 			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Naam"
@@ -20,26 +17,7 @@ import { store } from '../../store.js'
 					maxlength="255"
 					:value.sync="summery" />
 			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi categorie naam" :value.sync="tooiCategorieNaam" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi categorie id" :value.sync="tooiCategorieId" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi categorie uri" :value.sync="tooiCategorieUri" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi thema naam" :value.sync="tooiThemaNaam" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi thema uri" :value.sync="tooiThemaUri" />
-			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully added MetaData
-			</div>
-
-			<NcButton :disabled="!tooiCategorieNaam" type="primary" @click="addMetaData">
+			<NcButton :disabled="!externalCatalogName" type="primary" @click="editExternalCatalog">
 				Submit
 			</NcButton>
 		</div>
@@ -53,7 +31,7 @@ import { store } from '../../store.js'
 import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
-	name: 'AddMetaDataModal',
+	name: 'EditListingModal',
 	components: {
 		NcModal,
 		NcTextField,
@@ -64,11 +42,6 @@ export default {
 		return {
 			name: '',
 			summery: '',
-			tooiCategorieNaam: '',
-			tooiCategorieId: '',
-			tooiCategorieUri: '',
-			tooiThemaNaam: '',
-			tooiThemaUri: '',
 			succesMessage: false,
 			loading: false,
 		}
@@ -77,7 +50,7 @@ export default {
 		closeModal() {
 			store.modal = false
 		},
-		addMetaData() {
+		editExternalCatalog() {
 			this.closeModal()
 		},
 	},
