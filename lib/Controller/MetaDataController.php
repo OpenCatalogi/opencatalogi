@@ -14,13 +14,135 @@ class MetaDataController extends Controller
     const TEST_ARRAY = [
         "6892aeb1-d92d-4da5-ad41-f1c3278f40c2" => [
             "id" => "6892aeb1-d92d-4da5-ad41-f1c3278f40c2",
-            "name" => "MetaData one",
-            "summary" => "summary for one"
+            "title" => "Woo verzoek en -besluit",
+            "description" => "Woo verzoek",
+            "version" => "0.0.1",
+            "properties" =>  '{
+        "id": {
+            "type": "string"
+        },
+        "titel": {
+            "type": "string"
+        },
+        "beschrijving": {
+            "type": "string"
+        },
+        "samenvatting": {
+            "type": "string"
+        },
+        "categorie": {
+            "type": "string",
+            "required": true
+        },
+        "gepubliceerd": {
+            "type": "boolean",
+            "default": true
+        },
+        "portalUrl": {
+            "type": "string",
+            "format": "url"
+        },
+        "publicatiedatum": {
+            "description": "Publicatiedatum van een Woo object is nooit in de toekomst.",
+            "type": "string",
+            "maxDate": "now",
+            "required": true
+        },
+        "organisatie": {
+            "type": "object",
+            "$ref": "https://commongateway.nl/woo.organisatie.schema.json",
+            "format": "json",
+            "cascadeDelete": true
+        },
+        "bijlagen": {
+            "type": "array",
+            "items": {
+                "$ref": "https://commongateway.nl/woo.bijlage.schema.json"
+            },
+            "format": "json",
+            "cascadeDelete": true
+        },
+        "metadata": {
+            "type": "object",
+            "$ref": "https://commongateway.nl/woo.metadata.schema.json",
+            "format": "json",
+            "cascadeDelete": true
+        },
+        "themas": {
+            "type": "array",
+            "items": {
+                "$ref": "https://commongateway.nl/woo.thema.schema.json"
+            },
+            "format": "json",
+            "cascadeDelete": true
+        }
+    }'
         ],
         "a375d626-ffe8-4a26-a024-1ad452d1b931" => [
             "id" => "a375d626-ffe8-4a26-a024-1ad452d1b931",
-            "name" => "MetaData two",
-            "summary" => "summary for two"
+            "title" => "Convenant",
+            "descriptiont" => "Woo Convenant",
+            "version" => "0.0.1",
+			"properties" => '{
+        "id": {
+            "type": "string"
+        },
+        "titel": {
+            "type": "string"
+        },
+        "beschrijving": {
+            "type": "string"
+        },
+        "samenvatting": {
+            "type": "string"
+        },
+        "categorie": {
+            "type": "string",
+            "required": true
+        },
+        "gepubliceerd": {
+            "type": "boolean",
+            "default": true
+        },
+        "portalUrl": {
+            "type": "string",
+            "format": "url"
+        },
+        "publicatiedatum": {
+            "description": "Publicatiedatum van een Woo object is nooit in de toekomst.",
+            "type": "string",
+            "maxDate": "now",
+            "required": true
+        },
+        "organisatie": {
+            "type": "object",
+            "$ref": "https://commongateway.nl/woo.organisatie.schema.json",
+            "format": "json",
+            "cascadeDelete": true
+        },
+        "bijlagen": {
+            "type": "array",
+            "items": {
+                "$ref": "https://commongateway.nl/woo.bijlage.schema.json"
+            },
+            "format": "json",
+            "cascadeDelete": true
+        },
+        "metadata": {
+            "type": "object",
+            "$ref": "https://commongateway.nl/woo.metadata.schema.json",
+            "format": "json",
+            "cascadeDelete": true
+        },
+        "themas": {
+            "type": "array",
+            "items": {
+                "$ref": "https://commongateway.nl/woo.thema.schema.json"
+            },
+            "format": "json",
+            "cascadeDelete": true
+        }
+    }'
         ]
     ];
 
