@@ -33,8 +33,12 @@ import { store } from '../../store.js'
 				<div class="form-group">
 					<NcTextArea :disabled="publicationLoading" label="Data" :value.sync="data" />
 				</div>
-				<div v-if="succesMessage" class="success">
+				<div v-if="successMessage" class="successMessage">
 					Succesfully added publication
+				</div>
+				<div v-if="errorMessage" class="errorMessage">
+					Oeps er is iets fout gegaan.
+					Error Code: {{ errorCode }}
 				</div>
 			</div>
 			<NcButton :disabled="!title && !catalogi?.value?.id && !metaData?.value?.id || publicationLoading" type="primary" @click="addPublication">
@@ -72,7 +76,9 @@ export default {
 			data: '',
 			catalogi: {},
 			metaData: {},
-			succesMessage: false,
+			errorCode: '',
+			successMessage: false,
+			errorMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
 			publicationLoading: false,
@@ -138,6 +144,7 @@ export default {
 		},
 		addPublication() {
 			this.publicationLoading = true
+			this.errorMessage = false
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -155,10 +162,14 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.closeModal()
+					this.publicationLoading = false
+					this.succesMessage = true
+					setTimeout(() => (this.succesMessage = false), 2500)
 				})
 				.catch((err) => {
 					this.publicationLoading = false
+					this.errorMessage = true
+					this.errorCode = err
 					console.error(err)
 				})
 		},
@@ -168,7 +179,7 @@ export default {
 
 <style>
 .modal__content {
-	margin: var(--zaa-margin-50);
+	margin: var(--OC-margin-50);
 	text-align: center;
 }
 
@@ -183,9 +194,9 @@ export default {
 }
 
 .zaakDetailsContainer {
-	margin-block-start: var(--zaa-margin-20);
-	margin-inline-start: var(--zaa-margin-20);
-	margin-inline-end: var(--zaa-margin-20);
+	margin-block-start: var(--OC-margin-20);
+	margin-inline-start: var(--OC-margin-20);
+	margin-inline-end: var(--OC-margin-20);
 }
 
 .success {

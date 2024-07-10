@@ -150,6 +150,6 @@ export default {
 }
 
 .loadingIcon {
-    margin-block-start: var(--zaa-margin-20);
+    margin-block-start: var(--OC-margin-20);
 }
 </style>
