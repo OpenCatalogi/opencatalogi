@@ -28,6 +28,11 @@
   fill: white;
 }
 
+.detailGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
 /* .loadingIcon {
   margin-block-start: var(--zaa-margin-20);
 } */
