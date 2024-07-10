@@ -126,8 +126,8 @@ export default {
 
 						this.metaData = {
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1]._id,
-								label: metaData[1].name,
+								id: metaData[1].id ?? metaData[1]._id,
+								label: metaData[1].title ?? metaData[1].name,
 							})),
 
 						}

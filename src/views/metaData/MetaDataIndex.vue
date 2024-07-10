@@ -16,7 +16,7 @@ import { store } from '../../store.js'
 					<FileTreeOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="store.setModal('metaDataAdd')">
+					<NcButton type="primary" @click="store.setModal('addMetaData')">
 						Metadata beschrijving toevoegen
 					</NcButton>
 				</template>

@@ -106,10 +106,14 @@ export default {
 		}
 	},
 	updated() {
+		if (store.modal === 'publicationEdit' && this.hasUpdated) {
+			if (this.publication.id === store.publicationId) return
+			this.hasUpdated = false
+		}
 		if (store.modal === 'publicationEdit' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(store.publicationItem)
+			this.fetchData(store.publicationId)
 			this.hasUpdated = true
 		}
 	},
@@ -172,8 +176,8 @@ export default {
 						this.metaData = {
 							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1]._id,
-								label: metaData[1].name,
+								id: metaData[1].id ?? metaData[1]._id,
+								label: metaData[1].title ?? metaData[1].name,
 							})),
 
 						}
