@@ -5,16 +5,20 @@ import { store } from '../../store.js'
 <template>
 	<NcModal v-if="store.modal === 'catalogusAdd'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
-			<h2>Add catalog</h2>
+			<h2>Catalogus toevoegen</h2>
 			<div class="form-group">
-				<NcTextField label="Naam" />
+				<NcTextField :disabled="loading"
+					label="Naam"
+					maxlength="255"
+					:value.sync="name"
+					required />
+				<NcTextField :disabled="loading"
+					label="Samenvatting"
+					maxlength="255"
+					:value.sync="summery" />
 			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully added catalog
-			</div>
-
 			<NcButton :disabled="!name" type="primary" @click="addCatalog">
-				Submit
+				Toevoegen
 			</NcButton>
 		</div>
 		<NcLoadingIcon
@@ -36,6 +40,8 @@ export default {
 	},
 	data() {
 		return {
+			name: '',
+			summery: '',
 			succesMessage: false,
 			loading: false,
 

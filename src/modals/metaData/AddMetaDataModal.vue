@@ -8,7 +8,18 @@ import { store } from '../../store.js'
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
-			<h2>Add MetaData</h2>
+			<h2>MetaData toevoegen</h2>
+			<div class="form-group">
+				<NcTextField :disabled="loading"
+					label="Naam"
+					maxlength="255"
+					:value.sync="name"
+					required />
+				<NcTextField :disabled="loading"
+					label="Samenvatting"
+					maxlength="255"
+					:value.sync="summery" />
+			</div>
 			<div class="form-group">
 				<NcTextField label="Tooi categorie naam" :value.sync="tooiCategorieNaam" />
 			</div>
@@ -51,6 +62,8 @@ export default {
 	},
 	data() {
 		return {
+			name: '',
+			summery: '',
 			tooiCategorieNaam: '',
 			tooiCategorieId: '',
 			tooiCategorieUri: '',

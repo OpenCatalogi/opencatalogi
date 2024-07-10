@@ -5,14 +5,18 @@ import { store } from '../../store.js'
 <template>
 	<NcModal v-if="store.modal === 'listinEdit'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
-			<h2>Edit externalCatalog</h2>
+			<h2>Listing bewerken</h2>
 			<div class="form-group">
-				<NcTextField label="Naam" />
+				<NcTextField :disabled="loading"
+					label="Naam"
+					maxlength="255"
+					:value.sync="name"
+					required />
+				<NcTextField :disabled="loading"
+					label="Samenvatting"
+					maxlength="255"
+					:value.sync="summery" />
 			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully updated externalCatalog
-			</div>
-
 			<NcButton :disabled="!externalCatalogName" type="primary" @click="editExternalCatalog">
 				Submit
 			</NcButton>
@@ -36,6 +40,8 @@ export default {
 	},
 	data() {
 		return {
+			name: '',
+			summery: '',
 			succesMessage: false,
 			loading: false,
 		}

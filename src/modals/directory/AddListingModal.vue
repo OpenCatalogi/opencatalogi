@@ -5,12 +5,13 @@ import { store } from '../../store.js'
 <template>
 	<NcModal v-if="store.modal === 'listingAdd'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
-			<h2>Add externalCatalog</h2>
+			<h2>Listing toevoeggen</h2>
 			<div class="form-group">
-				<NcTextField label="Naam" />
-			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully added externalCatalog
+				<NcTextField :disabled="loading"
+					label="Locactie"
+					maxlength="255"
+					:value.sync="url"
+					required />
 			</div>
 
 			<NcButton :disabled="!name" type="primary" @click="addExternalCatalog">
@@ -36,7 +37,7 @@ export default {
 	},
 	data() {
 		return {
-			succesMessage: false,
+			url: '',
 			loading: false,
 		}
 	},
