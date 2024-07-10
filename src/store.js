@@ -17,6 +17,7 @@ export const store = reactive({
 	publicationId: false,
 	publicationItem: false,
 	publicationDataKey: false,
+	attachmentId: false,
 	// Lets add some setters
 	setSelected(selected) {
 		this.selected = selected
@@ -57,5 +58,9 @@ export const store = reactive({
 	setPublicationDataKey(publicationDataKey) {
 		this.publicationDataKey = publicationDataKey
 		console.log('Active publication data key set to ' + publicationDataKey)
+	},
+	setAttachmentId(attachmentId) {
+		this.attachmentId = attachmentId
+		console.log('Active attachment item set to ' + attachmentId)
 	},
 })

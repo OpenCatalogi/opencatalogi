@@ -33,6 +33,9 @@
 	grid-template-columns: 1fr 1fr;
 }
 
-/* .loadingIcon {
-  margin-block-start: var(--zaa-margin-20);
-} */
+.publishedIcon>svg {
+  fill: green;
+}
+.warningIcon>svg {
+  fill: yellow;
+}
