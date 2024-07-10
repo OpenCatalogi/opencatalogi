@@ -11,12 +11,27 @@ import { store } from '../../store.js'
 					<h1 class="h1">
 						{{ publication.title }}
 					</h1>
-					<NcActions>
+					<NcActions :primary="true" menu-name="Acties">
+						<template #icon>
+							<DotsHorizontal :size="20" />
+						</template>
 						<NcActionButton @click="store.setModal('publicationEdit')">
 							<template #icon>
-								<CogOutline :size="20" />
+								<Pencil :size="20" />
 							</template>
 							Bewerken
+						</NcActionButton>
+						<NcActionButton>
+							<template #icon>
+								<PublishOff :size="20" />
+							</template>
+							Depubliceren
+						</NcActionButton>
+						<NcActionButton class="publicationDetails-actionsDelete" @click="deletePublication()">
+							<template #icon>
+								<Delete :size="20" />
+							</template>
+							Verwijderen
 						</NcActionButton>
 					</NcActions>
 				</div>
@@ -123,11 +138,13 @@ import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud
 import { BTabs, BTab } from 'bootstrap-vue'
 
 // Icons
-import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
 import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -138,7 +155,6 @@ export default {
 		NcActions,
 		NcListItem,
 		// Icons
-		CogOutline,
 		CheckCircle,
 		ExclamationThick,
 		ListBoxOutline,
@@ -167,6 +183,10 @@ export default {
 		this.fetchData(this.publicationId)
 	},
 	methods: {
+		deletePublication() {
+			store.setPublicationItem(this.publication)
+			store.setModal('deletePublication')
+		},
 		editPublicationDataItem(key) {
 			store.setPublicationId(this.publicationId)
 			store.setPublicationDataKey(key)
@@ -257,5 +277,10 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.active.publicationDetails-actionsDelete {
+    color: var(--color-main-text) !important;
+    background-color: var(--color-error) !important;
 }
 </style>
