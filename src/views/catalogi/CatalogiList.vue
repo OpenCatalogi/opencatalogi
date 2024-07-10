@@ -37,7 +37,7 @@ import { store } from '../../store.js'
 					:active="store.catalogItem === catalogus?.id"
 					:details="'1h'"
 					:counter-number="44"
-					@click="setActive(catalogus.id)">
+					@click="store.setCatalogiItem(catalogus._id)">
 					<template #icon>
 						<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
@@ -122,9 +122,6 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
-		},
-		setActive(id) {
-			store.setCatalogItem(id)
 		},
 		clearText() {
 			this.search = ''

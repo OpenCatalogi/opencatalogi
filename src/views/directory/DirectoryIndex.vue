@@ -10,14 +10,14 @@ import { store } from '../../store.js'
 		<template #default>
 			<NcEmptyContent v-if="!store.directoryItem || store.selected != 'directory' "
 				class="detailContainer"
-				name="Geen Directory"
-				description="Nog geen directory geselecteerd">
+				name="Geen listing"
+				description="Nog geen lisiting geselecteerd">
 				<template #icon>
 					<LayersOutline />
 				</template>
 				<template #action>
 					<NcButton type="primary" @click="store.setModal('listingAdd')">
-						Directory toevoegen
+						Listing toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>

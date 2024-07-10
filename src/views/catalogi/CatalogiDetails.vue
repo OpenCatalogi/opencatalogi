@@ -69,13 +69,13 @@ export default {
 		},
 	},
 	mounted() {
-		this.fetchData()
+		this.fetchData(store.catalogiItem)
 	},
 	methods: {
-		fetchData() {
+		fetchData(catalogId) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/publications/' + store.item,
+				'/index.php/apps/opencatalogi/api/publications/' + catalogId,
 				{
 					method: 'GET',
 				},

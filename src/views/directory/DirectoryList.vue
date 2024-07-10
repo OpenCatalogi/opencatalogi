@@ -37,7 +37,7 @@ import { store } from '../../store.js'
 				:active="store.directoryItem === directory?.id"
 				:details="'1h'"
 				:counter-number="44"
-				@click="setActive(directory.id)">
+				@click="setListItem(directory.id)">
 				<template #icon>
 					<LayersOutline :class="store.directoryItem === directory.id && 'selectedZaakIcon'"
 						disable-menu

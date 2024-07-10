@@ -39,7 +39,7 @@ import { store } from '../../store.js'
 					:active="store.publicationItem === publication.id"
 					:details="'CC0 1.0'"
 					:counter-number="1"
-					@click="store.publicationItem !== publication.id ? store.setPublicationItem(publication.id) : store.setPublicationItem(false)">
+					@click="store.setPublicationItem(publication.id)">
 					<template #icon>
 						<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
 							disable-menu

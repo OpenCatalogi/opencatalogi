@@ -11,7 +11,7 @@ import { store } from '../../store.js'
 			<NcEmptyContent v-if="!store.publicationItem || store.selected != 'publication'"
 				class="detailContainer"
 				name="Geen publicatie"
-				description="Nog geen publicaite geselecteerd">
+				description="Nog geen publicatie geselecteerd">
 				<template #icon>
 					<ListBoxOutline />
 				</template>
