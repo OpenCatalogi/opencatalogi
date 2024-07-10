@@ -48,47 +48,38 @@ import { store } from '../../store.js'
 							<div
 								v-if="publication?.data?.attachments?.length > 0"
 								class="tabPanel">
-								<table
-									ref="table"
-									class="vld-parent table"
-									:current-page="currentPage">
-									<tr>
-										<th>Titel</th>
-										<th>Beschrijving</th>
-										<th>Licentie</th>
-										<th>Type</th>
-										<th>Gepubliseerd</th>
-										<th>bewerkt</th>
-										<th>download</th>
-									</tr>
-									<tr
-										v-for="(attachment, i) in publication?.data?.attachments"
-										:key="i"
-										class="table-rows">
-										<td class="td">
-											{{ attachment.title }}
-										</td>
-										<td class="td">
-											{{ attachment.description }}
-										</td>
-										<td class="td">
-											{{ attachment.license }}
-										</td>
-										<td class="td">
-											{{ attachment.type }}
-										</td>
-										<td class="td">
-											{{ attachment.published }}
-										</td>
-										<td class="td">
-											{{ attachment.modified }}
-										</td>
-										<td class="td">
-											<a class="link"
-												:href="attachment.downloadURL">Download</a>
-										</td>
-									</tr>
-								</table>
+								<NcListItem v-for="(attachment, i) in publication?.data?.attachments"
+									:key="`${attachment}${i}`"
+									:name="attachment?.title"
+									:bold="false"
+									:active="store.attachmentId === attachment.id"
+									:force-display-actions="true"
+									:details="attachment?.published ? 'Published' : 'Not Published'"
+									@click="store.setAttachmentId(attachment.id)">
+									<template #icon>
+										<CheckCircle v-if="attachment?.published"
+											:class="attachment?.published && 'publishedIcon'"
+											disable-menu
+											:size="44"
+											user="janedoe"
+											display-name="Jane Doe" />
+
+										<ExclamationThick v-if="!attachment?.published"
+											:class="!attachment?.published && 'warningIcon'"
+											disable-menu
+											:size="44"
+											user="janedoe"
+											display-name="Jane Doe" />
+									</template>
+									<template #subname>
+										{{ attachment?.description }}
+									</template>
+									<template #actions>
+										<NcActionButton>
+											Bewerken
+										</NcActionButton>
+									</template>
+								</NcListItem>
 							</div>
 							<div v-else class="tabPanel">
 								Geen bijlagen gevonden
@@ -107,17 +98,27 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcActions, NcActionButton } from '@nextcloud/vue'
+// Components
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
+
+// Icons
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
+import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
+import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
 
 export default {
 	name: 'PublicationDetail',
 	components: {
+		// Components
 		NcLoadingIcon,
 		NcActionButton,
 		NcActions,
+		NcListItem,
+		// Icons
 		CogOutline,
+		CheckCircle,
+		ExclamationThick,
 	},
 	props: {
 		publicationId: {

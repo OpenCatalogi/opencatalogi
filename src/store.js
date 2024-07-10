@@ -15,6 +15,7 @@ export const store = reactive({
 	directoryItem: false,
 	metaDataItem: false,
 	publicationItem: false,
+	attachmentId: false,
 	// Lets add some setters
 	setSelected(selected) {
 		this.selected = selected
@@ -47,5 +48,9 @@ export const store = reactive({
 	setPublicationItem(publicationItem) {
 		this.publicationItem = publicationItem
 		console.log('Active publication item set to ' + publicationItem)
+	},
+	setAttachmentId(attachmentId) {
+		this.attachmentId = attachmentId
+		console.log('Active attachment item set to ' + attachmentId)
 	},
 })
