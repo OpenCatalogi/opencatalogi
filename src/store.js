@@ -13,6 +13,7 @@ export const store = reactive({
 	catalogiItem: false,
 	listItem: false,
 	directoryItem: false,
+	metaDataId: false,
 	metaDataItem: false,
 	publicationId: false,
 	publicationItem: false,
@@ -43,7 +44,11 @@ export const store = reactive({
 		this.directoryItem = directoryItem
 		console.log('Active directory item set to ' + directoryItem)
 	},
-	setMetadataItem(metaDataItem) {
+	setMetaDataId(metaDataId) {
+		this.metaDataId = metaDataId
+		console.log('Active metadata id set to ' + metaDataId)
+	},
+	setMetaDataItem(metaDataItem) {
 		this.metaDataItem = metaDataItem
 		console.log('Active metadata item set to ' + metaDataItem)
 	},

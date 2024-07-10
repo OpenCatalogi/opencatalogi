@@ -22,7 +22,7 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('metaDataAdd')">
+					<NcActionButton @click="store.setModal('addMetaData')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -34,13 +34,13 @@ import { store } from '../../store.js'
 			<div v-if="!loading">
 				<NcListItem v-for="(metaData, i) in metaDataList.results"
 					:key="`${metaData}${i}`"
-					:name="metaData?.name"
-					:active="store.metaDataItem === metaData?._id"
+					:name="metaData?.title"
+					:active="store.metaDataId === metaData?.id"
 					:details="'1h'"
 					:counter-number="44"
-					@click="store.setMetadataItem(metaData._id)">
+					@click="storeMetaData(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataItem === metaData._id && 'selectedZaakIcon'"
+						<FileTreeOutline :class="store.metaDataId === metaData._id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -50,7 +50,7 @@ import { store } from '../../store.js'
 						{{ metaData?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton>
+						<NcActionButton @click="editMetaData(metaData)">
 							Bewerken
 						</NcActionButton>
 						<NcActionButton>
@@ -105,6 +105,15 @@ export default {
 		this.fetchData()
 	},
 	methods: {
+		storeMetaData(metaData) {
+			store.setMetaDataId(metaData.id)
+			store.setMetaDataItem(metaData)
+		},
+		editMetaData(metaData) {
+			store.setMetaDataItem(metaData)
+			store.setMetaDataId(metaData.id)
+			store.setModal('editMetaData')
+		},
 		fetchData(newPage) {
 			this.loading = true
 			fetch(
