@@ -8,10 +8,10 @@ import { store } from '../../store.js'
 			<PublicationList />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.item || !store.publicationItem"
+			<NcEmptyContent v-if="!store.publicationItem || store.selected != 'publication'"
 				class="detailContainer"
 				name="Geen publicatie"
-				description="Nog geen publicaite geselecteerd">
+				description="Nog geen publicatie geselecteerd">
 				<template #icon>
 					<ListBoxOutline />
 				</template>
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<PublicationDetails v-if="store.item && store.publicationItem" :publication-id="store.publicationItem" />
+			<PublicationDetails v-if="store.publicationItem && store.selected === 'publication'" :publication-id="store.publicationItem" />
 		</template>
 	</NcAppContent>
 </template>
@@ -41,13 +41,6 @@ export default {
 		PublicationList,
 		PublicationDetails,
 		NcButton,
-	},
-	methods: {
-		getIdFromUrl() {
-			const url = window.location.href
-			const lastParam = url.split('/').slice(-1)[0]
-			return lastParam
-		},
 	},
 }
 </script>

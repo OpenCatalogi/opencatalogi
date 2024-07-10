@@ -6,37 +6,56 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'publicationEdit'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div class="modal__content">
+		<div v-if="!loading" class="modal__content">
 			<h2>Edit publication</h2>
-			<h1>title: {{ publication.title }}</h1>
-			<div class="form-group">
-				<NcTextField label="Naam" :value.sync="publication.title" :loading="publicationLoading" />
+			<div v-if="!publicationLoading">
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Naam"
+						:value.sync="publication.title"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
+				</div>
+				<div class="selectGrid">
+					<div class="form-group">
+						<NcSelect v-bind="catalogi"
+							v-model="catalogi.value"
+							input-label="Catalogi"
+							:loading="catalogiLoading"
+							:disabled="loading"
+							required />
+					</div>
+					<div class="form-group">
+						<NcSelect
+							v-bind="metaData"
+							v-model="metaData.value"
+							input-label="MetaData"
+							:loading="catalogiLoading"
+							:disabled="true" />
+					</div>
+				</div>
+				<div class="form-group">
+					<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
+				</div>
+				<div v-if="succesMessage" class="success">
+					Succesfully updated publication
+				</div>
 			</div>
-			<div class="form-group">
-				<NcTextArea label="Beschrijving" :value.sync="publication.description" />
-			</div>
-			<div class="form-group">
-				<NcSelect v-bind="catalogi"
-					v-model="catalogi.value"
-					:loading="catalogiLoading"
-					required
-					:value.sync="test" />
-			</div>
-			<div class="form-group">
-				<NcSelect v-bind="metaData"
-					v-model="metaData.value"
-					:loading="metaDataLoading"
-					required
-					:value.sync="test2" />
-			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully added publication
-			</div>
+			<NcLoadingIcon
+				v-if="publicationLoading"
+				:size="100"
+				appearance="dark"
+				name="Publicatie details aan het laden" />
 
-			<NcButton :disabled="!title" type="primary" @click="addPublication">
+			<NcButton :disabled="!publication.title" type="primary" @click="updatePublication(publication.id)">
 				Submit
 			</NcButton>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
@@ -47,6 +66,7 @@ import {
 	NcTextField,
 	NcTextArea,
 	NcSelect,
+	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 export default {
@@ -57,15 +77,27 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcSelect,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
 			publication: {
 				title: '',
 				description: '',
+				catalogi: '',
+				metaData: '',
+				data: '',
+				id: '',
 			},
-			catalogi: {},
-			metaData: {},
+			catalogi: {
+				value: [],
+				options: [],
+			},
+			metaData: {
+				value: [],
+				options: [],
+			},
+			loading: false,
 			succesMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
@@ -74,10 +106,10 @@ export default {
 		}
 	},
 	updated() {
-		if (!this.hasUpdated) {
-			this.fetchData(store.publicationItem)
+		if (store.modal === 'publicationEdit' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
+			this.fetchData(store.publicationItem)
 			this.hasUpdated = true
 		}
 	},
@@ -85,7 +117,7 @@ export default {
 		fetchData(id) {
 			this.publicationLoading = true
 			fetch(
-				`/index.php/apps/opencatalog/publications/api/${id}`,
+				`/index.php/apps/opencatalogi/api/publications/${id}`,
 				{
 					method: 'GET',
 				},
@@ -93,29 +125,30 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						this.publication = data
-						console.log(data)
-						// this.oldZaakId = id
+						this.publication.data = JSON.stringify(data.data)
+						this.catalogi.value = [data.catalogi]
+						this.metaData.value = [data.metaData]
 					})
 					this.publicationLoading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					// this.oldZaakId = id
 					this.publicationLoading = false
 				})
 		},
 		fetchCatalogi() {
 			this.catalogiLoading = true
-			fetch('/index.php/apps/opencatalog/catalogi/api', {
+			fetch('/index.php/apps/opencatalogi/api/catalogi', {
 				method: 'GET',
 			})
 				.then((response) => {
 					response.json().then((data) => {
 
 						this.catalogi = {
+							value: this.catalogi.value,
 							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
-								id: catalog[0],
+								id: catalog[1]._id,
 								label: catalog[1].name,
 							})),
 
@@ -130,7 +163,7 @@ export default {
 		},
 		fetchMetaData() {
 			this.metaDataLoading = true
-			fetch('/index.php/apps/opencatalog/metadata/api', {
+			fetch('/index.php/apps/opencatalogi/api/metadata', {
 				method: 'GET',
 			})
 				.then((response) => {
@@ -139,7 +172,7 @@ export default {
 						this.metaData = {
 							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[0],
+								id: metaData[1]._id,
 								label: metaData[1].name,
 							})),
 
@@ -155,25 +188,29 @@ export default {
 		closeModal() {
 			store.modal = false
 		},
-		addPublication() {
-			this.$emit('publication', this.name)
+		updatePublication(id) {
+			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalog/publications/api',
+				`/index.php/apps/opencatalogi/api/publications/${id}`,
 				{
-					method: 'POST',
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({
-						title: this.title,
-						description: this.description,
-						catalogi: this.catalogi.value.id,
-						metaData: this.metaData.value.id,
+						title: this.publication.title,
+						description: this.publication.description,
+						catalogi: this.publication.catalogi,
+						metaData: this.publication.metaData,
+						data: JSON.parse(this.publication.data),
 					}),
 				},
 			)
 				.then((response) => {
-					this.succesMessage = true
-					setTimeout(() => (this.succesMessage = false), 2500)
+					this.closeModal()
 				})
 				.catch((err) => {
+					this.loading = false
 					console.error(err)
 				})
 		},

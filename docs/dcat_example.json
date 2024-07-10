@@ -1,0 +1,108 @@
+{
+	"id": "33f88aa9-6ac0-4f6c-967e-ecf787fd6a3d",
+	"reference": "https://catalogus-rotterdam.dataplatform.nl/dataset/voorlopige-energielabels-met-bag-kenmerken",
+	"title": "Input voor OpenCatalogi",
+	"summary": "Dit is een selectie van high-value datasets in DCAT-AP 2.0 standaard x",
+	"category": "Dataset",
+	"portal": "https://catalogus-rotterdam.dataplatform.nl/dataset/voorlopige-energielabels-met-bag-kenmerken",
+	"published": "2020-04-07",
+	"modified": "2020-12-29",
+	"featured": false,
+	"organization": {
+		"id": "9d8309c4-a244-4482-95db-e1488c643bb8",
+		"title": "Gemeente Rotterdam",
+		"image": "https://avatars.githubusercontent.com/u/93453128?v=4"
+	},
+	"schema": "https://openwoo.app/schemas/metadata.dcat_catalog.schema.json",
+	"status": "published",
+	"license": "CC0 1.0",
+	"attachments": [
+		{
+			"title": "voorlopige energielabels met BAG-kenmerken ",
+			"description": "ESRI feature layer met voorlopige energielabels met BAG-kenmerken, per addresseerbaar object. Op basis van de gegevens voor december 2019 van EP-online.",
+			"license": "CC0 1.0",
+			"type": "application/json",
+			"published": "29-12-2020",
+			"modified": "30 december 2020, 17:09 (UTC+01:00)",
+			"accessURL": "https://services.arcgis.com/zP1tGdLpGvt2qNJ6/arcgis/rest/services/Voorlopige_Energielabels_BAG/FeatureServer",
+			"downloadURL": "https://services.arcgis.com/zP1tGdLpGvt2qNJ6/arcgis/rest/services/Voorlopige_Energielabels_BAG/FeatureServer"
+		},
+		{
+			"title": "voorlopige energielabels met BAG-kenmerken ",
+			"description": "OGC:Geopackage met voorlopige energielabels met BAG-kenmerken, per addresseerbaar object. Op basis van de gegevens voor december 2019 van EP-online.",
+			"license": "CC0 1.0",
+			"type": "application/geopackage+sqlite3",
+			"published": "29-12-2020",
+			"modified": "30 december 2020, 17:10 (UTC+01:00)",
+			"accessURL": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GPKG/Voorlopige-labels-december-2019.gpkg",
+			"downloadURL": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\GPKG\\Voorlopige-labels-december-2019.gpkg"
+		},
+		{
+			"title": "voorlopige energielabels met BAG-kenmerken ",
+			"description": "ESRI File Geodatabase met voorlopige energielabels met BAG-kenmerken, per addresseerbaar object. Op basis van de gegevens voor december 2019 van EP-online.",
+			"license": "CC0 1.0",
+			"type": "application/vnd.esri.filegdb",
+			"published": "29-12-2020",
+			"modified": "30 december 2020, 17:11 (UTC+01:00)",
+			"accessURL": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GDB/Voorlopige-labels-december-2019.gdb",
+			"downloadURL": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\GDB\\Voorlopige-labels-december-2019.gdb"
+		},
+		{
+			"title": "voorlopige energielabels met BAG-kenmerken ",
+			"description": "ESRI Shape files met voorlopige energielabels met BAG-kenmerken, per addresseerbaar object. Op basis van de gegevens voor december 2019 van EP-online.",
+			"license": "CC0 1.0",
+			"type": "application/x-shapefile",
+			"published": "29-12-2020",
+			"modified": "30 december 2020, 17:11 (UTC+01:00)",
+			"accessURL": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GDB/Voorlopige-labels-december-2019.gdb",
+			"downloadURL": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\SHP\\*.shp"
+		},
+		{
+			"title": "productbeschrijving: voorlopige energielabels met BAG kenmerken",
+			"description": "productbeschrijving: voorlopige energielabels met BAG kenmerken",
+			"license": "CC0 1.0",
+			"type": "text/html",
+			"published": "7-4-2020",
+			"modified": "30 december 2020, 17:12 (UTC+01:00)",
+			"accessURL": "https://rio.rotterdam.nl/Project/SODAStadsOntwikkelingData/Pages/ThoZIFnen0KbY6eBjPvh-A",
+			"downloadURL": "https://rio.rotterdam.nl/Project/SODAStadsOntwikkelingData/Pages/ThoZIFnen0KbY6eBjPvh-A"
+		}
+	],
+	"attachment_count": 5,
+	"themes": [
+		"EI",
+		"EP",
+		"SODA",
+		"energie",
+		"energieindex",
+		"energielabel",
+		"energielabels",
+		"energieprestatie",
+		"kennisloods soda",
+		"voorlopig energielabel"
+	],
+	"data": {
+		"spatial": "[55500,428647,101033,447000]",
+		"contactPoint": {
+			"name": "gemeente Rotterdam, Stadsontwikkeling, SODA",
+			"email": "dataSO@rotterdam.nl"
+		},
+		"qualifiedAttribution": {
+			"responsible": {
+				"name": "gemeente Rotterdam, Stadsontwikkeling, SODA",
+				"email": "dataSO@rotterdam.nl"
+			},
+			"role": {
+				"name": "beheerder"
+			}
+		},
+		"accrualPeriodicity": "onregelmatig"
+	},
+	"anonymization": {
+		"anonymized": true
+	},
+	"language": {
+		"code": "nl-nl",
+		"level": "A1"
+	}
+}

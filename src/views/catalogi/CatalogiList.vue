@@ -22,51 +22,49 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('publicationAdd')">
+					<NcActionButton @click="store.setModal('catalogusAdd')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						Publicatie toevoegen
+						Catalogus toevoegen
 					</NcActionButton>
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(publication, i) in publications.results"
-					:key="`${publication}${i}`"
-					:name="publication?.title"
-					:bold="false"
-					:force-display-actions="true"
-					:active="store.publicationItem === publication.id"
-					:details="'CC0 1.0'"
-					:counter-number="1"
-					@click="store.setPublicationItem(publication.id)">
+				<NcListItem v-for="(catalogus, i) in catalogi.results"
+					:key="`${catalogus}${i}`"
+					:name="catalogus?.name"
+					:active="store.catalogItem === catalogus?.id"
+					:details="'1h'"
+					:counter-number="44"
+					@click="store.setCatalogiItem(catalogus._id)">
 					<template #icon>
-						<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
+						<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
 							display-name="Jane Doe" />
 					</template>
 					<template #subname>
-						{{ publication?.description }}
+						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
 						<NcActionButton>
-							Bewerken
+							Button one
 						</NcActionButton>
 						<NcActionButton>
-							Depubliceren
+							Button two
 						</NcActionButton>
-						<NcActionButton @click="deletePublication(publication.id)">
-							Verwijderen
+						<NcActionButton>
+							Button three
 						</NcActionButton>
 					</template>
 				</NcListItem>
 			</div>
 
 			<NcLoadingIcon v-if="loading"
-				:size="64"
 				class="loadingIcon"
+				:size="64"
 				appearance="dark"
 				name="Zaken aan het laden" />
 		</ul>
@@ -74,22 +72,24 @@ import { store } from '../../store.js'
 </template>
 <script>
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
-import Magnify from 'vue-material-design-icons/Magnify.vue'
-import Refresh from 'vue-material-design-icons/Refresh.vue'
+// eslint-disable-next-line n/no-missing-import
+import Magnify from 'vue-material-design-icons/Magnify'
+// eslint-disable-next-line n/no-missing-import
+import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
+import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
-	name: 'PublicationList',
+	name: 'CatalogiList',
 	components: {
 		NcListItem,
+		NcActions,
 		NcActionButton,
 		NcAppContentList,
 		NcTextField,
-		ListBoxOutline,
+		DatabaseOutline,
 		Magnify,
 		NcLoadingIcon,
-		NcActions,
 		Refresh,
 		Plus,
 	},
@@ -97,7 +97,7 @@ export default {
 		return {
 			search: '',
 			loading: false,
-			publications: [],
+			catalogi: [],
 		}
 	},
 	mounted() {
@@ -107,39 +107,20 @@ export default {
 		fetchData(newPage) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/publications',
+				'/index.php/apps/opencatalogi/api/catalogi',
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.publications = data
+						this.catalogi = data
 					})
 					this.loading = false
 				})
 				.catch((err) => {
 					console.error(err)
 					this.loading = false
-				})
-		},
-		deletePublication(id) {
-			fetch(
-				`/index.php/apps/api/publications/${id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				},
-			)
-				.then((response) => {
-					console.warn('publication removed')
-					// this.succesMessage = true
-					// setTimeout(() => (this.succesMessage = false), 2500)
-				})
-				.catch((err) => {
-					console.error(err)
 				})
 		},
 		clearText() {
@@ -149,13 +130,25 @@ export default {
 }
 </script>
 <style>
-.listHeader{
-	display: flex;
+.listHeader {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: var(--color-main-background);
+    border-bottom: 1px solid var(--color-border);
 }
 
-.refresh{
-	margin-block-start: 11px !important;
-    margin-block-end: 11px !important;
-    margin-inline-end: 10px;
+.searchField {
+    padding-inline-start: 65px;
+    padding-inline-end: 20px;
+    margin-block-end: 6px;
+}
+
+.selectedZaakIcon>svg {
+    fill: white;
+}
+
+.loadingIcon {
+    margin-block-start: var(--zaa-margin-20);
 }
 </style>

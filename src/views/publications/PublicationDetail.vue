@@ -7,21 +7,110 @@ import { store } from '../../store.js'
 		<div v-if="!loading" id="app-content">
 			<!-- app-content-wrapper is optional, only use if app-content-list  -->
 			<div>
-				<h1 class="h1">
-					{{ publication.title }}
-				</h1>
-				<div class="grid">
-					<div class="gridContent">
-						<h4>Beschrijving:</h4>
-						<span>{{ publication.description }}</span>
+				<div class="head">
+					<h1 class="h1">
+						{{ publication.title }}
+					</h1>
+					<NcActions>
+						<NcActionButton @click="store.setModal('publicationEdit')">
+							<template #icon>
+								<CogOutline :size="20" />
+							</template>
+							Bewerken
+						</NcActionButton>
+					</NcActions>
+				</div>
+				<div class="container">
+					<div class="detailGrid">
+						<div>
+							<h4>Beschrijving:</h4>
+							<span>{{ publication.description }}</span>
+						</div>
+						<div>
+							<h4>Catalogi:</h4>
+							<span>{{ publication.catalogi }}</span>
+						</div>
+						<div>
+							<h4>Metadata:</h4>
+							<span>{{ publication.metaData }}</span>
+						</div>
+					</div>
+					<div class="tabContainer">
+						<BTabs content-class="mt-3" justified>
+							<BTab title="Eigenschappen" active>
+								<NcListItem v-for="(value, key, i) in publication.data"
+									:key="`${key}${i}`"
+									:name="key"
+									:bold="false"
+									:force-display-actions="true">
+									<template #icon>
+										<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
+											disable-menu
+											:size="44"
+											user="janedoe"
+											display-name="Jane Doe" />
+									</template>
+									<template #subname>
+										{{ value }}
+									</template>
+									<template #actions>
+										<NcActionButton @click="editPublicationDataItem(key)">
+											<template #icon>
+												<Pencil :size="20" />
+											</template>
+											Bewerken
+										</NcActionButton>
+									</template>
+								</NcListItem>
+							</BTab>
+							<BTab title="Bijlagen">
+								<div
+									v-if="publication?.data?.attachments?.length > 0"
+									class="tabPanel">
+									<NcListItem v-for="(attachment, i) in publication?.data?.attachments"
+										:key="`${attachment}${i}`"
+										:name="attachment?.title"
+										:bold="false"
+										:active="store.attachmentId === attachment.id"
+										:force-display-actions="true"
+										:details="attachment?.published ? 'Published' : 'Not Published'"
+										@click="store.setAttachmentId(attachment.id)">
+										<template #icon>
+											<CheckCircle v-if="attachment?.published"
+												:class="attachment?.published && 'publishedIcon'"
+												disable-menu
+												:size="44"
+												user="janedoe"
+												display-name="Jane Doe" />
+
+											<ExclamationThick v-if="!attachment?.published"
+												:class="!attachment?.published && 'warningIcon'"
+												disable-menu
+												:size="44"
+												user="janedoe"
+												display-name="Jane Doe" />
+										</template>
+										<template #subname>
+											{{ attachment?.description }}
+										</template>
+										<template #actions>
+											<NcActionButton>
+												Bewerken
+											</NcActionButton>
+										</template>
+									</NcListItem>
+								</div>
+								<div v-else class="tabPanel">
+									Geen bijlagen gevonden
+								</div>
+							</BTab>
+						</BTabs>
 					</div>
 				</div>
 			</div>
-			<NcButton type="primary" @click="store.setModal('publicationEdit')">
-				Publicatie bewerken
-			</NcButton>
 		</div>
-		<NcLoadingIcon v-if="loading"
+		<NcLoadingIcon
+			v-if="loading"
 			:size="100"
 			appearance="dark"
 			name="Publicatie details aan het laden" />
@@ -29,13 +118,30 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcButton } from '@nextcloud/vue'
+// Components
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
+import { BTabs, BTab } from 'bootstrap-vue'
+
+// Icons
+import CogOutline from 'vue-material-design-icons/CogOutline.vue'
+import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
+import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
 	components: {
+		// Components
 		NcLoadingIcon,
-		NcButton,
+		NcActionButton,
+		NcActions,
+		NcListItem,
+		// Icons
+		CogOutline,
+		CheckCircle,
+		ExclamationThick,
+		ListBoxOutline,
 	},
 	props: {
 		publicationId: {
@@ -61,14 +167,16 @@ export default {
 		this.fetchData(this.publicationId)
 	},
 	methods: {
+		editPublicationDataItem(key) {
+			store.setPublicationId(this.publicationId)
+			store.setPublicationDataKey(key)
+			store.setModal('editPublicationDataModal')
+		},
 		fetchData(id) {
 			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalog/publications/api/${id}`,
-				{
-					method: 'GET',
-				},
-			)
+			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
+				method: 'GET',
+			})
 				.then((response) => {
 					response.json().then((data) => {
 						this.publication = data
@@ -88,7 +196,16 @@ export default {
 
 <style>
 h4 {
-  font-weight: bold
+  font-weight: bold;
+}
+
+.head{
+	display: flex;
+	justify-content: space-between;
+}
+
+.button{
+	max-height: 10px;
 }
 
 .h1 {
@@ -102,40 +219,32 @@ h4 {
   unicode-bidi: isolate !important;
 }
 
-.grid {
-  display: grid;
-  grid-gap: 24px;
-  grid-template-columns: 1fr 1fr;
-  margin-block-start: var(--zaa-margin-50);
-  margin-block-end: var(--zaa-margin-50);
-}
-
-.gridContent {
+.dataContent {
   display: flex;
-  gap: 25px;
+  flex-direction: column;
 }
 
-.tabContainer>* ul>li {
+.tabContainer > * ul > li {
   display: flex;
   flex: 1;
 }
 
-.tabContainer>* ul>li:hover {
+.tabContainer > * ul > li:hover {
   background-color: var(--color-background-hover);
 }
 
-.tabContainer>* ul>li>a {
+.tabContainer > * ul > li > a {
   flex: 1;
   text-align: center;
 }
 
-.tabContainer>* ul>li>.active {
+.tabContainer > * ul > li > .active {
   background: transparent !important;
   color: var(--color-main-text) !important;
   border-bottom: var(--default-grid-baseline) solid var(--color-primary-element) !important;
 }
 
-.tabContainer>* ul {
+.tabContainer > * ul {
   display: flex;
   margin: 10px 8px 0 8px;
   justify-content: space-between;

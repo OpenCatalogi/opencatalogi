@@ -2,45 +2,36 @@
 import { store } from '../../store.js'
 </script>
 <template>
-	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal
+		v-if="store.modal === 'editPublicationDataModal'"
+		ref="modalRef"
+		@close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
-			<h2>Add publication</h2>
-			<div class="formContainer">
+			<h2>Edit publication data</h2>
+
+			<div v-if="!publicationLoading">
 				<div class="form-group">
-					<NcTextField :disabled="publicationLoading" label="Naam" :value.sync="title" />
+					<NcTextField :disabled="loading"
+						:label="store.publicationDataKey"
+						:value.sync="publication.data[store.publicationDataKey]"
+						:loading="publicationLoading" />
 				</div>
-				<div class="form-group">
-					<NcTextArea :disabled="publicationLoading" label="Beschrijving" :value.sync="description" />
-				</div>
-				<div class="selectGrid">
-					<div class="form-group">
-						<NcSelect v-bind="catalogi"
-							v-model="catalogi.value"
-							input-label="Catalogi"
-							:loading="catalogiLoading"
-							:disabled="publicationLoading"
-							required />
-					</div>
-					<div class="form-group">
-						<NcSelect v-bind="metaData"
-							v-model="metaData.value"
-							input-label="MetaData"
-							:loading="metaDataLoading"
-							:disabled="publicationLoading"
-							required />
-					</div>
-				</div>
-				<div class="form-group">
-					<NcTextArea :disabled="publicationLoading" label="Data" :value.sync="data" />
-				</div>
+
 				<div v-if="succesMessage" class="success">
-					Succesfully added publication
+					Succesfully updated publication
 				</div>
 			</div>
-			<NcButton :disabled="!title && !catalogi?.value?.id && !metaData?.value?.id || publicationLoading" type="primary" @click="addPublication">
+			<NcLoadingIcon
+				v-if="publicationLoading"
+				:size="100"
+				appearance="dark"
+				name="Publicatie details aan het laden" />
+
+			<NcButton :disabled="!publication.title" type="primary" @click="updatePublication(publication.id)">
 				Submit
 			</NcButton>
 		</div>
+
 		<NcLoadingIcon
 			v-if="loading"
 			:size="100" />
@@ -52,41 +43,74 @@ import {
 	NcButton,
 	NcModal,
 	NcTextField,
-	NcTextArea,
-	NcSelect,
+	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 export default {
-	name: 'AddPublicationModal',
+	name: 'EditPublicationDataModal',
 	components: {
 		NcModal,
 		NcTextField,
-		NcTextArea,
 		NcButton,
-		NcSelect,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
-			title: '',
-			description: '',
-			data: '',
-			catalogi: {},
-			metaData: {},
+			publication: {
+				title: '',
+				description: '',
+				catalogi: '',
+				metaData: '',
+				data: '',
+				id: '',
+			},
+			catalogi: {
+				value: [],
+				options: [],
+			},
+			metaData: {
+				value: [],
+				options: [],
+			},
+			loading: false,
 			succesMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
-			publicationLoading: false,
 			hasUpdated: false,
+			publicationLoading: false,
 		}
 	},
 	updated() {
-		if (store.modal === 'publicationAdd' && !this.hasUpdated) {
+		if (store.modal === 'editPublicationDataModal' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
+			this.fetchData(store.publicationId)
 			this.hasUpdated = true
 		}
 	},
 	methods: {
+		fetchData(id) {
+			this.publicationLoading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/publications/${id}`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						this.publication = data
+						// this.publication.data = JSON.stringify(data.data)
+						this.catalogi.value = [data.catalogi]
+						this.metaData.value = [data.metaData]
+					})
+					this.publicationLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.publicationLoading = false
+				})
+		},
 		fetchCatalogi() {
 			this.catalogiLoading = true
 			fetch('/index.php/apps/opencatalogi/api/catalogi', {
@@ -96,6 +120,8 @@ export default {
 					response.json().then((data) => {
 
 						this.catalogi = {
+							value: this.catalogi.value,
+							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
 								id: catalog[1]._id,
 								label: catalog[1].name,
@@ -119,6 +145,7 @@ export default {
 					response.json().then((data) => {
 
 						this.metaData = {
+							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
 								id: metaData[1]._id,
 								label: metaData[1].name,
@@ -136,29 +163,23 @@ export default {
 		closeModal() {
 			store.modal = false
 		},
-		addPublication() {
-			this.publicationLoading = true
+		updatePublication(id) {
+			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/publications',
+				`/index.php/apps/opencatalogi/api/publications/${id}`,
 				{
-					method: 'POST',
+					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						title: this.title,
-						description: this.description,
-						catalogi: this.catalogi.value.id,
-						metaData: this.metaData.value.id,
-						data: JSON.parse(this.data),
-					}),
+					body: JSON.stringify(this.publication),
 				},
 			)
 				.then((response) => {
 					this.closeModal()
 				})
 				.catch((err) => {
-					this.publicationLoading = false
+					this.loading = false
 					console.error(err)
 				})
 		},
@@ -168,27 +189,17 @@ export default {
 
 <style>
 .modal__content {
-	margin: var(--zaa-margin-50);
-	text-align: center;
-}
-
-.formContainer>* {
-	margin-block-end: 10px;
-}
-
-.selectGrid {
-	display: grid;
-	grid-gap: 5px;
-	grid-template-columns: 1fr 1fr;
+  margin: var(--zaa-margin-50);
+  text-align: center;
 }
 
 .zaakDetailsContainer {
-	margin-block-start: var(--zaa-margin-20);
-	margin-inline-start: var(--zaa-margin-20);
-	margin-inline-end: var(--zaa-margin-20);
+  margin-block-start: var(--zaa-margin-20);
+  margin-inline-start: var(--zaa-margin-20);
+  margin-inline-end: var(--zaa-margin-20);
 }
 
 .success {
-	color: green;
+  color: green;
 }
 </style>

@@ -1,10 +1,12 @@
 <?php
 
-namespace OCA\OpenCatalog\Controller;
+namespace OCA\OpenCatalogi\Controller;
 
+use OCA\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\IAppConfig;
 use OCP\IRequest;
 
 class DirectoryController extends Controller
@@ -22,7 +24,7 @@ class DirectoryController extends Controller
         ]
     ];
 
-    public function __construct($appName, IRequest $request)
+    public function __construct($appName, IRequest $request, private readonly IAppConfig $config)
     {
         parent::__construct($appName, $request);
     }
@@ -39,59 +41,137 @@ class DirectoryController extends Controller
         // so that the value is accessible in the template.
         return new TemplateResponse(
             //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'DirectoryIndex',
             []
         );
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function index(): JSONResponse
-    {
-        $results = ["results" => self::TEST_ARRAY];
-        return new JSONResponse($results);
-    }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function show(string $id): JSONResponse
-    {
-        $result = self::TEST_ARRAY[$id];
-        return new JSONResponse($result);
-    }
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function index(ObjectService $objectService): JSONResponse
+	{
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters = $this->request->getParams();
+
+		foreach($filters as $key => $value) {
+			if(str_starts_with($key, '_')) {
+				unset($filters[$key]);
+			}
+		}
 
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function create(): JSONResponse
-    {
-        // get post from requests
-        return new JSONResponse([]);
-    }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function update(string $id): JSONResponse
-    {
-        $result = self::TEST_ARRAY[$id];
-        return new JSONResponse($result);
-    }
+		$filters['_schema'] = 'directory';
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function destroy(string $id): JSONResponse
-    {
-        return new JSONResponse([]);
-    }
+		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
+
+		$results = ["results" => $result['documents']];
+		return new JSONResponse($results);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function show(string $id, ObjectService $objectService): JSONResponse
+	{
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters['_id'] = $id;
+
+		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
+
+		return new JSONResponse($result);
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function create(ObjectService $objectService): JSONResponse
+	{
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$data = $this->request->getParams();
+
+		foreach($data as $key => $value) {
+			if(str_starts_with($key, '_')) {
+				unset($data[$key]);
+			}
+		}
+
+		$data['_schema'] = 'directory';
+
+		$returnData = $objectService->saveObject(
+			data: $data,
+			config: $dbConfig
+		);
+
+		// get post from requests
+		return new JSONResponse($returnData);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function update(string $id, ObjectService $objectService): JSONResponse
+	{
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$data = $this->request->getParams();
+
+		foreach($data as $key => $value) {
+			if(str_starts_with($key, '_')) {
+				unset($data[$key]);
+			}
+		}
+		if (isset($data['id'])) {
+			unset( $data['id']);
+		}
+
+		$filters['_id'] = $id;
+		$returnData = $objectService->updateObject(
+			filters: $filters,
+			update: $data,
+			config: $dbConfig
+		);
+
+		// get post from requests
+		return new JSONResponse($returnData);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function destroy(string $id, ObjectService $objectService): JSONResponse
+	{
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters['_id'] = $id;
+		$returnData = $objectService->deleteObject(
+			filters: $filters,
+			config: $dbConfig
+		);
+
+		// get post from requests
+		return new JSONResponse($returnData);
+	}
 }

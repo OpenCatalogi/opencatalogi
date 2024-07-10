@@ -1,13 +1,17 @@
 <?php
 
-namespace OCA\OpenCatalog\Controller;
+namespace OCA\OpenCatalogi\Controller;
 
-use OCA\OpenCatalog\Service\ObjectService;
+use Elastic\Elasticsearch\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use OCA\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
+use Symfony\Component\Uid\Uuid;
 
 class PublicationsController extends Controller
 {
@@ -34,7 +38,28 @@ class PublicationsController extends Controller
         parent::__construct($appName, $request);
     }
 
-    /**
+	private function insertNestedObjects(array $object, ObjectService $objectService, array $config): array
+	{
+		foreach($object as $key => $value) {
+			try {
+				if(
+					is_string(value: $value)
+					&& $key !== 'id'
+					&& Uuid::isValid(uuid: $value) === true
+					&& $subObject = $objectService->findObject(filters: ['_id' => $value], config: $config)
+				) {
+					$object[$key] = $subObject;
+				}
+			} catch (GuzzleException $exception) {
+				continue;
+			}
+		}
+
+		return $object;
+	}
+
+
+	/**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
@@ -45,8 +70,7 @@ class PublicationsController extends Controller
         // We pass the $getParameter variable to the template
         // so that the value is accessible in the template.
         return new TemplateResponse(
-            //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'PublicationsIndex',
             []
         );
@@ -65,8 +89,7 @@ class PublicationsController extends Controller
         // We pass the $getParameter variable to the template
         // so that the value is accessible in the template.
         return new TemplateResponse(
-            //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'PublicationsIndex',
             []
         );
@@ -122,7 +145,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function create(ObjectService $objectService): JSONResponse
+    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -143,6 +166,21 @@ class PublicationsController extends Controller
 			config: $dbConfig
 		);
 
+
+		if(
+			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
+			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
+			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
+		) {
+			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
+
+			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
+
+		}
         // get post from requests
         return new JSONResponse($returnData);
     }
@@ -151,7 +189,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function update(string $id, ObjectService $objectService): JSONResponse
+    public function update(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -175,6 +213,21 @@ class PublicationsController extends Controller
 			config: $dbConfig
 		);
 
+		if(
+			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
+			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
+			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
+		) {
+			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
+
+			$returnData = $elasticSearchService->updateObject(id: $id, object: $returnData, config: $elasticConfig);
+
+		}
+
 		// get post from requests
 		return new JSONResponse($returnData);
     }
@@ -183,7 +236,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function destroy(string $id, ObjectService $objectService): JSONResponse
+    public function destroy(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -194,6 +247,19 @@ class PublicationsController extends Controller
 			filters: $filters,
 			config: $dbConfig
 		);
+
+		if(
+			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
+			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
+			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
+		) {
+			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+			$returnData = $elasticSearchService->removeObject(id: $id, config: $elasticConfig);
+
+		}
 
 		// get post from requests
 		return new JSONResponse($returnData);

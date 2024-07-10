@@ -1,8 +1,8 @@
 <?php
 
-namespace OCA\OpenCatalog\Controller;
+namespace OCA\OpenCatalogi\Controller;
 
-use OCA\OpenCatalog\Service\ObjectService;
+use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
@@ -55,7 +55,7 @@ class CatalogiController extends Controller
         // so that the value is accessible in the template.
         return new TemplateResponse(
             //Application::APP_ID,
-            'opencatalog',
+            $this->appName,
             'CatalogiIndex',
             []
         );

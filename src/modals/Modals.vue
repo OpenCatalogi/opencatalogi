@@ -7,8 +7,9 @@
 		<EditMetaDataModal />
 		<AddCatalogModal />
 		<EditCatalogModal />
-		<AddExternalCatalogModal />
-		<EditExternalCatalogModal />
+		<AddListingModal />
+		<EditListingModal />
+		<EditPublicationDataModal />
 	</div>
 </template>
 
@@ -17,10 +18,11 @@ import AddPublicationModal from './publication/AddPublicationModal.vue'
 import EditPublicationModal from './publication/EditPublicationModal.vue'
 import AddMetaDataModal from './metaData/AddMetaDataModal.vue'
 import EditMetaDataModal from './metaData/EditMetaDataModal.vue'
-import AddCatalogModal from './catalog/Add.vue'
-import EditCatalogModal from './catalog/Edit.vue'
-import AddExternalCatalogModal from './directory/Add.vue'
-import EditExternalCatalogModal from './directory/Edit.vue'
+import AddCatalogModal from './catalog/AddCatalogModal.vue'
+import EditCatalogModal from './catalog/EditCatalogModal.vue'
+import AddListingModal from './directory/AddListingModal.vue'
+import EditListingModal from './directory/EditListingModal.vue'
+import EditPublicationDataModal from './publicationData/EditPublicationDataModal.vue'
 
 export default {
 	name: 'Modals',
@@ -31,8 +33,9 @@ export default {
 		EditMetaDataModal,
 		AddCatalogModal,
 		EditCatalogModal,
-		AddExternalCatalogModal,
-		EditExternalCatalogModal,
+		AddListingModal,
+		EditListingModal,
+		EditPublicationDataModal,
 	},
 }
 </script>
