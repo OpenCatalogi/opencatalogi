@@ -4,7 +4,7 @@ namespace OCA\OpenCatalogi\Controller;
 
 use Elastic\Elasticsearch\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use OCA\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
