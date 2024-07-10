@@ -28,6 +28,9 @@ import { store } from '../../store.js'
 				</NcButton>
 			</div>
 		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
@@ -35,6 +38,7 @@ import { store } from '../../store.js'
 import {
 	NcButton,
 	NcModal,
+	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 export default {
@@ -42,6 +46,7 @@ export default {
 	components: {
 		NcModal,
 		NcButton,
+		NcLoadingIcon,
 	},
 	data() {
 		return {

@@ -3,7 +3,7 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+		<div v-if="!loading && !successMessage" class="modal__content">
 			<h2>Add publication</h2>
 			<div class="formContainer">
 				<div class="form-group">
@@ -33,17 +33,17 @@ import { store } from '../../store.js'
 				<div class="form-group">
 					<NcTextArea :disabled="publicationLoading" label="Data" :value.sync="data" />
 				</div>
-				<div v-if="successMessage" class="successMessage">
-					Succesfully added publication
-				</div>
-				<div v-if="errorMessage" class="errorMessage">
-					Oeps er is iets fout gegaan.
-					Error Code: {{ errorCode }}
-				</div>
 			</div>
 			<NcButton :disabled="!title && !catalogi?.value?.id && !metaData?.value?.id || publicationLoading" type="primary" @click="addPublication">
 				Submit
 			</NcButton>
+		</div>
+		<div v-if="successMessage" class="successMessage">
+			Succesfully added publication
+		</div>
+		<div v-if="errorMessage" class="errorMessage">
+			Oeps er is iets fout gegaan.
+			Error Code: {{ errorCode }}
 		</div>
 		<NcLoadingIcon
 			v-if="loading"
@@ -58,6 +58,7 @@ import {
 	NcTextField,
 	NcTextArea,
 	NcSelect,
+	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 export default {
@@ -68,12 +69,13 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcSelect,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
 			title: '',
 			description: '',
-			data: '',
+			data: '{}',
 			catalogi: {},
 			metaData: {},
 			errorCode: '',
@@ -83,6 +85,7 @@ export default {
 			metaDataLoading: false,
 			publicationLoading: false,
 			hasUpdated: false,
+			loading: false,
 		}
 	},
 	updated() {
@@ -145,6 +148,7 @@ export default {
 		addPublication() {
 			this.publicationLoading = true
 			this.errorMessage = false
+			this.loading = true
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -162,9 +166,9 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.publicationLoading = false
+					this.loading = false
 					this.succesMessage = true
-					setTimeout(() => (this.succesMessage = false), 2500)
+					setTimeout(() => (store.modal = false), 2500)
 				})
 				.catch((err) => {
 					this.publicationLoading = false
