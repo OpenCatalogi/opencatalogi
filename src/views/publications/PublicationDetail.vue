@@ -115,7 +115,10 @@ import { store } from '../../store.js'
 											{{ attachment?.description }}
 										</template>
 										<template #actions>
-											<NcActionButton>
+											<NcActionButton @click="updatePublication">
+												<template #icon>
+													<Pencil :size="20" />
+												</template>
 												Bewerken
 											</NcActionButton>
 										</template>
@@ -208,6 +211,37 @@ export default {
 			store.setPublicationId(this.publicationId)
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
+		},
+		editPublicationAttachmentItem(key) {
+			store.setPublicationId(this.publicationId)
+			store.setPublicationDataKey(key)
+			store.setModal('editPublicationDataModal')
+		},
+		updatePublication() {
+			this.loading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/publications/${this.publicationId}`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(
+						{
+
+							attachments: JSON.parse(this.publication.attachments),
+
+						},
+					),
+				},
+			)
+				.then((response) => {
+					this.closeModal()
+				})
+				.catch((err) => {
+					this.loading = false
+					console.error(err)
+				})
 		},
 		fetchData(id) {
 			this.loading = true
