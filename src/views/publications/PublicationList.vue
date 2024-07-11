@@ -36,12 +36,12 @@ import { store } from '../../store.js'
 					:name="publication?.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="store.publicationItem === publication.id"
+					:active="store.publicationId === publication.id"
 					:details="'CC0 1.0'"
 					:counter-number="1"
-					@click="store.setPublicationItem(publication.id)">
+					@click="store.setPublicationId(publication.id)">
 					<template #icon>
-						<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
+						<ListBoxOutline :class="store.publicationId === publication.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -51,13 +51,22 @@ import { store } from '../../store.js'
 						{{ publication?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton>
+						<NcActionButton @click="editPublication(publication.id)">
+							<template #icon>
+								<Pencil :size="20" />
+							</template>
 							Bewerken
 						</NcActionButton>
 						<NcActionButton>
+							<template #icon>
+								<PublishOff :size="20" />
+							</template>
 							Depubliceren
 						</NcActionButton>
-						<NcActionButton @click="deletePublication(publication.id)">
+						<NcActionButton class="publicationsList-actionsDelete" @click="deletePublication(publication)">
+							<template #icon>
+								<Delete :size="20" />
+							</template>
 							Verwijderen
 						</NcActionButton>
 					</template>
@@ -78,6 +87,9 @@ import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 
 export default {
 	name: 'PublicationList',
@@ -99,6 +111,14 @@ export default {
 			loading: false,
 			publications: [],
 		}
+	},
+	watch: {
+		store: {
+			handler() {
+				store.refresh && this.fetchData()
+			},
+			deep: true,
+		},
 	},
 	mounted() {
 		this.fetchData()
@@ -123,24 +143,14 @@ export default {
 					this.loading = false
 				})
 		},
-		deletePublication(id) {
-			fetch(
-				`/index.php/apps/api/publications/${id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				},
-			)
-				.then((response) => {
-					console.warn('publication removed')
-					// this.succesMessage = true
-					// setTimeout(() => (this.succesMessage = false), 2500)
-				})
-				.catch((err) => {
-					console.error(err)
-				})
+		editPublication(id) {
+			store.setPublicationId(id)
+			store.setModal('publicationEdit')
+		},
+		deletePublication(publication) {
+			store.setPublicationId(publication.id)
+			store.setPublicationItem(publication)
+			store.setModal('deletePublication')
 		},
 		clearText() {
 			this.search = ''
@@ -157,5 +167,12 @@ export default {
 	margin-block-start: 11px !important;
     margin-block-end: 11px !important;
     margin-inline-end: 10px;
+}
+
+.active.publicationDetails-actionsDelete {
+    background-color: var(--color-error) !important;
+}
+.active.publicationDetails-actionsDelete button {
+    color: #EBEBEB !important;
 }
 </style>

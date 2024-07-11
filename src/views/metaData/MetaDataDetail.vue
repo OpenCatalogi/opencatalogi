@@ -8,20 +8,26 @@ import { store } from '../../store.js'
 			<!-- app-content-wrapper is optional, only use if app-content-list  -->
 			<div>
 				<h1 class="h1">
-					{{ metaData.name }}
+					{{ metaData.title }}
 				</h1>
-				<div class="grid">
-					<div class="gridContent">
-						<h4>Sammenvatting:</h4>
-						<span>{{ metaData.summary }}</span>
-					</div>
+				<div>
+					<h4>Beschrijving:</h4>
+					<span>{{ metaData.description }}</span>
+				</div>
+				<div>
+					<h4>Versie:</h4>
+					<span>{{ metaData.version }}</span>
+				</div>
+				<div>
+					<h4>Properties:</h4>
+					<p>{{ metaData.properties }}</p>
 				</div>
 			</div>
 		</div>
 		<NcLoadingIcon v-if="loading"
 			:size="100"
 			appearance="dark"
-			name="Publicatie details aan het laden" />
+			name="MetaData details aan het laden" />
 	</div>
 </template>
 
@@ -32,6 +38,12 @@ export default {
 	name: 'MetaDataDetail',
 	components: {
 		NcLoadingIcon,
+	},
+	props: {
+		metaDataId: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
@@ -54,7 +66,7 @@ export default {
 		fetchData() {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/metadata/' + store.metaDataItem,
+				'/index.php/apps/opencatalogi/api/metadata/' + store.metaDataItem.id,
 				{
 					method: 'GET',
 				},
@@ -96,8 +108,8 @@ h4 {
   display: grid;
   grid-gap: 24px;
   grid-template-columns: 1fr 1fr;
-  margin-block-start: var(--zaa-margin-50);
-  margin-block-end: var(--zaa-margin-50);
+  margin-block-start: var(--OC-margin-50);
+  margin-block-end: var(--OC-margin-50);
 }
 
 .gridContent {

@@ -22,7 +22,7 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('metaDataAdd')">
+					<NcActionButton @click="store.setModal('addMetaData')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -34,13 +34,14 @@ import { store } from '../../store.js'
 			<div v-if="!loading">
 				<NcListItem v-for="(metaData, i) in metaDataList.results"
 					:key="`${metaData}${i}`"
-					:name="metaData?.name"
-					:active="store.metaDataItem === metaData?._id"
-					:details="'1h'"
+					:name="metaData?.title ?? metaData?.name"
+					:active="store.metaDataId === metaData?.id"
+					:details="metaData.version ?? '1h'"
+					:force-display-actions="true"
 					:counter-number="44"
-					@click="store.setMetadataItem(metaData._id)">
+					@click="storeMetaData(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataItem === metaData._id && 'selectedZaakIcon'"
+						<FileTreeOutline :class="store.metaDataId === metaData._id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -48,9 +49,10 @@ import { store } from '../../store.js'
 					</template>
 					<template #subname>
 						{{ metaData?.summary }}
+						{{ metaData?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton>
+						<NcActionButton @click="editMetaData(metaData)">
 							Bewerken
 						</NcActionButton>
 						<NcActionButton>
@@ -72,25 +74,28 @@ import { store } from '../../store.js'
 	</NcAppContentList>
 </template>
 <script>
+// Components
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
-// eslint-disable-next-line n/no-missing-import
-import Magnify from 'vue-material-design-icons/Magnify'
-// eslint-disable-next-line n/no-missing-import
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline'
+
+// Icons
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
 	name: 'MetaDataList',
 	components: {
+		// Components
 		NcListItem,
 		NcActions,
 		NcActionButton,
 		NcAppContentList,
 		NcTextField,
+		NcLoadingIcon,
+		// Icons
 		FileTreeOutline,
 		Magnify,
-		NcLoadingIcon,
 		Refresh,
 		Plus,
 	},
@@ -105,6 +110,15 @@ export default {
 		this.fetchData()
 	},
 	methods: {
+		storeMetaData(metaData) {
+			store.setMetaDataId(metaData.id)
+			store.setMetaDataItem(metaData)
+		},
+		editMetaData(metaData) {
+			store.setMetaDataItem(metaData)
+			store.setMetaDataId(metaData.id)
+			store.setModal('editMetaData')
+		},
 		fetchData(newPage) {
 			this.loading = true
 			fetch(
@@ -150,6 +164,6 @@ export default {
 }
 
 .loadingIcon {
-    margin-block-start: var(--zaa-margin-20);
+    margin-block-start: var(--OC-margin-20);
 }
 </style>

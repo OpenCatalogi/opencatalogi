@@ -8,7 +8,7 @@ import { store } from '../../store.js'
 			<PublicationList />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.publicationItem || store.selected != 'publication'"
+			<NcEmptyContent v-if="!store.publicationId || store.selected != 'publication'"
 				class="detailContainer"
 				name="Geen publicatie"
 				description="Nog geen publicatie geselecteerd">
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<PublicationDetails v-if="store.publicationItem && store.selected === 'publication'" :publication-id="store.publicationItem" />
+			<PublicationDetails v-if="store.publicationId && store.selected === 'publication'" :publication-id="store.publicationId" />
 		</template>
 	</NcAppContent>
 </template>

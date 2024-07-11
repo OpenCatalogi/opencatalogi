@@ -3,7 +3,7 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+		<div class="modal__content">
 			<h2>Add publication</h2>
 			<div class="formContainer">
 				<div class="form-group">
@@ -11,6 +11,61 @@ import { store } from '../../store.js'
 				</div>
 				<div class="form-group">
 					<NcTextArea :disabled="publicationLoading" label="Beschrijving" :value.sync="description" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Categorie"
+						:value.sync="category"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Publicatie"
+						:value.sync="publication"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Portaal"
+						:value.sync="portal"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Status"
+						:value.sync="status"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Gepubliceerd"
+						:value.sync="published"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<p>Featured</p>
+					<NcCheckboxRadioSwitch :disabled="loading"
+						label="Featured"
+						:value.sync="featured"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Image"
+						:value.sync="image"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Modified"
+						:value.sync="modified"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Licentie"
+						:value.sync="license"
+						:loading="publicationLoading" />
 				</div>
 				<div class="selectGrid">
 					<div class="form-group">
@@ -31,10 +86,23 @@ import { store } from '../../store.js'
 					</div>
 				</div>
 				<div class="form-group">
-					<NcTextArea :disabled="publicationLoading" label="Data" :value.sync="data" />
+					<NcTextArea :error="!dataIsValidJson"
+						:disabled="publicationLoading"
+						label="Data"
+						:value.sync="data" />
 				</div>
-				<div v-if="succesMessage" class="success">
+				<div class="form-group">
+					<NcTextArea :error="!attachmentsIsValidJson"
+						:disabled="publicationLoading"
+						label="Bijlagen"
+						:value.sync="attachments" />
+				</div>
+				<div v-if="successMessage" class="successMessage">
 					Succesfully added publication
+				</div>
+				<div v-if="errorMessage" class="errorMessage">
+					Oeps er is iets fout gegaan.
+					Error Code: {{ errorCode }}
 				</div>
 			</div>
 			<NcButton :disabled="!title && !catalogi?.value?.id && !metaData?.value?.id || publicationLoading" type="primary" @click="addPublication">
@@ -54,6 +122,7 @@ import {
 	NcTextField,
 	NcTextArea,
 	NcSelect,
+	NcCheckboxRadioSwitch,
 } from '@nextcloud/vue'
 
 export default {
@@ -64,20 +133,50 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcSelect,
+		NcCheckboxRadioSwitch,
 	},
 	data() {
 		return {
 			title: '',
 			description: '',
-			data: '',
 			catalogi: {},
 			metaData: {},
-			succesMessage: false,
+			data: '',
+			attachments: '',
+			license: '',
+			modified: '',
+			published: '',
+			status: '',
+			featured: '',
+			publication: '',
+			portal: '',
+			category: '',
+			image: '',
+			errorCode: '',
+			successMessage: false,
+			errorMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
 			publicationLoading: false,
 			hasUpdated: false,
+			dataIsValidJson: false,
+			attachmentsIsValidJson: false,
+
 		}
+	},
+	watch: {
+		data: {
+			handler(data) {
+				this.dataIsValidJson = this.isJsonString(data)
+			},
+			deep: true,
+		},
+		attachments: {
+			handler(attachments) {
+				this.attachmentsIsValidJson = this.isJsonString(attachments)
+			},
+			deep: true,
+		},
 	},
 	updated() {
 		if (store.modal === 'publicationAdd' && !this.hasUpdated) {
@@ -120,8 +219,8 @@ export default {
 
 						this.metaData = {
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1]._id,
-								label: metaData[1].name,
+								id: metaData[1].id ?? metaData[1]._id,
+								label: metaData[1].title ?? metaData[1].name,
 							})),
 
 						}
@@ -136,8 +235,18 @@ export default {
 		closeModal() {
 			store.modal = false
 		},
+
+		isJsonString(str) {
+			try {
+				JSON.parse(str)
+			} catch (e) {
+				return false
+			}
+			return true
+		},
 		addPublication() {
 			this.publicationLoading = true
+			this.errorMessage = false
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -151,14 +260,29 @@ export default {
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
 						data: JSON.parse(this.data),
+						attachments: JSON.parse(this.attachments),
+						license: this.license,
+						modified: this.modified,
+						published: this.published,
+						status: this.status,
+						featured: this.featured,
+						publication: this.publication,
+						portal: this.portal,
+						category: this.category,
+						image: this.image,
 					}),
 				},
 			)
 				.then((response) => {
-					this.closeModal()
+					this.publicationLoading = false
+					this.succesMessage = true
+					setTimeout(() => (this.succesMessage = false), 2500)
+					store.setRefresh(true)
 				})
 				.catch((err) => {
 					this.publicationLoading = false
+					this.errorMessage = true
+					this.errorCode = err
 					console.error(err)
 				})
 		},
@@ -168,7 +292,7 @@ export default {
 
 <style>
 .modal__content {
-	margin: var(--zaa-margin-50);
+	margin: var(--OC-margin-50);
 	text-align: center;
 }
 
@@ -183,9 +307,9 @@ export default {
 }
 
 .zaakDetailsContainer {
-	margin-block-start: var(--zaa-margin-20);
-	margin-inline-start: var(--zaa-margin-20);
-	margin-inline-end: var(--zaa-margin-20);
+	margin-block-start: var(--OC-margin-20);
+	margin-inline-start: var(--OC-margin-20);
+	margin-inline-end: var(--OC-margin-20);
 }
 
 .success {

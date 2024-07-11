@@ -13,8 +13,13 @@ export const store = reactive({
 	catalogiItem: false,
 	listItem: false,
 	directoryItem: false,
+	metaDataId: false,
 	metaDataItem: false,
+	publicationId: false,
 	publicationItem: false,
+	publicationDataKey: false,
+	attachmentId: false,
+	refresh: false,
 	// Lets add some setters
 	setSelected(selected) {
 		this.selected = selected
@@ -40,12 +45,33 @@ export const store = reactive({
 		this.directoryItem = directoryItem
 		console.log('Active directory item set to ' + directoryItem)
 	},
-	setMetadataItem(metaDataItem) {
+	setMetaDataId(metaDataId) {
+		this.metaDataId = metaDataId
+		console.log('Active metadata id set to ' + metaDataId)
+	},
+	setMetaDataItem(metaDataItem) {
 		this.metaDataItem = metaDataItem
 		console.log('Active metadata item set to ' + metaDataItem)
+	},
+	setPublicationId(publicationId) {
+		this.publicationId = publicationId
+		console.log('Active publication id set to ' + publicationId)
 	},
 	setPublicationItem(publicationItem) {
 		this.publicationItem = publicationItem
 		console.log('Active publication item set to ' + publicationItem)
+	},
+	setPublicationDataKey(publicationDataKey) {
+		this.publicationDataKey = publicationDataKey
+		console.log('Active publication data key set to ' + publicationDataKey)
+	},
+	setAttachmentId(attachmentId) {
+		this.attachmentId = attachmentId
+		console.log('Active attachment item set to ' + attachmentId)
+	},
+	setRefresh(refresh) {
+		this.refresh = refresh
+		setTimeout(() => (this.refresh = false), 1000)
+		console.log('Active attachment item set to ' + refresh)
 	},
 })

@@ -4,43 +4,29 @@ import { store } from '../../store.js'
 
 <template>
 	<NcModal
-		v-if="store.modal === 'metaDataEdit'"
+		v-if="store.modal === 'editMetaData'"
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
 			<h2>MetaData bewerken</h2>
 			<div class="form-group">
-				<NcTextField :disabled="loading"
-					label="Naam"
-					maxlength="255"
-					:value.sync="name"
-					required />
-				<NcTextField :disabled="loading"
-					label="Samenvatting"
-					maxlength="255"
-					:value.sync="summery" />
+				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Tooi categorie naam" :value.sync="metaData.tooiCategorieNaam" />
+				<NcTextField label="Versie" :value.sync="metaData.version" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Tooi categorie id" :value.sync="metaData.tooiCategorieId" />
+				<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Tooi categorie uri" :value.sync="metaData.tooiCategorieUri" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi thema naam" :value.sync="metaData.tooiThemaNaam" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi thema uri" :value.sync="metaData.tooiThemaUri" />
+				<NcTextArea label="Properties" :value.sync="metaData.properties" />
 			</div>
 			<div v-if="succesMessage" class="success">
 				Succesfully updated metaData
 			</div>
 
-			<NcButton :disabled="!metaDataName" type="primary" @click="editMetaData">
-				Submit
+			<NcButton :disabled="!metaData.title" type="primary" @click="editMetaData">
+				Opslaan
 			</NcButton>
 		</div>
 		<NcLoadingIcon
@@ -50,13 +36,14 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
 	name: 'EditMetaDataModal',
 	components: {
 		NcModal,
 		NcTextField,
+		NcTextArea,
 		NcButton,
 		NcLoadingIcon,
 	},
@@ -65,11 +52,10 @@ export default {
 			name: '',
 			summery: '',
 			metaData: {
-				tooiCategorieNaam: '',
-				tooiCategorieId: '',
-				tooiCategorieUri: '',
-				tooiThemaNaam: '',
-				tooiThemaUri: '',
+				title: '',
+				version: '',
+				description: '',
+				properties: '',
 			},
 			succesMessage: false,
 			hasUpdated: false,
@@ -77,16 +63,21 @@ export default {
 		}
 	},
 	updated() {
-		if (!this.hasUpdated) {
-			this.fetchData(store.metaDataItem)
+		if (store.modal === 'editMetaData' && this.hasUpdated) {
+			if (this.metaData._id === store.metaDataId) return
+			this.hasUpdated = false
+		}
+		if (store.modal === 'editMetaData' && !this.hasUpdated) {
+			this.fetchData(store.metaDataId)
 			this.hasUpdated = true
+			this.metaData = store.metaDataItem
 		}
 	},
 	methods: {
 		fetchData(id) {
 			this.metaDataLoading = true
 			fetch(
-				`/index.php/apps/opencatalogi/metadata/api/${id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${id}`,
 				{
 					method: 'GET',
 				},
@@ -106,7 +97,22 @@ export default {
 			store.modal = false
 		},
 		editMetaData() {
-			this.closeModal()
+			this.metaDataLoading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataId}`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(this.metaData),
+				},
+			).then((response) => {
+				this.closeModal()
+			}).catch((err) => {
+				this.metaDataLoading = false
+				console.error(err)
+			})
 		},
 	},
 }
@@ -114,14 +120,14 @@ export default {
 
 <style>
 .modal__content {
-    margin: var(--zaa-margin-50);
+    margin: var(--OC-margin-50);
     text-align: center;
 }
 
 .zaakDetailsContainer {
-    margin-block-start: var(--zaa-margin-20);
-    margin-inline-start: var(--zaa-margin-20);
-    margin-inline-end: var(--zaa-margin-20);
+    margin-block-start: var(--OC-margin-20);
+    margin-inline-start: var(--OC-margin-20);
+    margin-inline-end: var(--OC-margin-20);
 }
 
 .success {

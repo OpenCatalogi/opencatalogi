@@ -4,42 +4,28 @@ import { store } from '../../store.js'
 
 <template>
 	<NcModal
-		v-if="store.modal === 'metaDataAdd'"
+		v-if="store.modal === 'addMetaData'"
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
 			<h2>MetaData toevoegen</h2>
 			<div class="form-group">
-				<NcTextField :disabled="loading"
-					label="Naam"
-					maxlength="255"
-					:value.sync="name"
-					required />
-				<NcTextField :disabled="loading"
-					label="Samenvatting"
-					maxlength="255"
-					:value.sync="summery" />
+				<NcTextField label="Titel" :value.sync="title" required="true" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Tooi categorie naam" :value.sync="tooiCategorieNaam" />
+				<NcTextField label="Versie" :value.sync="version" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Tooi categorie id" :value.sync="tooiCategorieId" />
+				<NcTextArea label="Beschrijving" :value.sync="description" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Tooi categorie uri" :value.sync="tooiCategorieUri" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi thema naam" :value.sync="tooiThemaNaam" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Tooi thema uri" :value.sync="tooiThemaUri" />
+				<NcTextArea label="Properties" :value.sync="properties" />
 			</div>
 			<div v-if="succesMessage" class="success">
 				Succesfully added MetaData
 			</div>
 
-			<NcButton :disabled="!tooiCategorieNaam" type="primary" @click="addMetaData">
+			<NcButton :disabled="!title" type="primary" @click="addMetaData">
 				Submit
 			</NcButton>
 		</div>
@@ -50,27 +36,24 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
 	name: 'AddMetaDataModal',
 	components: {
 		NcModal,
 		NcTextField,
+		NcTextArea,
 		NcButton,
 		NcLoadingIcon,
 	},
 	data() {
 		return {
-			name: '',
-			summery: '',
-			tooiCategorieNaam: '',
-			tooiCategorieId: '',
-			tooiCategorieUri: '',
-			tooiThemaNaam: '',
-			tooiThemaUri: '',
+			title: '',
+			version: '0.0.1',
+			description: '',
+			properties: '',
 			succesMessage: false,
-			loading: false,
 		}
 	},
 	methods: {
@@ -78,7 +61,30 @@ export default {
 			store.modal = false
 		},
 		addMetaData() {
-			this.closeModal()
+			this.metaDataLoading = true
+			this.$emit('metadata', this.title)
+			fetch(
+				'/index.php/apps/opencatalogi/api/metadata',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						title: this.title,
+						version: this.version,
+						description: this.description,
+						properties: this.properties,
+					}),
+				},
+			)
+				.then((response) => {
+					this.closeModal()
+				})
+				.catch((err) => {
+					this.metaDataLoading = false
+					console.error(err)
+				})
 		},
 	},
 }
@@ -86,14 +92,14 @@ export default {
 
 <style>
 .modal__content {
-    margin: var(--zaa-margin-50);
+    margin: var(--OC-margin-50);
     text-align: center;
 }
 
 .zaakDetailsContainer {
-    margin-block-start: var(--zaa-margin-20);
-    margin-inline-start: var(--zaa-margin-20);
-    margin-inline-end: var(--zaa-margin-20);
+    margin-block-start: var(--OC-margin-20);
+    margin-inline-start: var(--OC-margin-20);
+    margin-inline-end: var(--OC-margin-20);
 }
 
 .success {

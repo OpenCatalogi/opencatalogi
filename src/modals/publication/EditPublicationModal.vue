@@ -18,6 +18,61 @@ import { store } from '../../store.js'
 				<div class="form-group">
 					<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
 				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Categorie"
+						:value.sync="publication.category"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Publicatie"
+						:value.sync="publication.publication"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Portaal"
+						:value.sync="publication.portal"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Status"
+						:value.sync="publication.status"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Gepubliceerd"
+						:value.sync="publication.published"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<p>Featured</p>
+					<NcCheckboxRadioSwitch :disabled="loading"
+						label="Featured"
+						:value.sync="publication.featured"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Image"
+						:value.sync="publication.image"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Modified"
+						:value.sync="publication.modified"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Licentie"
+						:value.sync="publication.license"
+						:loading="publicationLoading" />
+				</div>
 				<div class="selectGrid">
 					<div class="form-group">
 						<NcSelect v-bind="catalogi"
@@ -38,6 +93,10 @@ import { store } from '../../store.js'
 				</div>
 				<div class="form-group">
 					<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
+				</div>
+
+				<div class="form-group">
+					<NcTextArea :disabled="publicationLoading" label="Bijlagen" :value.sync="attachments" />
 				</div>
 				<div v-if="succesMessage" class="success">
 					Succesfully updated publication
@@ -67,6 +126,7 @@ import {
 	NcTextArea,
 	NcSelect,
 	NcLoadingIcon,
+	NcCheckboxRadioSwitch,
 } from '@nextcloud/vue'
 
 export default {
@@ -75,6 +135,7 @@ export default {
 		NcModal,
 		NcTextField,
 		NcTextArea,
+		NcCheckboxRadioSwitch,
 		NcButton,
 		NcSelect,
 		NcLoadingIcon,
@@ -84,10 +145,19 @@ export default {
 			publication: {
 				title: '',
 				description: '',
-				catalogi: '',
-				metaData: '',
+				catalogi: {},
+				metaData: {},
 				data: '',
-				id: '',
+				attachments: '',
+				license: '',
+				modified: '',
+				published: '',
+				status: '',
+				featured: '',
+				publication: '',
+				portal: '',
+				category: '',
+				image: '',
 			},
 			catalogi: {
 				value: [],
@@ -106,10 +176,14 @@ export default {
 		}
 	},
 	updated() {
+		if (store.modal === 'publicationEdit' && this.hasUpdated) {
+			if (this.publication.id === store.publicationId) return
+			this.hasUpdated = false
+		}
 		if (store.modal === 'publicationEdit' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(store.publicationItem)
+			this.fetchData(store.publicationId)
 			this.hasUpdated = true
 		}
 	},
@@ -126,6 +200,7 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						this.publication.data = JSON.stringify(data.data)
+						this.publication.attachments = JSON.stringify(data.attachments)
 						this.catalogi.value = [data.catalogi]
 						this.metaData.value = [data.metaData]
 					})
@@ -172,8 +247,8 @@ export default {
 						this.metaData = {
 							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1]._id,
-								label: metaData[1].name,
+								id: metaData[1].id ?? metaData[1]._id,
+								label: metaData[1].title ?? metaData[1].name,
 							})),
 
 						}
@@ -198,11 +273,21 @@ export default {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
+						modified: this.publication.modified,
+						license: this.publication.license,
+						published: this.publication.published,
+						status: this.publication.status,
+						featured: this.publication.featured,
+						publication: this.publication.publication,
+						portal: this.publication.portal,
+						category: this.publication.category,
+						image: this.publication.image,
 						title: this.publication.title,
 						description: this.publication.description,
 						catalogi: this.publication.catalogi,
 						metaData: this.publication.metaData,
 						data: JSON.parse(this.publication.data),
+						attachments: JSON.parse(this.publication.attachments),
 					}),
 				},
 			)
@@ -220,14 +305,14 @@ export default {
 
 <style>
 .modal__content {
-  margin: var(--zaa-margin-50);
+  margin: var(--OC-margin-50);
   text-align: center;
 }
 
 .zaakDetailsContainer {
-  margin-block-start: var(--zaa-margin-20);
-  margin-inline-start: var(--zaa-margin-20);
-  margin-inline-end: var(--zaa-margin-20);
+  margin-block-start: var(--OC-margin-20);
+  margin-inline-start: var(--OC-margin-20);
+  margin-inline-end: var(--OC-margin-20);
 }
 
 .success {
