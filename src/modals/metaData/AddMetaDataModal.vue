@@ -61,7 +61,6 @@ export default {
 			store.modal = false
 		},
 		addMetaData() {
-			this.metaDataLoading = true
 			this.$emit('metadata', this.title)
 			fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
@@ -82,7 +81,6 @@ export default {
 					this.closeModal()
 				})
 				.catch((err) => {
-					this.metaDataLoading = false
 					console.error(err)
 				})
 		},
