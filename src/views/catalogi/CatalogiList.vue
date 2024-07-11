@@ -34,11 +34,11 @@ import { store } from '../../store.js'
 				<NcListItem v-for="(catalogus, i) in catalogi.results"
 					:key="`${catalogus}${i}`"
 					:name="catalogus?.name"
-					:active="store.catalogItem === catalogus?.id"
+					:active="store.catalogiId === catalogus?._id"
 					:details="'1h'"
 					:counter-number="44"
 					:force-display-actions="true"
-					@click="store.setCatalogiItem(catalogus._id)">
+					@click="store.setCatalogiId(catalogus._id)">
 					<template #icon>
 						<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
@@ -124,7 +124,7 @@ export default {
 		},
 		editCatalog(id) {
 			store.setModal('catalogEdit')
-			store.setCatalogiItem(id)
+			store.setCatalogiId(id)
 		},
 		deleteCatalog(id) {
 			fetch(
