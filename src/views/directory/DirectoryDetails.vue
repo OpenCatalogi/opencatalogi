@@ -10,15 +10,9 @@ import { store } from '../../store.js'
 				<h1 class="h1">
 					{{ directory.title }}
 				</h1>
-				<div class="grid">
-					<div class="gridContent">
-						<h4>Sammenvatting:</h4>
-						<span>{{ directory.summary }}</span>
-					</div>
-				</div>
 				<div>
-					<h4>Beschrijving:</h4>
-					<p>{{ directory.description }}</p>
+					<h4>Sammenvatting:</h4>
+					<p>{{ directory.summary }}</p>
 				</div>
 				<div>
 					<h4>Search:</h4>
