@@ -220,14 +220,6 @@ export default {
 		updatePublication(id) {
 			this.loading = true
 
-			const attachment = this.publication.attachments.find((attachment) => attachment.id === id)
-
-			attachment.published = 'false'
-
-			const test = { ...this.publication.attachments }
-
-			console.log(test)
-
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${this.publicationId}`,
 				{
