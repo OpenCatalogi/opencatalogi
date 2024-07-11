@@ -5,7 +5,7 @@ import { store } from '../../store.js'
 <template>
 	<div class="detailContainer">
 		<div v-if="!loading" id="app-content">
-			<NcListItem v-for="(publication, i) in publications.results"
+			<!-- <NcListItem v-for="(publication, i) in publications.results"
 				:key="`${publication}${i}`"
 				:name="publication?.name"
 				:bold="false"
@@ -32,7 +32,9 @@ import { store } from '../../store.js'
 						Depubliceren
 					</NcActionButton>
 				</template>
-			</NcListItem>
+			</NcListItem> -->
+
+			{{ catalogi }}
 		</div>
 		<NcLoadingIcon v-if="loading"
 			:size="100"
@@ -42,21 +44,25 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcListItem, NcActionButton } from '@nextcloud/vue'
+import {
+	NcLoadingIcon,
+	// NcListItem,
+	// NcActionButton
+} from '@nextcloud/vue'
 // eslint-disable-next-line n/no-missing-import
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
+// import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
 
 export default {
 	name: 'CatalogiDetails',
 	components: {
 		NcLoadingIcon,
-		NcListItem,
-		NcActionButton,
-		ListBoxOutline,
+		// NcListItem,
+		// NcActionButton,
+		// ListBoxOutline,
 	},
 	data() {
 		return {
-			publications: [],
+			catalogi: [],
 			loading: false,
 		}
 	},
@@ -69,20 +75,20 @@ export default {
 		},
 	},
 	mounted() {
-		this.fetchData(store.catalogiItem)
+		this.fetchData(store.catalogiId)
 	},
 	methods: {
 		fetchData(catalogId) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/publications/' + catalogId,
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogId}`,
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.publications = data
+						this.catalogi = data
 						// this.oldZaakId = id
 					})
 					this.loading = false

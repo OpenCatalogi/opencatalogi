@@ -8,7 +8,7 @@ import { store } from '../../store.js'
 			<MetaDataList />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.metaDataItem || store.selected != 'metaData'"
+			<NcEmptyContent v-if="!store.metaDataId || store.selected != 'metaData'"
 				class="detailContainer"
 				name="Geen Metadata"
 				description="Nog geen metadata beschrijving geselecteerd">
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<MetaDataDetails v-if="store.metaDataItem && store.selected === 'metaData'" :meta-data-id="store.metaDataItem" />
+			<MetaDataDetails v-if="store.metaDataId && store.selected === 'metaData'" :meta-data-id="store.metaDataId" />
 		</template>
 	</NcAppContent>
 </template>

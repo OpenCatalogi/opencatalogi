@@ -70,7 +70,6 @@ export default {
 		if (store.modal === 'editMetaData' && !this.hasUpdated) {
 			this.fetchData(store.metaDataId)
 			this.hasUpdated = true
-			this.metaData = store.metaDataItem
 		}
 	},
 	methods: {

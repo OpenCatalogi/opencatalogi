@@ -43,11 +43,17 @@ import { store } from '../../store.js'
 						</div>
 						<div>
 							<h4>Catalogi:</h4>
-							<span>{{ catalogi.title }}</span>
+							<span v-if="catalogiLoading">Loading...</span>
+							<span v-if="!catalogiLoading" class="PublicationDetail-clickable" @click="goToCatalogi(catalogi._id)">
+								{{ catalogi.name }}
+							</span>
 						</div>
 						<div>
 							<h4>Metadata:</h4>
-							<span>{{ metadata.title }}</span>
+							<span v-if="metaDataLoading">Loading...</span>
+							<span v-if="!metaDataLoading" class="PublicationDetail-clickable" @click="goToMetadata(metadata._id)">
+								{{ metadata.title }}
+							</span>
 						</div>
 						<div>
 							<h4>Data:</h4>
@@ -204,17 +210,8 @@ export default {
 			deep: true,
 		},
 	},
-	updated() {
-		if (this.hasUpdated) {
-			if (this.publication.id === this.publicationId) return
-			this.hasUpdated = false
-		}
-		if (!this.hasUpdated) {
-			this.fetchData(this.publicationId)
-		    this.fetchCatalogi(this.publication.catalogi)
-		    this.fetchMetaData(this.publication.metaData)
-			this.hasUpdated = true
-		}
+	mounted() {
+		this.fetchData(this.publicationId)
 	},
 	methods: {
 		fetchData(id) {
@@ -226,6 +223,9 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						// this.oldZaakId = id
+						this.fetchCatalogi(data.catalogi)
+						this.fetchMetaData(data.metaData)
+
 						this.loading = false
 					})
 				})
@@ -280,6 +280,14 @@ export default {
 			store.setPublicationId(this.publicationId)
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
+		},
+		goToMetadata(id) {
+			store.setMetaDataId(id)
+			store.setSelected('metaData')
+		},
+		goToCatalogi(id) {
+			store.setCatalogiId(id)
+			store.setSelected('catalogi')
 		},
 		updatePublication() {
 			this.loading = true
@@ -346,5 +354,9 @@ h4 {
 }
 .active.publicationDetails-actionsDelete button {
     color: #EBEBEB !important;
+}
+
+.PublicationDetail-clickable {
+    cursor: pointer !important;
 }
 </style>
