@@ -18,6 +18,61 @@ import { store } from '../../store.js'
 				<div class="form-group">
 					<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
 				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Categorie"
+						:value.sync="publication.category"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Publicatie"
+						:value.sync="publication.publication"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Portaal"
+						:value.sync="publication.portal"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Status"
+						:value.sync="publication.status"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Gepubliceerd"
+						:value.sync="publication.published"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<p>Featured</p>
+					<NcCheckboxRadioSwitch :disabled="loading"
+						label="Featured"
+						:value.sync="publication.featured"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Image"
+						:value.sync="publication.image"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Modified"
+						:value.sync="publication.modified"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Licentie"
+						:value.sync="publication.license"
+						:loading="publicationLoading" />
+				</div>
 				<div class="selectGrid">
 					<div class="form-group">
 						<NcSelect v-bind="catalogi"
@@ -38,6 +93,10 @@ import { store } from '../../store.js'
 				</div>
 				<div class="form-group">
 					<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
+				</div>
+
+				<div class="form-group">
+					<NcTextArea :disabled="publicationLoading" label="Bijlagen" :value.sync="attachments" />
 				</div>
 				<div v-if="succesMessage" class="success">
 					Succesfully updated publication
@@ -67,6 +126,7 @@ import {
 	NcTextArea,
 	NcSelect,
 	NcLoadingIcon,
+	NcCheckboxRadioSwitch,
 } from '@nextcloud/vue'
 
 export default {
@@ -75,6 +135,7 @@ export default {
 		NcModal,
 		NcTextField,
 		NcTextArea,
+		NcCheckboxRadioSwitch,
 		NcButton,
 		NcSelect,
 		NcLoadingIcon,
@@ -84,10 +145,19 @@ export default {
 			publication: {
 				title: '',
 				description: '',
-				catalogi: '',
-				metaData: '',
+				catalogi: {},
+				metaData: {},
 				data: '',
-				id: '',
+				attachments: '',
+				license: '',
+				modified: '',
+				published: '',
+				status: '',
+				featured: '',
+				publication: '',
+				portal: '',
+				category: '',
+				image: '',
 			},
 			catalogi: {
 				value: [],
@@ -130,6 +200,7 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						this.publication.data = JSON.stringify(data.data)
+						this.publication.attachments = JSON.stringify(data.attachments)
 						this.catalogi.value = [data.catalogi]
 						this.metaData.value = [data.metaData]
 					})
@@ -202,11 +273,21 @@ export default {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
+						modified: this.publication.modified,
+						license: this.publication.license,
+						published: this.publication.published,
+						status: this.publication.status,
+						featured: this.publication.featured,
+						publication: this.publication.publication,
+						portal: this.publication.portal,
+						category: this.publication.category,
+						image: this.publication.image,
 						title: this.publication.title,
 						description: this.publication.description,
 						catalogi: this.publication.catalogi,
 						metaData: this.publication.metaData,
 						data: JSON.parse(this.publication.data),
+						attachments: JSON.parse(this.publication.attachments),
 					}),
 				},
 			)

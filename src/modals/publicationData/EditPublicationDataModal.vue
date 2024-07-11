@@ -13,7 +13,7 @@ import { store } from '../../store.js'
 				<div class="form-group">
 					<NcTextField :disabled="loading"
 						:label="store.publicationDataKey"
-						:value.sync="publication.data[store.publicationDataKey]"
+						:value.sync="publication.data.data[store.publicationDataKey]"
 						:loading="publicationLoading" />
 				</div>
 
