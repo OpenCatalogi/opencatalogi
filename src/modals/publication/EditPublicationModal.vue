@@ -73,23 +73,21 @@ import { store } from '../../store.js'
 						:value.sync="publication.license"
 						:loading="publicationLoading" />
 				</div>
-				<div class="selectGrid">
-					<div class="form-group">
-						<NcSelect v-bind="catalogi"
-							v-model="catalogi.value"
-							input-label="Catalogi"
-							:loading="catalogiLoading"
-							:disabled="loading"
-							required />
-					</div>
-					<div class="form-group">
-						<NcSelect
-							v-bind="metaData"
-							v-model="metaData.value"
-							input-label="MetaData"
-							:loading="catalogiLoading"
-							:disabled="true" />
-					</div>
+				<div class="form-group">
+					<NcSelect v-bind="catalogi"
+						v-model="catalogi.value"
+						input-label="Catalogi"
+						:loading="catalogiLoading"
+						:disabled="loading"
+						required />
+				</div>
+				<div class="form-group">
+					<NcSelect
+						v-bind="metaData"
+						v-model="metaData.value"
+						input-label="MetaData"
+						:loading="catalogiLoading"
+						:disabled="true" />
 				</div>
 				<div class="form-group">
 					<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
@@ -219,13 +217,18 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 
+						const selectedCatalogi = Object.entries(data.results).find((catalogi) => catalogi[1]._id === this.publication.catalogi)
+
 						this.catalogi = {
-							value: this.catalogi.value,
 							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
 								id: catalog[1]._id,
 								label: catalog[1].name,
 							})),
+							value: {
+								id: selectedCatalogi[1]._id ?? '',
+								label: selectedCatalogi[1].name ?? '',
+							},
 
 						}
 					})
@@ -243,6 +246,7 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
+						const selectedMetaData = Object.entries(data.results).find((metadata) => metadata[1]._id === this.publication.metaData)
 
 						this.metaData = {
 							inputLabel: 'MetaData',
@@ -250,7 +254,10 @@ export default {
 								id: metaData[1].id ?? metaData[1]._id,
 								label: metaData[1].title ?? metaData[1].name,
 							})),
-
+							value: {
+								id: selectedMetaData[1]._id ?? '',
+								label: selectedMetaData[1].name ?? selectedMetaData[1].title ?? '',
+							},
 						}
 					})
 					this.metaDataLoading = false
