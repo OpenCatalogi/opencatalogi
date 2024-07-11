@@ -12,6 +12,60 @@ import { store } from '../../store.js'
 				<div class="form-group">
 					<NcTextArea :disabled="publicationLoading" label="Beschrijving" :value.sync="description" />
 				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Categorie"
+						:value.sync="category"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Publicatie"
+						:value.sync="publication"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Portaal"
+						:value.sync="portal"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Status"
+						:value.sync="status"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Gepubliceerd"
+						:value.sync="published"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcCheckboxRadioSwitch :disabled="loading"
+						label="Featured"
+						:value.sync="featured"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Image"
+						:value.sync="image"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Modified"
+						:value.sync="modified"
+						:loading="publicationLoading" />
+				</div>
+				<div class="form-group">
+					<NcTextField :disabled="loading"
+						label="Licentie"
+						:value.sync="license"
+						:loading="publicationLoading" />
+				</div>
 				<div class="selectGrid">
 					<div class="form-group">
 						<NcSelect v-bind="catalogi"
@@ -71,6 +125,15 @@ export default {
 	},
 	data() {
 		return {
+			license: '',
+			modified: '',
+			published: '',
+			status: '',
+			featured: '',
+			publication: '',
+			portal: '',
+			category: '',
+			image: '',
 			title: '',
 			description: '',
 			data: '',
