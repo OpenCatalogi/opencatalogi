@@ -8,13 +8,41 @@ import { store } from '../../store.js'
 			<!-- app-content-wrapper is optional, only use if app-content-list  -->
 			<div>
 				<h1 class="h1">
-					{{ directory.name }}
+					{{ directory.title }}
 				</h1>
 				<div class="grid">
 					<div class="gridContent">
 						<h4>Sammenvatting:</h4>
 						<span>{{ directory.summary }}</span>
 					</div>
+				</div>
+				<div>
+					<h4>Beschrijving:</h4>
+					<p>{{ directory.description }}</p>
+				</div>
+				<div>
+					<h4>Search:</h4>
+					<span>{{ directory.search }}</span>
+				</div>
+				<div>
+					<h4>MetaData:</h4>
+					<span>{{ directory.metadata }}</span>
+				</div>
+				<div>
+					<h4>Status:</h4>
+					<span>{{ directory.status }}</span>
+				</div>
+				<div>
+					<h4>Last synchronized:</h4>
+					<span>{{ directory.lastSync }}</span>
+				</div>
+				<div>
+					<h4>Default:</h4>
+					<span>{{ directory.default }}</span>
+				</div>
+				<div>
+					<h4>Available:</h4>
+					<span>{{ directory.available }}</span>
 				</div>
 			</div>
 		</div>
@@ -32,6 +60,12 @@ export default {
 	name: 'DirectoryDetails',
 	components: {
 		NcLoadingIcon,
+	},
+	props: {
+		directoryId: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
@@ -54,7 +88,7 @@ export default {
 		fetchData() {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/directory/api/' + store.item,
+				'/index.php/apps/opencatalogi/api/directory/' + store.directoryItem.id,
 				{
 					method: 'GET',
 				},
@@ -62,13 +96,11 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						this.directory = data
-						// this.oldZaakId = id
 					})
 					this.loading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					// this.oldZaakId = id
 					this.loading = false
 				})
 		},

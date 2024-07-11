@@ -7,14 +7,34 @@ import { store } from '../../store.js'
 		<div v-if="!loading" class="modal__content">
 			<h2>Directory toevoeggen</h2>
 			<div class="form-group">
-				<NcTextField :disabled="loading"
-					label="Locactie"
-					maxlength="255"
-					:value.sync="url"
-					required />
+				<NcTextField label="Titel" :value.sync="title" />
+			</div>
+			<div class="form-group">
+				<NcTextArea label="Samenvatting" :value.sync="summary" />
+			</div>
+			<div class="form-group">
+				<NcTextArea label="Beschrijving" :value.sync="description" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Search" :value.sync="search" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="MetaData" :value.sync="metadata" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Status" :value.sync="status" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Last synchronized" :value.sync="lastSync" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Last synchronized" :value.sync="lastSync" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Default" :value.sync="defaultValue" />
 			</div>
 
-			<NcButton :disabled="!name" type="primary" @click="addExternalCatalog">
+			<NcButton :disabled="!url" type="primary" @click="addDirectory">
 				Submit
 			</NcButton>
 		</div>
@@ -37,13 +57,48 @@ export default {
 	},
 	data() {
 		return {
-			url: '',
-			loading: false,
+			title: '',
+			summary: '',
+			description: '',
+			search: '',
+			metadata: '',
+			status: '',
+			lastSync: '',
+			defaultValue: '',
+			succesMessage: false,
 		}
 	},
 	methods: {
-		addExternalCatalog() {
-			this.closeModal()
+		closeModal() {
+			store.modal = false
+		},
+		addDirectory() {
+			this.$emit('metadata', this.title)
+			fetch(
+				'/index.php/apps/opencatalogi/api/directory',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						title: this.title,
+						summary: this.summary,
+						description: this.description,
+						search: this.search,
+						metadata: this.metadata,
+						status: this.status,
+						lastSync: this.lastSync,
+						default: this.defaultValue,
+					}),
+				},
+			)
+				.then((response) => {
+					this.closeModal()
+				})
+				.catch((err) => {
+					console.error(err)
+				})
 		},
 	},
 }

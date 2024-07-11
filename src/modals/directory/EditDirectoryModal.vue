@@ -3,21 +3,17 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'listinEdit'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'editDirectory'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
-			<h2>Listing bewerken</h2>
+			<h2>Directory bewerken</h2>
 			<div class="form-group">
 				<NcTextField :disabled="loading"
-					label="Naam"
+					label="Locatie"
 					maxlength="255"
-					:value.sync="name"
+					:value.sync="url"
 					required />
-				<NcTextField :disabled="loading"
-					label="Samenvatting"
-					maxlength="255"
-					:value.sync="summery" />
 			</div>
-			<NcButton :disabled="!externalCatalogName" type="primary" @click="editExternalCatalog">
+			<NcButton :disabled="!url" type="primary" @click="editDirectory">
 				Submit
 			</NcButton>
 		</div>
@@ -31,7 +27,7 @@ import { store } from '../../store.js'
 import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
-	name: 'EditListingModal',
+	name: 'EditDirectoryModal',
 	components: {
 		NcModal,
 		NcTextField,
@@ -40,8 +36,7 @@ export default {
 	},
 	data() {
 		return {
-			name: '',
-			summery: '',
+			url: '',
 			succesMessage: false,
 			loading: false,
 		}
@@ -50,7 +45,7 @@ export default {
 		closeModal() {
 			store.modal = false
 		},
-		editExternalCatalog() {
+		editDirectory() {
 			this.closeModal()
 		},
 	},
