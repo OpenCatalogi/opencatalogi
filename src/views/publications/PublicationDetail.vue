@@ -57,7 +57,7 @@ import { store } from '../../store.js'
 						</div>
 						<div>
 							<h4>Data:</h4>
-							<span>{{ dataView }}</span>
+							<span>{{ publicationData }}</span>
 						</div>
 					</div>
 					<div class="tabContainer">
@@ -183,6 +183,7 @@ export default {
 	data() {
 		return {
 			publication: [],
+			publicationData: '',
 			catalogi: [],
 			metadata: [],
 			loading: false,
@@ -190,17 +191,6 @@ export default {
 			metaDataLoading: false,
 			hasUpdated: false,
 		}
-	},
-	computed: {
-		dataView() {
-			const rawData = this?.publication?.data
-			return Object.keys(rawData)
-				.filter(key => !['data', 'attachments'].includes(key))
-				.reduce((obj, key) => {
-					obj[key] = rawData[key]
-					return obj
-				}, {})
-		},
 	},
 	watch: {
 		publicationId: {
@@ -225,7 +215,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
-
+						this.dataView()
 						this.loading = false
 					})
 				})
@@ -288,6 +278,17 @@ export default {
 		goToCatalogi(id) {
 			store.setCatalogiId(id)
 			store.setSelected('catalogi')
+		},
+		dataView() {
+
+			const rawData = this?.publication?.data
+
+			this.publicationData = Object.keys(rawData)
+				.filter(key => !['data', 'attachments'].includes(key))
+				.reduce((obj, key) => {
+					obj[key] = rawData[key]
+					return obj
+				}, {})
 		},
 		updatePublication() {
 			this.loading = true
