@@ -103,7 +103,7 @@ export default {
 			store.setDirectoryId(directory.id)
 			store.setDirectoryItem(directory)
 		},
-		editDirectroy(directory) {
+		editDirectory(directory) {
 			store.setDirectoryItem(directory)
 			store.setDirectoryId(directory.id)
 			store.setModal('editDirectory')

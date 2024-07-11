@@ -5,7 +5,7 @@ import { store } from '../../store.js'
 <template>
 	<NcModal v-if="store.modal === 'addDirectory'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
-			<h2>Directory toevoeggen</h2>
+			<h2>Directory toevoegen</h2>
 			<div class="form-group">
 				<NcTextField label="Titel" :value.sync="title" />
 			</div>
@@ -23,9 +23,6 @@ import { store } from '../../store.js'
 			</div>
 			<div class="form-group">
 				<NcTextField label="Status" :value.sync="status" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Last synchronized" :value.sync="lastSync" />
 			</div>
 			<div class="form-group">
 				<NcTextField label="Last synchronized" :value.sync="lastSync" />
@@ -67,6 +64,7 @@ export default {
 			lastSync: '',
 			defaultValue: '',
 			succesMessage: false,
+			loading: false,
 		}
 	},
 	methods: {
@@ -74,6 +72,7 @@ export default {
 			store.modal = false
 		},
 		addDirectory() {
+			this.loading = true
 			this.$emit('metadata', this.title)
 			fetch(
 				'/index.php/apps/opencatalogi/api/directory',
@@ -98,6 +97,7 @@ export default {
 					this.closeModal()
 				})
 				.catch((err) => {
+					this.loading = false
 					console.error(err)
 				})
 		},
