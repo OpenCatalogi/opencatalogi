@@ -86,9 +86,9 @@ import { store } from '../../store.js'
 							</BTab>
 							<BTab title="Bijlagen">
 								<div
-									v-if="publication?.data?.attachments?.length > 0"
+									v-if="publication?.attachments?.length > 0"
 									class="tabPanel">
-									<NcListItem v-for="(attachment, i) in publication?.data?.attachments"
+									<NcListItem v-for="(attachment, i) in publication?.attachments"
 										:key="`${attachment}${i}`"
 										:name="attachment?.title"
 										:bold="false"
@@ -115,7 +115,7 @@ import { store } from '../../store.js'
 											{{ attachment?.description }}
 										</template>
 										<template #actions>
-											<NcActionButton @click="updatePublication">
+											<NcActionButton @click="updatePublication(attachment.id)">
 												<template #icon>
 													<Pencil :size="20" />
 												</template>
@@ -217,8 +217,17 @@ export default {
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
 		},
-		updatePublication() {
+		updatePublication(id) {
 			this.loading = true
+
+			const attachment = this.publication.attachments.find((attachment) => attachment.id === id)
+
+			attachment.published = 'false'
+
+			const test = { ...this.publication.attachments }
+
+			console.log(test)
+
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${this.publicationId}`,
 				{

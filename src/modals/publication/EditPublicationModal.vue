@@ -96,7 +96,7 @@ import { store } from '../../store.js'
 				</div>
 
 				<div class="form-group">
-					<NcTextArea :disabled="publicationLoading" label="Bijlagen" :value.sync="attachments" />
+					<NcTextArea :disabled="publicationLoading" label="Bijlagen" :value.sync="publication.attachments" />
 				</div>
 				<div v-if="succesMessage" class="success">
 					Succesfully updated publication
@@ -293,6 +293,7 @@ export default {
 			)
 				.then((response) => {
 					this.closeModal()
+					this.loading = false
 				})
 				.catch((err) => {
 					this.loading = false
