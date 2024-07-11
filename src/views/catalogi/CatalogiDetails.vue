@@ -44,19 +44,19 @@ import { store } from '../../store.js'
 <script>
 import {
 	NcLoadingIcon,
-	// NcListItem,
-	// NcActionButton
+	NcListItem,
+	NcActionButton,
 } from '@nextcloud/vue'
 // eslint-disable-next-line n/no-missing-import
-// import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
 
 export default {
 	name: 'CatalogiDetails',
 	components: {
 		NcLoadingIcon,
-		// NcListItem,
-		// NcActionButton,
-		// ListBoxOutline,
+		NcListItem,
+		NcActionButton,
+		ListBoxOutline,
 	},
 	data() {
 		return {
