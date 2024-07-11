@@ -49,11 +49,15 @@ import { store } from '../../store.js'
 							<h4>Metadata:</h4>
 							<span>{{ publication.metaData }}</span>
 						</div>
+						<div>
+							<h4>Data:</h4>
+							<span>{{ dataView }}</span>
+						</div>
 					</div>
 					<div class="tabContainer">
 						<BTabs content-class="mt-3" justified>
 							<BTab title="Eigenschappen" active>
-								<NcListItem v-for="(value, key, i) in publication.data"
+								<NcListItem v-for="(value, key, i) in publication?.data?.data"
 									:key="`${key}${i}`"
 									:name="key"
 									:bold="false"
@@ -172,6 +176,17 @@ export default {
 			publication: [],
 			loading: false,
 		}
+	},
+	computed: {
+		dataView() {
+			const rawData = this?.publication?.data
+			return Object.keys(rawData)
+				.filter(key => !['data', 'attachments'].includes(key))
+				.reduce((obj, key) => {
+					obj[key] = rawData[key]
+					return obj
+				}, {})
+		},
 	},
 	watch: {
 		publicationId: {
