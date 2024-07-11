@@ -5,7 +5,7 @@ import { store } from '../../store.js'
 <template>
 	<div class="detailContainer">
 		<div v-if="!loading" id="app-content">
-			<!-- <NcListItem v-for="(publication, i) in publications.results"
+			<NcListItem v-for="(publication, i) in publications.results"
 				:key="`${publication}${i}`"
 				:name="publication?.name"
 				:bold="false"
@@ -32,9 +32,7 @@ import { store } from '../../store.js'
 						Depubliceren
 					</NcActionButton>
 				</template>
-			</NcListItem> -->
-
-			{{ catalogi }}
+			</NcListItem>
 		</div>
 		<NcLoadingIcon v-if="loading"
 			:size="100"
