@@ -34,7 +34,7 @@ import { store } from '../../store.js'
 				<NcTextField label="Default" :value.sync="defaultValue" />
 			</div>
 
-			<NcButton :disabled="!url" type="primary" @click="addDirectory">
+			<NcButton :disabled="!title" type="primary" @click="addDirectory">
 				Submit
 			</NcButton>
 		</div>
