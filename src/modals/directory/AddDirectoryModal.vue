@@ -45,13 +45,14 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon } from '@nextcloud/vue'
 
 export default {
 	name: 'AddDirectoryModal',
 	components: {
 		NcModal,
 		NcTextField,
+		NcTextArea,
 		NcButton,
 		NcLoadingIcon,
 	},

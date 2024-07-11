@@ -68,8 +68,10 @@ class DirectoryController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function index(ObjectService $objectService): JSONResponse
+	// public function index(ObjectService $objectService): JSONResponse
+	public function index(): JSONResponse
 	{
+		return new JSONResponse(['results' => $this::TEST_ARRAY]);
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');

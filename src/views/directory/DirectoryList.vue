@@ -33,7 +33,7 @@ import { store } from '../../store.js'
 
 			<NcListItem v-for="(directory, i) in directoryList.results"
 				:key="`${directory}${i}`"
-				:name="directory?.name"
+				:name="directory?.title"
 				:active="store.directoryId === directory?.id"
 				:details="'1h'"
 				:counter-number="44"
@@ -46,7 +46,7 @@ import { store } from '../../store.js'
 						display-name="Jane Doe" />
 				</template>
 				<template #subname>
-					{{ directory?.summary }}
+					{{ directory?.title }}
 				</template>
 				<template #actions>
 					<NcActionButton @click="editDirectory(directory)">
