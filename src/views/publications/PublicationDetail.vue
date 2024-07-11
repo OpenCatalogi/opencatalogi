@@ -47,7 +47,8 @@ import { store } from '../../store.js'
 							<div v-if="!catalogiLoading" class="buttonLinkContainer">
 								<span>{{ catalogi.name }}</span>
 								<NcActions>
-									<NcActionLink :name="metadata.title"
+									<NcActionLink :aria-label="`got to ${catalogi.name}`"
+										:name="catalogi.name"
 										@click="goToCatalogi(catalogi._id)">
 										<template #icon>
 											<OpenInApp :size="20" />
@@ -63,7 +64,8 @@ import { store } from '../../store.js'
 							<div v-if="!metaDataLoading" class="buttonLinkContainer">
 								<span>{{ metadata.title }}</span>
 								<NcActions>
-									<NcActionLink :name="metadata.title"
+									<NcActionLink :aria-label="`got to ${metadata.title}`"
+										:name="metadata.title"
 										@click="goToMetadata(metadata._id)">
 										<template #icon>
 											<OpenInApp :size="20" />
