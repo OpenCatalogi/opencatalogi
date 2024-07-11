@@ -3,24 +3,9 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'editDirectory'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'editLising'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
 			<h2>Directory bewerken</h2>
-			<div class="form-group">
-				<NcTextField label="Titel" :value.sync="directory.title" />
-			</div>
-			<div class="form-group">
-				<NcTextArea label="Samenvatting" :value.sync="directory.summary" />
-			</div>
-			<div class="form-group">
-				<NcTextArea label="Beschrijving" :value.sync="directory.description" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Search" :value.sync="directory.search" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="MetaData" :value.sync="directory.metadata" />
-			</div>
 			<div class="form-group">
 				<NcTextField label="Status" :value.sync="directory.status" />
 			</div>
@@ -37,19 +22,26 @@ import { store } from '../../store.js'
 		<NcLoadingIcon
 			v-if="loading"
 			:size="100" />
+		<NcNoteCard v-if="succes" type="success">
+			<p>Meta data succesvol toegevoegd</p>
+		</NcNoteCard>
+		<NcNoteCard v-if="error" type="error">
+			<p>{{ error }}</p>
+		</NcNoteCard>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 
 export default {
-	name: 'EditDirectoryModal',
+	name: 'EditListingModal',
 	components: {
 		NcModal,
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
 	},
 	data() {
 		return {
@@ -66,6 +58,8 @@ export default {
 			succesMessage: false,
 			hasUpdated: false,
 			loading: false,
+			succes: false,
+			error: false,
 		}
 	},
 	updated() {
@@ -97,14 +91,14 @@ export default {
 					})
 				})
 				.catch((err) => {
-					console.error(err)
+					this.error = err
 					this.loading = false
 				})
 		},
 		editDirectory() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${store.directoryId}`,
+				`/index.php/apps/opencatalogi/api/directory/${store.listingId}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -113,9 +107,18 @@ export default {
 					body: JSON.stringify(this.directory),
 				},
 			).then((response) => {
-				this.closeModal()
+				// Set propper modal states
+				this.loading = false
+				this.succes = true
+				// Forse a refresh of the list and detaul page
+				store.setSelected(false)
+				store.setSelected('directory')
+				store.setListingItem(false)
+				store.setListingItem(store.listingId)
+				// Wait and then close the modal
+				setTimeout(() => (this.closeModal()), 2500)
 			}).catch((err) => {
-				console.error(err)
+				this.error = err
 				this.loading = false
 			})
 		},

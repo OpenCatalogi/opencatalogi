@@ -17,13 +17,6 @@ import { store } from '../../store.js'
 					maxlength="255"
 					:value.sync="summary" />
 			</div>
-			<div v-if="succesMessage" class="successMessage">
-				Catalogi met succes bewerkt
-			</div>
-			<div v-if="errorMessage" class="errorMessage">
-				Oeps er is iets fout gegaan.
-				Error Code: {{ errorCode }}
-			</div>
 			<NcButton :disabled="!catalogName" type="primary" @click="editCatalog">
 				Opslaan
 			</NcButton>
@@ -31,11 +24,17 @@ import { store } from '../../store.js'
 		<NcLoadingIcon
 			v-if="loading"
 			:size="100" />
+		<NcNoteCard v-if="succes" type="success">
+			<p>Meta data succesvol toegevoegd</p>
+		</NcNoteCard>
+		<NcNoteCard v-if="error" type="error">
+			<p>{{ error }}</p>
+		</NcNoteCard>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 
 export default {
 	name: 'EditCatalogModal',
@@ -44,14 +43,15 @@ export default {
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
 	},
 	data() {
 		return {
 			name: '',
 			summary: '',
-			succesMessage: false,
-			errorMessage: false,
 			loading: false,
+			succes: false,
+			error: false,
 			catalogLoading: false,
 			errorCode: '',
 		}
@@ -77,16 +77,14 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.catalogLoading = false
-					this.succesMessage = true
-					setTimeout(() => (this.succesMessage = false), 2500)
+					this.loading = false
+					this.succes = true
+					setTimeout(() => (this.closeModal()), 2500)
 
 				})
 				.catch((err) => {
-					this.catalogLoading = false
-					this.errorMessage = true
-					this.errorCode = err
-					console.error(err)
+					this.error = err
+					this.loading = false
 				})
 		},
 	},

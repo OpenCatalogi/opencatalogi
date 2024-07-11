@@ -13,8 +13,8 @@ export const store = reactive({
 	catalogiId: false,
 	catalogiItem: false,
 	listItem: false,
-	directoryId: false,
-	directoryItem: false,
+	listingId: false,
+	listingItem: false,
 	metaDataId: false,
 	metaDataItem: false,
 	publicationId: false,
@@ -47,13 +47,13 @@ export const store = reactive({
 		this.catalogItem = catalogItem
 		console.log('Active catalog item set to ' + catalogItem)
 	},
-	setDirectoryId(directoryId) {
-		this.directoryId = directoryId
-		console.log('Active directory id set to ' + directoryId)
+	setListingId(listingId) {
+		this.listingId = listingId
+		console.log('Active directory id set to ' + listingId)
 	},
-	setDirectoryItem(directoryItem) {
-		this.directoryItem = directoryItem
-		console.log('Active directory item set to ' + directoryItem)
+	setListingItem(listingItem) {
+		this.listingItem = listingItem
+		console.log('Active directory item set to ' + listingItem)
 	},
 	setMetaDataId(metaDataId) {
 		this.metaDataId = metaDataId

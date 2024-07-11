@@ -113,6 +113,12 @@ import { store } from '../../store.js'
 		<NcLoadingIcon
 			v-if="loading"
 			:size="100" />
+		<NcNoteCard v-if="succes" type="success">
+			<p>Meta data succesvol toegevoegd</p>
+		</NcNoteCard>
+		<NcNoteCard v-if="error" type="error">
+			<p>{{ error }}</p>
+		</NcNoteCard>
 	</NcModal>
 </template>
 
@@ -125,6 +131,7 @@ import {
 	NcSelect,
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
+	NcNoteCard,
 } from '@nextcloud/vue'
 
 export default {
@@ -137,6 +144,7 @@ export default {
 		NcButton,
 		NcSelect,
 		NcLoadingIcon,
+		NcNoteCard,
 	},
 	data() {
 		return {
@@ -166,7 +174,8 @@ export default {
 				options: [],
 			},
 			loading: false,
-			succesMessage: false,
+			succes: false,
+			error: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
 			hasUpdated: false,
@@ -299,12 +308,13 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.closeModal()
 					this.loading = false
+					this.succes = true
+					setTimeout(() => (this.closeModal()), 2500)
 				})
 				.catch((err) => {
+					this.error = err
 					this.loading = false
-					console.error(err)
 				})
 		},
 	},

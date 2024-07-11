@@ -22,11 +22,11 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('addDirectory')">
+					<NcActionButton @click="store.setModal('addListing')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						Directory toevoegen
+						Listing toevoegen aan directory
 					</NcActionButton>
 				</NcActions>
 			</div>

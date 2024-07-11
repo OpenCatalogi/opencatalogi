@@ -109,13 +109,12 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
-		<div v-if="successMessage" class="successMessage">
-			Succesfully added publication
-		</div>
-		<div v-if="errorMessage" class="errorMessage">
-			Oeps er is iets fout gegaan.
-			Error Code: {{ errorCode }}
-		</div>
+		<NcNoteCard v-if="succes" type="success">
+			<p>Meta data succesvol toegevoegd</p>
+		</NcNoteCard>
+		<NcNoteCard v-if="error" type="error">
+			<p>{{ error }}</p>
+		</NcNoteCard>
 		<NcLoadingIcon
 			v-if="loading"
 			:size="100" />
@@ -131,6 +130,7 @@ import {
 	NcSelect,
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
+	NcNoteCard,
 } from '@nextcloud/vue'
 
 export default {
@@ -143,6 +143,7 @@ export default {
 		NcSelect,
 		NcLoadingIcon,
 		NcCheckboxRadioSwitch,
+		NcNoteCard,
 	},
 	data() {
 		return {
@@ -151,7 +152,6 @@ export default {
 			data: '{}',
 			catalogi: {},
 			metaData: {},
-			data: '',
 			attachments: '',
 			license: '',
 			modified: '',
@@ -163,13 +163,13 @@ export default {
 			category: '',
 			image: '',
 			errorCode: '',
-			successMessage: false,
-			errorMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
 			publicationLoading: false,
 			hasUpdated: false,
 			loading: false,
+			succes: false,
+			error: false,
 			dataIsValidJson: false,
 			attachmentsIsValidJson: false,
 
@@ -287,16 +287,13 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succesMessage = true
-					setTimeout(() => (store.modal = false), 2500)
-					setTimeout(() => (this.succesMessage = false), 2500)
+					this.succes = true
+					setTimeout(() => (this.closeModal()), 2500)
 					store.setRefresh(true)
 				})
 				.catch((err) => {
-					this.publicationLoading = false
-					this.errorMessage = true
-					this.errorCode = err
-					console.error(err)
+					this.error = err
+					this.loading = false
 				})
 		},
 	},

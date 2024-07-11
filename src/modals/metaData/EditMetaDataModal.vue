@@ -32,11 +32,17 @@ import { store } from '../../store.js'
 		<NcLoadingIcon
 			v-if="loading"
 			:size="100" />
+		<NcNoteCard v-if="succes" type="success">
+			<p>Meta data succesvol gewijzigd</p>
+		</NcNoteCard>
+		<NcNoteCard v-if="error" type="error">
+			<p>{{ error }}</p>
+		</NcNoteCard>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 
 export default {
 	name: 'EditMetaDataModal',
@@ -46,6 +52,7 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
 	},
 	data() {
 		return {
@@ -57,9 +64,10 @@ export default {
 				description: '',
 				properties: '',
 			},
-			succesMessage: false,
 			hasUpdated: false,
 			loading: false,
+			succes: false,
+			error: false,
 		}
 	},
 	updated() {
@@ -107,10 +115,12 @@ export default {
 					body: JSON.stringify(this.metaData),
 				},
 			).then((response) => {
-				this.closeModal()
+				this.loading = false
+				this.succes = true
+				setTimeout(() => (this.closeModal()), 2500)
 			}).catch((err) => {
-				this.metaDataLoading = false
-				console.error(err)
+				this.error = err
+				this.loading = false
 			})
 		},
 	},

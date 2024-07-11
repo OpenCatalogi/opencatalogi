@@ -16,7 +16,7 @@ import { store } from '../../store.js'
 					<LayersOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="store.setModal('addDirectory')">
+					<NcButton type="primary" @click="store.setModal('addListing')">
 						Directory toevoegen
 					</NcButton>
 				</template>

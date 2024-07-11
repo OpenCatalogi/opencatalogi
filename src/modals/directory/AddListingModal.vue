@@ -3,32 +3,11 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'addDirectory'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'addLising'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
 			<h2>Directory toevoegen</h2>
 			<div class="form-group">
-				<NcTextField label="Titel" :value.sync="title" />
-			</div>
-			<div class="form-group">
-				<NcTextArea label="Samenvatting" :value.sync="summary" />
-			</div>
-			<div class="form-group">
-				<NcTextArea label="Beschrijving" :value.sync="description" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Search" :value.sync="search" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="MetaData" :value.sync="metadata" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Status" :value.sync="status" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Last synchronized" :value.sync="lastSync" />
-			</div>
-			<div class="form-group">
-				<NcTextField label="Default" :value.sync="defaultValue" />
+				<NcTextField label="Url" :value.sync="search" />
 			</div>
 
 			<NcButton :disabled="!title" type="primary" @click="addDirectory">
@@ -38,20 +17,26 @@ import { store } from '../../store.js'
 		<NcLoadingIcon
 			v-if="loading"
 			:size="100" />
+		<NcNoteCard v-if="succes" type="success">
+			<p>Listing succesvol toegevoegd</p>
+		</NcNoteCard>
+		<NcNoteCard v-if="error" type="error">
+			<p>{{ error }}</p>
+		</NcNoteCard>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 
 export default {
-	name: 'AddDirectoryModal',
+	name: 'AddListingModal',
 	components: {
 		NcModal,
 		NcTextField,
-		NcTextArea,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
 	},
 	data() {
 		return {
@@ -65,6 +50,8 @@ export default {
 			defaultValue: '',
 			succesMessage: false,
 			loading: false,
+			succes: false,
+			error: false,
 		}
 	},
 	methods: {
@@ -94,11 +81,20 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.closeModal()
+					// Set propper modal states
+					this.loading = false
+					this.succes = true
+					// Forse a refresh of the list and detaul page
+					store.setSelected(false)
+					store.setSelected('directory')
+					store.setListingItem(false)
+					store.setListingItem(false)
+					// Wait and then close the modal
+					setTimeout(() => (this.closeModal()), 2500)
 				})
 				.catch((err) => {
+					this.error = err
 					this.loading = false
-					console.error(err)
 				})
 		},
 	},
