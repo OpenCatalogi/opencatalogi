@@ -43,11 +43,11 @@ import { store } from '../../store.js'
 						</div>
 						<div>
 							<h4>Catalogi:</h4>
-							<span>{{ publication.catalogi }}</span>
+							<span>{{ catalogi.title }}</span>
 						</div>
 						<div>
 							<h4>Metadata:</h4>
-							<span>{{ publication.metaData }}</span>
+							<span>{{ metadata.title }}</span>
 						</div>
 						<div>
 							<h4>Data:</h4>
@@ -180,6 +180,8 @@ export default {
 			catalogi: [],
 			metadata: [],
 			loading: false,
+			catalogiLoading: false,
+			metaDataLoading: false,
 			hasUpdated: false,
 		}
 	},
@@ -208,7 +210,6 @@ export default {
 			this.hasUpdated = false
 		}
 		if (!this.hasUpdated) {
-            // TODO: there should be a wait or error handling for all these fetches
 			this.fetchData(this.publicationId)
 		    this.fetchCatalogi(this.publication.catalogi)
 		    this.fetchMetaData(this.publication.metaData)
@@ -225,8 +226,8 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						// this.oldZaakId = id
+						this.loading = false
 					})
-					this.loading = false
 				})
 				.catch((err) => {
 					console.error(err)
@@ -257,7 +258,7 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaData = data
+						this.metadata = data
 					})
 					this.metaDataLoading = false
 				})
