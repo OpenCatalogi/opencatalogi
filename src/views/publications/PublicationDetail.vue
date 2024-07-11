@@ -92,9 +92,9 @@ import { store } from '../../store.js'
 							</BTab>
 							<BTab title="Bijlagen">
 								<div
-									v-if="publication?.data?.attachments?.length > 0"
+									v-if="publication?.attachments?.length > 0"
 									class="tabPanel">
-									<NcListItem v-for="(attachment, i) in publication?.data?.attachments"
+									<NcListItem v-for="(attachment, i) in publication?.attachments"
 										:key="`${attachment}${i}`"
 										:name="attachment?.title"
 										:bold="false"
@@ -121,7 +121,7 @@ import { store } from '../../store.js'
 											{{ attachment?.description }}
 										</template>
 										<template #actions>
-											<NcActionButton @click="updatePublication">
+											<NcActionButton @click="updatePublication(attachment.id)">
 												<template #icon>
 													<Pencil :size="20" />
 												</template>
@@ -291,6 +291,7 @@ export default {
 		},
 		updatePublication() {
 			this.loading = true
+
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${this.publicationId}`,
 				{
