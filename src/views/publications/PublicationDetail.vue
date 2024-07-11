@@ -43,11 +43,17 @@ import { store } from '../../store.js'
 						</div>
 						<div>
 							<h4>Catalogi:</h4>
-							<span>{{ publication.catalogi }}</span>
+							<span v-if="catalogiLoading">Loading...</span>
+							<span v-if="!catalogiLoading" class="PublicationDetail-clickable" @click="goToCatalogi(catalogi._id)">
+								{{ catalogi.name }}
+							</span>
 						</div>
 						<div>
 							<h4>Metadata:</h4>
-							<span>{{ publication.metaData }}</span>
+							<span v-if="metaDataLoading">Loading...</span>
+							<span v-if="!metaDataLoading" class="PublicationDetail-clickable" @click="goToMetadata(metadata._id)">
+								{{ metadata.title }}
+							</span>
 						</div>
 						<div>
 							<h4>Data:</h4>
@@ -177,7 +183,12 @@ export default {
 	data() {
 		return {
 			publication: [],
+			catalogi: [],
+			metadata: [],
 			loading: false,
+			catalogiLoading: false,
+			metaDataLoading: false,
+			hasUpdated: false,
 		}
 	},
 	computed: {
@@ -203,6 +214,59 @@ export default {
 		this.fetchData(this.publicationId)
 	},
 	methods: {
+		fetchData(id) {
+			this.loading = true
+			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.publication = data
+						// this.oldZaakId = id
+						this.fetchCatalogi(data.catalogi)
+						this.fetchMetaData(data.metaData)
+
+						this.loading = false
+					})
+				})
+				.catch((err) => {
+					console.error(err)
+					// this.oldZaakId = id
+					this.loading = false
+				})
+		},
+		fetchCatalogi(catalogiId) {
+			this.catalogiLoading = true
+			fetch(`/index.php/apps/opencatalogi/api/catalogi/${catalogiId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.catalogi = data
+					})
+					this.catalogiLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.catalogiLoading = false
+				})
+		},
+		fetchMetaData(metadataId) {
+			this.metaDataLoading = true
+			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.metadata = data
+					})
+					this.metaDataLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.metaDataLoading = false
+				})
+		},
 		deletePublication() {
 			store.setPublicationItem(this.publication)
 			store.setModal('deletePublication')
@@ -216,6 +280,14 @@ export default {
 			store.setPublicationId(this.publicationId)
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
+		},
+		goToMetadata(id) {
+			store.setMetaDataId(id)
+			store.setSelected('metaData')
+		},
+		goToCatalogi(id) {
+			store.setCatalogiId(id)
+			store.setSelected('catalogi')
 		},
 		updatePublication() {
 			this.loading = true
@@ -241,24 +313,6 @@ export default {
 				.catch((err) => {
 					this.loading = false
 					console.error(err)
-				})
-		},
-		fetchData(id) {
-			this.loading = true
-			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-						this.publication = data
-						// this.oldZaakId = id
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					// this.oldZaakId = id
-					this.loading = false
 				})
 		},
 	},
@@ -300,5 +354,9 @@ h4 {
 }
 .active.publicationDetails-actionsDelete button {
     color: #EBEBEB !important;
+}
+
+.PublicationDetail-clickable {
+    cursor: pointer !important;
 }
 </style>

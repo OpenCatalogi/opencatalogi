@@ -112,10 +112,8 @@ export default {
 	methods: {
 		storeMetaData(metaData) {
 			store.setMetaDataId(metaData.id)
-			store.setMetaDataItem(metaData)
 		},
 		editMetaData(metaData) {
-			store.setMetaDataItem(metaData)
 			store.setMetaDataId(metaData.id)
 			store.setModal('editMetaData')
 		},

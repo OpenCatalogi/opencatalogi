@@ -64,7 +64,7 @@ export default {
 			this.catalogLoading = true
 			this.errorMessage = false
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiId}`,
 				{
 					method: 'POST',
 					headers: {
