@@ -3,6 +3,7 @@
 	<div>
 		<AddPublicationModal />
 		<EditPublicationModal />
+		<DeletePublicationModal />
 		<AddMetaDataModal />
 		<EditMetaDataModal />
 		<AddCatalogModal />
@@ -16,6 +17,7 @@
 <script>
 import AddPublicationModal from './publication/AddPublicationModal.vue'
 import EditPublicationModal from './publication/EditPublicationModal.vue'
+import DeletePublicationModal from './publication/DeletePublicationModal.vue'
 import AddMetaDataModal from './metaData/AddMetaDataModal.vue'
 import EditMetaDataModal from './metaData/EditMetaDataModal.vue'
 import AddCatalogModal from './catalog/AddCatalogModal.vue'
@@ -29,6 +31,7 @@ export default {
 	components: {
 		AddPublicationModal,
 		EditPublicationModal,
+		DeletePublicationModal,
 		AddMetaDataModal,
 		EditMetaDataModal,
 		AddCatalogModal,

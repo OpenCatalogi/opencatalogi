@@ -42,7 +42,11 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcListItem, NcActionButton } from '@nextcloud/vue'
+import {
+	NcLoadingIcon,
+	NcListItem,
+	NcActionButton,
+} from '@nextcloud/vue'
 // eslint-disable-next-line n/no-missing-import
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
 
@@ -56,7 +60,7 @@ export default {
 	},
 	data() {
 		return {
-			publications: [],
+			catalogi: [],
 			loading: false,
 		}
 	},
@@ -69,20 +73,20 @@ export default {
 		},
 	},
 	mounted() {
-		this.fetchData(store.catalogiItem)
+		this.fetchData(store.catalogiId)
 	},
 	methods: {
 		fetchData(catalogId) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/publications/' + catalogId,
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogId}`,
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.publications = data
+						this.catalogi = data
 						// this.oldZaakId = id
 					})
 					this.loading = false
@@ -117,8 +121,8 @@ h4 {
   display: grid;
   grid-gap: 24px;
   grid-template-columns: 1fr 1fr;
-  margin-block-start: var(--zaa-margin-50);
-  margin-block-end: var(--zaa-margin-50);
+  margin-block-start: var(--OC-margin-50);
+  margin-block-end: var(--OC-margin-50);
 }
 
 .gridContent {

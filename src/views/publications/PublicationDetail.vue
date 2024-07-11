@@ -11,12 +11,27 @@ import { store } from '../../store.js'
 					<h1 class="h1">
 						{{ publication.title }}
 					</h1>
-					<NcActions>
+					<NcActions :primary="true" menu-name="Acties">
+						<template #icon>
+							<DotsHorizontal :size="20" />
+						</template>
 						<NcActionButton @click="store.setModal('publicationEdit')">
 							<template #icon>
-								<CogOutline :size="20" />
+								<Pencil :size="20" />
 							</template>
 							Bewerken
+						</NcActionButton>
+						<NcActionButton>
+							<template #icon>
+								<PublishOff :size="20" />
+							</template>
+							Depubliceren
+						</NcActionButton>
+						<NcActionButton class="publicationDetails-actionsDelete" @click="deletePublication()">
+							<template #icon>
+								<Delete :size="20" />
+							</template>
+							Verwijderen
 						</NcActionButton>
 					</NcActions>
 				</div>
@@ -28,23 +43,35 @@ import { store } from '../../store.js'
 						</div>
 						<div>
 							<h4>Catalogi:</h4>
-							<span>{{ publication.catalogi }}</span>
+							<span v-if="catalogiLoading">Loading...</span>
+							<span v-if="!catalogiLoading" class="PublicationDetail-clickable" @click="goToCatalogi(catalogi._id)">
+								{{ catalogi.name }}
+							</span>
 						</div>
 						<div>
 							<h4>Metadata:</h4>
-							<span>{{ publication.metaData }}</span>
+							<span v-if="metaDataLoading">Loading...</span>
+							<span v-if="!metaDataLoading" class="PublicationDetail-clickable" @click="goToMetadata(metadata._id)">
+								{{ metadata.title }}
+							</span>
+						</div>
+						<div>
+							<h4>Data:</h4>
+							<span>{{ dataView }}</span>
 						</div>
 					</div>
 					<div class="tabContainer">
 						<BTabs content-class="mt-3" justified>
 							<BTab title="Eigenschappen" active>
-								<NcListItem v-for="(value, key, i) in publication.data"
+								<NcListItem v-for="(value, key, i) in publication?.data?.data"
 									:key="`${key}${i}`"
 									:name="key"
 									:bold="false"
-									:force-display-actions="true">
+									:force-display-actions="true"
+									@click=" store.setPublicationDataKey(key)
+									">
 									<template #icon>
-										<ListBoxOutline :class="store.publicationItem === publication.id && 'selectedZaakIcon'"
+										<ListBoxOutline :class="store.publicationDataKey === key && 'selectedZaakIcon'"
 											disable-menu
 											:size="44"
 											user="janedoe"
@@ -94,7 +121,10 @@ import { store } from '../../store.js'
 											{{ attachment?.description }}
 										</template>
 										<template #actions>
-											<NcActionButton>
+											<NcActionButton @click="updatePublication">
+												<template #icon>
+													<Pencil :size="20" />
+												</template>
 												Bewerken
 											</NcActionButton>
 										</template>
@@ -123,11 +153,13 @@ import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud
 import { BTabs, BTab } from 'bootstrap-vue'
 
 // Icons
-import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
 import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -138,7 +170,6 @@ export default {
 		NcActions,
 		NcListItem,
 		// Icons
-		CogOutline,
 		CheckCircle,
 		ExclamationThick,
 		ListBoxOutline,
@@ -152,8 +183,24 @@ export default {
 	data() {
 		return {
 			publication: [],
+			catalogi: [],
+			metadata: [],
 			loading: false,
+			catalogiLoading: false,
+			metaDataLoading: false,
+			hasUpdated: false,
 		}
+	},
+	computed: {
+		dataView() {
+			const rawData = this?.publication?.data
+			return Object.keys(rawData)
+				.filter(key => !['data', 'attachments'].includes(key))
+				.reduce((obj, key) => {
+					obj[key] = rawData[key]
+					return obj
+				}, {})
+		},
 	},
 	watch: {
 		publicationId: {
@@ -167,11 +214,6 @@ export default {
 		this.fetchData(this.publicationId)
 	},
 	methods: {
-		editPublicationDataItem(key) {
-			store.setPublicationId(this.publicationId)
-			store.setPublicationDataKey(key)
-			store.setModal('editPublicationDataModal')
-		},
 		fetchData(id) {
 			this.loading = true
 			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
@@ -181,13 +223,96 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						// this.oldZaakId = id
+						this.fetchCatalogi(data.catalogi)
+						this.fetchMetaData(data.metaData)
+
+						this.loading = false
 					})
-					this.loading = false
 				})
 				.catch((err) => {
 					console.error(err)
 					// this.oldZaakId = id
 					this.loading = false
+				})
+		},
+		fetchCatalogi(catalogiId) {
+			this.catalogiLoading = true
+			fetch(`/index.php/apps/opencatalogi/api/catalogi/${catalogiId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.catalogi = data
+					})
+					this.catalogiLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.catalogiLoading = false
+				})
+		},
+		fetchMetaData(metadataId) {
+			this.metaDataLoading = true
+			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.metadata = data
+					})
+					this.metaDataLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.metaDataLoading = false
+				})
+		},
+		deletePublication() {
+			store.setPublicationItem(this.publication)
+			store.setModal('deletePublication')
+		},
+		editPublicationDataItem(key) {
+			store.setPublicationId(this.publicationId)
+			store.setPublicationDataKey(key)
+			store.setModal('editPublicationDataModal')
+		},
+		editPublicationAttachmentItem(key) {
+			store.setPublicationId(this.publicationId)
+			store.setPublicationDataKey(key)
+			store.setModal('editPublicationDataModal')
+		},
+		goToMetadata(id) {
+			store.setMetaDataId(id)
+			store.setSelected('metaData')
+		},
+		goToCatalogi(id) {
+			store.setCatalogiId(id)
+			store.setSelected('catalogi')
+		},
+		updatePublication() {
+			this.loading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/publications/${this.publicationId}`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(
+						{
+
+							attachments: JSON.parse(this.publication.attachments),
+
+						},
+					),
+				},
+			)
+				.then((response) => {
+					this.closeModal()
+				})
+				.catch((err) => {
+					this.loading = false
+					console.error(err)
 				})
 		},
 	},
@@ -224,38 +349,14 @@ h4 {
   flex-direction: column;
 }
 
-.tabContainer > * ul > li {
-  display: flex;
-  flex: 1;
+.active.publicationDetails-actionsDelete {
+    background-color: var(--color-error) !important;
+}
+.active.publicationDetails-actionsDelete button {
+    color: #EBEBEB !important;
 }
 
-.tabContainer > * ul > li:hover {
-  background-color: var(--color-background-hover);
-}
-
-.tabContainer > * ul > li > a {
-  flex: 1;
-  text-align: center;
-}
-
-.tabContainer > * ul > li > .active {
-  background: transparent !important;
-  color: var(--color-main-text) !important;
-  border-bottom: var(--default-grid-baseline) solid var(--color-primary-element) !important;
-}
-
-.tabContainer > * ul {
-  display: flex;
-  margin: 10px 8px 0 8px;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.tabPanel {
-  padding: 20px 10px;
-  min-height: 100%;
-  max-height: 100%;
-  height: 100%;
-  overflow: auto;
+.PublicationDetail-clickable {
+    cursor: pointer !important;
 }
 </style>

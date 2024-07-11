@@ -34,10 +34,11 @@ import { store } from '../../store.js'
 				<NcListItem v-for="(catalogus, i) in catalogi.results"
 					:key="`${catalogus}${i}`"
 					:name="catalogus?.name"
-					:active="store.catalogItem === catalogus?.id"
+					:active="store.catalogiId === catalogus?._id"
 					:details="'1h'"
 					:counter-number="44"
-					@click="store.setCatalogiItem(catalogus._id)">
+					:force-display-actions="true"
+					@click="store.setCatalogiId(catalogus._id)">
 					<template #icon>
 						<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
@@ -49,14 +50,11 @@ import { store } from '../../store.js'
 						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton>
-							Button one
+						<NcActionButton @click="editCatalog(catalogus.id)">
+							Bewerken
 						</NcActionButton>
-						<NcActionButton>
-							Button two
-						</NcActionButton>
-						<NcActionButton>
-							Button three
+						<NcActionButton @click="deleteCatalog(catalogus.id)">
+							Delete
 						</NcActionButton>
 					</template>
 				</NcListItem>
@@ -71,11 +69,12 @@ import { store } from '../../store.js'
 	</NcAppContentList>
 </template>
 <script>
+// Components
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
-// eslint-disable-next-line n/no-missing-import
-import Magnify from 'vue-material-design-icons/Magnify'
-// eslint-disable-next-line n/no-missing-import
-import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline'
+
+// Icons
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
@@ -123,6 +122,29 @@ export default {
 					this.loading = false
 				})
 		},
+		editCatalog(id) {
+			store.setModal('catalogEdit')
+			store.setCatalogiId(id)
+		},
+		deleteCatalog(id) {
+			fetch(
+				`/index.php/apps/opencatalogi/api/catalogi/${id}`,
+				{
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			)
+				.then((response) => {
+					console.warn('catalogi removed')
+					// this.succesMessage = true
+					// setTimeout(() => (this.succesMessage = false), 2500)
+				})
+				.catch((err) => {
+					console.error(err)
+				})
+		},
 		clearText() {
 			this.search = ''
 		},
@@ -149,6 +171,6 @@ export default {
 }
 
 .loadingIcon {
-    margin-block-start: var(--zaa-margin-20);
+    margin-block-start: var(--OC-margin-20);
 }
 </style>
