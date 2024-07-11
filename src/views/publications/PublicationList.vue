@@ -112,6 +112,14 @@ export default {
 			publications: [],
 		}
 	},
+	watch: {
+		store: {
+			handler() {
+				store.refresh && this.fetchData()
+			},
+			deep: true,
+		},
+	},
 	mounted() {
 		this.fetchData()
 	},

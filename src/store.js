@@ -19,6 +19,7 @@ export const store = reactive({
 	publicationItem: false,
 	publicationDataKey: false,
 	attachmentId: false,
+	refresh: false,
 	// Lets add some setters
 	setSelected(selected) {
 		this.selected = selected
@@ -67,5 +68,10 @@ export const store = reactive({
 	setAttachmentId(attachmentId) {
 		this.attachmentId = attachmentId
 		console.log('Active attachment item set to ' + attachmentId)
+	},
+	setRefresh(refresh) {
+		this.refresh = refresh
+		setTimeout(() => (this.refresh = false), 1000)
+		console.log('Active attachment item set to ' + refresh)
 	},
 })
