@@ -177,7 +177,10 @@ export default {
 	data() {
 		return {
 			publication: [],
+			catalogi: [],
+			metadata: [],
 			loading: false,
+			hasUpdated: false,
 		}
 	},
 	computed: {
@@ -199,10 +202,70 @@ export default {
 			deep: true,
 		},
 	},
-	mounted() {
-		this.fetchData(this.publicationId)
+	updated() {
+		if (this.hasUpdated) {
+			if (this.publication.id === this.publicationId) return
+			this.hasUpdated = false
+		}
+		if (!this.hasUpdated) {
+            // TODO: there should be a wait or error handling for all these fetches
+			this.fetchData(this.publicationId)
+		    this.fetchCatalogi(this.publication.catalogi)
+		    this.fetchMetaData(this.publication.metaData)
+			this.hasUpdated = true
+		}
 	},
 	methods: {
+		fetchData(id) {
+			this.loading = true
+			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.publication = data
+						// this.oldZaakId = id
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					// this.oldZaakId = id
+					this.loading = false
+				})
+		},
+		fetchCatalogi(catalogiId) {
+			this.catalogiLoading = true
+			fetch(`/index.php/apps/opencatalogi/api/catalogi/${catalogiId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.catalogi = data
+					})
+					this.catalogiLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.catalogiLoading = false
+				})
+		},
+		fetchMetaData(metadataId) {
+			this.metaDataLoading = true
+			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.metaData = data
+					})
+					this.metaDataLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.metaDataLoading = false
+				})
+		},
 		deletePublication() {
 			store.setPublicationItem(this.publication)
 			store.setModal('deletePublication')
@@ -241,24 +304,6 @@ export default {
 				.catch((err) => {
 					this.loading = false
 					console.error(err)
-				})
-		},
-		fetchData(id) {
-			this.loading = true
-			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-						this.publication = data
-						// this.oldZaakId = id
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					// this.oldZaakId = id
-					this.loading = false
 				})
 		},
 	},
