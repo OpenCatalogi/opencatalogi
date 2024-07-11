@@ -43,15 +43,41 @@ import { store } from '../../store.js'
 						</div>
 						<div>
 							<h4>Catalogi:</h4>
-							<span>{{ publication.catalogi }}</span>
+							<span v-if="catalogiLoading">Loading...</span>
+							<div v-if="!catalogiLoading" class="buttonLinkContainer">
+								<span>{{ catalogi.name }}</span>
+								<NcActions>
+									<NcActionLink :aria-label="`got to ${catalogi.name}`"
+										:name="catalogi.name"
+										@click="goToCatalogi(catalogi._id)">
+										<template #icon>
+											<OpenInApp :size="20" />
+										</template>
+										{{ catalogi.name }}
+									</NcActionLink>
+								</NcActions>
+							</div>
 						</div>
 						<div>
 							<h4>Metadata:</h4>
-							<span>{{ publication.metaData }}</span>
+							<span v-if="metaDataLoading">Loading...</span>
+							<div v-if="!metaDataLoading" class="buttonLinkContainer">
+								<span>{{ metadata.title }}</span>
+								<NcActions>
+									<NcActionLink :aria-label="`got to ${metadata.title}`"
+										:name="metadata.title"
+										@click="goToMetadata(metadata._id)">
+										<template #icon>
+											<OpenInApp :size="20" />
+										</template>
+										{{ metadata.title }}
+									</NcActionLink>
+								</NcActions>
+							</div>
 						</div>
 						<div>
 							<h4>Data:</h4>
-							<span>{{ dataView }}</span>
+							<span>{{ publicationData }}</span>
 						</div>
 					</div>
 					<div class="tabContainer">
@@ -86,9 +112,9 @@ import { store } from '../../store.js'
 							</BTab>
 							<BTab title="Bijlagen">
 								<div
-									v-if="publication?.data?.attachments?.length > 0"
+									v-if="publication?.attachments?.length > 0"
 									class="tabPanel">
-									<NcListItem v-for="(attachment, i) in publication?.data?.attachments"
+									<NcListItem v-for="(attachment, i) in publication?.attachments"
 										:key="`${attachment}${i}`"
 										:name="attachment?.title"
 										:bold="false"
@@ -115,7 +141,7 @@ import { store } from '../../store.js'
 											{{ attachment?.description }}
 										</template>
 										<template #actions>
-											<NcActionButton @click="updatePublication">
+											<NcActionButton @click="updatePublication(attachment.id)">
 												<template #icon>
 													<Pencil :size="20" />
 												</template>
@@ -143,7 +169,7 @@ import { store } from '../../store.js'
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
 // Icons
@@ -154,6 +180,7 @@ import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -167,6 +194,7 @@ export default {
 		CheckCircle,
 		ExclamationThick,
 		ListBoxOutline,
+		OpenInApp,
 	},
 	props: {
 		publicationId: {
@@ -177,19 +205,14 @@ export default {
 	data() {
 		return {
 			publication: [],
+			publicationData: '',
+			catalogi: [],
+			metadata: [],
 			loading: false,
+			catalogiLoading: false,
+			metaDataLoading: false,
+			hasUpdated: false,
 		}
-	},
-	computed: {
-		dataView() {
-			const rawData = this?.publication?.data
-			return Object.keys(rawData)
-				.filter(key => !['data', 'attachments'].includes(key))
-				.reduce((obj, key) => {
-					obj[key] = rawData[key]
-					return obj
-				}, {})
-		},
 	},
 	watch: {
 		publicationId: {
@@ -203,6 +226,59 @@ export default {
 		this.fetchData(this.publicationId)
 	},
 	methods: {
+		fetchData(id) {
+			this.loading = true
+			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.publication = data
+						// this.oldZaakId = id
+						this.fetchCatalogi(data.catalogi)
+						this.fetchMetaData(data.metaData)
+						this.dataView()
+						this.loading = false
+					})
+				})
+				.catch((err) => {
+					console.error(err)
+					// this.oldZaakId = id
+					this.loading = false
+				})
+		},
+		fetchCatalogi(catalogiId) {
+			this.catalogiLoading = true
+			fetch(`/index.php/apps/opencatalogi/api/catalogi/${catalogiId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.catalogi = data
+					})
+					this.catalogiLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.catalogiLoading = false
+				})
+		},
+		fetchMetaData(metadataId) {
+			this.metaDataLoading = true
+			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.metadata = data
+					})
+					this.metaDataLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.metaDataLoading = false
+				})
+		},
 		deletePublication() {
 			store.setPublicationItem(this.publication)
 			store.setModal('deletePublication')
@@ -217,8 +293,28 @@ export default {
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
 		},
+		goToMetadata(id) {
+			store.setMetaDataId(id)
+			store.setSelected('metaData')
+		},
+		goToCatalogi(id) {
+			store.setCatalogiId(id)
+			store.setSelected('catalogi')
+		},
+		dataView() {
+
+			const rawData = this?.publication?.data
+
+			this.publicationData = Object.keys(rawData)
+				.filter(key => !['data', 'attachments'].includes(key))
+				.reduce((obj, key) => {
+					obj[key] = rawData[key]
+					return obj
+				}, {})
+		},
 		updatePublication() {
 			this.loading = true
+
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${this.publicationId}`,
 				{
@@ -241,24 +337,6 @@ export default {
 				.catch((err) => {
 					this.loading = false
 					console.error(err)
-				})
-		},
-		fetchData(id) {
-			this.loading = true
-			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-						this.publication = data
-						// this.oldZaakId = id
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					// this.oldZaakId = id
-					this.loading = false
 				})
 		},
 	},
@@ -300,5 +378,14 @@ h4 {
 }
 .active.publicationDetails-actionsDelete button {
     color: #EBEBEB !important;
+}
+
+.PublicationDetail-clickable {
+    cursor: pointer !important;
+}
+
+.buttonLinkContainer{
+	display: flex;
+    align-items: center;
 }
 </style>

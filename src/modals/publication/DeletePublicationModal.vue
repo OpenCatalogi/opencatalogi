@@ -6,12 +6,16 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'deletePublication'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+		<div v-if="success === -1" class="modal__content">
 			<h2>Verwijder publicatie:</h2>
 
 			<div class="deletePublication-info">
 				<h3>{{ publication.title }}</h3>
 				<span>{{ publication.description }}</span>
+			</div>
+
+			<div v-if="loading">
+				<NcLoadingIcon :size="100" />
 			</div>
 
 			<div class="deletePublication-warnings">
@@ -20,10 +24,10 @@ import { store } from '../../store.js'
 			</div>
 
 			<div class="deletePublication-buttons">
-				<NcButton type="error" @click="deletePublication(store.publicationId)">
+				<NcButton type="error" :disabled="loading" @click="deletePublication(store.publicationId)">
 					Delete!
 				</NcButton>
-				<NcButton type="secondary" @click="() => store.modal = false">
+				<NcButton type="secondary" :disabled="loading" @click="store.setModal(false)">
 					Cancel
 				</NcButton>
 			</div>
@@ -52,6 +56,8 @@ export default {
 		return {
 			publication: [],
 			hasUpdated: false,
+			loading: false,
+			success: -1,
 		}
 	},
 	updated() {
@@ -62,6 +68,10 @@ export default {
 		if (store.modal === 'deletePublication' && !this.hasUpdated) {
 			this.publication = store.publicationItem
 			this.hasUpdated = true
+
+			// reset state
+			this.loading = false
+			this.success = -1
 		}
 	},
 	methods: {
@@ -77,7 +87,10 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.closeModal()
+					if (response.ok === true) this.success = 1
+					else this.success = 0
+
+					setTimeout(() => this.closeModal(), 3000)
 				})
 				.catch((err) => {
 					this.loading = false

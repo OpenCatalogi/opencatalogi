@@ -22,41 +22,38 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('listingAdd')">
+					<NcActionButton @click="store.setModal('addDirectory')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						Listing toevoegen
+						Directory toevoegen
 					</NcActionButton>
 				</NcActions>
 			</div>
 
 			<NcListItem v-for="(directory, i) in directoryList.results"
 				:key="`${directory}${i}`"
-				:name="directory?.name"
-				:active="store.directoryItem === directory?.id"
+				:name="directory?.title"
+				:active="store.directoryId === directory?.id"
 				:details="'1h'"
 				:counter-number="44"
-				@click="setListItem(directory.id)">
+				@click="storeDirectory(directory)">
 				<template #icon>
-					<LayersOutline :class="store.directoryItem === directory.id && 'selectedZaakIcon'"
+					<LayersOutline :class="store.directoryId === directory.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"
 						display-name="Jane Doe" />
 				</template>
 				<template #subname>
-					{{ directory?.summary }}
+					{{ directory?.title }}
 				</template>
 				<template #actions>
-					<NcActionButton>
-						Button one
+					<NcActionButton @click="editDirectory(directory)">
+						Bewerken
 					</NcActionButton>
-					<NcActionButton>
-						Button two
-					</NcActionButton>
-					<NcActionButton>
-						Button three
+					<NcActionButton @click="deleteDirectory(directory.id)">
+						Verwijderen
 					</NcActionButton>
 				</template>
 			</NcListItem>
@@ -65,7 +62,7 @@ import { store } from '../../store.js'
 			class="loadingIcon"
 			:size="64"
 			appearance="dark"
-			name="Lisitngs aan het laden" />
+			name="Directories aan het laden" />
 	</NcAppContentList>
 </template>
 <script>
@@ -102,6 +99,15 @@ export default {
 		this.fetchData()
 	},
 	methods: {
+		storeDirectory(directory) {
+			store.setDirectoryId(directory.id)
+			store.setDirectoryItem(directory)
+		},
+		editDirectory(directory) {
+			store.setDirectoryItem(directory)
+			store.setDirectoryId(directory.id)
+			store.setModal('editDirectory')
+		},
 		fetchData(newPage) {
 			this.loading = true
 			fetch(

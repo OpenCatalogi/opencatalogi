@@ -70,7 +70,6 @@ export default {
 			store.modal = false
 		},
 		addMetaData() {
-			this.metaDataLoading = true
 			this.$emit('metadata', this.title)
 			fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
