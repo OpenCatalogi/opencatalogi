@@ -49,6 +49,7 @@ import { store } from '../../store.js'
 						:loading="publicationLoading" />
 				</div>
 				<div class="form-group">
+					<p>Featured</p>
 					<NcCheckboxRadioSwitch :disabled="loading"
 						label="Featured"
 						:value.sync="publication.featured"
@@ -92,6 +93,10 @@ import { store } from '../../store.js'
 				</div>
 				<div class="form-group">
 					<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
+				</div>
+
+				<div class="form-group">
+					<NcTextArea :disabled="publicationLoading" label="Bijlagen" :value.sync="attachments" />
 				</div>
 				<div v-if="succesMessage" class="success">
 					Succesfully updated publication
@@ -138,6 +143,12 @@ export default {
 	data() {
 		return {
 			publication: {
+				title: '',
+				description: '',
+				catalogi: {},
+				metaData: {},
+				data: '',
+				attachments: '',
 				license: '',
 				modified: '',
 				published: '',
@@ -147,12 +158,6 @@ export default {
 				portal: '',
 				category: '',
 				image: '',
-				title: '',
-				description: '',
-				catalogi: '',
-				metaData: '',
-				data: '',
-				id: '',
 			},
 			catalogi: {
 				value: [],
@@ -195,6 +200,7 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						this.publication.data = JSON.stringify(data.data)
+						this.publication.attachments = JSON.stringify(data.attachments)
 						this.catalogi.value = [data.catalogi]
 						this.metaData.value = [data.metaData]
 					})
@@ -281,6 +287,7 @@ export default {
 						catalogi: this.publication.catalogi,
 						metaData: this.publication.metaData,
 						data: JSON.parse(this.publication.data),
+						attachments: JSON.parse(this.publication.attachments),
 					}),
 				},
 			)

@@ -3,7 +3,7 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+		<div class="modal__content">
 			<h2>Add publication</h2>
 			<div class="formContainer">
 				<div class="form-group">
@@ -43,6 +43,7 @@ import { store } from '../../store.js'
 						:loading="publicationLoading" />
 				</div>
 				<div class="form-group">
+					<p>Featured</p>
 					<NcCheckboxRadioSwitch :disabled="loading"
 						label="Featured"
 						:value.sync="featured"
@@ -85,7 +86,16 @@ import { store } from '../../store.js'
 					</div>
 				</div>
 				<div class="form-group">
-					<NcTextArea :disabled="publicationLoading" label="Data" :value.sync="data" />
+					<NcTextArea :error="!dataIsValidJson"
+						:disabled="publicationLoading"
+						label="Data"
+						:value.sync="data" />
+				</div>
+				<div class="form-group">
+					<NcTextArea :error="!attachmentsIsValidJson"
+						:disabled="publicationLoading"
+						label="Bijlagen"
+						:value.sync="attachments" />
 				</div>
 				<div v-if="successMessage" class="successMessage">
 					Succesfully added publication
@@ -112,6 +122,7 @@ import {
 	NcTextField,
 	NcTextArea,
 	NcSelect,
+	NcCheckboxRadioSwitch,
 } from '@nextcloud/vue'
 
 export default {
@@ -122,9 +133,16 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcSelect,
+		NcCheckboxRadioSwitch,
 	},
 	data() {
 		return {
+			title: '',
+			description: '',
+			catalogi: {},
+			metaData: {},
+			data: '',
+			attachments: '',
 			license: '',
 			modified: '',
 			published: '',
@@ -134,11 +152,6 @@ export default {
 			portal: '',
 			category: '',
 			image: '',
-			title: '',
-			description: '',
-			data: '',
-			catalogi: {},
-			metaData: {},
 			errorCode: '',
 			successMessage: false,
 			errorMessage: false,
@@ -146,7 +159,24 @@ export default {
 			metaDataLoading: false,
 			publicationLoading: false,
 			hasUpdated: false,
+			dataIsValidJson: false,
+			attachmentsIsValidJson: false,
+
 		}
+	},
+	watch: {
+		data: {
+			handler(data) {
+				this.dataIsValidJson = this.isJsonString(data)
+			},
+			deep: true,
+		},
+		attachments: {
+			handler(attachments) {
+				this.attachmentsIsValidJson = this.isJsonString(attachments)
+			},
+			deep: true,
+		},
 	},
 	updated() {
 		if (store.modal === 'publicationAdd' && !this.hasUpdated) {
@@ -205,6 +235,15 @@ export default {
 		closeModal() {
 			store.modal = false
 		},
+
+		isJsonString(str) {
+			try {
+				JSON.parse(str)
+			} catch (e) {
+				return false
+			}
+			return true
+		},
 		addPublication() {
 			this.publicationLoading = true
 			this.errorMessage = false
@@ -221,6 +260,16 @@ export default {
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
 						data: JSON.parse(this.data),
+						attachments: JSON.parse(this.attachments),
+						license: this.license,
+						modified: this.modified,
+						published: this.published,
+						status: this.status,
+						featured: this.featured,
+						publication: this.publication,
+						portal: this.portal,
+						category: this.category,
+						image: this.image,
 					}),
 				},
 			)
@@ -228,6 +277,7 @@ export default {
 					this.publicationLoading = false
 					this.succesMessage = true
 					setTimeout(() => (this.succesMessage = false), 2500)
+					store.setRefresh(true)
 				})
 				.catch((err) => {
 					this.publicationLoading = false
