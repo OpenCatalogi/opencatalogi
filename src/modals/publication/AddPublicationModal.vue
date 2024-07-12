@@ -3,7 +3,7 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div class="modal__content">
+		<div v-if="!loading && !successMessage" class="modal__content">
 			<h2>Add publication</h2>
 			<div class="formContainer">
 				<div class="form-group">
@@ -109,6 +109,13 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
+		<div v-if="successMessage" class="successMessage">
+			Succesfully added publication
+		</div>
+		<div v-if="errorMessage" class="errorMessage">
+			Oeps er is iets fout gegaan.
+			Error Code: {{ errorCode }}
+		</div>
 		<NcLoadingIcon
 			v-if="loading"
 			:size="100" />
@@ -122,6 +129,7 @@ import {
 	NcTextField,
 	NcTextArea,
 	NcSelect,
+	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
 } from '@nextcloud/vue'
 
@@ -133,12 +141,14 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcSelect,
+		NcLoadingIcon,
 		NcCheckboxRadioSwitch,
 	},
 	data() {
 		return {
 			title: '',
 			description: '',
+			data: '{}',
 			catalogi: {},
 			metaData: {},
 			data: '',
@@ -159,6 +169,7 @@ export default {
 			metaDataLoading: false,
 			publicationLoading: false,
 			hasUpdated: false,
+			loading: false,
 			dataIsValidJson: false,
 			attachmentsIsValidJson: false,
 
@@ -247,6 +258,7 @@ export default {
 		addPublication() {
 			this.publicationLoading = true
 			this.errorMessage = false
+			this.loading = true
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -274,8 +286,9 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.publicationLoading = false
+					this.loading = false
 					this.succesMessage = true
+					setTimeout(() => (store.modal = false), 2500)
 					setTimeout(() => (this.succesMessage = false), 2500)
 					store.setRefresh(true)
 				})

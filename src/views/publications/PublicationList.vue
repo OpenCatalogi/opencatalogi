@@ -37,7 +37,7 @@ import { store } from '../../store.js'
 					:bold="false"
 					:force-display-actions="true"
 					:active="store.publicationId === publication.id"
-					:details="'CC0 1.0'"
+					:details="publication?.license"
 					:counter-number="1"
 					@click="store.setPublicationId(publication.id)">
 					<template #icon>

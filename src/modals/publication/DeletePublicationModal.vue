@@ -32,19 +32,9 @@ import { store } from '../../store.js'
 				</NcButton>
 			</div>
 		</div>
-
-		<div v-if="success !== -1" class="modal__content">
-			<h2>Verwijder publicatie:</h2>
-
-			<div class="deletePublication-warnings">
-				<p v-if="success">
-					Publicatie is met success verwijderd.
-				</p>
-				<p v-if="!success">
-					Er is iets fout gegaan.
-				</p>
-			</div>
-		</div>
+		<NcLoadingIcon
+			v-if="loading"
+			:size="100" />
 	</NcModal>
 </template>
 
