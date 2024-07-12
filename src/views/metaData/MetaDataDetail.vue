@@ -40,33 +40,35 @@ export default {
 		NcLoadingIcon,
 	},
 	props: {
-		metaDataId: {
-			type: String,
+		metaDataItem: {
+			type: Object,
 			required: true,
 		},
 	},
 	data() {
 		return {
-			metaData: [],
+			metadata: [],
 			loading: false,
 		}
 	},
 	watch: {
-		metaDataId: {
-			handler(metaDataId) {
-				this.fetchData(metaDataId)
+		metaDataItem: {
+			handler(metaDataItem) {
+				this.metadata = metaDataItem
+				this.fetchData(metaDataItem?._id)
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.fetchData()
+		this.metadata = store.metaDataItem
+		this.fetchData(store.metaDataItem?._id)
 	},
 	methods: {
-		fetchData() {
+		fetchData(metadataId) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/metadata/' + store.metaDataId,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataId}`,
 				{
 					method: 'GET',
 				},

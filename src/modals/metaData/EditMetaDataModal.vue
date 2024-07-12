@@ -72,11 +72,11 @@ export default {
 	},
 	updated() {
 		if (store.modal === 'editMetaData' && this.hasUpdated) {
-			if (this.metaData._id === store.metaDataId) return
+			if (this.metaData._id === store.metaDataItem?._id) return
 			this.hasUpdated = false
 		}
 		if (store.modal === 'editMetaData' && !this.hasUpdated) {
-			this.fetchData(store.metaDataId)
+			this.fetchData(store.metaDataItem?._id)
 			this.hasUpdated = true
 		}
 	},
@@ -106,7 +106,7 @@ export default {
 		editMetaData() {
 			this.metaDataLoading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataId}`,
+				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem?._id}`,
 				{
 					method: 'PUT',
 					headers: {

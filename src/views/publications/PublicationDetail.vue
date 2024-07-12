@@ -66,7 +66,7 @@ import { store } from '../../store.js'
 								<NcActions>
 									<NcActionLink :aria-label="`got to ${metadata.title}`"
 										:name="metadata.title"
-										@click="goToMetadata(metadata._id)">
+										@click="goToMetadata(metadata)">
 										<template #icon>
 											<OpenInApp :size="20" />
 										</template>
@@ -293,8 +293,8 @@ export default {
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
 		},
-		goToMetadata(id) {
-			store.setMetaDataId(id)
+		goToMetadata(metadata) {
+			store.setMetaDataItem(metadata)
 			store.setSelected('metaData')
 		},
 		goToCatalogi(id) {
