@@ -8,7 +8,7 @@ import { store } from '../../store.js'
 			<DirectoryList />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.directoryItem || store.selected != 'directory' "
+			<NcEmptyContent v-if="!store.listingItem || store.selected != 'directory' "
 				class="detailContainer"
 				name="Geen directory"
 				description="Nog geen directory geselecteerd">
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<DirectoryDetails v-if="store.directoryItem && store.selected === 'directory'" :directory-id="directoryId" />
+			<ListingDetails v-if="store.listingItem && store.selected === 'directory'" :listing-id="store.listingId" />
 		</template>
 	</NcAppContent>
 </template>
@@ -29,7 +29,7 @@ import { store } from '../../store.js'
 <script>
 import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
 import DirectoryList from './DirectoryList.vue'
-import DirectoryDetails from './DirectoryDetails.vue'
+import ListingDetails from './ListingDetails.vue'
 // eslint-disable-next-line n/no-missing-import
 import LayersOutline from 'vue-material-design-icons/LayersOutline'
 
@@ -40,13 +40,8 @@ export default {
 		NcEmptyContent,
 		NcButton,
 		DirectoryList,
-		DirectoryDetails,
+		ListingDetails,
 		LayersOutline,
-	},
-	data() {
-		return {
-			directoryId: undefined,
-		}
 	},
 }
 </script>

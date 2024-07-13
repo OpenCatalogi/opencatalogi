@@ -31,28 +31,28 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 
-			<NcListItem v-for="(directory, i) in directoryList.results"
-				:key="`${directory}${i}`"
-				:name="directory?.title"
-				:active="store.directoryId === directory?.id"
+			<NcListItem v-for="(listing, i) in directoryList.results"
+				:key="`${listing}${i}`"
+				:name="listing?.title"
+				:active="store.listingId === listing?.id"
 				:details="'1h'"
-				:counter-number="44"
-				@click="storeDirectory(directory)">
+				:counter-number="45"
+				@click="store.setListingItem(listing)">
 				<template #icon>
-					<LayersOutline :class="store.directoryId === directory.id && 'selectedZaakIcon'"
+					<LayersOutline :class="store.listingId === listing?.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44"
 						user="janedoe"
 						display-name="Jane Doe" />
 				</template>
 				<template #subname>
-					{{ directory?.title }}
+					{{ listing?.title }}
 				</template>
 				<template #actions>
-					<NcActionButton @click="editDirectory(directory)">
+					<NcActionButton @click="updateListing(directory)">
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="deleteDirectory(directory.id)">
+					<NcActionButton @click="deleteListing(directory.id)">
 						Verwijderen
 					</NcActionButton>
 				</template>
