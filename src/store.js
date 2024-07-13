@@ -51,7 +51,7 @@ export const store = reactive({
 	},
 	setMetaDataItem(metaDataItem) {
 		this.metaDataItem = metaDataItem
-		console.log('Active metadata item set to ' + metaDataItem)
+		console.log('Active metadata object set to ' + metaDataItem.id)
 	},
 	setPublicationId(publicationId) {
 		this.publicationId = publicationId

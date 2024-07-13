@@ -22,7 +22,7 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('addMetaData')">
+					<NcActionButton @click="store.setMetaDataItem(metaData)">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -41,7 +41,7 @@ import { store } from '../../store.js'
 					:counter-number="44"
 					@click="storeMetaData(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="tore.metaDataItem?._id === metaData?._id && 'selectedZaakIcon'"
+						<FileTreeOutline :class="store.metaDataItem?._id === metaData?._id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"

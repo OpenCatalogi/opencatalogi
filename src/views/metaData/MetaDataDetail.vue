@@ -8,19 +8,19 @@ import { store } from '../../store.js'
 			<!-- app-content-wrapper is optional, only use if app-content-list  -->
 			<div>
 				<h1 class="h1">
-					{{ metaData.title }}
+					{{ metadata.title }}
 				</h1>
 				<div>
 					<h4>Beschrijving:</h4>
-					<span>{{ metaData.description }}</span>
+					<span>{{ metadata.description }}</span>
 				</div>
 				<div>
 					<h4>Versie:</h4>
-					<span>{{ metaData.version }}</span>
+					<span>{{ metadata.version }}</span>
 				</div>
 				<div>
 					<h4>Properties:</h4>
-					<p>{{ metaData.properties }}</p>
+					<p>{{ metadata.properties }}</p>
 				</div>
 			</div>
 		</div>

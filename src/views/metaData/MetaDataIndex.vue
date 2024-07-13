@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<MetaDataDetails v-if="store.metaDataItem && store.selected === 'metaData'" :meta-data-id="store.metaDataItem" />
+			<MetaDataDetails v-if="store.metaDataItem && store.selected === 'metaData'" :meta-data-item="store.metaDataItem" />
 		</template>
 	</NcAppContent>
 </template>

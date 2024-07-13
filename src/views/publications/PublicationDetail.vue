@@ -75,10 +75,6 @@ import { store } from '../../store.js'
 								</NcActions>
 							</div>
 						</div>
-						<div>
-							<h4>Data:</h4>
-							<span>{{ publicationData }}</span>
-						</div>
 					</div>
 					<div class="tabContainer">
 						<BTabs content-class="mt-3" justified>
@@ -205,7 +201,6 @@ export default {
 	data() {
 		return {
 			publication: [],
-			publicationData: '',
 			catalogi: [],
 			metadata: [],
 			loading: false,
@@ -247,7 +242,6 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
-						this.dataView()
 						// this.loading = false
 					})
 				})
@@ -313,17 +307,6 @@ export default {
 		goToCatalogi(id) {
 			store.setCatalogiId(id)
 			store.setSelected('catalogi')
-		},
-		dataView() {
-
-			const rawData = this?.publication?.data
-
-			this.publicationData = Object.keys(rawData)
-				.filter(key => !['data', 'attachments'].includes(key))
-				.reduce((obj, key) => {
-					obj[key] = rawData[key]
-					return obj
-				}, {})
 		},
 		updatePublication() {
 			this.loading = true
