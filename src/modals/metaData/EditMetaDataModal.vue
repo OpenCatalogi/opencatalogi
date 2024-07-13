@@ -18,13 +18,6 @@ import { store } from '../../store.js'
 			<div class="form-group">
 				<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
 			</div>
-			<div class="form-group">
-				<NcTextArea label="Properties" :value.sync="metaData.properties" />
-			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully updated metaData
-			</div>
-
 			<NcButton :disabled="!metaData.title" type="primary" @click="editMetaData">
 				Opslaan
 			</NcButton>
@@ -56,13 +49,10 @@ export default {
 	},
 	data() {
 		return {
-			name: '',
-			summery: '',
 			metaData: {
 				title: '',
 				version: '',
 				description: '',
-				properties: '',
 			},
 			hasUpdated: false,
 			loading: false,
@@ -93,18 +83,18 @@ export default {
 					response.json().then((data) => {
 						this.metaData = data
 					})
-					this.metaDataLoading = false
+					this.loading = false
 				})
 				.catch((err) => {
-					console.error(err)
-					this.metaDataLoading = false
+					this.error = err
+					this.loading = false
 				})
 		},
 		closeModal() {
 			store.modal = false
 		},
 		editMetaData() {
-			this.metaDataLoading = true
+			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem?._id}`,
 				{
@@ -117,6 +107,10 @@ export default {
 			).then((response) => {
 				this.loading = false
 				this.succes = true
+				store.setSelected('metaData')
+				response.json().then((data) => {
+					this.setMetdaDataItem(data)
+				})
 				setTimeout(() => (this.closeModal()), 2500)
 			}).catch((err) => {
 				this.error = err

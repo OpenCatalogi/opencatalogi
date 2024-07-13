@@ -11,19 +11,13 @@ import { store } from '../../store.js'
 			<h2>MetaData toevoegen</h2>
 			<div v-if="!loading && !succes" class="form_wrapper">
 				<div class="form-group">
-					<NcTextField label="Titel" :value.sync="title" required="true" />
+					<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
 				</div>
 				<div class="form-group">
-					<NcTextField label="Versie" :value.sync="version" />
+					<NcTextField label="Versie" :value.sync="metaData.version" />
 				</div>
 				<div class="form-group">
-					<NcTextArea label="Beschrijving" :value.sync="description" />
-				</div>
-				<div class="form-group">
-					<NcTextArea label="Properties" :value.sync="properties" />
-				</div>
-				<div v-if="succesMessage" class="success">
-					Succesfully added MetaData
+					<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
 				</div>
 				<NcButton :disabled="!title" type="primary" @click="addMetaData">
 					Submit
@@ -57,12 +51,14 @@ export default {
 	},
 	data() {
 		return {
-			succes: '',
-			title: '',
-			version: '0.0.1',
-			description: '',
-			properties: '',
-			succesMessage: false,
+			metaData: {
+				title: '',
+				version: '',
+				description: '',
+			},
+			loading: false,
+			succes: false,
+			error: false,
 		}
 	},
 	methods: {
@@ -70,7 +66,7 @@ export default {
 			store.modal = false
 		},
 		addMetaData() {
-			this.$emit('metadata', this.title)
+			this.loading = true
 			fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
 				{
@@ -89,6 +85,10 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.succes = true
+					store.setSelected('metaData')
+					response.json().then((data) => {
+						this.setMetdaDataItem(data)
+					})
 					setTimeout(() => (this.closeModal()), 2500)
 				})
 				.catch((err) => {

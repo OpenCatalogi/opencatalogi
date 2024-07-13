@@ -111,10 +111,10 @@ export default {
 				this.loading = false
 				this.succes = true
 				// Forse a refresh of the list and detaul page
-				store.setSelected(false)
 				store.setSelected('directory')
-				store.setListingItem(false)
-				store.setListingItem(store.listingId)
+				response.json().then((data) => {
+					this.setListingItem(data)
+				})
 				// Wait and then close the modal
 				setTimeout(() => (this.closeModal()), 2500)
 			}).catch((err) => {
