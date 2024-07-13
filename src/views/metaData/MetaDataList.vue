@@ -35,13 +35,13 @@ import { store } from '../../store.js'
 				<NcListItem v-for="(metaData, i) in metaDataList.results"
 					:key="`${metaData}${i}`"
 					:name="metaData?.title ?? metaData?.name"
-					:active="store.metaDataId === metaData?.id"
+					:active="store.metaDataItem?._id === metaData?._id"
 					:details="metaData.version ?? '1h'"
 					:force-display-actions="true"
 					:counter-number="44"
 					@click="storeMetaData(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataId === metaData._id && 'selectedZaakIcon'"
+						<FileTreeOutline :class="tore.metaDataItem?._id === metaData?._id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -111,10 +111,10 @@ export default {
 	},
 	methods: {
 		storeMetaData(metaData) {
-			store.setMetaDataId(metaData.id)
+			store.setMetaDataItem(metaData)
 		},
 		editMetaData(metaData) {
-			store.setMetaDataId(metaData.id)
+			store.setMetaDataItem(metaData)
 			store.setModal('editMetaData')
 		},
 		fetchData(newPage) {

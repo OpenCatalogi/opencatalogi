@@ -4,7 +4,7 @@ import { reactive } from 'vue'
 
 export const store = reactive({
 	// The curently active menu item, defaults to '' wich triggers the dashboard
-	selected: 'dashboard',
+	selected: 'metaData',
 	// The currently active modal, managed trought the state to ensure that only one modal can be active at the same time
 	modal: false,
 	modalData: [], // optional data to pass to the modal
@@ -14,7 +14,6 @@ export const store = reactive({
 	listItem: false,
 	listingId: false,
 	listingItem: false,
-	metaDataId: false,
 	metaDataItem: false,
 	publicationId: false,
 	publicationItem: false,
@@ -49,10 +48,6 @@ export const store = reactive({
 	setListingItem(listingItem) {
 		this.listingItem = listingItem
 		console.log('Active directory item set to ' + listingItem)
-	},
-	setMetaDataId(metaDataId) {
-		this.metaDataId = metaDataId
-		console.log('Active metadata id set to ' + metaDataId)
 	},
 	setMetaDataItem(metaDataItem) {
 		this.metaDataItem = metaDataItem
