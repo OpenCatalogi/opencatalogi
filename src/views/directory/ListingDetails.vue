@@ -10,6 +10,28 @@ import { store } from '../../store.js'
 				<h1 class="h1">
 					{{ directory.title }}
 				</h1>
+				<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+					<template #icon>
+						<span>
+							<NcLoadingIcon v-if="loading"
+								:size="20"
+								appearance="dark" />
+							<DotsHorizontal v-if="!loading" :size="20" />
+						</span>
+					</template>
+					<NcActionButton @click="store.setModal('editListing')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Bewerken
+					</NcActionButton>
+					<NcActionButton disabled>
+						<template #icon>
+							<Delete :size="20" />
+						</template>
+						Verwijderen
+					</NcActionButton>
+				</NcActions>
 				<div>
 					<h4>Sammenvatting:</h4>
 					<p>{{ directory.summary }}</p>
@@ -48,7 +70,15 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon } from '@nextcloud/vue'
+import {
+	NcActions,
+	NcActionButton,
+	NcLoadingIcon,
+} from '@nextcloud/vue'
+
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
 	name: 'ListingDetails',

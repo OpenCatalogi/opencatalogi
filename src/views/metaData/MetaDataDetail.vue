@@ -4,40 +4,62 @@ import { store } from '../../store.js'
 
 <template>
 	<div class="detailContainer">
-		<div v-if="!loading" id="app-content">
-			<!-- app-content-wrapper is optional, only use if app-content-list  -->
+		<!-- app-content-wrapper is optional, only use if app-content-list  -->
+		<div>
+			<h1 class="h1">
+				{{ metadata.title }}
+			</h1>
+			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+				<template #icon>
+					<span>
+						<NcLoadingIcon v-if="loading"
+							:size="20"
+							appearance="dark" />
+						<DotsHorizontal v-if="!loading" :size="20" />
+					</span>
+				</template>
+				<NcActionButton @click="store.setModal('editMetaData')">
+					<template #icon>
+						<Pencil :size="20" />
+					</template>
+					Bewerken
+				</NcActionButton>
+				<NcActionButton disabled>
+					<template #icon>
+						<Delete :size="20" />
+					</template>
+					Verwijderen
+				</NcActionButton>
+			</NcActions>
 			<div>
-				<h1 class="h1">
-					{{ metadata.title }}
-				</h1>
-				<div>
-					<h4>Beschrijving:</h4>
-					<span>{{ metadata.description }}</span>
-				</div>
-				<div>
-					<h4>Versie:</h4>
-					<span>{{ metadata.version }}</span>
-				</div>
-				<div>
-					<h4>Properties:</h4>
-					<p>{{ metadata.properties }}</p>
-				</div>
+				<h4>Beschrijving:</h4>
+				<span>{{ metadata.description }}</span>
+			</div>
+			<div>
+				<h4>Versie:</h4>
+				<span>{{ metadata.version }}</span>
+			</div>
+			<div>
+				<h4>Properties:</h4>
+				<p>{{ metadata.properties }}</p>
 			</div>
 		</div>
-		<NcLoadingIcon v-if="loading"
-			:size="100"
-			appearance="dark"
-			name="MetaData details aan het laden" />
 	</div>
 </template>
 
 <script>
-import { NcLoadingIcon } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton } from '@nextcloud/vue'
+
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
 	name: 'MetaDataDetail',
 	components: {
 		NcLoadingIcon,
+		NcActions,
+		NcActionButton,
 	},
 	props: {
 		metaDataItem: {

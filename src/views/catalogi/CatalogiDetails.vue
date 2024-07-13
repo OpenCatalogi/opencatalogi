@@ -8,13 +8,12 @@ import { store } from '../../store.js'
 			<h1 class="h1">
 				{{ catalogi.name }}
 			</h1>
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Loading...' : 'Acties'">
+			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
 							:size="20"
-							appearance="dark"
-							name="Publicatie details aan het laden" />
+							appearance="dark" />
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
