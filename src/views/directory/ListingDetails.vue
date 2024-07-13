@@ -4,68 +4,61 @@ import { store } from '../../store.js'
 
 <template>
 	<div class="detailContainer">
-		<div v-if="!loading" id="app-content">
-			<!-- app-content-wrapper is optional, only use if app-content-list  -->
-			<div>
-				<h1 class="h1">
-					{{ directory.title }}
-				</h1>
-				<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+		<div class="head">
+			<h1 class="h1">
+				{{ directory.title }}
+			</h1>
+			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+				<template #icon>
+					<span>
+						<NcLoadingIcon v-if="loading"
+							:size="20"
+							appearance="dark" />
+						<DotsHorizontal v-if="!loading" :size="20" />
+					</span>
+				</template>
+				<NcActionButton @click="store.setModal('editListing')">
 					<template #icon>
-						<span>
-							<NcLoadingIcon v-if="loading"
-								:size="20"
-								appearance="dark" />
-							<DotsHorizontal v-if="!loading" :size="20" />
-						</span>
+						<Pencil :size="20" />
 					</template>
-					<NcActionButton @click="store.setModal('editListing')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton disabled>
-						<template #icon>
-							<Delete :size="20" />
-						</template>
-						Verwijderen
-					</NcActionButton>
-				</NcActions>
-				<div>
-					<h4>Sammenvatting:</h4>
-					<p>{{ directory.summary }}</p>
-				</div>
-				<div>
-					<h4>Search:</h4>
-					<span>{{ directory.search }}</span>
-				</div>
-				<div>
-					<h4>MetaData:</h4>
-					<span>{{ directory.metadata }}</span>
-				</div>
-				<div>
-					<h4>Status:</h4>
-					<span>{{ directory.status }}</span>
-				</div>
-				<div>
-					<h4>Last synchronized:</h4>
-					<span>{{ directory.lastSync }}</span>
-				</div>
-				<div>
-					<h4>Default:</h4>
-					<span>{{ directory.default }}</span>
-				</div>
-				<div>
-					<h4>Available:</h4>
-					<span>{{ directory.available }}</span>
-				</div>
+					Bewerken
+				</NcActionButton>
+				<NcActionButton disabled>
+					<template #icon>
+						<Delete :size="20" />
+					</template>
+					Verwijderen
+				</NcActionButton>
+			</NcActions>
+			<div>
+				<h4>Sammenvatting:</h4>
+				<p>{{ directory.summary }}</p>
+			</div>
+			<div>
+				<h4>Search:</h4>
+				<span>{{ directory.search }}</span>
+			</div>
+			<div>
+				<h4>MetaData:</h4>
+				<span>{{ directory.metadata }}</span>
+			</div>
+			<div>
+				<h4>Status:</h4>
+				<span>{{ directory.status }}</span>
+			</div>
+			<div>
+				<h4>Last synchronized:</h4>
+				<span>{{ directory.lastSync }}</span>
+			</div>
+			<div>
+				<h4>Default:</h4>
+				<span>{{ directory.default }}</span>
+			</div>
+			<div>
+				<h4>Available:</h4>
+				<span>{{ directory.available }}</span>
 			</div>
 		</div>
-		<NcLoadingIcon v-if="loading"
-			:size="100"
-			appearance="dark"
-			name="Directory details aan het laden" />
 	</div>
 </template>
 

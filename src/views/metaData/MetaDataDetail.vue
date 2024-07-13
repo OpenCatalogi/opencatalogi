@@ -4,8 +4,7 @@ import { store } from '../../store.js'
 
 <template>
 	<div class="detailContainer">
-		<!-- app-content-wrapper is optional, only use if app-content-list  -->
-		<div>
+		<div class="head">
 			<h1 class="h1">
 				{{ metadata.title }}
 			</h1>
@@ -31,6 +30,8 @@ import { store } from '../../store.js'
 					Verwijderen
 				</NcActionButton>
 			</NcActions>
+		</div>
+		<div>
 			<div>
 				<h4>Beschrijving:</h4>
 				<span>{{ metadata.description }}</span>
