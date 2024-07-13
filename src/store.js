@@ -37,17 +37,9 @@ export const store = reactive({
 		this.catalogiItem = catalogiItem
 		console.log('Active catalog item set to ' + catalogiItem)
 	},
-	setListItem(catalogItem) {
-		this.catalogItem = catalogItem
-		console.log('Active catalog item set to ' + catalogItem)
-	},
-	setListingId(listingId) {
-		this.listingId = listingId
-		console.log('Active directory id set to ' + listingId)
-	},
 	setListingItem(listingItem) {
 		this.listingItem = listingItem
-		console.log('Active directory item set to ' + listingItem)
+		console.log('Active directory item set to ' + listingItem.id)
 	},
 	setMetaDataItem(metaDataItem) {
 		this.metaDataItem = metaDataItem

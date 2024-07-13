@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<ListingDetails v-if="store.listingItem && store.selected === 'directory'" :listing-id="store.listingId" />
+			<ListingDetails v-if="store.listingItem && store.selected === 'directory'" :listing-item="store.listingItem" />
 		</template>
 	</NcAppContent>
 </template>

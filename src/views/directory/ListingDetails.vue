@@ -6,7 +6,7 @@ import { store } from '../../store.js'
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ directory.title }}
+				{{ listing.title }}
 			</h1>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
@@ -30,33 +30,35 @@ import { store } from '../../store.js'
 					Verwijderen
 				</NcActionButton>
 			</NcActions>
+		</div>
+		<div>
 			<div>
 				<h4>Sammenvatting:</h4>
-				<p>{{ directory.summary }}</p>
+				<p>{{ listing.summary }}</p>
 			</div>
 			<div>
 				<h4>Search:</h4>
-				<span>{{ directory.search }}</span>
+				<span>{{ listing.search }}</span>
 			</div>
 			<div>
 				<h4>MetaData:</h4>
-				<span>{{ directory.metadata }}</span>
+				<span>{{ listing.metadata }}</span>
 			</div>
 			<div>
 				<h4>Status:</h4>
-				<span>{{ directory.status }}</span>
+				<span>{{ listing.status }}</span>
 			</div>
 			<div>
 				<h4>Last synchronized:</h4>
-				<span>{{ directory.lastSync }}</span>
+				<span>{{ listing.lastSync }}</span>
 			</div>
 			<div>
 				<h4>Default:</h4>
-				<span>{{ directory.default }}</span>
+				<span>{{ listing.default }}</span>
 			</div>
 			<div>
 				<h4>Available:</h4>
-				<span>{{ directory.available }}</span>
+				<span>{{ listing.available }}</span>
 			</div>
 		</div>
 	</div>
@@ -79,27 +81,28 @@ export default {
 		NcLoadingIcon,
 	},
 	props: {
-		listingId: {
-			type: String,
+		listingItem: {
+			type: Object,
 			required: true,
 		},
 	},
 	data() {
 		return {
-			directory: [],
+			listing: [],
 			loading: false,
 		}
 	},
 	watch: {
-		listingId: {
-			handler(listingId) {
-				this.fetchData(listingId)
+		listingItem: {
+			handler(listingItem) {
+				this.listing = listingItem
+				this.fetchData(listingItem?.id)
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.fetchData(store.listingItem.id)
+		this.fetchData(store.listingItem?.id)
 	},
 	methods: {
 		fetchData(listingId) {
@@ -112,7 +115,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.directory = data
+						this.listing = data
 					})
 					this.loading = false
 				})

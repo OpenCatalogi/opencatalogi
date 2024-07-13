@@ -34,16 +34,14 @@ import { store } from '../../store.js'
 			<NcListItem v-for="(listing, i) in directoryList.results"
 				:key="`${listing}${i}`"
 				:name="listing?.title"
-				:active="store.listingId === listing?.id"
+				:active="store.listingItem?.id === listing?.id"
 				:details="'1h'"
 				:counter-number="45"
 				@click="store.setListingItem(listing)">
 				<template #icon>
-					<LayersOutline :class="store.listingId === listing?.id && 'selectedZaakIcon'"
+					<LayersOutline :class="store.listingItem?.id === listing?.id && 'selectedIcon'"
 						disable-menu
-						:size="44"
-						user="janedoe"
-						display-name="Jane Doe" />
+						:size="44" />
 				</template>
 				<template #subname>
 					{{ listing?.title }}
@@ -151,7 +149,7 @@ export default {
     margin-block-end: 6px;
 }
 
-.selectedZaakIcon>svg {
+.selectedIcon>svg {
     fill: white;
 }
 
