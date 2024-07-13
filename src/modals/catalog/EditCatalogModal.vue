@@ -4,26 +4,24 @@ import { store } from '../../store.js'
 
 <template>
 	<NcModal v-if="store.modal === 'catalogEdit'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
 			<div class="form-group">
 				<NcTextField :disabled="catalogLoading"
 					label="Naam"
 					maxlength="255"
-					:value.sync="name"
+					:value.sync="catalogi.name"
 					required />
 				<NcTextField :disabled="catalogLoading"
 					label="Samenvatting"
 					maxlength="255"
-					:value.sync="summary" />
+					:value.sync="catalogi.summary" />
 			</div>
-			<NcButton :disabled="!catalogName" type="primary" @click="editCatalog">
+			<NcButton :disabled="loading" type="primary" @click="editCatalog">
 				Opslaan
 			</NcButton>
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
+
 		<NcNoteCard v-if="succes" type="success">
 			<p>Meta data succesvol toegevoegd</p>
 		</NcNoteCard>
@@ -34,7 +32,7 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcNoteCard } from '@nextcloud/vue'
 
 export default {
 	name: 'EditCatalogModal',
@@ -42,49 +40,79 @@ export default {
 		NcModal,
 		NcTextField,
 		NcButton,
-		NcLoadingIcon,
 		NcNoteCard,
 	},
 	data() {
 		return {
-			name: '',
-			summary: '',
+			catalogi: {
+				name: '',
+				summary: '',
+				_schema: '',
+			},
 			loading: false,
+			editLoading: false,
 			succes: false,
 			error: false,
 			catalogLoading: false,
 			errorCode: '',
+			hasUpdated: false,
+		}
+	},
+	updated() {
+		if (store.modal === 'catalogEdit' && this.hasUpdated) {
+			if (this.catalogi._id === store.catalogiItem._id) return
+			this.hasUpdated = false
+		}
+		if (store.modal === 'catalogEdit' && !this.hasUpdated) {
+			this.catalogi = store.catalogiItem
+			this.fetchData(store.catalogiItem._id)
+			this.hasUpdated = true
 		}
 	},
 	methods: {
 		closeModal() {
 			store.modal = false
 		},
+		fetchData(catalogId) {
+			this.loading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogId}`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						this.catalogi = data
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.loading = false
+				})
+		},
 		editCatalog() {
-			this.catalogLoading = true
+			this.editLoading = true
 			this.errorMessage = false
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiId}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogi._id}`,
 				{
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						name: this.name,
-						summary: this.summary,
-					}),
+					body: JSON.stringify(this.catalogi),
 				},
 			)
 				.then((response) => {
-					this.loading = false
+					this.editLoading = false
 					this.succes = true
 					setTimeout(() => (this.closeModal()), 2500)
-
 				})
 				.catch((err) => {
 					this.error = err
-					this.loading = false
+					this.editLoading = false
 				})
 		},
 	},

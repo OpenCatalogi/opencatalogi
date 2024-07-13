@@ -34,13 +34,13 @@ import { store } from '../../store.js'
 				<NcListItem v-for="(catalogus, i) in catalogi.results"
 					:key="`${catalogus}${i}`"
 					:name="catalogus?.name"
-					:active="store.catalogiId === catalogus?._id"
+					:active="store.catalogiItem?._id === catalogus?._id"
 					:details="'1h'"
 					:counter-number="44"
 					:force-display-actions="true"
-					@click="store.setCatalogiId(catalogus._id)">
+					@click="toggleCatalogiDetailView(catalogus)">
 					<template #icon>
-						<DatabaseOutline :class="store.catalogItem === catalogus.id && 'selectedZaakIcon'"
+						<DatabaseOutline :class="store.catalogiItem?._id === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -50,10 +50,10 @@ import { store } from '../../store.js'
 						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="editCatalog(catalogus.id)">
+						<NcActionButton @click="editCatalog(catalogus)">
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="deleteCatalog(catalogus.id)">
+						<NcActionButton @click="deleteCatalog(catalogus?._id)">
 							Delete
 						</NcActionButton>
 					</template>
@@ -103,7 +103,7 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData(newPage) {
+		fetchData() {
 			this.loading = true
 			fetch(
 				'/index.php/apps/opencatalogi/api/catalogi',
@@ -122,9 +122,13 @@ export default {
 					this.loading = false
 				})
 		},
-		editCatalog(id) {
+		toggleCatalogiDetailView(catalogus) {
+			if (store.catalogiItem?._id === catalogus?._id) store.setCatalogiItem(false)
+			else store.setCatalogiItem(catalogus)
+		},
+		editCatalog(catalogiItem) {
 			store.setModal('catalogEdit')
-			store.setCatalogiId(id)
+			store.setCatalogiItem(catalogiItem)
 		},
 		deleteCatalog(id) {
 			fetch(
