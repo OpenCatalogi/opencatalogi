@@ -36,12 +36,12 @@ import { store } from '../../store.js'
 					:name="publication?.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="store.publicationId === publication.id"
+					:active="store.publicationItem.id === publication.id"
 					:details="publication?.license"
 					:counter-number="1"
-					@click="store.setPublicationId(publication.id)">
+					@click="store.setPublicationItem(publication)">
 					<template #icon>
-						<ListBoxOutline :class="store.publicationId === publication.id && 'selectedZaakIcon'"
+						<ListBoxOutline :class="store.publicationItem.id === publication.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -51,7 +51,7 @@ import { store } from '../../store.js'
 						{{ publication?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="editPublication(publication.id)">
+						<NcActionButton @click="editPublication(publication)">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
@@ -124,7 +124,7 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData(newPage) {
+		fetchData() {
 			this.loading = true
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
@@ -143,8 +143,8 @@ export default {
 					this.loading = false
 				})
 		},
-		editPublication(id) {
-			store.setPublicationId(id)
+		editPublication(publication) {
+			store.setPublicationITem(publication)
 			store.setModal('publicationEdit')
 		},
 		deletePublication(publication) {

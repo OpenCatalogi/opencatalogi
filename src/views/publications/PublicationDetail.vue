@@ -217,17 +217,27 @@ export default {
 	watch: {
 		publicationId: {
 			handler(publicationId) {
-				this.fetchData(publicationId)
+				this.publication = store.publicationItem
+				this.fetchCatalogi(store.publicationItem.catalogi)
+				this.fetchMetaData(store.publicationItem.metaData)
+				this.fetchData(store.publicationItem.id)
 			},
 			deep: true,
 		},
+
 	},
 	mounted() {
-		this.fetchData(this.publicationId)
+
+		this.publication = store.publicationItem
+
+		this.fetchCatalogi(store.publicationItem.catalogi, true)
+		this.fetchMetaData(store.publicationItem.metaData, true)
+		this.fetchData(store.publicationItem.id)
+
 	},
 	methods: {
 		fetchData(id) {
-			this.loading = true
+			// this.loading = true
 			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
 				method: 'GET',
 			})
@@ -238,17 +248,18 @@ export default {
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
 						this.dataView()
-						this.loading = false
+						// this.loading = false
 					})
 				})
 				.catch((err) => {
 					console.error(err)
 					// this.oldZaakId = id
-					this.loading = false
+					// this.loading = false
 				})
 		},
-		fetchCatalogi(catalogiId) {
-			this.catalogiLoading = true
+		fetchCatalogi(catalogiId, loading) {
+			if (loading) { this.catalogiLoading = true }
+
 			fetch(`/index.php/apps/opencatalogi/api/catalogi/${catalogiId}`, {
 				method: 'GET',
 			})
@@ -256,15 +267,17 @@ export default {
 					response.json().then((data) => {
 						this.catalogi = data
 					})
-					this.catalogiLoading = false
+					if (loading) { this.catalogiLoading = false }
 				})
 				.catch((err) => {
 					console.error(err)
-					this.catalogiLoading = false
+					if (loading) { this.catalogiLoading = false }
 				})
 		},
-		fetchMetaData(metadataId) {
-			this.metaDataLoading = true
+		fetchMetaData(metadataId, loading) {
+
+			if (loading) { this.metaDataLoading = true }
+
 			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
 				method: 'GET',
 			})
@@ -272,11 +285,11 @@ export default {
 					response.json().then((data) => {
 						this.metadata = data
 					})
-					this.metaDataLoading = false
+					if (loading) { this.metaDataLoading = false }
 				})
 				.catch((err) => {
 					console.error(err)
-					this.metaDataLoading = false
+					if (loading) { this.metaDataLoading = false }
 				})
 		},
 		deletePublication() {
