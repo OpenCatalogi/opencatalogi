@@ -109,9 +109,12 @@ export default {
 				this.succes = true
 				store.setSelected('metaData')
 				response.json().then((data) => {
-					this.setMetdaDataItem(data)
+					store.setMetaDataItem(data)
 				})
 				setTimeout(() => (this.closeModal()), 2500)
+				// Reset the form the form
+				this.succes = false
+				this.metaData = { title: '', version: '', description: '' }
 			}).catch((err) => {
 				this.error = err
 				this.loading = false

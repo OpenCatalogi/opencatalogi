@@ -5,7 +5,7 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<DirectoryList />
+			<DirectoryList :search="store.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!store.listingItem || store.selected != 'directory' "

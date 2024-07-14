@@ -5,7 +5,7 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<MetaDataList />
+			<MetaDataList :search="store.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!store.metaDataItem || store.selected != 'metaData'"

@@ -7,12 +7,11 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					disabled
-					:value.sync="search"
+					:value.sync="store.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="clearText">
+					@trailing-button-click="store.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -32,16 +31,16 @@ import { store } from '../../store.js'
 			</div>
 
 			<div v-if="!loading">
-				<NcListItem v-for="(metaData, i) in metaDataList.results"
+				<NcListItem v-for="(metaData, i) in store.metaDataList"
 					:key="`${metaData}${i}`"
-					:name="metaData?.title ?? metaData?.name"
+					:name="metaData?.title"
 					:active="store.metaDataItem?._id === metaData?._id"
 					:details="metaData.version ?? '1h'"
 					:force-display-actions="true"
 					:counter-number="44"
 					@click="storeMetaData(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataItem?._id === metaData?._id && 'selectedZaakIcon'"
+						<FileTreeOutline :class="store.metaDataItem?._id === metaData?._id && 'selectedIcon'"
 							disable-menu
 							:size="44" />
 					</template>
@@ -53,10 +52,7 @@ import { store } from '../../store.js'
 						<NcActionButton @click="editMetaData(metaData)">
 							Bewerken
 						</NcActionButton>
-						<NcActionButton>
-							Depubliceren
-						</NcActionButton>
-						<NcActionButton @click="deleteMetaData(metaData._id)">
+						<NcActionButton @click="deleteMetaData(metaData)">
 							Verwijderen
 						</NcActionButton>
 					</template>
@@ -97,12 +93,24 @@ export default {
 		Refresh,
 		Plus,
 	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
+	},
 	data() {
 		return {
-			search: '',
 			loading: true,
 			metaDataList: [],
 		}
+	},
+	watch: {
+		search: {
+			handler(search) {
+				this.fetchData()
+			},
+		},
 	},
 	mounted() {
 		this.fetchData()
@@ -125,7 +133,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaDataList = data
+						store.setMetaDataList(data.results)
 					})
 					this.loading = false
 				})
@@ -133,9 +141,6 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
-		},
-		clearText() {
-			this.search = ''
 		},
 	},
 }
@@ -155,7 +160,7 @@ export default {
     margin-block-end: 6px;
 }
 
-.selectedZaakIcon>svg {
+.selecteIcon>svg {
     fill: white;
 }
 

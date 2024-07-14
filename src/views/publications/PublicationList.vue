@@ -7,12 +7,11 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					disabled
-					:value.sync="search"
+					:value.sync="store.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="clearText">
+					@trailing-button-click="store.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -105,19 +104,23 @@ export default {
 		Refresh,
 		Plus,
 	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
+	},
 	data() {
 		return {
-			search: '',
 			loading: false,
 			publications: [],
 		}
 	},
 	watch: {
-		store: {
-			handler() {
-				store.refresh && this.fetchData()
+		search: {
+			handler(search) {
+				this.fetchData()
 			},
-			deep: true,
 		},
 	},
 	mounted() {
@@ -151,9 +154,6 @@ export default {
 			store.setPublicationId(publication.id)
 			store.setPublicationItem(publication)
 			store.setModal('deletePublication')
-		},
-		clearText() {
-			this.search = ''
 		},
 	},
 }

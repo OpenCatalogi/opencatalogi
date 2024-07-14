@@ -7,12 +7,11 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					disabled
-					:value.sync="search"
+					:value.sync="store.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="clearText">
+					@trailing-button-click="store.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -40,7 +39,7 @@ import { store } from '../../store.js'
 					:force-display-actions="true"
 					@click="toggleCatalogiDetailView(catalogus)">
 					<template #icon>
-						<DatabaseOutline :class="store.catalogiItem?._id === catalogus.id && 'selectedZaakIcon'"
+						<DatabaseOutline :class="store.catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44"
 							user="janedoe"
@@ -92,12 +91,24 @@ export default {
 		Refresh,
 		Plus,
 	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
+	},
 	data() {
 		return {
-			search: '',
 			loading: false,
 			catalogi: [],
 		}
+	},
+	watch: {
+		search: {
+			handler(search) {
+				this.fetchData()
+			},
+		},
 	},
 	mounted() {
 		this.fetchData()
@@ -148,9 +159,6 @@ export default {
 				.catch((err) => {
 					console.error(err)
 				})
-		},
-		clearText() {
-			this.search = ''
 		},
 	},
 }

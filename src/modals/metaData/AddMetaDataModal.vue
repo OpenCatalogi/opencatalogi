@@ -19,7 +19,7 @@ import { store } from '../../store.js'
 				<div class="form-group">
 					<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
 				</div>
-				<NcButton :disabled="!title" type="primary" @click="addMetaData">
+				<NcButton :disabled="!metaData.title" type="primary" @click="addMetaData">
 					Submit
 				</NcButton>
 			</div>
@@ -56,6 +56,7 @@ export default {
 				version: '',
 				description: '',
 			},
+			metaDataList: [],
 			loading: false,
 			succes: false,
 			error: false,
@@ -63,6 +64,11 @@ export default {
 	},
 	methods: {
 		closeModal() {
+			// Reset the form the form
+			this.succes = false
+			this.error = false
+			this.loading = false
+			this.metaData = { title: '', version: '', description: '' }
 			store.modal = false
 		},
 		addMetaData() {
@@ -74,22 +80,23 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						title: this.title,
-						version: this.version,
-						description: this.description,
-						properties: this.properties,
-					}),
+					body: JSON.stringify(this.metaData),
 				},
 			)
 				.then((response) => {
+					// Set the form
 					this.loading = false
 					this.succes = true
-					store.setSelected('metaData')
+					// Work the data
 					response.json().then((data) => {
-						this.setMetdaDataItem(data)
+						store.setMetaDataItem(data)
 					})
-					setTimeout(() => (this.closeModal()), 2500)
+					store.clearSearch()
+					store.setSelected('metaData')
+					// Update the list
+					setTimeout(() => (
+						this.closeModal()
+					), 2500)
 				})
 				.catch((err) => {
 					this.metaDataLoading = false

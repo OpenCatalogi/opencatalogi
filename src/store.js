@@ -5,6 +5,8 @@ import { reactive } from 'vue'
 export const store = reactive({
 	// The curently active menu item, defaults to '' wich triggers the dashboard
 	selected: 'metaData',
+	// The current search term
+	search: '',
 	// The currently active modal, managed trought the state to ensure that only one modal can be active at the same time
 	modal: false,
 	modalData: [], // optional data to pass to the modal
@@ -14,7 +16,10 @@ export const store = reactive({
 	listItem: false,
 	listingId: false,
 	listingItem: false,
+	// Metadata
 	metaDataItem: false,
+	metaDataList: [],
+	// Publications
 	publicationId: false,
 	publicationItem: false,
 	publicationDataKey: false,
@@ -24,6 +29,13 @@ export const store = reactive({
 	setSelected(selected) {
 		this.selected = selected
 		console.log('Active menu item set to ' + selected)
+	},
+	setSearch(search) {
+		this.search = search
+		console.log('Active search set to ' + search)
+	},
+	clearSearch() {
+		this.search = ''
 	},
 	setModal(modal) {
 		this.modal = modal
@@ -41,10 +53,16 @@ export const store = reactive({
 		this.listingItem = listingItem
 		console.log('Active directory item set to ' + listingItem.id)
 	},
+	// MetaDataObjects
 	setMetaDataItem(metaDataItem) {
 		this.metaDataItem = metaDataItem
 		console.log('Active metadata object set to ' + metaDataItem.id)
 	},
+	setMetaDataList(metaDataList) {
+		this.metaDataList = metaDataList
+		console.log('Active metadata lest set')
+	},
+	// Publications
 	setPublicationId(publicationId) {
 		this.publicationId = publicationId
 		console.log('Active publication id set to ' + publicationId)

@@ -7,12 +7,11 @@ import { store } from '../../store.js'
 		<ul v-if="!loading">
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					disabled
-					:value.sync="search"
+					:value.sync="store.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="clearText">
+					@trailing-button-click="store.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -86,12 +85,24 @@ export default {
 		Refresh,
 		Plus,
 	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
+	},
 	data() {
 		return {
-			search: '',
 			loading: false,
 			directoryList: [],
 		}
+	},
+	watch: {
+		search: {
+			handler(search) {
+				this.fetchData()
+			},
+		},
 	},
 	mounted() {
 		this.fetchData()
@@ -127,9 +138,6 @@ export default {
 		},
 		setActive(id) {
 			store.setDirectoryItem(id)
-		},
-		clearText() {
-			this.search = ''
 		},
 	},
 }
