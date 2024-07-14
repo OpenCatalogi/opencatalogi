@@ -16,7 +16,7 @@ import { store } from '../../store.js'
 					<DatabaseOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="store.setModal('catalogusAdd')">
+					<NcButton type="primary" @click="store.setModal('addCatalog')">
 						Catalogi toevoegen
 					</NcButton>
 				</template>

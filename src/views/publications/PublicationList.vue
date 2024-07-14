@@ -50,7 +50,7 @@ import { store } from '../../store.js'
 						{{ publication?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="editPublication(publication)">
+						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('editPublication')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
@@ -62,7 +62,7 @@ import { store } from '../../store.js'
 							</template>
 							Depubliceren
 						</NcActionButton>
-						<NcActionButton class="publicationsList-actionsDelete" @click="deletePublication(publication)">
+						<NcActionButton class="publicationsList-actionsDelete" @click="store.setPublicationItem(publication); store.setModal('deletePublication')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>

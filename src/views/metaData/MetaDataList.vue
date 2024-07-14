@@ -49,10 +49,16 @@ import { store } from '../../store.js'
 						{{ metaData?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="editMetaData(metaData)">
+						<NcActionButton @click="store.setCatalogiItem(metaData); store.setModal('editMetaData')">
+							<template #icon>
+								<Pencil :size="20" />
+							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="deleteMetaData(metaData)">
+						<NcActionButton @click="store.setCatalogiItem(metaData); store.setModal('deleteMetaData')">
+							<template #icon>
+								<Delete :size="20" />
+							</template>
 							Verwijderen
 						</NcActionButton>
 					</template>
@@ -75,6 +81,8 @@ import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIco
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
@@ -92,6 +100,8 @@ export default {
 		Magnify,
 		Refresh,
 		Plus,
+		Pencil,
+		Delete,
 	},
 	props: {
 		search: {

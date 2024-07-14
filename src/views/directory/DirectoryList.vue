@@ -46,10 +46,16 @@ import { store } from '../../store.js'
 					{{ listing?.title }}
 				</template>
 				<template #actions>
-					<NcActionButton @click="updateListing(directory)">
+					<NcActionButton @click="store.setListingItem(catalogus); store.setModal('editListing')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="deleteListing(directory.id)">
+					<NcActionButton @click="store.setListingItem(catalogus); store.setModal('deleteListing')">
+						<template #icon>
+							<Delete :size="20" />
+						</template>
 						Verwijderen
 					</NcActionButton>
 				</template>
@@ -69,6 +75,8 @@ import Magnify from 'vue-material-design-icons/Magnify'
 // eslint-disable-next-line n/no-missing-import
 import LayersOutline from 'vue-material-design-icons/LayersOutline'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
@@ -84,6 +92,8 @@ export default {
 		NcLoadingIcon,
 		Refresh,
 		Plus,
+		Pencil,
+		Delete,
 	},
 	props: {
 		search: {

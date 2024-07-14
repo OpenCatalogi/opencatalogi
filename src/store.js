@@ -10,9 +10,16 @@ export const store = reactive({
 	// The currently active modal, managed trought the state to ensure that only one modal can be active at the same time
 	modal: false,
 	modalData: [], // optional data to pass to the modal
+	// The curetnly active dialog
+	dialog: false,
 	// The curently active item (or object) , managed trought the state to ensure that only one modal can be active at the same time
 	item: false,
+
+	// Catlogi
 	catalogiItem: false,
+	catalogiList: [],
+
+	// Directory
 	listItem: false,
 	listingId: false,
 	listingItem: false,
@@ -24,6 +31,7 @@ export const store = reactive({
 	publicationItem: false,
 	publicationDataKey: false,
 	attachmentId: false,
+	// Experemental
 	refresh: false,
 	// Lets add some setters
 	setSelected(selected) {
@@ -39,16 +47,43 @@ export const store = reactive({
 	},
 	setModal(modal) {
 		this.modal = modal
-		console.log('Active modal item set to ' + modal)
+		console.log('Active modal set to ' + modal)
+	},
+	setDialog(dialog) {
+		this.dialog = dialog
+		console.log('Active dialog set to ' + dialog)
 	},
 	setItem(item) {
 		this.item = item
 		console.log('Active object item set to ' + item)
 	},
+	// Catlogi
 	setCatalogiItem(catalogiItem) {
 		this.catalogiItem = catalogiItem
-		console.log('Active catalog item set to ' + catalogiItem)
+		console.log('Active catalog item set to ' + catalogiItem.id)
 	},
+	setCatalogiList(catalogiList) {
+		this.catalogiList = catalogiList
+		console.log('Catalogi list set to ' + catalogiList.length + ' item')
+	},
+	// @todo this might belong in a service?
+	refreshCatalogiList() {
+		fetch(
+			'/index.php/apps/opencatalogi/api/catalogi',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					this.catalogiList = data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+			})
+	},
+	// Directory
 	setListingItem(listingItem) {
 		this.listingItem = listingItem
 		console.log('Active directory item set to ' + listingItem.id)

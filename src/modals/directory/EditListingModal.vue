@@ -3,7 +3,7 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'editLising'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'editListing'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
 			<h2>Directory bewerken</h2>
 			<div class="form-group">
@@ -12,10 +12,7 @@ import { store } from '../../store.js'
 			<div class="form-group">
 				<NcTextField label="Last synchronized" :value.sync="directory.lastSync" />
 			</div>
-			<div class="form-group">
-				<NcTextField label="Default" :value.sync="directory.default" />
-			</div>
-			<NcButton :disabled="!directory.title" type="primary" @click="editDirectory">
+			<NcButton type="primary" @click="editDirectory">
 				Submit
 			</NcButton>
 		</div>
@@ -46,30 +43,11 @@ export default {
 	data() {
 		return {
 			directory: {
-				title: '',
-				summary: '',
-				description: '',
-				search: '',
-				metadata: '',
 				status: '',
-				lastSync: '',
-				defaultValue: '',
 			},
-			succesMessage: false,
-			hasUpdated: false,
 			loading: false,
 			succes: false,
 			error: false,
-		}
-	},
-	updated() {
-		if (store.modal === 'editDirectory' && this.hasUpdated) {
-			if (this.directory.id === store.directoryId) return
-			this.hasUpdated = false
-		}
-		if (store.modal === 'editDirectory' && !this.hasUpdated) {
-			this.fetchData(store.directoryId)
-			this.hasUpdated = true
 		}
 	},
 	methods: {

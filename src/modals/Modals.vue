@@ -1,5 +1,5 @@
 <template>
-	<!-- Placeholder -->
+	<!-- Placeholder Div -->
 	<div>
 		<AddPublicationModal />
 		<EditPublicationModal />

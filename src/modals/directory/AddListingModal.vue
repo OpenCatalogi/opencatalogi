@@ -3,14 +3,14 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'addLising'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'addListing'" ref="modalRef" @close="store.setModal(false)">
 		<div v-if="!loading" class="modal__content">
 			<h2>Directory toevoegen</h2>
 			<div class="form-group">
-				<NcTextField label="Url" :value.sync="search" />
+				<NcTextField label="Url" :value.sync="directory.url" />
 			</div>
 
-			<NcButton :disabled="!title" type="primary" @click="addDirectory">
+			<NcButton :disabled="!directory.url" type="primary" @click="addDirectory">
 				Submit
 			</NcButton>
 		</div>
@@ -40,15 +40,9 @@ export default {
 	},
 	data() {
 		return {
-			title: '',
-			summary: '',
-			description: '',
-			search: '',
-			metadata: '',
-			status: '',
-			lastSync: '',
-			defaultValue: '',
-			succesMessage: false,
+			directory: {
+				url: '',
+			},
 			loading: false,
 			succes: false,
 			error: false,

@@ -3,38 +3,44 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'catalogusAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+	<NcModal v-if="store.modal === 'addCatalog'" ref="modalRef" @close="store.setModal(false)">
+		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
-			<div class="form-group">
-				<NcTextField :disabled="catalogLoading"
+			<NcNoteCard v-if="succes" type="success">
+				<p>Catalogus succesvol toegevoegd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+			<div v-if="!succes" class="form-group">
+				<NcTextField :disabled="loading"
 					label="Naam"
 					maxlength="255"
 					:value.sync="name"
 					required />
-				<NcTextField :disabled="catalogLoading"
+				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
 					:value.sync="summary" />
 			</div>
-			<NcButton :disabled="!name" type="primary" @click="addCatalog">
+			<NcButton
+				v-if="!succes"
+				:disabled="!name || loading"
+				type="primary"
+				@click="addCatalog">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<Pencil v-if="!loading" :size="20" />
+				</template>
 				Toevoegen
 			</NcButton>
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
-		<NcNoteCard v-if="succes" type="success">
-			<p>Meta data succesvol toegevoegd</p>
-		</NcNoteCard>
-		<NcNoteCard v-if="error" type="error">
-			<p>{{ error }}</p>
-		</NcNoteCard>
 	</NcModal>
 </template>
 
 <script>
 import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 export default {
 	name: 'AddCatalogModal',
@@ -44,6 +50,8 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
+		// Icons
+		Pencil,
 	},
 	data() {
 		return {
@@ -52,7 +60,6 @@ export default {
 			loading: false,
 			succes: false,
 			error: false,
-			catalogLoading: false,
 			errorCode: '',
 		}
 	},
@@ -61,7 +68,7 @@ export default {
 			store.modal = false
 		},
 		addCatalog() {
-			this.catalogLoading = true
+			this.loading = true
 			this.errorMessage = false
 			fetch(
 				'/index.php/apps/opencatalogi/api/catalogi',
@@ -79,8 +86,14 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.succes = true
-					setTimeout(() => (this.closeModal()), 2500)
-
+					// Lets refresh the catalogiList
+					store.refreshCatalogiList()
+					// Wait for the user to read the feedback then close the model
+					var self = this
+					setTimeout(function() {
+						self.succes = false
+						store.setModal(false)
+					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err

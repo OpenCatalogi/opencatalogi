@@ -3,36 +3,40 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'catalogEdit'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="store.modal === 'editCatalog'" ref="modalRef" @close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
-			<div class="form-group">
-				<NcTextField :disabled="catalogLoading"
+			<NcNoteCard v-if="succes" type="success">
+				<p>Catalogus succesvol toegevoegd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+			<div v-if="!succes" class="form-group">
+				<NcTextField :disabled="loading"
 					label="Naam"
 					maxlength="255"
 					:value.sync="catalogi.name"
 					required />
-				<NcTextField :disabled="catalogLoading"
+				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
 					:value.sync="catalogi.summary" />
 			</div>
-			<NcButton :disabled="loading" type="primary" @click="editCatalog">
+			<NcButton v-if="!succes" :disabled="loading" type="primary" @click="editCatalog">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<Pencil v-if="!loading" :size="20" />
+				</template>
 				Opslaan
 			</NcButton>
 		</div>
-
-		<NcNoteCard v-if="succes" type="success">
-			<p>Meta data succesvol toegevoegd</p>
-		</NcNoteCard>
-		<NcNoteCard v-if="error" type="error">
-			<p>{{ error }}</p>
-		</NcNoteCard>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcNoteCard } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 export default {
 	name: 'EditCatalogModal',
@@ -41,6 +45,9 @@ export default {
 		NcTextField,
 		NcButton,
 		NcNoteCard,
+		NcLoadingIcon,
+		// Icons
+		Pencil,
 	},
 	data() {
 		return {
@@ -50,10 +57,8 @@ export default {
 				_schema: '',
 			},
 			loading: false,
-			editLoading: false,
 			succes: false,
 			error: false,
-			catalogLoading: false,
 			errorCode: '',
 			hasUpdated: false,
 		}
@@ -106,13 +111,15 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.editLoading = false
+					this.loading = false
 					this.succes = true
+					// Lets refresh the catalogiList
+					store.refreshCatalogiList()
 					setTimeout(() => (this.closeModal()), 2500)
 				})
 				.catch((err) => {
+					this.loading = false
 					this.error = err
-					this.editLoading = false
 				})
 		},
 	},

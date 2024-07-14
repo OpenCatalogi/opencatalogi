@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('catalogusAdd')">
+					<NcActionButton @click="store.setModal('addCatalog')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -30,7 +30,7 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(catalogus, i) in catalogi.results"
+				<NcListItem v-for="(catalogus, i) in store.catalogiList.results"
 					:key="`${catalogus}${i}`"
 					:name="catalogus?.name"
 					:active="store.catalogiItem?._id === catalogus?._id"
@@ -41,18 +41,22 @@ import { store } from '../../store.js'
 					<template #icon>
 						<DatabaseOutline :class="store.catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
-							:size="44"
-							user="janedoe"
-							display-name="Jane Doe" />
+							:size="44" />
 					</template>
 					<template #subname>
 						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="editCatalog(catalogus)">
+						<NcActionButton @click="store.setCatalogiItem(catalogus); store.setModal('editCatalog')">
+							<template #icon>
+								<Pencil :size="20" />
+							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="deleteCatalog(catalogus?._id)">
+						<NcActionButton @click="store.setCatalogiItem(catalogus); store.setDialog('deleteCatalog')">
+							<template #icon>
+								<Delete :size="20" />
+							</template>
 							Delete
 						</NcActionButton>
 					</template>
@@ -75,6 +79,8 @@ import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIco
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
@@ -90,6 +96,8 @@ export default {
 		NcLoadingIcon,
 		Refresh,
 		Plus,
+		Pencil,
+		Delete,
 	},
 	props: {
 		search: {
@@ -116,22 +124,8 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			fetch(
-				'/index.php/apps/opencatalogi/api/catalogi',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.catalogi = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
+			store.refreshCatalogiList()
+			this.loading = false
 		},
 		toggleCatalogiDetailView(catalogus) {
 			if (store.catalogiItem?._id === catalogus?._id) store.setCatalogiItem(false)
