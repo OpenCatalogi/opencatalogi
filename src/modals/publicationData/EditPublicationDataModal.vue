@@ -84,7 +84,7 @@ export default {
 		if (store.modal === 'editPublicationDataModal' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(store.publicationId)
+			this.fetchData(store.publicationItem.id)
 			this.hasUpdated = true
 		}
 	},

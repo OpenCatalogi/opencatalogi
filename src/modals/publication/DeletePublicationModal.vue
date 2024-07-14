@@ -24,7 +24,7 @@ import { store } from '../../store.js'
 			</div>
 
 			<div class="deletePublication-buttons">
-				<NcButton type="error" :disabled="loading" @click="deletePublication(store.publicationId)">
+				<NcButton type="error" :disabled="loading" @click="deletePublication(store.publicationItem.id)">
 					Delete!
 				</NcButton>
 				<NcButton type="secondary" :disabled="loading" @click="store.setModal(false)">

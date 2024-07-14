@@ -184,13 +184,13 @@ export default {
 	},
 	updated() {
 		if (store.modal === 'publicationEdit' && this.hasUpdated) {
-			if (this.publication.id === store.publicationId) return
+			if (this.publication.id === store.publicationItem.id) return
 			this.hasUpdated = false
 		}
 		if (store.modal === 'publicationEdit' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(store.publicationId)
+			this.fetchData(store.publicationItem.id)
 			this.hasUpdated = true
 		}
 	},

@@ -76,7 +76,7 @@ export default {
 		editDirectory() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${store.listingId}`,
+				`/index.php/apps/opencatalogi/api/directory/${store.listingItem?.id}`,
 				{
 					method: 'PUT',
 					headers: {
