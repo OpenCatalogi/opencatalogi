@@ -20,3 +20,6 @@ Je moet wel elke keer als je iets veranderd verversen
 # Grafieken
 Voor grafieken gebruiken we APEXCHARTS
 https://apexcharts.com/vue-chart-demos/area-charts/spline/
+
+# Vue
+Voor de project gebruiken we vue 2.7

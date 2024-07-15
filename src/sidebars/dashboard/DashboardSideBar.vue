@@ -20,18 +20,21 @@ import { store } from '../../store.js'
 				<ListBoxOutline :size="20" />
 			</template>
 			Welke publicaties vereisen uw aandacht?
+			<NcNoteCard type="success">
+				<p>Er zijn op dit moment geen publicaties die uw aandacht vereisen</p>
+			</NcNoteCard>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab name="Bijlagen" id="share-tab" :order="3">
 			<template #icon>
 				<FileOutline :size="20" />
 			</template>
-			Welke publicaties vereisen uw aandacht?
+			Welke bijlagen vereisen uw aandacht?
 		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
 <script>
 
-import { NcAppSidebar, NcAppSidebarTab, NcTextField } from '@nextcloud/vue'
+import { NcAppSidebar, NcAppSidebarTab, NcTextField, NcNoteCard } from '@nextcloud/vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import FileOutline from 'vue-material-design-icons/FileOutline.vue'
@@ -42,6 +45,7 @@ export default {
 		NcAppSidebar,
 		NcAppSidebarTab,
 		NcTextField,
+		NcNoteCard,
 		// Icons
 		Magnify,
 		ListBoxOutline,
