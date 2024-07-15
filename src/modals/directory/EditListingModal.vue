@@ -12,16 +12,16 @@ import { store } from '../../store.js'
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
 			</NcNoteCard>
-			<div class="form-group">
+			<div v-if="!succes" class="form-group">
 				<NcTextField label="Url" :value.sync="store.listingItem.url" />
-			</div>
-			<div class="form-group">
 				<NcTextField label="Status" :value.sync="store.listingItem.status" />
-			</div>
-			<div class="form-group">
 				<NcTextField label="Last synchronized" :value.sync="store.listingItem.lastSync" />
 			</div>
-			<NcButton type="primary" @click="editDirectory">
+			<NcButton v-if="!succes" type="primary" @click="editDirectory()">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
 				Submit
 			</NcButton>
 		</div>
@@ -30,6 +30,7 @@ import { store } from '../../store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditListingModal',
@@ -39,19 +40,15 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {
-			listing: {
-				status: '',
-			},
 			loading: false,
 			succes: false,
 			error: false,
 		}
-	},
-	mounted() {
-		this.listing = store.listingItem
 	},
 	methods: {
 		closeModal() {

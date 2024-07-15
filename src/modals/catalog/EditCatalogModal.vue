@@ -16,12 +16,12 @@ import { store } from '../../store.js'
 				<NcTextField :disabled="loading"
 					label="Naam"
 					maxlength="255"
-					:value.sync="catalogi.name"
+					:value.sync="store.catalogiItem.name"
 					required />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
-					:value.sync="catalogi.summary" />
+					:value.sync="store.catalogiItem.summary" />
 			</div>
 			<NcButton
 				v-if="!succes"
@@ -30,7 +30,7 @@ import { store } from '../../store.js'
 				@click="editCatalog()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<Pencil v-if="!loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
 				Opslaan
 			</NcButton>
@@ -40,7 +40,7 @@ import { store } from '../../store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditCatalogModal',
@@ -51,57 +51,18 @@ export default {
 		NcNoteCard,
 		NcLoadingIcon,
 		// Icons
-		Pencil,
+		ContentSaveOutline,
 	},
 	data() {
 		return {
-			catalogi: {
-				name: '',
-				summary: '',
-			},
 			loading: false,
 			succes: false,
 			error: false,
-			errorCode: '',
-			hasUpdated: false,
 		}
-	},
-	updated() {
-		if (store.modal === 'catalogEdit' && this.hasUpdated) {
-			if (this.catalogi._id === store.catalogiItem._id) return
-			this.hasUpdated = false
-		}
-		if (store.modal === 'catalogEdit' && !this.hasUpdated) {
-			this.catalogi = store.catalogiItem
-			this.fetchData(store.catalogiItem.id)
-			this.hasUpdated = true
-		}
-	},
-	mounted() {
-		this.catalogi = store.catalogiItem
 	},
 	methods: {
 		closeModal() {
 			store.modal = false
-		},
-		fetchData(catalogId) {
-			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.catalogi = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
 		},
 		editCatalog() {
 			this.editLoading = true

@@ -16,18 +16,18 @@ import { store } from '../../store.js'
 				<p>{{ error }}</p>
 			</NcNoteCard>
 			<div class="form-group">
-				<NcTextField label="Titel" :disabled="loading" :value.sync="metaData.title" />
+				<NcTextField label="Titel" :disabled="loading" :value.sync="store.metaDataItem.title" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Versie" :disabled="loading" :value.sync="metaData.version" />
+				<NcTextField label="Versie" :disabled="loading" :value.sync="store.metaDataItem.version" />
 			</div>
 			<div class="form-group">
-				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metaData.description" />
+				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="store.metaDataItem.description" />
 			</div>
-			<NcButton :disabled="!metaData.title || loading" type="primary" @click="editMetaData">
+			<NcButton :disabled="!store.metaDataItem.title || loading" type="primary" @click="editMetaData">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<Pencil v-if="!loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
 				Opslaan
 			</NcButton>
@@ -37,7 +37,7 @@ import { store } from '../../store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditMetaDataModal',
@@ -49,33 +49,14 @@ export default {
 		NcLoadingIcon,
 		NcNoteCard,
 		// Icons
-		Pencil,
+		ContentSaveOutline,
 	},
 	data() {
 		return {
-			metaData: {
-				title: '',
-				version: '',
-				description: '',
-			},
-			hasUpdated: false,
 			loading: false,
 			succes: false,
 			error: false,
 		}
-	},
-	updated() {
-		if (store.modal === 'editMetaData' && this.hasUpdated) {
-			if (this.metaData._id === store.metaDataItem?.id) return
-			this.hasUpdated = false
-		}
-		if (store.modal === 'editMetaData' && !this.hasUpdated) {
-			this.fetchData(store.metaDataItem?.id)
-			this.hasUpdated = true
-		}
-	},
-	mounted() {
-		this.metaData = store.metaDataItem
 	},
 	methods: {
 		fetchData(id) {

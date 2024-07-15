@@ -3,7 +3,7 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'publicationEdit'"
+		v-if="store.modal === 'editPublication'"
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div class="modal__content">
@@ -14,77 +14,55 @@ import { store } from '../../store.js'
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
 			</NcNoteCard>
-			<div class="form-group">
+			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Naam"
 					:value.sync="publication.title"
 					:loading="publicationLoading" />
 				<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
-			</div>
-			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Categorie"
 					:value.sync="publication.category"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Publicatie"
 					:value.sync="publication.publication"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Portaal"
 					:value.sync="publication.portal"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Status"
 					:value.sync="publication.status"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Gepubliceerd"
 					:value.sync="publication.published"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<p>Featured</p>
 				<NcCheckboxRadioSwitch :disabled="loading"
 					label="Featured"
 					:value.sync="publication.featured"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Image"
 					:value.sync="publication.image"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Modified"
 					:value.sync="publication.modified"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<NcTextField :disabled="loading"
 					label="Licentie"
 					:value.sync="publication.license"
 					:loading="publicationLoading" />
-			</div>
-			<div class="form-group">
 				<NcSelect v-bind="catalogi"
 					v-model="catalogi.value"
 					input-label="Catalogi"
 					:loading="catalogiLoading"
 					:disabled="loading"
 					required />
-			</div>
-			<div class="form-group">
 				<NcSelect
 					v-bind="metaData"
 					v-model="metaData.value"
@@ -92,18 +70,15 @@ import { store } from '../../store.js'
 					:loading="catalogiLoading"
 					:disabled="true" />
 			</div>
-			<div class="form-group">
-				<NcTextArea :disabled="loading" label="Data" :value.sync="publication.data" />
-			</div>
-
-			<div class="form-group">
-				<NcTextArea :disabled="loading" label="Bijlagen" :value.sync="publication.attachments" />
-			</div>
 			<NcButton
 				v-if="!succes"
 				:disabled="!publication.title"
 				type="primary"
 				@click="updatePublication()">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
 				Opslaan
 			</NcButton>
 		</div>
@@ -121,6 +96,7 @@ import {
 	NcCheckboxRadioSwitch,
 	NcNoteCard,
 } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditPublicationModal',
@@ -133,6 +109,8 @@ export default {
 		NcSelect,
 		NcLoadingIcon,
 		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {
@@ -141,8 +119,6 @@ export default {
 				description: '',
 				catalogi: {},
 				metaData: {},
-				data: '',
-				attachments: '',
 				license: '',
 				modified: '',
 				published: '',
@@ -167,6 +143,9 @@ export default {
 			catalogiLoading: false,
 			metaDataLoading: false,
 		}
+	},
+	mounted() {
+		this.publication = store.publicationItem
 	},
 	updated() {
 		if (store.modal === 'publicationEdit' && this.hasUpdated) {
