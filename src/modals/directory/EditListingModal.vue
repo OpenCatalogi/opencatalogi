@@ -4,27 +4,27 @@ import { store } from '../../store.js'
 
 <template>
 	<NcModal v-if="store.modal === 'editListing'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+		<div class="modal__content">
 			<h2>Directory bewerken</h2>
+			<NcNoteCard v-if="succes" type="success">
+				<p>Meta data succesvol toegevoegd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
 			<div class="form-group">
-				<NcTextField label="Status" :value.sync="directory.status" />
+				<NcTextField label="Url" :value.sync="store.listingItem.url" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Last synchronized" :value.sync="directory.lastSync" />
+				<NcTextField label="Status" :value.sync="store.listingItem.status" />
+			</div>
+			<div class="form-group">
+				<NcTextField label="Last synchronized" :value.sync="store.listingItem.lastSync" />
 			</div>
 			<NcButton type="primary" @click="editDirectory">
 				Submit
 			</NcButton>
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
-		<NcNoteCard v-if="succes" type="success">
-			<p>Meta data succesvol toegevoegd</p>
-		</NcNoteCard>
-		<NcNoteCard v-if="error" type="error">
-			<p>{{ error }}</p>
-		</NcNoteCard>
 	</NcModal>
 </template>
 
@@ -42,13 +42,16 @@ export default {
 	},
 	data() {
 		return {
-			directory: {
+			listing: {
 				status: '',
 			},
 			loading: false,
 			succes: false,
 			error: false,
 		}
+	},
+	mounted() {
+		this.listing = store.listingItem
 	},
 	methods: {
 		closeModal() {
@@ -57,14 +60,14 @@ export default {
 		fetchData(id) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${id}`,
+				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.directory = data
+						this.listing = data
 						this.loading = false
 					})
 				})
@@ -76,7 +79,7 @@ export default {
 		editDirectory() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${store.listingItem?.id}`,
+				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -88,11 +91,12 @@ export default {
 				// Set propper modal states
 				this.loading = false
 				this.succes = true
-				// Forse a refresh of the list and detaul page
-				store.setSelected('directory')
+				// Lets refresh the catalogiList
+				store.refreshMetaDataList()
 				response.json().then((data) => {
 					this.setListingItem(data)
 				})
+				store.setSelected('directory')
 				// Wait and then close the modal
 				setTimeout(() => (this.closeModal()), 2500)
 			}).catch((err) => {

@@ -23,7 +23,7 @@ import { store } from '../../store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton disabled>
+				<NcActionButton @click="store.setDialog('deleteMetaData')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>

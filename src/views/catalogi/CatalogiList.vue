@@ -127,33 +127,6 @@ export default {
 			store.refreshCatalogiList()
 			this.loading = false
 		},
-		toggleCatalogiDetailView(catalogus) {
-			if (store.catalogiItem?._id === catalogus?._id) store.setCatalogiItem(false)
-			else store.setCatalogiItem(catalogus)
-		},
-		editCatalog(catalogiItem) {
-			store.setModal('catalogEdit')
-			store.setCatalogiItem(catalogiItem)
-		},
-		deleteCatalog(id) {
-			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				},
-			)
-				.then((response) => {
-					console.warn('catalogi removed')
-					// this.succesMessage = true
-					// setTimeout(() => (this.succesMessage = false), 2500)
-				})
-				.catch((err) => {
-					console.error(err)
-				})
-		},
 	},
 }
 </script>

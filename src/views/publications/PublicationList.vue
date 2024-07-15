@@ -30,7 +30,7 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(publication, i) in publications.results"
+				<NcListItem v-for="(publication, i) in store.publicationList.results"
 					:key="`${publication}${i}`"
 					:name="publication?.title"
 					:bold="false"
@@ -42,9 +42,7 @@ import { store } from '../../store.js'
 					<template #icon>
 						<ListBoxOutline :class="store.publicationItem.id === publication.id && 'selectedZaakIcon'"
 							disable-menu
-							:size="44"
-							user="janedoe"
-							display-name="Jane Doe" />
+							:size="44" />
 					</template>
 					<template #subname>
 						{{ publication?.description }}
@@ -62,7 +60,7 @@ import { store } from '../../store.js'
 							</template>
 							Depubliceren
 						</NcActionButton>
-						<NcActionButton class="publicationsList-actionsDelete" @click="store.setPublicationItem(publication); store.setModal('deletePublication')">
+						<NcActionButton class="publicationsList-actionsDelete" @click="store.setPublicationItem(publication); store.setDialog('deletePublication')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -113,7 +111,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-			publications: [],
 		}
 	},
 	watch: {
@@ -129,31 +126,8 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			fetch(
-				'/index.php/apps/opencatalogi/api/publications',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.publications = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
-		},
-		editPublication(publication) {
-			store.setPublicationITem(publication)
-			store.setModal('publicationEdit')
-		},
-		deletePublication(publication) {
-			store.setPublicationId(publication.id)
-			store.setPublicationItem(publication)
-			store.setModal('deletePublication')
+			store.refreshPublicationList()
+			this.loading = false
 		},
 	},
 }

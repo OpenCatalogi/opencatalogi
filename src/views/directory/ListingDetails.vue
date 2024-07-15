@@ -17,13 +17,13 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('editListing')">
+				<NcActionButton @click="store.setListingItem(listing); store.setModal('editListing')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton disabled>
+				<NcActionButton @click="store.setListingItem(listing); store.setDialog('deleteListing')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>

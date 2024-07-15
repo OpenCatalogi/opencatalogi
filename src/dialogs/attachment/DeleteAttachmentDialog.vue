@@ -4,15 +4,14 @@ import { store } from '../../store.js'
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deleteCatalog'"
-		name="Catalogus verwijderen"
-		message="'"
+		v-if="store.dialog === 'deleteAttachment'"
+		name="Bijlage verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.catalogiItem.name ?? store.catalogiItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ store.attachmentItem.name ?? store.attachmentItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Catalogus succesvol verwijderd</p>
+			<p>Bijlage succesvol verwijderd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -46,7 +45,7 @@ import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
-	name: 'DeleteCatalogDialog',
+	name: 'DeleteAttachmentDialog',
 	components: {
 		NcDialog,
 		NcButton,
@@ -67,7 +66,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/attachment/${store.attachmentItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -84,7 +83,7 @@ export default {
 					var self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setCatalogiItem(false)
+						store.setAttachmentItem(false)
 						store.setDialog(false)
 					}, 2000)
 				})

@@ -9,29 +9,20 @@ import { store } from '../../store.js'
 		@close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData toevoegen</h2>
-			<div v-if="!loading && !succes" class="form_wrapper">
-				<div class="form-group">
-					<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
-				</div>
-				<div class="form-group">
-					<NcTextField label="Versie" :value.sync="metaData.version" />
-				</div>
-				<div class="form-group">
-					<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
-				</div>
-				<NcButton :disabled="!metaData.title" type="primary" @click="addMetaData">
-					Submit
-				</NcButton>
-			</div>
-			<NcLoadingIcon
-				v-if="loading"
-				:size="100" />
 			<NcNoteCard v-if="succes" type="success">
 				<p>Meta data succesvol toegevoegd</p>
 			</NcNoteCard>
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
 			</NcNoteCard>
+			<div v-if="!succes" class="form-group">
+				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
+				<NcTextField label="Versie" :value.sync="metaData.version" />
+				<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
+			</div>
+			<NcButton :disabled="!metaData.title" type="primary" @click="addMetaData">
+				Submit
+			</NcButton>
 		</div>
 	</NcModal>
 </template>
@@ -87,11 +78,11 @@ export default {
 					// Set the form
 					this.loading = false
 					this.succes = true
-					// Work the data
+					// Lets refresh the catalogiList
+					store.refreshMetaDataList()
 					response.json().then((data) => {
 						store.setMetaDataItem(data)
 					})
-					store.clearSearch()
 					store.setSelected('metaData')
 					// Update the list
 					setTimeout(() => (

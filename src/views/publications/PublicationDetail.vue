@@ -29,7 +29,7 @@ import { store } from '../../store.js'
 					</template>
 					Depubliceren
 				</NcActionButton>
-				<NcActionButton class="publicationDetails-actionsDelete" @click="deletePublication()">
+				<NcActionButton @click="store.setDialog('deletePublication')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>

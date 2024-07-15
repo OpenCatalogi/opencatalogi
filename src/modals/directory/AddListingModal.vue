@@ -4,8 +4,14 @@ import { store } from '../../store.js'
 
 <template>
 	<NcModal v-if="store.modal === 'addListing'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
+			<NcNoteCard v-if="succes" type="success">
+				<p>Listing succesvol toegevoegd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
 			<div class="form-group">
 				<NcTextField label="Url" :value.sync="directory.url" />
 			</div>
@@ -14,15 +20,6 @@ import { store } from '../../store.js'
 				Submit
 			</NcButton>
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
-		<NcNoteCard v-if="succes" type="success">
-			<p>Listing succesvol toegevoegd</p>
-		</NcNoteCard>
-		<NcNoteCard v-if="error" type="error">
-			<p>{{ error }}</p>
-		</NcNoteCard>
 	</NcModal>
 </template>
 
@@ -78,11 +75,12 @@ export default {
 					// Set propper modal states
 					this.loading = false
 					this.succes = true
-					// Forse a refresh of the list and detaul page
-					store.setSelected('directory')
+					// Lets refresh the catalogiList
+					store.refreshListingList()
 					response.json().then((data) => {
 						this.setListingItem(data)
 					})
+					store.setSelected('directory')
 					// Wait and then close the modal
 					setTimeout(() => (this.closeModal()), 2500)
 				})

@@ -23,7 +23,7 @@ import { store } from '../../store.js'
 					maxlength="255"
 					:value.sync="catalogi.summary" />
 			</div>
-			<NcButton v-if="!succes" :disabled="loading" type="primary" @click="editCatalog">
+			<NcButton v-if="!succes" :disabled="loading" type="primary" @click="editCatalog()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<Pencil v-if="!loading" :size="20" />
@@ -54,7 +54,6 @@ export default {
 			catalogi: {
 				name: '',
 				summary: '',
-				_schema: '',
 			},
 			loading: false,
 			succes: false,
@@ -70,9 +69,12 @@ export default {
 		}
 		if (store.modal === 'catalogEdit' && !this.hasUpdated) {
 			this.catalogi = store.catalogiItem
-			this.fetchData(store.catalogiItem._id)
+			this.fetchData(store.catalogiItem.id)
 			this.hasUpdated = true
 		}
+	},
+	mounted() {
+		this.catalogi = store.catalogiItem
 	},
 	methods: {
 		closeModal() {
@@ -81,7 +83,7 @@ export default {
 		fetchData(catalogId) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${catalogId}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
 				{
 					method: 'GET',
 				},
@@ -101,7 +103,7 @@ export default {
 			this.editLoading = true
 			this.errorMessage = false
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogi._id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
 				{
 					method: 'POST',
 					headers: {
@@ -115,6 +117,9 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					store.refreshCatalogiList()
+					response.json().then((data) => {
+						store.setCatalogiItem(data)
+					})
 					setTimeout(() => (this.closeModal()), 2500)
 				})
 				.catch((err) => {

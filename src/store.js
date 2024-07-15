@@ -25,9 +25,7 @@ export const store = reactive({
 	publicationList: [],
 	// ??
 	publicationDataKey: false,
-	attachmentId: false,
-	// Experemental
-	refresh: false,
+	attachmentItem: false,
 	// Lets add some setters
 	setSelected(selected) {
 		this.selected = selected
@@ -84,7 +82,7 @@ export const store = reactive({
 	},
 	refreshListingList() { // @todo this might belong in a service?
 		fetch(
-			'/index.php/apps/opencatalogi/api/direcotry',
+			'/index.php/apps/opencatalogi/api/directory',
 			{
 				method: 'GET',
 			},
@@ -153,13 +151,8 @@ export const store = reactive({
 		this.publicationDataKey = publicationDataKey
 		console.log('Active publication data key set to ' + publicationDataKey)
 	},
-	setAttachmentId(attachmentId) {
-		this.attachmentId = attachmentId
-		console.log('Active attachment item set to ' + attachmentId)
-	},
-	setRefresh(refresh) {
-		this.refresh = refresh
-		setTimeout(() => (this.refresh = false), 1000)
-		console.log('Active attachment item set to ' + refresh)
+	setAttachmentItem(attachmentItem) {
+		this.attachmentItem = attachmentItem
+		console.log('Active attachment item set to ' + attachmentItem)
 	},
 })

@@ -31,16 +31,16 @@ import { store } from '../../store.js'
 			</div>
 
 			<div v-if="!loading">
-				<NcListItem v-for="(metaData, i) in store.metaDataList"
+				<NcListItem v-for="(metaData, i) in store.metaDataList.results"
 					:key="`${metaData}${i}`"
 					:name="metaData?.title"
 					:active="store.metaDataItem?._id === metaData?._id"
 					:details="metaData.version ?? '1h'"
 					:force-display-actions="true"
 					:counter-number="44"
-					@click="storeMetaData(metaData)">
+					@click="store.setMetaDataItem(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataItem?._id === metaData?._id && 'selectedIcon'"
+						<FileTreeOutline :class="store.metaDataItem?._id === metaData?.id && 'selectedIcon'"
 							disable-menu
 							:size="44" />
 					</template>
@@ -49,13 +49,13 @@ import { store } from '../../store.js'
 						{{ metaData?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="store.setCatalogiItem(metaData); store.setModal('editMetaData')">
+						<NcActionButton @click="store.setMetaDataItem(metaData); store.setModal('editMetaData')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="store.setCatalogiItem(metaData); store.setModal('deleteMetaData')">
+						<NcActionButton @click="store.setMetaDataItem(metaData); store.setDialog('deleteMetaData')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -112,7 +112,6 @@ export default {
 	data() {
 		return {
 			loading: true,
-			metaDataList: [],
 		}
 	},
 	watch: {
@@ -126,31 +125,10 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		storeMetaData(metaData) {
-			store.setMetaDataItem(metaData)
-		},
-		editMetaData(metaData) {
-			store.setMetaDataItem(metaData)
-			store.setModal('editMetaData')
-		},
 		fetchData(newPage) {
 			this.loading = true
-			fetch(
-				'/index.php/apps/opencatalogi/api/metadata',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						store.setMetaDataList(data.results)
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
+			store.refreshMetaDataList()
+			this.loading = false
 		},
 	},
 }

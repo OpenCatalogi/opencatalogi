@@ -30,7 +30,7 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 
-			<NcListItem v-for="(listing, i) in directoryList.results"
+			<NcListItem v-for="(listing, i) in store.listingList.results"
 				:key="`${listing}${i}`"
 				:name="listing?.title"
 				:active="store.listingItem?.id === listing?.id"
@@ -46,13 +46,13 @@ import { store } from '../../store.js'
 					{{ listing?.title }}
 				</template>
 				<template #actions>
-					<NcActionButton @click="store.setListingItem(catalogus); store.setModal('editListing')">
+					<NcActionButton @click="store.setListingItem(listing); store.setModal('editListing')">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="store.setListingItem(catalogus); store.setModal('deleteListing')">
+					<NcActionButton @click="store.setListingItem(listing); store.setDialog('deleteListing')">
 						<template #icon>
 							<Delete :size="20" />
 						</template>
@@ -104,7 +104,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-			directoryList: [],
 		}
 	},
 	watch: {
@@ -118,36 +117,10 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		storeDirectory(directory) {
-			store.setDirectoryId(directory.id)
-			store.setDirectoryItem(directory)
-		},
-		editDirectory(directory) {
-			store.setDirectoryItem(directory)
-			store.setDirectoryId(directory.id)
-			store.setModal('editDirectory')
-		},
 		fetchData(newPage) {
 			this.loading = true
-			fetch(
-				'/index.php/apps/opencatalogi/api/directory',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.directoryList = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
-		},
-		setActive(id) {
-			store.setDirectoryItem(id)
+			store.refreshListingList()
+			this.loading = false
 		},
 	},
 }

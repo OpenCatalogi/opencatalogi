@@ -4,15 +4,14 @@ import { store } from '../../store.js'
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deleteCatalog'"
-		name="Catalogus verwijderen"
-		message="'"
+		v-if="store.dialog === 'deletePublication'"
+		name="Publicatie verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.catalogiItem.name ?? store.catalogiItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ store.publicationItem.name ?? store.publicationItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Catalogus succesvol verwijderd</p>
+			<p>Publicatie succesvol verwijderd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -46,7 +45,7 @@ import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
-	name: 'DeleteCatalogDialog',
+	name: 'DeletePublicationDialog',
 	components: {
 		NcDialog,
 		NcButton,
@@ -67,7 +66,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -79,12 +78,12 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshCatalogiList()
+					store.refreshPublicationList()
 					// Wait for the user to read the feedback then close the model
 					var self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setCatalogiItem(false)
+						store.setPublicationItem(false)
 						store.setDialog(false)
 					}, 2000)
 				})

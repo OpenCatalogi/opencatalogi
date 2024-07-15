@@ -88,6 +88,9 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					store.refreshCatalogiList()
+					response.json().then((data) => {
+						store.setCatalogiItem(data)
+					})
 					// Wait for the user to read the feedback then close the model
 					var self = this
 					setTimeout(function() {
