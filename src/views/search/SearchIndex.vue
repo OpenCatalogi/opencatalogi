@@ -6,7 +6,7 @@ import { store } from '../../store.js'
 	<NcAppContent>
 		<div class="dashboardContainer">
 			<h1>Searc</h1>
-			<p>Search item {{ store.item }}</p>
+			<p>Search item {{ store.search }}</p>
 		</div>
 	</NcAppContent>
 </template>

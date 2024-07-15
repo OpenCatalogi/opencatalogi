@@ -3,48 +3,40 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal
-		v-if="store.modal === 'editMetaData'"
-		ref="modalRef"
-		@close="store.setModal(false)">
-		<div v-if="!succes" class="modal__content">
-			<h2>MetaData bewerken</h2>
+	<NcModal v-if="store.modal === 'editListing'" ref="modalRef" @close="store.setModal(false)">
+		<div class="modal__content">
+			<h2>Directory bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
-				<p>Meta data succesvol gewijzigd</p>
+				<p>Meta data succesvol toegevoegd</p>
 			</NcNoteCard>
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
 			</NcNoteCard>
-			<div class="form-group">
-				<NcTextField label="Titel" :disabled="loading" :value.sync="store.metaDataItem.title" />
+			<div v-if="!succes" class="form-group">
+				<NcTextField label="Url" :value.sync="store.listingItem.url" />
+				<NcTextField label="Status" :value.sync="store.listingItem.status" />
+				<NcTextField label="Last synchronized" :value.sync="store.listingItem.lastSync" />
 			</div>
-			<div class="form-group">
-				<NcTextField label="Versie" :disabled="loading" :value.sync="store.metaDataItem.version" />
-			</div>
-			<div class="form-group">
-				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="store.metaDataItem.description" />
-			</div>
-			<NcButton :disabled="!store.metaDataItem.title || loading" type="primary" @click="editMetaData">
+			<NcButton v-if="!succes" type="primary" @click="editDirectory()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
-				Opslaan
+				Submit
 			</NcButton>
 		</div>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
-	name: 'EditMetaDataModal',
+	name: 'EditListingModal',
 	components: {
 		NcModal,
 		NcTextField,
-		NcTextArea,
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
@@ -59,52 +51,51 @@ export default {
 		}
 	},
 	methods: {
+		closeModal() {
+			store.modal = false
+		},
 		fetchData(id) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${id}`,
+				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaData = data
+						this.listing = data
+						this.loading = false
 					})
-					this.loading = false
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
-		editMetaData() {
+		editDirectory() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem?._id}`,
+				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.metaData),
+					body: JSON.stringify(this.directory),
 				},
 			).then((response) => {
+				// Set propper modal states
 				this.loading = false
 				this.succes = true
 				// Lets refresh the catalogiList
 				store.refreshMetaDataList()
 				response.json().then((data) => {
-					store.setMetaDataItem(data)
+					this.setListingItem(data)
 				})
-				store.setSelected('metaData')
+				store.setSelected('directory')
+				// Wait and then close the modal
 				setTimeout(() => (this.closeModal()), 2500)
-				// Reset the form the form
-				this.succes = false
-				this.metaData = { title: '', version: '', description: '' }
 			}).catch((err) => {
 				this.error = err
 				this.loading = false

@@ -4,69 +4,94 @@ import { store } from '../../store.js'
 
 <template>
 	<div class="detailContainer">
-		<div v-if="!loading" id="app-content">
-			<!-- app-content-wrapper is optional, only use if app-content-list  -->
+		<div class="head">
+			<h1 class="h1">
+				{{ metadata.title }}
+			</h1>
+			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+				<template #icon>
+					<span>
+						<NcLoadingIcon v-if="loading"
+							:size="20"
+							appearance="dark" />
+						<DotsHorizontal v-if="!loading" :size="20" />
+					</span>
+				</template>
+				<NcActionButton @click="store.setModal('editMetaData')">
+					<template #icon>
+						<Pencil :size="20" />
+					</template>
+					Bewerken
+				</NcActionButton>
+				<NcActionButton @click="store.setDialog('deleteMetaData')">
+					<template #icon>
+						<Delete :size="20" />
+					</template>
+					Verwijderen
+				</NcActionButton>
+			</NcActions>
+		</div>
+		<div>
 			<div>
-				<h1 class="h1">
-					{{ metaData.title }}
-				</h1>
-				<div>
-					<h4>Beschrijving:</h4>
-					<span>{{ metaData.description }}</span>
-				</div>
-				<div>
-					<h4>Versie:</h4>
-					<span>{{ metaData.version }}</span>
-				</div>
-				<div>
-					<h4>Properties:</h4>
-					<p>{{ metaData.properties }}</p>
-				</div>
+				<h4>Beschrijving:</h4>
+				<span>{{ metadata.description }}</span>
+			</div>
+			<div>
+				<h4>Versie:</h4>
+				<span>{{ metadata.version }}</span>
+			</div>
+			<div>
+				<h4>Properties:</h4>
+				<p>{{ metadata.properties }}</p>
 			</div>
 		</div>
-		<NcLoadingIcon v-if="loading"
-			:size="100"
-			appearance="dark"
-			name="MetaData details aan het laden" />
 	</div>
 </template>
 
 <script>
-import { NcLoadingIcon } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton } from '@nextcloud/vue'
+
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
 	name: 'MetaDataDetail',
 	components: {
 		NcLoadingIcon,
+		NcActions,
+		NcActionButton,
 	},
 	props: {
-		metaDataId: {
-			type: String,
+		metaDataItem: {
+			type: Object,
 			required: true,
 		},
 	},
 	data() {
 		return {
-			metaData: [],
+			metadata: [],
 			loading: false,
 		}
 	},
 	watch: {
-		metaDataId: {
-			handler(metaDataId) {
-				this.fetchData(metaDataId)
+		metaDataItem: {
+			handler(metaDataItem) {
+				this.metadata = metaDataItem
+				this.fetchData(metaDataItem?._id)
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.fetchData()
+		this.metadata = store.metaDataItem
+		this.fetchData(store.metaDataItem?._id)
 	},
 	methods: {
-		fetchData() {
+		fetchData(metadataId) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/metadata/' + store.metaDataId,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataId}`,
 				{
 					method: 'GET',
 				},
