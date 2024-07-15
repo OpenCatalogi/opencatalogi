@@ -4,7 +4,7 @@ import { reactive } from 'vue'
 
 export const store = reactive({
 	// The curently active menu item, defaults to '' wich triggers the dashboard
-	selected: 'metaData',
+	selected: 'dashboard',
 	// The currently active modal, managed trought the state to ensure that only one modal can be active at the same time
 	modal: false,
 	// The curetnly active dialog
