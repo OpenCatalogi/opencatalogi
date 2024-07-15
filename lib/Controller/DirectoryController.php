@@ -2,6 +2,7 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
+use OCA\OpenCatalogi\Service\DirectoryService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -96,7 +97,7 @@ class DirectoryController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function show(string $id, ObjectService $objectService): JSONResponse
+	public function show(string $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
 	{
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -114,7 +115,7 @@ class DirectoryController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function create(ObjectService $objectService): JSONResponse
+	public function create(ObjectService $objectService, DirectoryService $directoryService): JSONResponse
 	{
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -134,6 +135,8 @@ class DirectoryController extends Controller
 			data: $data,
 			config: $dbConfig
 		);
+
+		$directoryService->registerToExternalDirectory(newDirectory: $data);
 
 		// get post from requests
 		return new JSONResponse($returnData);

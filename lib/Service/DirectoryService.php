@@ -1,34 +1,87 @@
 <?php
 
-namespace OCA\opencatalog\lib\Service;
+namespace OCA\OpenCatalogi\Service;
 
 use DateTime;
+use GuzzleHttp\Client;
+use OCP\IAppConfig;
+use OCP\IURLGenerator;
 
 class DirectoryService
 {
-	private function getDirectoryEntry(string $search): array
+	private Client $client;
+
+	public function __construct(
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IAppConfig $config,
+		private readonly ObjectService $objectService,
+	)
+	{
+		$this->client = new Client([]);
+	}
+
+	private function getDirectoryEntry(): array
 	{
 		$now = new DateTime();
 		return [
 			'title' => '',
 			'summary' => '',
 			'description' => '',
-			'search'	=> $search,
+			'search'	=> $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute(routeName:"opencatalogi.search.index")),
+			'directory'	=> $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute(routeName:"opencatalogi.directory.index")),
 			'metadata'	=> '',
 			'status'	=> '',
-			'lastSync'	=> $now->format('c'),
+			'lastSync'	=> $now->format(format: 'c'),
 			'default'	=> true,
-		]
+		];
 	}
 
-	public function registerToExternalDirectory (string $search): int
+	public function registerToExternalDirectory (array $newDirectory): int
 	{
+		$directory = $this->getDirectoryEntry();
+
+		$result = $this->client->post(uri: $newDirectory['directory'], options: ['json' => $directory, 'http_errors' => false]);
+		$externalDirectories = $this->fetchFromExternalDirectory($newDirectory);
+
+		return $result->getStatusCode();
 
 	}
 
-	public function fetchFromExternalDirectory(): array
+	private function createDirectoryFromResult(array $result): ?array
 	{
+		$myDirectory = $this->getDirectoryEntry();
 
+		if(isset($result['directory']) === false || $result['directory'] === $myDirectory['directory']) {
+			return null;
+		}
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbCluster');
+
+		$result['_schema'] = 'directory';
+
+		$returnData = $this->objectService->saveObject(
+			data: $result,
+			config: $dbConfig
+		);
+
+		$this->registerToExternalDirectory(newDirectory: $result);
+
+		return $returnData;
+	}
+
+	public function fetchFromExternalDirectory(array $directory): array
+	{
+		$result = $this->client->get($directory['directory']);
+
+		$results = json_decode($result->getBody()->getContents());
+
+		foreach($results['results'] as $record) {
+			$this->createDirectoryFromResult($record);
+		}
+
+		return $results['results'];
 	}
 
 	public function updateToExternalDirectory(): array
