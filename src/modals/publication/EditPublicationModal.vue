@@ -104,6 +104,10 @@ import { store } from '../../store.js'
 				:disabled="!publication.title"
 				type="primary"
 				@click="updatePublication()">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
 				Opslaan
 			</NcButton>
 		</div>
@@ -121,6 +125,7 @@ import {
 	NcCheckboxRadioSwitch,
 	NcNoteCard,
 } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditPublicationModal',
@@ -133,6 +138,8 @@ export default {
 		NcSelect,
 		NcLoadingIcon,
 		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {

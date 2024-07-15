@@ -28,6 +28,10 @@ import { store } from '../../store.js'
 				name="Publicatie details aan het laden" />
 
 			<NcButton :disabled="!publication.title" type="primary" @click="updatePublication(publication.id)">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
 				Submit
 			</NcButton>
 		</div>
@@ -45,6 +49,7 @@ import {
 	NcTextField,
 	NcLoadingIcon,
 } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditPublicationDataModal',
@@ -53,6 +58,8 @@ export default {
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {

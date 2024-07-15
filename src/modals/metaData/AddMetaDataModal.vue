@@ -21,6 +21,10 @@ import { store } from '../../store.js'
 				<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
 			</div>
 			<NcButton :disabled="!metaData.title" type="primary" @click="addMetaData">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
 				Submit
 			</NcButton>
 		</div>
@@ -29,6 +33,7 @@ import { store } from '../../store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'AddMetaDataModal',
@@ -39,6 +44,8 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {

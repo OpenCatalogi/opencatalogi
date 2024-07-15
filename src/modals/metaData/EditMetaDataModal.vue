@@ -27,7 +27,7 @@ import { store } from '../../store.js'
 			<NcButton :disabled="!metaData.title || loading" type="primary" @click="editMetaData">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<Pencil v-if="!loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
 				Opslaan
 			</NcButton>
@@ -37,7 +37,7 @@ import { store } from '../../store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditMetaDataModal',
@@ -49,7 +49,7 @@ export default {
 		NcLoadingIcon,
 		NcNoteCard,
 		// Icons
-		Pencil,
+		ContentSaveOutline,
 	},
 	data() {
 		return {

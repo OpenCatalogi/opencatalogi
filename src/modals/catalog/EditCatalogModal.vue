@@ -30,7 +30,7 @@ import { store } from '../../store.js'
 				@click="editCatalog()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<Pencil v-if="!loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
 				Opslaan
 			</NcButton>
@@ -40,7 +40,7 @@ import { store } from '../../store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditCatalogModal',
@@ -51,7 +51,7 @@ export default {
 		NcNoteCard,
 		NcLoadingIcon,
 		// Icons
-		Pencil,
+		ContentSaveOutline,
 	},
 	data() {
 		return {
