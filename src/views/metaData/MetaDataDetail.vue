@@ -40,18 +40,46 @@ import { store } from '../../store.js'
 				<h4>Versie:</h4>
 				<span>{{ metadata.version }}</span>
 			</div>
-			<div>
-				<h4>Properties:</h4>
-				<p>{{ metadata.properties }}</p>
-			</div>
+		</div>
+		<div class="tabContainer">
+			<BTabs content-class="mt-3" justified>
+				<BTab title="Eigenschappen" active>
+					<NcListItem v-for="(value, key, i) in JSON.parse(metadata?.properties)"
+						:key="`${key}${i}`"
+						:name="key"
+						:bold="false"
+						:force-display-actions="true">
+						<template #icon>
+							<ListBoxOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
+								disable-menu
+								:size="44"
+								user="janedoe"
+								display-name="Jane Doe" />
+						</template>
+						<template #subname>
+							{{ value }}
+						</template>
+						<template #actions>
+							<NcActionButton @click="editMetadataDataItem(key)">
+								<template #icon>
+									<Pencil :size="20" />
+								</template>
+								Bewerken
+							</NcActionButton>
+						</template>
+					</NcListItem>
+				</BTab>
+			</BTabs>
 		</div>
 	</div>
 </template>
 
 <script>
-import { NcLoadingIcon, NcActions, NcActionButton } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
+import { BTabs, BTab } from 'bootstrap-vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
@@ -108,6 +136,10 @@ export default {
 					// this.oldZaakId = id
 					this.loading = false
 				})
+		},
+		editMetadataDataItem(key) {
+			store.setMetadataDataKey(key)
+			store.setModal('editMetadataDataModal')
 		},
 	},
 }
