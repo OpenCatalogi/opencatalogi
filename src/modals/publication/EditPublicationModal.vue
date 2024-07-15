@@ -99,7 +99,11 @@ import { store } from '../../store.js'
 			<div class="form-group">
 				<NcTextArea :disabled="loading" label="Bijlagen" :value.sync="publication.attachments" />
 			</div>
-			<NcButton v-if="!succes" :disabled="!publication.title" type="primary" @click="updatePublication()">
+			<NcButton
+				v-if="!succes"
+				:disabled="!publication.title"
+				type="primary"
+				@click="updatePublication()">
 				Opslaan
 			</NcButton>
 		</div>

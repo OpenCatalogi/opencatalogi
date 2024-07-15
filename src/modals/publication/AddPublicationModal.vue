@@ -66,7 +66,11 @@ import { store } from '../../store.js'
 						required />
 				</div>
 			</div>
-			<NcButton v-if="!succes" :disabled="(!title && !catalogi?.value?.id && !metaData?.value?.id) || loading" type="primary" @click="addPublication()">
+			<NcButton
+				v-if="!succes"
+				:disabled="(!title && !catalogi?.value?.id && !metaData?.value?.id) || loading"
+				type="primary"
+				@click="addPublication()">
 				Opslaan
 			</NcButton>
 		</div>

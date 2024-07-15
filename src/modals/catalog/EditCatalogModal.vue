@@ -23,7 +23,11 @@ import { store } from '../../store.js'
 					maxlength="255"
 					:value.sync="catalogi.summary" />
 			</div>
-			<NcButton v-if="!succes" :disabled="loading" type="primary" @click="editCatalog()">
+			<NcButton
+				v-if="!succes"
+				:disabled="loading"
+				type="primary"
+				@click="editCatalog()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<Pencil v-if="!loading" :size="20" />
