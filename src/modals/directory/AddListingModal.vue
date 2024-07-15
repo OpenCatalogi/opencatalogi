@@ -12,11 +12,14 @@ import { store } from '../../store.js'
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
 			</NcNoteCard>
-			<div class="form-group">
+			<div v-if="!succes" class="form-group">
 				<NcTextField label="Url" :value.sync="directory.url" />
 			</div>
-
-			<NcButton :disabled="!directory.url" type="primary" @click="addDirectory">
+			<NcButton
+				v-if="!succes"
+				:disabled="!directory.url"
+				type="primary"
+				@click="addDirectory">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
@@ -85,7 +88,7 @@ export default {
 					// Lets refresh the catalogiList
 					store.refreshListingList()
 					response.json().then((data) => {
-						this.setListingItem(data)
+						store.setListingItem(data)
 					})
 					store.setSelected('directory')
 					// Wait and then close the modal

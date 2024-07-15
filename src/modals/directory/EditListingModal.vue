@@ -12,16 +12,12 @@ import { store } from '../../store.js'
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
 			</NcNoteCard>
-			<div class="form-group">
+			<div v-if="!succes" class="form-group">
 				<NcTextField label="Url" :value.sync="store.listingItem.url" />
-			</div>
-			<div class="form-group">
 				<NcTextField label="Status" :value.sync="store.listingItem.status" />
-			</div>
-			<div class="form-group">
 				<NcTextField label="Last synchronized" :value.sync="store.listingItem.lastSync" />
 			</div>
-			<NcButton type="primary" @click="editDirectory">
+			<NcButton v-if="!succes" type="primary" @click="editDirectory()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />

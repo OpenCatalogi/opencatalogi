@@ -80,6 +80,8 @@ export const store = reactive({
 			name: '',
 			url: '',
 			summery: '',
+			status: '',
+			lastSync: '',
 		}
 		this.listingItem = { ...listingDefault, ...listingItem }
 		console.log('Active directory item set to ' + listingItem.id)
