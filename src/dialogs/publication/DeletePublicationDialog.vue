@@ -80,7 +80,7 @@ export default {
 					// Lets refresh the catalogiList
 					store.refreshPublicationList()
 					// Wait for the user to read the feedback then close the model
-					var self = this
+					const self = this
 					setTimeout(function() {
 						self.succes = false
 						store.setPublicationItem(false)
