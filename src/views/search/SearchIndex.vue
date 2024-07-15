@@ -9,19 +9,19 @@ import { store } from '../../store.js'
 		</div>
 		<ul>
 			<NcListItem
-				:name="'Name'"
+				v-for="(result, i) in store.searchResults.results"
+				:key="`${result}${i}`"
+				:name="result.title"
+				:subname="result.summary"
+				:details="result.metaData.title"
 				:bold="false"
 				:force-display-actions="true"
-				:details="'metadata'"
-				:counter-number="44">
+				:counter-number="result.attachment_count">
 				<template #icon>
 					<ListBoxOutline :size="44" />
 				</template>
-				<template #subname>
-					Summery
-				</template>
 				<template #actions>
-					<NcActionButton>
+					<NcActionButton @click="goToLink(result.portal)">
 						<template #icon>
 							<LinkIcon :size="20" />
 						</template>
@@ -49,6 +49,27 @@ export default {
 		// Icons
 		ListBoxOutline,
 		LinkIcon,
+	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
+	},
+	watch: {
+		search: {
+			handler(search) {
+				store.getSearchResults()
+			},
+		},
+	},
+	mounted() {
+		store.getSearchResults()
+	},
+	methods: {
+		goToLink(link) {
+			//
+		},
 	},
 }
 </script>

@@ -45,6 +45,7 @@ export default {
 	},
 }
 </script>
+
 <style>
 .dashboardContainer {
     margin-inline-start: 65px;

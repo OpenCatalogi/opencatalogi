@@ -48,6 +48,22 @@ export const store = reactive({
 		this.searchResults = searchResults
 		console.log('Active search set to ' + searchResults)
 	},
+	getSearchResults() {
+		fetch(
+			'https://nextcloud.test.commonground.nu/index.php/apps/opencatalog/api/search?_search=' + this.search,
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					this.searchResults = data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+			})
+	},
 	clearSearch() {
 		this.search = ''
 	},
