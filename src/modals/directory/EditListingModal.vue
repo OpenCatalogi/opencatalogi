@@ -49,16 +49,10 @@ export default {
 	},
 	data() {
 		return {
-			listing: {
-				status: '',
-			},
 			loading: false,
 			succes: false,
 			error: false,
 		}
-	},
-	mounted() {
-		this.listing = store.listingItem
 	},
 	methods: {
 		closeModal() {

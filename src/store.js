@@ -48,7 +48,9 @@ export const store = reactive({
 	},
 	// Catlogi
 	setCatalogiItem(catalogiItem) {
-		this.catalogiItem = catalogiItem
+		// To prevent forms etc from braking we alway use a default/skeleton object
+		const catalogiDefault = { name: '', summery: '' }
+		this.catalogiItem = { ...catalogiDefault, ...catalogiItem }
 		console.log('Active catalog item set to ' + catalogiItem.id)
 	},
 	setCatalogiList(catalogiList) {
@@ -73,7 +75,13 @@ export const store = reactive({
 	},
 	// Directory
 	setListingItem(listingItem) {
-		this.listingItem = listingItem
+		// To prevent forms etc from braking we alway use a default/skeleton object
+		const listingDefault = {
+			name: '',
+			url: '',
+			summery: '',
+		}
+		this.listingItem = { ...listingDefault, ...listingItem }
 		console.log('Active directory item set to ' + listingItem.id)
 	},
 	setListingList(listingList) {
@@ -98,7 +106,12 @@ export const store = reactive({
 	},
 	// MetaDataObjects
 	setMetaDataItem(metaDataItem) {
-		this.metaDataItem = metaDataItem
+		// To prevent forms etc from braking we alway use a default/skeleton object
+		const metaDataDefault = {
+			name: '',
+			summery: '',
+		}
+		this.metaDataItem = { ...metaDataDefault, ...metaDataItem }
 		console.log('Active metadata object set to ' + metaDataItem.id)
 	},
 	setMetaDataList(metaDataList) {
@@ -123,7 +136,23 @@ export const store = reactive({
 	},
 	// Publications
 	setPublicationItem(publicationItem) {
-		this.publicationItem = publicationItem
+		// To prevent forms etc from braking we alway use a default/skeleton object
+		const publicationDefault = {
+			title: '',
+			description: '',
+			catalogi: {},
+			metaData: {},
+			license: '',
+			modified: '',
+			published: '',
+			status: '',
+			featured: '',
+			publication: '',
+			portal: '',
+			category: '',
+			image: '',
+		 }
+		this.publicationItem = { ...publicationDefault, ...publicationItem }
 		console.log('Active publication item set to ' + publicationItem.id)
 	},
 	setPublicationList(publicationList) {
