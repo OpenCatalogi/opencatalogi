@@ -4,28 +4,28 @@ import { store } from '../../store.js'
 
 <template>
 	<NcAppSidebar
-		name="Zoek opdracht"
-		subtitle="baldie"
-		subname="Via deze pagina kunt u zoeken binnen het bij u bekende federatieve netwerk">
+		name="Snelle start"
+		subname="Schakel snel naar waar u nodig bent">
 		<NcAppSidebarTab name="Zoeken" id="search-tab" :order="1">
 			<template #icon>
 				<Magnify :size="20" />
 			</template>
+			Zoek snel in het voor uw beschickbare federatieve netwerk
 			<NcTextField class="searchField"
 				:value.sync="store.search"
 				label="Search" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab name="Catalogi" id="settings-tab" :order="2">
+		<NcAppSidebarTab name="Publicaties" id="settings-tab" :order="2">
 			<template #icon>
-				<DatabaseOutline :size="20" />
+				<ListBoxOutline :size="20" />
 			</template>
-			Catalogi tab content
+			Welke publicaties vereisen uw aandacht?
 		</NcAppSidebarTab>
-		<NcAppSidebarTab name="Metdata" id="share-tab" :order="3">
+		<NcAppSidebarTab name="Bijlagen" id="share-tab" :order="3">
 			<template #icon>
-				<FileTreeOutline :size="20" />
+				<FileOutline :size="20" />
 			</template>
-			Metdata tab content
+			Welke publicaties vereisen uw aandacht?
 		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
@@ -33,19 +33,19 @@ import { store } from '../../store.js'
 
 import { NcAppSidebar, NcAppSidebarTab, NcTextField } from '@nextcloud/vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
-import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
+import FileOutline from 'vue-material-design-icons/FileOutline.vue'
 
 export default {
-	name: 'SearchSideBar',
+	name: 'DashboardSideBar',
 	components: {
 		NcAppSidebar,
 		NcAppSidebarTab,
 		NcTextField,
 		// Icons
 		Magnify,
-		DatabaseOutline,
-		FileTreeOutline,
+		ListBoxOutline,
+		FileOutline,
 	},
 	data() {
 		return {

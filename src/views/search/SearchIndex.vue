@@ -9,35 +9,23 @@ import { store } from '../../store.js'
 		</div>
 		<ul>
 			<NcListItem
-				:name="'Name of the element with normal counter'"
+				:name="'Name'"
 				:bold="false"
 				:force-display-actions="true"
-				:details="'1h'"
+				:details="'metadata'"
 				:counter-number="44">
 				<template #icon>
-					<LinkIcon disable-menu :size="44" />
+					<ListBoxOutline :size="44" />
 				</template>
 				<template #subname>
-					In this slot you can put both text and other components such as icons
+					Summery
 				</template>
 				<template #actions>
 					<NcActionButton>
 						<template #icon>
-							<LinkIcon disable-menu :size="20" />
+							<LinkIcon :size="20" />
 						</template>
-						Button one
-					</NcActionButton>
-					<NcActionButton>
-						<template #icon>
-							<LinkIcon disable-menu :size="20" />
-						</template>
-						Button two
-					</NcActionButton>
-					<NcActionButton>
-						<template #icon>
-							<LinkIcon disable-menu :size="20" />
-						</template>
-						Button three
+						Open portal page
 					</NcActionButton>
 				</template>
 			</NcListItem>
@@ -47,9 +35,9 @@ import { store } from '../../store.js'
 
 <script>
 
-import { NcAppContent, NcListItem, NcActions, NcActionButton } from '@nextcloud/vue'
+import { NcAppContent, NcListItem, NcActionButton } from '@nextcloud/vue'
 
-import CheckboxBlankCircle from 'vue-material-design-icons/CheckboxBlankCircle.vue'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import LinkIcon from 'vue-material-design-icons/Link.vue'
 
 export default {
@@ -59,14 +47,14 @@ export default {
 		NcListItem,
 		NcActionButton,
 		// Icons
-		CheckboxBlankCircle,
+		ListBoxOutline,
 		LinkIcon,
 	},
 }
 </script>
 <style>
 .dashboardContainer {
-    margin-inline-start: 75px;
+    margin-inline-start: 65px;
     margin-block-start: 20px
 }
 </style>

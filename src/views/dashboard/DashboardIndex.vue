@@ -5,9 +5,9 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<div class="dashboardContainer">
-			<h1>Titel Dashboard</h1>
-			<p>Selected menu item {{ store.selected }}</p>
+			<h2>Dashboard</h2>
 		</div>
+		<p>Hier dus wat statestieken</p>
 	</NcAppContent>
 </template>
 
@@ -24,7 +24,7 @@ export default {
 </script>
 <style>
 .dashboardContainer {
-    margin-inline-start: 75px;
+    margin-inline-start: 65px;
     margin-block-start: 20px
 }
 </style>
