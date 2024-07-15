@@ -1,4 +1,4 @@
-# Open Catalog
+# Open Catalogi
 
 ## Documentatie
 
@@ -16,3 +16,7 @@
 Om de frontend te veranderen verander je de content in de .vue bestanden.
 Elke keer als je iets hebt gewijzigd in en .vue bestand dan moet je `npm run dev` draaien. Een makkelijkere manier om dit bij te houden is `npm run watch` dit commando kijkt naar veranderingen in de .vue bestanden en zet dit meteen door.
 Je moet wel elke keer als je iets veranderd verversen
+
+# Grafieken
+Voor grafieken gebruiken we APEXCHARTS
+https://apexcharts.com/vue-chart-demos/area-charts/spline/
