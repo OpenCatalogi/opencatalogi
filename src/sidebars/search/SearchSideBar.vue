@@ -1,15 +1,15 @@
 <template>
 	<NcAppSidebar
 		:starred="starred"
-		name="cat-picture.jpg"
-		subname="last edited 3 weeks ago">
-		<NcAppSidebarTab name="Search" id="search-tab">
+		name="Zoek opdracht"
+		subname="Via deze pagina kunt u zoeken binnen het bij u bekende federatieve netwerk">
+		<NcAppSidebarTab name="Zoeken" id="search-tab">
 			<template #icon>
 				<Magnify :size="20" />
 			</template>
 			Search tab content
 		</NcAppSidebarTab>
-		<NcAppSidebarTab name="Settings" id="settings-tab">
+		<NcAppSidebarTab name="Catalogi" id="settings-tab">
 			<template #icon>
 				<Cog :size="20" />
 			</template>
