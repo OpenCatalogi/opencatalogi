@@ -51,7 +51,7 @@ export const store = reactive({
 	},
 	getSearchResults() {
 		fetch(
-			'https://nextcloud.test.commonground.nu/index.php/apps/opencatalog/api/search?_search=' + this.search,
+			'/index.php/apps/opencatalogi/api/search?_search=' + this.search,
 			{
 				method: 'GET',
 			},
