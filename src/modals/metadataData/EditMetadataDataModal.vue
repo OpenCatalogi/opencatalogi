@@ -9,64 +9,68 @@ import { store } from '../../store.js'
 		<div class="modal__content">
 			<h2>Edit Metadata property {{ store.metadataDataKey }}</h2>
 
-			<div v-if="success === -1">
-				<div v-if="!loading" class="form-group">
-					<NcSelect v-bind="typeOptions"
-						v-model="metadata.properties[store.metadataDataKey].type"
-						required
-						:loading="metadataLoading" />
+			<div v-if="success === -1" class="form-group">
+				<NcSelect v-bind="typeOptions"
+					v-model="metadata.properties[store.metadataDataKey].type"
+					required
+					:loading="loading" />
 
-					<NcTextField :disabled="loading"
-						label="description"
-						:value.sync="metadata.properties[store.metadataDataKey].description"
-						:loading="metadataLoading" />
+				<NcTextField :disabled="loading"
+					label="description"
+					:value.sync="metadata.properties[store.metadataDataKey].description"
+					:loading="loading" />
 
-					<NcTextField :disabled="loading"
-						label="format"
-						:value.sync="metadata.properties[store.metadataDataKey].format"
-						:loading="metadataLoading" />
+				<NcTextField :disabled="loading"
+					label="format"
+					:value.sync="metadata.properties[store.metadataDataKey].format"
+					:loading="loading" />
 
-					<NcTextField :disabled="loading"
-						label="max date"
-						:value.sync="metadata.properties[store.metadataDataKey].maxDate"
-						:loading="metadataLoading" />
+				<NcTextField :disabled="loading"
+					label="max date"
+					:value.sync="metadata.properties[store.metadataDataKey].maxDate"
+					:loading="loading" />
 
-					<NcTextField :disabled="loading"
-						label="reference"
-						:value.sync="metadata.properties[store.metadataDataKey].$ref"
-						:loading="metadataLoading" />
+				<NcTextField :disabled="loading"
+					label="reference"
+					:value.sync="metadata.properties[store.metadataDataKey].$ref"
+					:loading="loading" />
 
-					<NcCheckboxRadioSwitch
-						:checked.sync="metadata.properties[store.metadataDataKey].required">
-						Required
-					</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch
+					:disabled="loading"
+					:checked.sync="metadata.properties[store.metadataDataKey].required">
+					Required
+				</NcCheckboxRadioSwitch>
 
-					<NcCheckboxRadioSwitch
-						:checked.sync="metadata.properties[store.metadataDataKey].default">
-						Default
-					</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch
+					:disabled="loading"
+					:checked.sync="metadata.properties[store.metadataDataKey].default">
+					Default
+				</NcCheckboxRadioSwitch>
 
-					<NcCheckboxRadioSwitch
-						:checked.sync="metadata.properties[store.metadataDataKey].cascadeDelete">
-						Cascade delete
-					</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch
+					:disabled="loading"
+					:checked.sync="metadata.properties[store.metadataDataKey].cascadeDelete">
+					Cascade delete
+				</NcCheckboxRadioSwitch>
 
-					<NcTextField :disabled="loading"
-						type="number"
-						label="Exclusive minimum"
-						:value.sync="metadata.properties[store.metadataDataKey].exclusiveMinimum"
-						:loading="metadataLoading" />
-				</div>
+				<NcTextField :disabled="loading"
+					type="number"
+					label="Exclusive minimum"
+					:value.sync="metadata.properties[store.metadataDataKey].exclusiveMinimum"
+					:loading="loading" />
 			</div>
 
-			<NcLoadingIcon
-				v-if="loading"
-				:size="100" />
-
-			<NcButton v-if="success === -1 && !loading"
-				:disabled="metadataLoading"
+			<NcButton v-if="success === -1"
+				:loading="loading"
+				:disabled="loading"
 				type="primary"
 				@click="updateMetadata(metadata.id)">
+				<template #icon>
+					<span>
+						<NcLoadingIcon v-if="loading" :size="20" />
+						<Pencil v-if="!loading" :size="20" />
+					</span>
+				</template>
 				Submit
 			</NcButton>
 
@@ -95,9 +99,12 @@ import {
 	NcTextField,
 	NcSelect,
 	NcCheckboxRadioSwitch,
-	NcLoadingIcon,
 	NcNoteCard,
+	NcLoadingIcon,
 } from '@nextcloud/vue'
+
+// icons
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 export default {
 	name: 'EditMetadataDataModal',
@@ -107,8 +114,8 @@ export default {
 		NcSelect,
 		NcCheckboxRadioSwitch,
 		NcButton,
-		NcLoadingIcon,
 		NcNoteCard,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
@@ -135,7 +142,6 @@ export default {
 			loading: false,
 			success: -1,
 			hasUpdated: false,
-			metadataLoading: false,
 		}
 	},
 	updated() {
@@ -156,7 +162,7 @@ export default {
 	},
 	methods: {
 		fetchData(id) {
-			this.metadataLoading = true
+			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/metadata/${id}`,
 				{
@@ -173,11 +179,11 @@ export default {
 						}
 						this.metadata.properties[store.metadataDataKey] = store.getMetadataPropertyKeys(store.metadataDataKey)
 					})
-					this.metadataLoading = false
+					this.loading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					this.metadataLoading = false
+					this.loading = false
 				})
 		},
 		closeModal() {
