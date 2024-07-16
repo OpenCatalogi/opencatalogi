@@ -40,6 +40,7 @@ class PublicationsController extends Controller
 
 	private function insertNestedObjects(array $object, ObjectService $objectService, array $config): array
 	{
+		//@TODO keep in mind that unpublished objects should not be inserted, and that objects should be updated if a subobject is updated.
 		foreach($object as $key => $value) {
 			try {
 				if(
@@ -49,6 +50,13 @@ class PublicationsController extends Controller
 					&& $subObject = $objectService->findObject(filters: ['_id' => $value], config: $config)
 				) {
 					$object[$key] = $subObject;
+				}
+
+				if(
+					is_array(value: $value) === true
+					&& array_is_list(array: $value) === true
+				) {
+					$object[$key] = $this->insertNestedObjects(object: $value, objectService: $objectService, config: $config);
 				}
 			} catch (GuzzleException $exception) {
 				continue;
