@@ -31,25 +31,26 @@ import { store } from '../../store.js'
 						:value.sync="metadata.properties[store.metadataDataKey].maxDate"
 						:loading="metadataLoading" />
 
-					<NcTextField :disabled="loading"
-						label="reference"
+					<NcTextField
+						:disabled="loading"
+						label="reference 1"
 						:value.sync="metadata.properties[store.metadataDataKey].$ref"
 						:loading="metadataLoading" />
-                    
-                    <NcCheckboxRadioSwitch
-                        :checked.sync="metadata.properties[store.metadataDataKey].required">
-                        Required
-                    </NcCheckboxRadioSwitch>
-                    
-                    <NcCheckboxRadioSwitch
-                        :checked.sync="metadata.properties[store.metadataDataKey].default">
-                        Default
-                    </NcCheckboxRadioSwitch>
-                    
-                    <NcCheckboxRadioSwitch
-                        :checked.sync="metadata.properties[store.metadataDataKey].cascadeDelete">
-                        Cascade delete
-                    </NcCheckboxRadioSwitch>
+
+					<NcCheckboxRadioSwitch
+						:checked.sync="metadata.properties[store.metadataDataKey].required">
+						Required
+					</NcCheckboxRadioSwitch>
+
+					<NcCheckboxRadioSwitch
+						:checked.sync="metadata.properties[store.metadataDataKey].default">
+						Default
+					</NcCheckboxRadioSwitch>
+
+					<NcCheckboxRadioSwitch
+						:checked.sync="metadata.properties[store.metadataDataKey].cascadeDelete">
+						Cascade delete
+					</NcCheckboxRadioSwitch>
 				</div>
 
 				<div v-if="succesMessage" class="success">
@@ -79,7 +80,7 @@ import {
 	NcModal,
 	NcTextField,
 	NcSelect,
-    NcCheckboxRadioSwitch,
+	NcCheckboxRadioSwitch,
 	NcLoadingIcon,
 } from '@nextcloud/vue'
 
@@ -89,7 +90,7 @@ export default {
 		NcModal,
 		NcTextField,
 		NcSelect,
-        NcCheckboxRadioSwitch,
+		NcCheckboxRadioSwitch,
 		NcButton,
 		NcLoadingIcon,
 	},
@@ -104,6 +105,7 @@ export default {
 				_id: '',
 				id: '',
 			},
+			dataKey: '',
 			typeOptions: {
 				inputLabel: 'Type',
 				multiple: false,
@@ -121,8 +123,8 @@ export default {
 		}
 	},
 	updated() {
-        if (store.modal === 'editMetadataDataModal' && this.hasUpdated) {
-			if (this.metadata._id === store.metaDataItem._id || this.metadata.id === store.metaDataItem.id) return
+		if (store.modal === 'editMetadataDataModal' && this.hasUpdated) {
+			if (this.dataKey === store.metadataDataKey) return
 			this.hasUpdated = false
 		}
 		if (store.modal === 'editMetadataDataModal' && !this.hasUpdated) {
@@ -130,10 +132,10 @@ export default {
 				...store.metaDataItem,
 				properties: JSON.parse(store.metaDataItem.properties),
 			}
+			this.dataKey = store.metadataDataKey
 			this.fetchData(store.metaDataItem.id)
-			this.hasUpdated = true
-
 			this.prepareDataKeys()
+			this.hasUpdated = true
 		}
 	},
 	methods: {
