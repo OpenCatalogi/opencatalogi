@@ -93,6 +93,14 @@ import { store } from '../../store.js'
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
+						<NcButton class="float-right"
+							type="primary"
+							@click="store.setModal('addPublicationDataModal')">
+							<template #icon>
+								<Pencil :size="20" />
+							</template>
+							Aanmaken
+						</NcButton>
 						<NcListItem v-for="(value, key, i) in publication?.data?.data"
 							:key="`${key}${i}`"
 							:name="key"
@@ -116,6 +124,12 @@ import { store } from '../../store.js'
 										<Pencil :size="20" />
 									</template>
 									Bewerken
+								</NcActionButton>
+								<NcActionButton @click="deletePublicationDataItem(key)">
+									<template #icon>
+										<Delete :size="20" />
+									</template>
+									Verwijderen
 								</NcActionButton>
 							</template>
 						</NcListItem>
@@ -172,7 +186,7 @@ import { store } from '../../store.js'
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink, NcButton } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
 // Icons
@@ -195,6 +209,7 @@ export default {
 		NcActionButton,
 		NcActions,
 		NcListItem,
+		NcButton,
 		// Icons
 		CheckCircle,
 		ExclamationThick,
@@ -302,12 +317,14 @@ export default {
 			store.setModal('deletePublication')
 		},
 		editPublicationDataItem(key) {
-			store.setPublicationId(this.publicationId)
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
 		},
+		deletePublicationDataItem(key) {
+			store.setPublicationDataKey(key)
+			store.setDialog('deletePublicationDataDialog')
+		},
 		editPublicationAttachmentItem(key) {
-			store.setPublicationId(this.publicationId)
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
 		},
@@ -394,5 +411,9 @@ h4 {
 .buttonLinkContainer{
 	display: flex;
     align-items: center;
+}
+
+.float-right {
+    float: right;
 }
 </style>
