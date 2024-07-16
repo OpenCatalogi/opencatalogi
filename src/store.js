@@ -21,6 +21,7 @@ export const store = reactive({
 	// Metadata
 	metaDataItem: false,
 	metaDataList: [],
+	metaDataPropertyItem: [],
 	// Publications
 	publicationItem: false,
 	publicationList: [],
@@ -156,6 +157,22 @@ export const store = reactive({
 			.catch((err) => {
 				console.error(err)
 			})
+	},
+	getMataDataProperty(key) {
+		// To prevent forms etc from braking we alway use a default/skeleton object
+		const propertyDefault = {
+			title: '',
+			type: '',
+			format: '',
+		}
+
+		// Try catch omheen zeten
+		this.metaDataPropertyItem = this.metaDataItem[key]
+
+		this.metaDataPropertyItem = { ...propertyDefault, ...this.metaDataPropertyItem }
+		console.log('Active publication item set to ' + this.metaDataPropertyItem.id)
+
+		return this.metaDataPropertyItem
 	},
 	// Publications
 	setPublicationItem(publicationItem) {
