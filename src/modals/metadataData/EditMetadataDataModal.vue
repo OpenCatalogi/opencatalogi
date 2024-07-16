@@ -6,11 +6,11 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'editMetadataDataModal'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
-			<h2>Edit Metadata data {{ store.metadataDataKey }}</h2>
+		<div class="modal__content">
+			<h2>Edit Metadata property {{ store.metadataDataKey }}</h2>
 
-			<div v-if="!metadataLoading">
-				<div class="form-group">
+			<div v-if="success === -1">
+				<div v-if="!loading" class="form-group">
 					<NcSelect v-bind="typeOptions"
 						v-model="metadata.properties[store.metadataDataKey].type"
 						required
@@ -57,25 +57,34 @@ import { store } from '../../store.js'
 						:value.sync="metadata.properties[store.metadataDataKey].exclusiveMinimum"
 						:loading="metadataLoading" />
 				</div>
-
-				<div v-if="succesMessage" class="success">
-					Succesfully updated metadata
-				</div>
 			</div>
-			<NcLoadingIcon
-				v-if="metadataLoading"
-				:size="100"
-				appearance="dark"
-				name="Metadata details aan het laden" />
 
-			<NcButton :disabled="metadataLoading" type="primary" @click="updateMetadata(metadata.id)">
+			<NcLoadingIcon
+				v-if="loading"
+				:size="100" />
+
+			<NcButton v-if="success === -1 && !loading"
+				:disabled="metadataLoading"
+				type="primary"
+				@click="updateMetadata(metadata.id)">
 				Submit
 			</NcButton>
-		</div>
 
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
+			<div v-if="success > -1">
+				<NcNoteCard v-if="success" type="success" heading="Success!">
+					<p>Successfully updated metadata property {{ store.metadataDataKey }}</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error" heading="Error!">
+					<p>Something went wrong</p>
+				</NcNoteCard>
+
+				<NcButton
+					type="primary"
+					@click="closeModal">
+					Close
+				</NcButton>
+			</div>
+		</div>
 	</NcModal>
 </template>
 
@@ -87,6 +96,7 @@ import {
 	NcSelect,
 	NcCheckboxRadioSwitch,
 	NcLoadingIcon,
+	NcNoteCard,
 } from '@nextcloud/vue'
 
 export default {
@@ -98,6 +108,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
 	},
 	data() {
 		return {
@@ -122,7 +133,7 @@ export default {
 				],
 			},
 			loading: false,
-			succesMessage: false,
+			success: -1,
 			hasUpdated: false,
 			metadataLoading: false,
 		}
@@ -188,10 +199,13 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.closeModal()
+					this.loading = false
+					this.success = 1
+					setTimeout(() => this.closeModal(), 3000)
 				})
 				.catch((err) => {
 					this.loading = false
+					this.success = 0
 					console.error(err)
 				})
 		},
