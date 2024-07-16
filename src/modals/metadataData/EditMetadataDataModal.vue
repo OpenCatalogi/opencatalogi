@@ -79,7 +79,7 @@ import { store } from '../../store.js'
 					<p>Succesvol metadata eigenschap "{{ store.metadataDataKey }}" bewerkt</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error" heading="Error!">
-					<p>Iets is verkeerd gegaan</p>
+					<p>{{ successMessage }}</p>
 				</NcNoteCard>
 
 				<NcButton
@@ -141,6 +141,7 @@ export default {
 			},
 			loading: false,
 			success: -1,
+			successMessage: '',
 			hasUpdated: false,
 		}
 	},
@@ -207,11 +208,15 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.success = 1
-					setTimeout(() => this.closeModal(), 3000)
+					setTimeout(() => {
+						this.closeModal()
+					    this.success = -1
+					}, 3000)
 				})
 				.catch((err) => {
 					this.loading = false
 					this.success = 0
+					this.successMessage = err
 					console.error(err)
 				})
 		},
