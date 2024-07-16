@@ -44,6 +44,15 @@ import { store } from '../../store.js'
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
+					<NcButton class="float-right"
+						type="primary"
+						@click="store.setModal('addMetadataDataModal')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Aanmaken
+					</NcButton>
+
 					<NcListItem v-for="(value, key, i) in JSON.parse(metadata?.properties)"
 						:key="`${key}${i}`"
 						:name="key"
@@ -52,9 +61,7 @@ import { store } from '../../store.js'
 						<template #icon>
 							<ListBoxOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
 								disable-menu
-								:size="44"
-								user="janedoe"
-								display-name="Jane Doe" />
+								:size="44" />
 						</template>
 						<template #subname>
 							{{ value }}
@@ -66,6 +73,12 @@ import { store } from '../../store.js'
 								</template>
 								Bewerken
 							</NcActionButton>
+							<NcActionButton @click="deleteMetadataDataItem(key)">
+								<template #icon>
+									<Delete :size="20" />
+								</template>
+								Verwijderen
+							</NcActionButton>
 						</template>
 					</NcListItem>
 				</BTab>
@@ -75,7 +88,7 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcButton } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
@@ -89,6 +102,7 @@ export default {
 		NcLoadingIcon,
 		NcActions,
 		NcActionButton,
+		NcButton,
 	},
 	props: {
 		metaDataItem: {
@@ -140,6 +154,10 @@ export default {
 		editMetadataDataItem(key) {
 			store.setMetadataDataKey(key)
 			store.setModal('editMetadataDataModal')
+		},
+		deleteMetadataDataItem(key) {
+			store.setMetadataDataKey(key)
+			store.setDialog('deleteMetaDataProperty')
 		},
 	},
 }
@@ -207,5 +225,9 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.float-right {
+    float: right;
 }
 </style>
