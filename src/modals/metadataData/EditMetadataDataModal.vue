@@ -7,7 +7,7 @@ import { store } from '../../store.js'
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div class="modal__content">
-			<h2>Edit Metadata eigenschap {{ store.metadataDataKey }}</h2>
+			<h2>Edit Metadata eigenschap "{{ store.metadataDataKey }}"</h2>
 
 			<div v-if="success === -1" class="form-group">
 				<NcSelect v-bind="typeOptions"
@@ -68,7 +68,7 @@ import { store } from '../../store.js'
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading" :size="20" />
-						<Pencil v-if="!loading" :size="20" />
+						<Plus v-if="!loading" :size="20" />
 					</span>
 				</template>
 				Toevoegen
@@ -104,7 +104,7 @@ import {
 } from '@nextcloud/vue'
 
 // icons
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'EditMetadataDataModal',
