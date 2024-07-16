@@ -160,7 +160,7 @@ export default {
 		AddMetadata() {
 			const metadata = store.metaDataItem
 			metadata.properties = JSON.parse(metadata.properties)
-			metadata.properties[this.propertyName] = JSON.stringify(this.properties)
+			metadata.properties[this.propertyName] = this.properties
 
 			this.loading = true
 			fetch(
