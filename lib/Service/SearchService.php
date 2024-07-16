@@ -75,6 +75,11 @@ class SearchService
 		return $existingAggregations;
 	}
 
+	public function sortResultArray(array $a, array $b): int
+	{
+		return $a['_score'] <=> $b['_score'];
+	}
+
 	/**
 	 *
 	 */
@@ -115,6 +120,8 @@ class SearchService
 					$results,
 					$responseData['results']
 				);
+
+				usort($results, [$this, 'sortResultArray']);
 
 				$aggregations = $this->mergeAggregations($aggregations, $responseData['facets']);
 			}
