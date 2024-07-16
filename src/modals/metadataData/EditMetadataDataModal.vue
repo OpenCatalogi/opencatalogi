@@ -7,7 +7,7 @@ import { store } from '../../store.js'
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div class="modal__content">
-			<h2>Edit Metadata property {{ store.metadataDataKey }}</h2>
+			<h2>Edit Metadata eigenschap {{ store.metadataDataKey }}</h2>
 
 			<div v-if="success === -1" class="form-group">
 				<NcSelect v-bind="typeOptions"
@@ -71,21 +71,21 @@ import { store } from '../../store.js'
 						<Pencil v-if="!loading" :size="20" />
 					</span>
 				</template>
-				Submit
+				Toevoegen
 			</NcButton>
 
 			<div v-if="success > -1">
 				<NcNoteCard v-if="success" type="success" heading="Success!">
-					<p>Successfully updated metadata property {{ store.metadataDataKey }}</p>
+					<p>Succesvol metadata eigenschap "{{ store.metadataDataKey }}" bewerkt</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error" heading="Error!">
-					<p>Something went wrong</p>
+					<p>Iets is verkeerd gegaan</p>
 				</NcNoteCard>
 
 				<NcButton
 					type="primary"
 					@click="closeModal">
-					Close
+					Sluiten
 				</NcButton>
 			</div>
 		</div>
