@@ -6,7 +6,7 @@ import { store } from '../../store.js'
 	<NcAppContent>
 		<div class="dashboardContainer">
 			<h1>Titel Dashboard</h1>
-			<p>Selected item {{ store.item }}</p>
+			<p>Selected menu item {{ store.selected }}</p>
 		</div>
 	</NcAppContent>
 </template>

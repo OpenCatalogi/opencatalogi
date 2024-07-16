@@ -3,40 +3,44 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'catalogusAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+	<NcModal v-if="store.modal === 'addCatalog'" ref="modalRef" @close="store.setModal(false)">
+		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
-			<div class="form-group">
-				<NcTextField :disabled="catalogLoading"
+			<NcNoteCard v-if="succes" type="success">
+				<p>Catalogus succesvol toegevoegd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+			<div v-if="!succes" class="form-group">
+				<NcTextField :disabled="loading"
 					label="Naam"
 					maxlength="255"
 					:value.sync="name"
 					required />
-				<NcTextField :disabled="catalogLoading"
+				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
 					:value.sync="summary" />
 			</div>
-			<div v-if="succesMessage" class="successMessage">
-				Catalogi met succes aangemaakt
-			</div>
-			<div v-if="errorMessage" class="errorMessage">
-				Oeps er is iets fout gegaan.
-				Error Code: {{ errorCode }}
-			</div>
-
-			<NcButton :disabled="!name" type="primary" @click="addCatalog">
+			<NcButton
+				v-if="!succes"
+				:disabled="!name || loading"
+				type="primary"
+				@click="addCatalog">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
 				Toevoegen
 			</NcButton>
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'AddCatalogModal',
@@ -45,15 +49,17 @@ export default {
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {
 			name: '',
 			summary: '',
-			succesMessage: false,
-			errorMessage: false,
 			loading: false,
-			catalogLoading: false,
+			succes: false,
+			error: false,
 			errorCode: '',
 		}
 	},
@@ -62,7 +68,7 @@ export default {
 			store.modal = false
 		},
 		addCatalog() {
-			this.catalogLoading = true
+			this.loading = true
 			this.errorMessage = false
 			fetch(
 				'/index.php/apps/opencatalogi/api/catalogi',
@@ -78,16 +84,23 @@ export default {
 				},
 			)
 				.then((response) => {
-					this.catalogLoading = false
-					this.succesMessage = true
-					setTimeout(() => (this.succesMessage = false), 2500)
-
+					this.loading = false
+					this.succes = true
+					// Lets refresh the catalogiList
+					store.refreshCatalogiList()
+					response.json().then((data) => {
+						store.setCatalogiItem(data)
+					})
+					// Wait for the user to read the feedback then close the model
+					const self = this
+					setTimeout(function() {
+						self.succes = false
+						store.setModal(false)
+					}, 2000)
 				})
 				.catch((err) => {
-					this.catalogLoading = false
-					this.errorMessage = true
-					this.errorCode = err
-					console.error(err)
+					this.error = err
+					this.loading = false
 				})
 		},
 	},

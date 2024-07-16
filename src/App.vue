@@ -1,8 +1,9 @@
 <template>
-	<NcContent app-name="opencatalog">
+	<NcContent app-name="opencatalogi">
 		<MainMenu />
 		<Views />
 		<Modals />
+		<Dialogs />
 	</NcContent>
 </template>
 
@@ -11,8 +12,8 @@
 import { NcContent } from '@nextcloud/vue'
 import MainMenu from './navigation/MainMenu.vue'
 import Modals from './modals/Modals.vue'
+import Dialogs from './dialogs/Dialogs.vue'
 import Views from './views/Views.vue'
-import { store } from './store.js'
 
 export default {
 	name: 'App',
@@ -20,18 +21,8 @@ export default {
 		NcContent,
 		MainMenu,
 		Modals,
+		Dialogs,
 		Views,
-	},
-	methods: {
-		setModal(modal) {
-			store.modal = modal
-		},
-		setSelected(selected) {
-			store.selected = selected
-		},
-		setItem(item) {
-			store.item = item
-		},
 	},
 }
 </script>

@@ -7,12 +7,11 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					disabled
-					:value.sync="search"
+					:value.sync="store.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="clearText">
+					@trailing-button-click="store.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -32,33 +31,34 @@ import { store } from '../../store.js'
 			</div>
 
 			<div v-if="!loading">
-				<NcListItem v-for="(metaData, i) in metaDataList.results"
+				<NcListItem v-for="(metaData, i) in store.metaDataList.results"
 					:key="`${metaData}${i}`"
-					:name="metaData?.title ?? metaData?.name"
-					:active="store.metaDataId === metaData?.id"
+					:name="metaData?.title"
+					:active="store.metaDataItem?._id === metaData?._id"
 					:details="metaData.version ?? '1h'"
 					:force-display-actions="true"
 					:counter-number="44"
-					@click="storeMetaData(metaData)">
+					@click="store.setMetaDataItem(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataId === metaData._id && 'selectedZaakIcon'"
+						<FileTreeOutline :class="store.metaDataItem?._id === metaData?.id && 'selectedIcon'"
 							disable-menu
-							:size="44"
-							user="janedoe"
-							display-name="Jane Doe" />
+							:size="44" />
 					</template>
 					<template #subname>
 						{{ metaData?.summary }}
 						{{ metaData?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="editMetaData(metaData)">
+						<NcActionButton @click="store.setMetaDataItem(metaData); store.setModal('editMetaData')">
+							<template #icon>
+								<Pencil :size="20" />
+							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton>
-							Depubliceren
-						</NcActionButton>
-						<NcActionButton @click="deleteMetaData(metaData._id)">
+						<NcActionButton @click="store.setMetaDataItem(metaData); store.setDialog('deleteMetaData')">
+							<template #icon>
+								<Delete :size="20" />
+							</template>
 							Verwijderen
 						</NcActionButton>
 					</template>
@@ -81,6 +81,8 @@ import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIco
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
@@ -98,48 +100,35 @@ export default {
 		Magnify,
 		Refresh,
 		Plus,
+		Pencil,
+		Delete,
+	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
-			search: '',
 			loading: true,
-			metaDataList: [],
 		}
+	},
+	watch: {
+		search: {
+			handler(search) {
+				this.fetchData()
+			},
+		},
 	},
 	mounted() {
 		this.fetchData()
 	},
 	methods: {
-		storeMetaData(metaData) {
-			store.setMetaDataId(metaData.id)
-			store.setMetaDataItem(metaData)
-		},
-		editMetaData(metaData) {
-			store.setMetaDataItem(metaData)
-			store.setMetaDataId(metaData.id)
-			store.setModal('editMetaData')
-		},
 		fetchData(newPage) {
 			this.loading = true
-			fetch(
-				'/index.php/apps/opencatalogi/api/metadata',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.metaDataList = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
-		},
-		clearText() {
-			this.search = ''
+			store.refreshMetaDataList()
+			this.loading = false
 		},
 	},
 }
@@ -159,7 +148,7 @@ export default {
     margin-block-end: 6px;
 }
 
-.selectedZaakIcon>svg {
+.selecteIcon>svg {
     fill: white;
 }
 

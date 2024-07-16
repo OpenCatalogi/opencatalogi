@@ -6,7 +6,7 @@ import { store } from '../../store.js'
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ catalogi.name }}
+				{{ listing.title }}
 			</h1>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
@@ -17,13 +17,13 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('editCatalog')">
+				<NcActionButton @click="store.setListingItem(listing); store.setModal('editListing')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton disabled class="catalogiDetails-actionsDelete">
+				<NcActionButton @click="store.setListingItem(listing); store.setDialog('deleteListing')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -31,17 +31,34 @@ import { store } from '../../store.js'
 				</NcActionButton>
 			</NcActions>
 		</div>
-
-		<div v-if="catalogi" id="app-content">
-			<div class="detailGrid">
-				<div>
-					<h4>Beschrijving:</h4>
-					<span>{{ catalogi.summary }}</span>
-				</div>
-				<div>
-					<h4>Schema:</h4>
-					<span>{{ catalogi._schema }}</span>
-				</div>
+		<div>
+			<div>
+				<h4>Sammenvatting:</h4>
+				<p>{{ listing.summary }}</p>
+			</div>
+			<div>
+				<h4>Search:</h4>
+				<span>{{ listing.search }}</span>
+			</div>
+			<div>
+				<h4>MetaData:</h4>
+				<span>{{ listing.metadata }}</span>
+			</div>
+			<div>
+				<h4>Status:</h4>
+				<span>{{ listing.status }}</span>
+			</div>
+			<div>
+				<h4>Last synchronized:</h4>
+				<span>{{ listing.lastSync }}</span>
+			</div>
+			<div>
+				<h4>Default:</h4>
+				<span>{{ listing.default }}</span>
+			</div>
+			<div>
+				<h4>Available:</h4>
+				<span>{{ listing.available }}</span>
 			</div>
 		</div>
 	</div>
@@ -59,49 +76,46 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
-	name: 'CatalogiDetails',
+	name: 'ListingDetails',
 	components: {
-		NcActions,
-		NcActionButton,
 		NcLoadingIcon,
 	},
 	props: {
-		catalogiItem: {
+		listingItem: {
 			type: Object,
 			required: true,
 		},
 	},
 	data() {
 		return {
-			catalogi: false,
+			listing: [],
 			loading: false,
 		}
 	},
 	watch: {
-		catalogiItem: {
-			handler(catalogiItem) {
-				this.catalogi = catalogiItem
-				this.fetchData(catalogiItem._id)
+		listingItem: {
+			handler(listingItem) {
+				this.listing = listingItem
+				this.fetchData(listingItem?.id)
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.catalogi = store.catalogiItem
-		this.fetchData(store.catalogiItem._id)
+		this.fetchData(store.listingItem?.id)
 	},
 	methods: {
-		fetchData(catalogId) {
+		fetchData(listingId) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${catalogId}`,
+				'/index.php/apps/opencatalogi/api/directory/' + listingId,
 				{
 					method: 'GET',
 				},
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.catalogi = data
+						this.listing = data
 					})
 					this.loading = false
 				})
@@ -176,12 +190,5 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
-}
-
-.active.catalogiDetails-actionsDelete {
-    background-color: var(--color-error) !important;
-}
-.active.catalogiDetails-actionsDelete button {
-    color: #EBEBEB !important;
 }
 </style>

@@ -7,12 +7,11 @@ import { store } from '../../store.js'
 		<ul v-if="!loading">
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					disabled
-					:value.sync="search"
+					:value.sync="store.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="clearText">
+					@trailing-button-click="store.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -22,41 +21,42 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('listingAdd')">
+					<NcActionButton @click="store.setModal('addListing')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						Listing toevoegen
+						Listing toevoegen aan directory
 					</NcActionButton>
 				</NcActions>
 			</div>
 
-			<NcListItem v-for="(directory, i) in directoryList.results"
-				:key="`${directory}${i}`"
-				:name="directory?.name"
-				:active="store.directoryItem === directory?.id"
+			<NcListItem v-for="(listing, i) in store.listingList.results"
+				:key="`${listing}${i}`"
+				:name="listing?.title"
+				:active="store.listingItem?.id === listing?.id"
 				:details="'1h'"
-				:counter-number="44"
-				@click="setListItem(directory.id)">
+				:counter-number="45"
+				@click="store.setListingItem(listing)">
 				<template #icon>
-					<LayersOutline :class="store.directoryItem === directory.id && 'selectedZaakIcon'"
+					<LayersOutline :class="store.listingItem?.id === listing?.id && 'selectedIcon'"
 						disable-menu
-						:size="44"
-						user="janedoe"
-						display-name="Jane Doe" />
+						:size="44" />
 				</template>
 				<template #subname>
-					{{ directory?.summary }}
+					{{ listing?.title }}
 				</template>
 				<template #actions>
-					<NcActionButton>
-						Button one
+					<NcActionButton @click="store.setListingItem(listing); store.setModal('editListing')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Bewerken
 					</NcActionButton>
-					<NcActionButton>
-						Button two
-					</NcActionButton>
-					<NcActionButton>
-						Button three
+					<NcActionButton @click="store.setListingItem(listing); store.setDialog('deleteListing')">
+						<template #icon>
+							<Delete :size="20" />
+						</template>
+						Verwijderen
 					</NcActionButton>
 				</template>
 			</NcListItem>
@@ -65,7 +65,7 @@ import { store } from '../../store.js'
 			class="loadingIcon"
 			:size="64"
 			appearance="dark"
-			name="Lisitngs aan het laden" />
+			name="Directories aan het laden" />
 	</NcAppContentList>
 </template>
 <script>
@@ -75,6 +75,8 @@ import Magnify from 'vue-material-design-icons/Magnify'
 // eslint-disable-next-line n/no-missing-import
 import LayersOutline from 'vue-material-design-icons/LayersOutline'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
@@ -90,13 +92,26 @@ export default {
 		NcLoadingIcon,
 		Refresh,
 		Plus,
+		Pencil,
+		Delete,
+	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
-			search: '',
 			loading: false,
-			directoryList: [],
 		}
+	},
+	watch: {
+		search: {
+			handler(search) {
+				this.fetchData()
+			},
+		},
 	},
 	mounted() {
 		this.fetchData()
@@ -104,28 +119,8 @@ export default {
 	methods: {
 		fetchData(newPage) {
 			this.loading = true
-			fetch(
-				'/index.php/apps/opencatalogi/api/directory',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.directoryList = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
-		},
-		setActive(id) {
-			store.setDirectoryItem(id)
-		},
-		clearText() {
-			this.search = ''
+			store.refreshListingList()
+			this.loading = false
 		},
 	},
 }
@@ -145,7 +140,7 @@ export default {
     margin-block-end: 6px;
 }
 
-.selectedZaakIcon>svg {
+.selectedIcon>svg {
     fill: white;
 }
 

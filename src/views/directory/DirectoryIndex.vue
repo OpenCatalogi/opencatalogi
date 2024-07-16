@@ -5,23 +5,23 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<DirectoryList />
+			<DirectoryList :search="store.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.directoryItem || store.selected != 'directory' "
+			<NcEmptyContent v-if="!store.listingItem || store.selected != 'directory' "
 				class="detailContainer"
-				name="Geen listing"
-				description="Nog geen lisiting geselecteerd">
+				name="Geen directory"
+				description="Nog geen directory geselecteerd">
 				<template #icon>
 					<LayersOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="store.setModal('listingAdd')">
-						Listing toevoegen
+					<NcButton type="primary" @click="store.setModal('addListing')">
+						Directory toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<DirectoryDetails v-if="store.directoryItem && store.selected === 'directory'" :directory-id="directoryId" />
+			<ListingDetails v-if="store.listingItem && store.selected === 'directory'" :listing-item="store.listingItem" />
 		</template>
 	</NcAppContent>
 </template>
@@ -29,7 +29,7 @@ import { store } from '../../store.js'
 <script>
 import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
 import DirectoryList from './DirectoryList.vue'
-import DirectoryDetails from './DirectoryDetails.vue'
+import ListingDetails from './ListingDetails.vue'
 // eslint-disable-next-line n/no-missing-import
 import LayersOutline from 'vue-material-design-icons/LayersOutline'
 
@@ -40,13 +40,8 @@ export default {
 		NcEmptyContent,
 		NcButton,
 		DirectoryList,
-		DirectoryDetails,
+		ListingDetails,
 		LayersOutline,
-	},
-	data() {
-		return {
-			directoryId: undefined,
-		}
 	},
 }
 </script>
