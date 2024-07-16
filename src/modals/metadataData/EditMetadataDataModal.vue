@@ -124,8 +124,7 @@ export default {
 	},
 	updated() {
 		if (store.modal === 'editMetadataDataModal' && this.hasUpdated) {
-			if (this.dataKey === store.metadataDataKey) return
-			this.hasUpdated = false
+			if (this.dataKey !== store.metadataDataKey) this.hasUpdated = false
 		}
 		if (store.modal === 'editMetadataDataModal' && !this.hasUpdated) {
 			this.metadata = {
@@ -134,9 +133,9 @@ export default {
 			}
 			this.dataKey = store.metadataDataKey
 			this.fetchData(store.metaDataItem.id)
-			this.prepareDataKeys()
 			this.hasUpdated = true
 		}
+		this.prepareDataKeys()
 	},
 	methods: {
 		fetchData(id) {
