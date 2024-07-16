@@ -5,11 +5,11 @@ import { store } from '../store.js'
 <template>
 	<NcAppNavigation>
 		<NcAppNavigationList>
-			<NcAppNavigationNewItem name="Publicatie Aanmaken" @click="store.setModal('publicationAdd')">
+			<NcAppNavigationNew text="Publicatie Aanmaken" @click="store.setModal('publicationAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
-			</NcAppNavigationNewItem>
+			</NcAppNavigationNew>
 			<NcAppNavigationItem :active="store.selected === 'dashboard'" name="Dashboard" @click="store.setSelected('dashboard')">
 				<template #icon>
 					<Finance :size="20" />
@@ -202,7 +202,7 @@ import {
 	NcAppNavigation,
 	NcAppNavigationList,
 	NcAppNavigationItem,
-	NcAppNavigationNewItem,
+	NcAppNavigationNew,
 	NcAppNavigationSettings,
 	NcAppSettingsDialog,
 	NcAppSettingsSection,
@@ -228,7 +228,7 @@ export default {
 		NcAppNavigation,
 		NcAppNavigationList,
 		NcAppNavigationItem,
-		NcAppNavigationNewItem,
+		NcAppNavigationNew,
 		NcAppNavigationSettings,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
