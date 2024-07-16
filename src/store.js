@@ -21,6 +21,7 @@ export const store = reactive({
 	// Metadata
 	metaDataItem: false,
 	metaDataList: [],
+	metadataDataKey: false,
 	// Publications
 	publicationItem: false,
 	publicationList: [],
@@ -157,6 +158,27 @@ export const store = reactive({
 				console.error(err)
 			})
 	},
+	setMetadataDataKey(metadataDataKey) {
+		this.metadataDataKey = metadataDataKey
+		console.log('Active metadata data key set to ' + metadataDataKey)
+	},
+	getMetadataPropertyKeys(property) {
+		const defaultKeys = {
+			type: '',
+			description: '',
+			required: false,
+			default: false,
+			format: '',
+			$ref: '',
+			cascadeDelete: false,
+			maxDate: '',
+			exclusiveMinimum: 0,
+		}
+
+		const propertyKeys = JSON.parse(this.metaDataItem.properties)[property]
+
+		return { ...defaultKeys, ...propertyKeys }
+	},
 	// Publications
 	setPublicationItem(publicationItem) {
 		// To prevent forms etc from braking we alway use a default/skeleton object
@@ -198,7 +220,7 @@ export const store = reactive({
 				console.error(err)
 			})
 	},
-	// @todo why does the following run through the store?
+	// @todo why does the following run through the store? -- because its impossible with props, and its vital information for the modal.
 	setPublicationDataKey(publicationDataKey) {
 		this.publicationDataKey = publicationDataKey
 		console.log('Active publication data key set to ' + publicationDataKey)
