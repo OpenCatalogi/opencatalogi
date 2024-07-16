@@ -91,7 +91,6 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setMetaDataItem(false)
 						store.setDialog(false)
 					}, 2000)
 				})
