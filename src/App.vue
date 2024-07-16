@@ -1,26 +1,28 @@
 <template>
-	<NcAppContent>
-		<div id="opencatalog">
-			<h1>Hello world!</h1>
-		</div>
-	</NcAppContent>
+	<NcContent app-name="opencatalogi">
+		<MainMenu />
+		<Views />
+		<Modals />
+		<Dialogs />
+	</NcContent>
 </template>
 
 <script>
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
+
+import { NcContent } from '@nextcloud/vue'
+import MainMenu from './navigation/MainMenu.vue'
+import Modals from './modals/Modals.vue'
+import Dialogs from './dialogs/Dialogs.vue'
+import Views from './views/Views.vue'
 
 export default {
 	name: 'App',
 	components: {
-		NcAppContent,
+		NcContent,
+		MainMenu,
+		Modals,
+		Dialogs,
+		Views,
 	},
 }
 </script>
-
-<style scoped lang="scss">
-#opencatalog {
-	display: flex;
-	justify-content: center;
-	margin: 16px;
-}
-</style>

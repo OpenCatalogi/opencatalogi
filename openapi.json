@@ -1,9 +1,9 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "Open Catalog",
+        "title": "Open Catalogi",
         "version": "0.0.1",
-        "description": "DSO Nextcloud",
+        "description": "Open Catalogi Nextcloud",
         "license": {
             "name": "agpl"
         }
