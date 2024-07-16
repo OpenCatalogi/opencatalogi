@@ -6,7 +6,7 @@ import { store } from '../../store.js'
 	<NcAppSidebar
 		name="Snelle start"
 		subname="Schakel snel naar waar u nodig bent">
-		<NcAppSidebarTab name="Zoeken" id="search-tab" :order="1">
+		<NcAppSidebarTab id="search-tab" name="Zoeken" :order="1">
 			<template #icon>
 				<Magnify :size="20" />
 			</template>
@@ -15,7 +15,7 @@ import { store } from '../../store.js'
 				:value.sync="store.search"
 				label="Search" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab name="Publicaties" id="settings-tab" :order="2">
+		<NcAppSidebarTab id="settings-tab" name="Publicaties" :order="2">
 			<template #icon>
 				<ListBoxOutline :size="20" />
 			</template>
@@ -24,7 +24,7 @@ import { store } from '../../store.js'
 				<p>Er zijn op dit moment geen publicaties die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>
-		<NcAppSidebarTab name="Bijlagen" id="share-tab" :order="3">
+		<NcAppSidebarTab id="share-tab" name="Bijlagen" :order="3">
 			<template #icon>
 				<FileOutline :size="20" />
 			</template>
