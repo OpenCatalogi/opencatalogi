@@ -1,4 +1,4 @@
-# Open Catalog
+# Open Catalogi
 
 ## Documentatie
 
@@ -17,6 +17,12 @@ Om de frontend te veranderen verander je de content in de .vue bestanden.
 Elke keer als je iets hebt gewijzigd in en .vue bestand dan moet je `npm run dev` draaien. Een makkelijkere manier om dit bij te houden is `npm run watch` dit commando kijkt naar veranderingen in de .vue bestanden en zet dit meteen door.
 Je moet wel elke keer als je iets veranderd verversen
 
+# Grafieken
+Voor grafieken gebruiken we APEXCHARTS
+https://apexcharts.com/vue-chart-demos/area-charts/spline/
+
+# Vue
+Voor de project gebruiken we vue 2.7
 ## De repository draaien
 ### Quick start
 Deze repository bevat een quick start docker compose file. Deze docker compose file bevat een init-container die ervoor zorgt dat de applicatie in één keer kan worden gestart. Om deze te gebruiken is [docker](https://docker.com) vereist. Als docker is geïnstalleerd kan de applicatie worden gestart door in deze map het commando `docker compose up` te draaien.
