@@ -40,6 +40,7 @@ class PublicationsController extends Controller
 
 	private function insertNestedObjects(array $object, ObjectService $objectService, array $config): array
 	{
+		//@TODO keep in mind that unpublished objects should not be inserted, and that objects should be updated if a subobject is updated.
 		foreach($object as $key => $value) {
 			try {
 				if(
