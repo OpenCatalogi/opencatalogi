@@ -63,8 +63,13 @@ class SearchService
 		return $results;
 	}
 
-	private function mergeAggregations(array $existingAggregations, array $newAggregations): array
+	private function mergeAggregations(?array $existingAggregations, ?array $newAggregations): array
 	{
+		if($newAggregations === null) {
+			return [];
+		}
+
+
 		foreach($newAggregations as $key => $aggregation) {
 			if(isset($existingAggregations[$key]) === false) {
 				$existingAggregations[$key] = $aggregation;
@@ -85,7 +90,6 @@ class SearchService
 	 */
 	public function search(array $parameters, array $elasticConfig, array $dbConfig, array $catalogi = []): array
 	{
-
 		$elasticService = new ElasticSearchService();
 		$localResults = $elasticService->searchObject($parameters, $elasticConfig);
 
