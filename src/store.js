@@ -141,6 +141,23 @@ export const store = reactive({
 		this.metadataDataKey = metadataDataKey
 		console.log('Active metadata data key set to ' + metadataDataKey)
 	},
+	getMetadataPropertyKeys(property) {
+		const defaultKeys = {
+			type: '',
+			description: '',
+			required: false,
+			default: false,
+			format: '',
+			$ref: '',
+			cascadeDelete: false,
+			maxDate: '',
+			exclusiveMinimum: 0,
+		}
+
+		const propertyKeys = JSON.parse(this.metaDataItem.properties)[property]
+
+		return { ...defaultKeys, ...propertyKeys }
+	},
 	// Publications
 	setPublicationItem(publicationItem) {
 		// To prevent forms etc from braking we alway use a default/skeleton object

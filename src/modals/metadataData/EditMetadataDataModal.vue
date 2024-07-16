@@ -31,9 +31,8 @@ import { store } from '../../store.js'
 						:value.sync="metadata.properties[store.metadataDataKey].maxDate"
 						:loading="metadataLoading" />
 
-					<NcTextField
-						:disabled="loading"
-						label="reference 1"
+					<NcTextField :disabled="loading"
+						label="reference"
 						:value.sync="metadata.properties[store.metadataDataKey].$ref"
 						:loading="metadataLoading" />
 
@@ -51,6 +50,12 @@ import { store } from '../../store.js'
 						:checked.sync="metadata.properties[store.metadataDataKey].cascadeDelete">
 						Cascade delete
 					</NcCheckboxRadioSwitch>
+
+					<NcTextField :disabled="loading"
+						type="number"
+						label="Exclusive minimum"
+						:value.sync="metadata.properties[store.metadataDataKey].exclusiveMinimum"
+						:loading="metadataLoading" />
 				</div>
 
 				<div v-if="succesMessage" class="success">
@@ -63,7 +68,7 @@ import { store } from '../../store.js'
 				appearance="dark"
 				name="Metadata details aan het laden" />
 
-			<NcButton :disabled="!metadataLoading" type="primary" @click="updateMetadata(metadata.id)">
+			<NcButton :disabled="metadataLoading" type="primary" @click="updateMetadata(metadata.id)">
 				Submit
 			</NcButton>
 		</div>
@@ -131,11 +136,12 @@ export default {
 				...store.metaDataItem,
 				properties: JSON.parse(store.metaDataItem.properties),
 			}
-			this.dataKey = store.metadataDataKey
+			this.metadata.properties[store.metadataDataKey] = store.getMetadataPropertyKeys(store.metadataDataKey)
 			this.fetchData(store.metaDataItem.id)
+
+			this.dataKey = store.metadataDataKey
 			this.hasUpdated = true
 		}
-		this.prepareDataKeys()
 	},
 	methods: {
 		fetchData(id) {
@@ -148,11 +154,13 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
+						store.metaDataItem = data
+
 						this.metadata = {
-							...this.metadata,
-							...data,
-							properties: JSON.parse(data.properties),
+							...store.metaDataItem,
+							properties: JSON.parse(store.metaDataItem.properties),
 						}
+						this.metadata.properties[store.metadataDataKey] = store.getMetadataPropertyKeys(store.metadataDataKey)
 					})
 					this.metadataLoading = false
 				})
@@ -160,22 +168,6 @@ export default {
 					console.error(err)
 					this.metadataLoading = false
 				})
-		},
-		prepareDataKeys() {
-			const data = this.metadata.properties[store.metadataDataKey]
-
-			if (!data?.type) data.type = ''
-			if (!data?.description) data.description = ''
-			if (!data?.required) data.required = false
-			if (!data?.default) data.default = false
-			if (!data?.format) data.format = ''
-			if (!data?.$ref) data.$ref = ''
-			if (!data?.cascadeDelete) data.cascadeDelete = false
-			if (!data?.maxDate) data.maxDate = ''
-
-			// items object
-			if (!data?.items) data.items = {}
-			if (!data?.items?.$ref) data.items.$ref = ''
 		},
 		closeModal() {
 			store.modal = false
@@ -211,6 +203,10 @@ export default {
 .modal__content {
   margin: var(--OC-margin-50);
   text-align: center;
+}
+
+.form-group .group {
+    margin-block-end: 2rem;
 }
 
 .zaakDetailsContainer {
