@@ -7,7 +7,7 @@ import { store } from '../../store.js'
 		name="Zoek opdracht"
 		subtitle="baldie"
 		subname="Via deze pagina kunt u zoeken binnen het bij u bekende federatieve netwerk">
-		<NcAppSidebarTab name="Zoeken" id="search-tab" :order="1">
+		<NcAppSidebarTab id="search-tab" name="Zoeken" :order="1">
 			<template #icon>
 				<Magnify :size="20" />
 			</template>
@@ -15,13 +15,13 @@ import { store } from '../../store.js'
 				:value.sync="store.search"
 				label="Search" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab name="Catalogi" id="settings-tab" :order="2">
+		<NcAppSidebarTab id="settings-tab" name="Catalogi" :order="2">
 			<template #icon>
 				<DatabaseOutline :size="20" />
 			</template>
 			Catalogi tab content
 		</NcAppSidebarTab>
-		<NcAppSidebarTab name="Metdata" id="share-tab" :order="3">
+		<NcAppSidebarTab id="share-tab" name="Metdata" :order="3">
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
