@@ -52,8 +52,56 @@ import { store } from '../../store.js'
 		<div class="container">
 			<div class="detailGrid">
 				<div>
+					<h4>Referentie:</h4>
+					<span>{{ publication?.data?.reference }}</span>
+				</div>
+				<div>
+					<h4>Samenvatting:</h4>
+					<span>{{ publication?.data?.summary }}</span>
+				</div>
+				<div>
 					<h4>Beschrijving:</h4>
 					<span>{{ publication.description }}</span>
+				</div>
+				<div>
+					<h4>Categorie:</h4>
+					<span>{{ publication.category }}</span>
+				</div>
+				<div>
+					<h4>Portal:</h4>
+					<span><a target="_blank" :href="publication.portal">{{ publication.portal }}</a></span>
+				</div>
+				<div>
+					<h4>Foto:</h4>
+					<span>{{ publication.image }}</span>
+				</div>
+				<div>
+					<h4>Themas:</h4>
+					<ul>
+						<li v-for="(theme, index) in publication?.data?.themes" :key="index">
+							{{ theme }}
+						</li>
+					</ul>
+				</div>
+				<div>
+					<h4>Featured:</h4>
+					<span>{{ publication?.data?.featured }}</span>
+				</div>
+				<div>
+					<h4>Licentie:</h4>
+					<span>{{ publication.license }}</span>
+				</div>
+				<div>
+					<h4>Status:</h4>
+					<span>{{ publication.status }}</span>
+				</div>
+				<div>
+					<h4>Gepubliceerd:</h4>
+					<span>{{ publication.published }}</span>
+				</div>
+				<div>
+					<h4>Gemodificeerd:</h4>
+					<span>{{ publication.modified }}</span>
 				</div>
 				<div>
 					<h4>Catalogi:</h4>
