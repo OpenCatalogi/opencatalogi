@@ -29,6 +29,18 @@ import { store } from '../../store.js'
 					</template>
 					Depubliceren
 				</NcActionButton>
+				<NcActionButton>
+					<template #icon>
+						<FileTreeOutline :size="20" />
+					</template>
+					Eigenschap toevoegen
+				</NcActionButton>
+				<NcActionButton>
+					<template #icon>
+						<FilePlusOutline :size="20" />
+					</template>
+					Bijlage toevoegen
+				</NcActionButton>
 				<NcActionButton @click="store.setDialog('deletePublication')">
 					<template #icon>
 						<Delete :size="20" />
@@ -172,6 +184,8 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -186,6 +200,8 @@ export default {
 		ExclamationThick,
 		ListBoxOutline,
 		OpenInApp,
+		FilePlusOutline,
+		FileTreeOutline,
 	},
 	props: {
 		publicationId: {
