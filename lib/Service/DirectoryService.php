@@ -20,7 +20,7 @@ class DirectoryService
 		$this->client = new Client([]);
 	}
 
-	private function getDirectoryEntry(): array
+	private function getDirectoryEntry(string $catalogId): array
 	{
 		$now = new DateTime();
 		return [
@@ -33,14 +33,23 @@ class DirectoryService
 			'status'	=> '',
 			'lastSync'	=> $now->format(format: 'c'),
 			'default'	=> true,
+			'catalogId' => $catalogId
 		];
 	}
 
 	public function registerToExternalDirectory (array $newDirectory): int
 	{
-		$directory = $this->getDirectoryEntry();
+		$dbConfig['base_uri'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbCluster');
 
-		$result = $this->client->post(uri: $newDirectory['directory'], options: ['json' => $directory, 'http_errors' => false]);
+		$catalogi = $this->objectService->findObjects(filters: ['_schema' => 'catalog'], config: $dbConfig)['documents'];
+
+		foreach($catalogi as $catalog) {
+			$directory = $this->getDirectoryEntry($catalog['id']);
+			$result = $this->client->post(uri: $newDirectory['directory'], options: ['json' => $directory, 'http_errors' => false]);
+		}
+
 		$externalDirectories = $this->fetchFromExternalDirectory($newDirectory);
 
 		return $result->getStatusCode();
@@ -49,7 +58,7 @@ class DirectoryService
 
 	private function createDirectoryFromResult(array $result): ?array
 	{
-		$myDirectory = $this->getDirectoryEntry();
+		$myDirectory = $this->getDirectoryEntry('');
 
 		if(isset($result['directory']) === false || $result['directory'] === $myDirectory['directory']) {
 			return null;

@@ -83,8 +83,9 @@ class SearchService
 	/**
 	 *
 	 */
-	public function search(array $parameters, array $elasticConfig, array $dbConfig): array
+	public function search(array $parameters, array $elasticConfig, array $dbConfig, array $catalogi = []): array
 	{
+
 		$elasticService = new ElasticSearchService();
 		$localResults = $elasticService->searchObject($parameters, $elasticConfig);
 

@@ -50,6 +50,13 @@ class PublicationsController extends Controller
 				) {
 					$object[$key] = $subObject;
 				}
+
+				if(
+					is_array(value: $value) === true
+					&& array_is_list(array: $value) === true
+				) {
+					$object[$key] = $this->insertNestedObjects(object: $value, objectService: $objectService, config: $config);
+				}
 			} catch (GuzzleException $exception) {
 				continue;
 			}
