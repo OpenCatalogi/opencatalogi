@@ -82,7 +82,9 @@ export default {
 		AddPublicatieEigenschap() {
 			const publicationProperty = store.publicationItem
 			publicationProperty.data[this.key] = this.value
-			console.log(store.publicationItem)
+			publicationProperty.data[1] = 3
+			publicationProperty.data[2] = 4
+			console.log(publicationProperty)
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
@@ -91,7 +93,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationProperty),
+					body: JSON.stringify(publicationProperty),
 				},
 			)
 				.then((response) => {
