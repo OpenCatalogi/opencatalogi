@@ -21,7 +21,7 @@ class ObjectService
 	 * @param array $config The config to be used for the client.
 	 * @return Client
 	 */
-	private function getClient(array $config): Client
+	public function getClient(array $config): Client
 	{
 		$guzzleConf = $config;
 		unset($guzzleConf['mongodbCluster']);
