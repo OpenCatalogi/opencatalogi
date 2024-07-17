@@ -8,6 +8,7 @@ import { store } from '../../store.js'
 			<h1 class="h1">
 				{{ metadata.title }}
 			</h1>
+			<span>{{ metadata.description }}</span>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
@@ -36,16 +37,6 @@ import { store } from '../../store.js'
 					Verwijderen
 				</NcActionButton>
 			</NcActions>
-		</div>
-		<div>
-			<div>
-				<h4>Beschrijving:</h4>
-				<span>{{ metadata.description }}</span>
-			</div>
-			<div>
-				<h4>Versie:</h4>
-				<span>{{ metadata.version }}</span>
-			</div>
 		</div>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
@@ -92,8 +83,8 @@ import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
-import CircleOutline from 'vue-material-design-icons/CircleOutline.vue' 
-import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue' 
+import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
+import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue'
 
 export default {
 	name: 'MetaDataDetail',

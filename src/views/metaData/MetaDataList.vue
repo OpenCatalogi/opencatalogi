@@ -33,7 +33,7 @@ import { store } from '../../store.js'
 			<div v-if="!loading">
 				<NcListItem v-for="(metaData, i) in store.metaDataList.results"
 					:key="`${metaData}${i}`"
-					:name="metaData.name ?? metaData.title"
+					:name="metaData.title ?? metaData.name"
 					:active="store.metaDataItem?._id === metaData?._id"
 					:details="metaData.version ?? '1h'"
 					:force-display-actions="true"
@@ -45,8 +45,7 @@ import { store } from '../../store.js'
 							:size="44" />
 					</template>
 					<template #subname>
-						{{ metaData?.summary }}
-						{{ metaData?.description }}
+						{{ metaData?.summery }}
 					</template>
 					<template #actions>
 						<NcActionButton @click="store.setMetaDataItem(metaData); store.setModal('editMetaData')">

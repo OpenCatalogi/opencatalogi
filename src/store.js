@@ -71,7 +71,11 @@ export const store = reactive({
 	// Catlogi
 	setCatalogiItem(catalogiItem) {
 		// To prevent forms etc from braking we alway use a default/skeleton object
-		const catalogiDefault = { name: '', summery: '' }
+		const catalogiDefault = {
+			name: '',
+			summery: '',
+			description: '',
+		}
 		this.catalogiItem = { ...catalogiDefault, ...catalogiItem }
 		console.log('Active catalog item set to ' + catalogiItem.id)
 	},
@@ -133,7 +137,10 @@ export const store = reactive({
 		// To prevent forms etc from braking we alway use a default/skeleton object
 		const metaDataDefault = {
 			name: '',
+			version: '',
 			summery: '',
+			description: '',
+			properties: [],
 		}
 		this.metaDataItem = { ...metaDataDefault, ...metaDataItem }
 		console.log('Active metadata object set to ' + metaDataItem.id)
