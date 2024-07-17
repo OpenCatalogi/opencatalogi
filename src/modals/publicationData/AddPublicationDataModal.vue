@@ -81,7 +81,6 @@ export default {
 	methods: {
 		AddPublicatieEigenschap() {
 			store.publicationItem.data[this.key] = this.value
-			console.log(store.publicationItem.data)
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,

@@ -83,11 +83,10 @@ import { store } from '../../store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcButton } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
@@ -100,10 +99,8 @@ export default {
 		NcLoadingIcon,
 		NcActions,
 		NcActionButton,
-		NcButton,
 		// Icons
 		PlusCircleOutline,
-		ListBoxOutline,
 		ContentCopy,
 		Pencil,
 		Delete,

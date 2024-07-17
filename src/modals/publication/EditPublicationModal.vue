@@ -69,7 +69,6 @@ import {
 	NcModal,
 	NcTextField,
 	NcTextArea,
-	NcSelect,
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
 	NcNoteCard,
@@ -84,7 +83,6 @@ export default {
 		NcTextArea,
 		NcCheckboxRadioSwitch,
 		NcButton,
-		NcSelect,
 		NcLoadingIcon,
 		NcNoteCard,
 		// Icons

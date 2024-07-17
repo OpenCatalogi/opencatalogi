@@ -25,6 +25,12 @@ import { store } from '../../store.js'
 				</NcActionButton>
 				<NcActionButton>
 					<template #icon>
+						<ContentCopy :size="20" />
+					</template>
+					Kopieren
+				</NcActionButton>
+				<NcActionButton>
+					<template #icon>
 						<PublishOff :size="20" />
 					</template>
 					Depubliceren
@@ -163,6 +169,18 @@ import { store } from '../../store.js'
 									</template>
 									Bewerken
 								</NcActionButton>
+								<NcActionButton @click="editPublicationDataItem(key)">
+									<template #icon>
+										<ContentCopy :size="20" />
+									</template>
+									Kopieren
+								</NcActionButton>
+								<NcActionButton>
+									<template #icon>
+										<PublishOff :size="20" />
+									</template>
+									Depubliceren
+								</NcActionButton>
 								<NcActionButton @click="deletePublicationDataItem(key)">
 									<template #icon>
 										<Delete :size="20" />
@@ -225,21 +243,21 @@ import { store } from '../../store.js'
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink, NcButton } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
 // Icons
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
 import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue' 
-import CircleOutline from 'vue-material-design-icons/CircleOutline.vue' 
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -249,15 +267,14 @@ export default {
 		NcActionButton,
 		NcActions,
 		NcListItem,
-		NcButton,
 		// Icons
 		CheckCircle,
 		ExclamationThick,
-		ListBoxOutline,
 		OpenInApp,
 		FilePlusOutline,
 		FileTreeOutline,
 		CircleOutline,
+		ContentCopy,
 	},
 	props: {
 		publicationId: {
