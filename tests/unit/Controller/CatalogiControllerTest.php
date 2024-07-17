@@ -2,19 +2,16 @@
 
 namespace OCA\OpenCatalogi\Tests\Controller;
 
-use OCA\OpenCatalogi\Controller\AttachmentsController;
+use Test\TestCase; 
+use OCA\OpenCatalogi\Controller\CatalogiController;
 use OCA\OpenCatalogi\Service\ObjectService;
-use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCP\IRequest;
 use OCP\IAppConfig;
-use Test\TestCase; 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class AttachmentsControllerTest extends TestCase
+class CatalogiControllerTest extends TestCase
 {
     /** @var MockObject|IRequest */
     private $request;
@@ -22,14 +19,14 @@ class AttachmentsControllerTest extends TestCase
     /** @var MockObject|IAppConfig */
     private $config;
 
-    /** @var AttachmentsController */
+    /** @var CatalogiController */
     private $controller;
 
     protected function setUp(): void
     {
         $this->request = $this->createMock(IRequest::class);
         $this->config = $this->createMock(IAppConfig::class);
-        $this->controller = new AttachmentsController('opencatalogi', $this->request, $this->config);
+        $this->controller = new CatalogiController('opencatalogi', $this->request, $this->config);
 
         // Zorg ervoor dat de config mock altijd een string retourneert
         $this->config->method('getValueString')
@@ -39,12 +36,6 @@ class AttachmentsControllerTest extends TestCase
     public function testPage()
     {
         $response = $this->controller->page('testParam');
-        $this->assertInstanceOf(TemplateResponse::class, $response);
-    }
-
-    public function testCatalog()
-    {
-        $response = $this->controller->catalog('testId');
         $this->assertInstanceOf(TemplateResponse::class, $response);
     }
 
@@ -88,7 +79,6 @@ class AttachmentsControllerTest extends TestCase
     public function testCreate()
     {
         $objectService = $this->createMock(ObjectService::class);
-        $elasticSearchService = $this->createMock(ElasticSearchService::class);
 
         $this->config->method('getValueString')
             ->willReturnMap([
@@ -100,7 +90,7 @@ class AttachmentsControllerTest extends TestCase
         $this->request->method('getParams')->willReturn(['key' => 'value']);
         $objectService->method('saveObject')->willReturn(['key' => 'value']);
 
-        $response = $this->controller->create($objectService, $elasticSearchService);
+        $response = $this->controller->create($objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals(['key' => 'value'], $response->getData());
     }
@@ -108,7 +98,6 @@ class AttachmentsControllerTest extends TestCase
     public function testUpdate()
     {
         $objectService = $this->createMock(ObjectService::class);
-        $elasticSearchService = $this->createMock(ElasticSearchService::class);
 
         $this->config->method('getValueString')
             ->willReturnMap([
@@ -120,7 +109,7 @@ class AttachmentsControllerTest extends TestCase
         $this->request->method('getParams')->willReturn(['key' => 'newValue']);
         $objectService->method('updateObject')->willReturn(['key' => 'newValue']);
 
-        $response = $this->controller->update('testId', $objectService, $elasticSearchService);
+        $response = $this->controller->update('testId', $objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals(['key' => 'newValue'], $response->getData());
     }
@@ -128,7 +117,6 @@ class AttachmentsControllerTest extends TestCase
     public function testDestroy()
     {
         $objectService = $this->createMock(ObjectService::class);
-        $elasticSearchService = $this->createMock(ElasticSearchService::class);
 
         $this->config->method('getValueString')
             ->willReturnMap([
@@ -139,7 +127,7 @@ class AttachmentsControllerTest extends TestCase
 
         $objectService->method('deleteObject')->willReturn([]);
 
-        $response = $this->controller->destroy('testId', $objectService, $elasticSearchService);
+        $response = $this->controller->destroy('testId', $objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals([], $response->getData());
     }

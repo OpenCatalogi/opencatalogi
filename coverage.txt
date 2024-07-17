@@ -1,0 +1,63 @@
+PHPUnit 9.6.20 by Sebastian Bergmann and contributors.
+
+...............................................EE.......E         57 / 57 (100%)
+
+Time: 00:00.806, Memory: 41.76 MB
+
+There were 3 errors:
+
+1) DirectoryServiceTest::testRegisterToExternalDirectory
+TypeError: Mock_IAppConfig_6e142c8f::getValueString(): Return value must be of type string, null returned
+
+/var/www/html/apps-extra/opencatalogi/lib/Service/DirectoryService.php:42
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:63
+
+2) DirectoryServiceTest::testFetchFromExternalDirectory
+Error: Cannot use object of type stdClass as array
+
+/var/www/html/apps-extra/opencatalogi/lib/Service/DirectoryService.php:89
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:84
+
+3) SearchServiceTest::testSearch
+ReflectionException: Property OCA\OpenCatalogi\Service\SearchService::$getClient does not exist
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/SearchServiceTest.php:67
+
+ERRORS!
+Tests: 57, Assertions: 90, Errors: 3.
+
+
+[1;37;40mCode Coverage Report:      [0m
+[1;37;40m  2024-07-17 17:55:13      [0m
+[1;37;40m                           [0m
+[1;37;40m Summary:                  [0m
+[37;41m  Classes: 15.38% (2/13)   [0m
+[37;41m  Methods: 48.10% (38/79)  [0m
+[30;43m  Lines:   60.74% (410/675)[0m
+
+OCA\OpenCatalogi\AppInfo\Application
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/  3)[0m
+OCA\OpenCatalogi\Controller\AttachmentsController
+  [30;43mMethods:  55.56% ( 5/ 9)[0m   [30;43mLines:  82.67% ( 62/ 75)[0m
+OCA\OpenCatalogi\Controller\CatalogiController
+  [30;43mMethods:  57.14% ( 4/ 7)[0m   [30;42mLines:  93.44% ( 57/ 61)[0m
+OCA\OpenCatalogi\Controller\ConfigurationController
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% ( 27/ 27)[0m
+OCA\OpenCatalogi\Controller\DashboardController
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% (  8/  8)[0m
+OCA\OpenCatalogi\Controller\DirectoryController
+  [30;43mMethods:  85.71% ( 6/ 7)[0m   [30;42mLines:  96.77% ( 60/ 62)[0m
+OCA\OpenCatalogi\Controller\MetaDataController
+  [30;43mMethods:  85.71% ( 6/ 7)[0m   [30;42mLines:  96.72% ( 59/ 61)[0m
+OCA\OpenCatalogi\Controller\PublicationsController
+  [37;41mMethods:  33.33% ( 3/ 9)[0m   [30;43mLines:  60.40% ( 61/101)[0m
+OCA\OpenCatalogi\Controller\SearchController
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 31)[0m
+OCA\OpenCatalogi\Service\DirectoryService
+  [37;41mMethods:   0.00% ( 0/ 6)[0m   [37;41mLines:   0.00% (  0/ 42)[0m
+OCA\OpenCatalogi\Service\ElasticSearchService
+  [37;41mMethods:   0.00% ( 0/ 9)[0m   [37;41mLines:   0.00% (  0/ 78)[0m
+OCA\OpenCatalogi\Service\ObjectService
+  [30;43mMethods:  85.71% ( 6/ 7)[0m   [30;42mLines:  96.10% ( 74/ 77)[0m
+OCA\OpenCatalogi\Service\SearchService
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [37;41mLines:   4.08% (  2/ 49)[0m

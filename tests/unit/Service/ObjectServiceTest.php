@@ -2,8 +2,8 @@
 
 namespace Service;
 
+use Test\TestCase; 
 use OCA\OpenCatalogi\Service\ObjectService;
-use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 

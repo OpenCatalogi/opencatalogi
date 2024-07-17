@@ -2,7 +2,7 @@
 
 use OCA\OpenCatalogi\Service\SearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
-use PHPUnit\Framework\TestCase;
+use Test\TestCase; 
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Psr7\Response;
