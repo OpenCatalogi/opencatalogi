@@ -7,36 +7,37 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'editMetaData'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
+		<div v-if="!succes" class="modal__content">
 			<h2>MetaData bewerken</h2>
+			<NcNoteCard v-if="succes" type="success">
+				<p>Meta data succesvol gewijzigd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
 			<div class="form-group">
-				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
+				<NcTextField label="Titel" :disabled="loading" :value.sync="store.metaDataItem.title" />
 			</div>
 			<div class="form-group">
-				<NcTextField label="Versie" :value.sync="metaData.version" />
+				<NcTextField label="Versie" :disabled="loading" :value.sync="store.metaDataItem.version" />
 			</div>
 			<div class="form-group">
-				<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
+				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="store.metaDataItem.description" />
 			</div>
-			<div class="form-group">
-				<NcTextArea label="Properties" :value.sync="metaData.properties" />
-			</div>
-			<div v-if="succesMessage" class="success">
-				Succesfully updated metaData
-			</div>
-
-			<NcButton :disabled="!metaData.title" type="primary" @click="editMetaData">
+			<NcButton :disabled="!store.metaDataItem.title || loading" type="primary" @click="editMetaData">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
 				Opslaan
 			</NcButton>
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditMetaDataModal',
@@ -46,36 +47,20 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {
-			name: '',
-			summery: '',
-			metaData: {
-				title: '',
-				version: '',
-				description: '',
-				properties: '',
-			},
-			succesMessage: false,
-			hasUpdated: false,
 			loading: false,
-		}
-	},
-	updated() {
-		if (store.modal === 'editMetaData' && this.hasUpdated) {
-			if (this.metaData._id === store.metaDataId) return
-			this.hasUpdated = false
-		}
-		if (store.modal === 'editMetaData' && !this.hasUpdated) {
-			this.fetchData(store.metaDataId)
-			this.hasUpdated = true
-			this.metaData = store.metaDataItem
+			succes: false,
+			error: false,
 		}
 	},
 	methods: {
 		fetchData(id) {
-			this.metaDataLoading = true
+			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/metadata/${id}`,
 				{
@@ -86,20 +71,20 @@ export default {
 					response.json().then((data) => {
 						this.metaData = data
 					})
-					this.metaDataLoading = false
+					this.loading = false
 				})
 				.catch((err) => {
-					console.error(err)
-					this.metaDataLoading = false
+					this.error = err
+					this.loading = false
 				})
 		},
 		closeModal() {
 			store.modal = false
 		},
 		editMetaData() {
-			this.metaDataLoading = true
+			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataId}`,
+				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem?._id}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -108,10 +93,21 @@ export default {
 					body: JSON.stringify(this.metaData),
 				},
 			).then((response) => {
-				this.closeModal()
+				this.loading = false
+				this.succes = true
+				// Lets refresh the catalogiList
+				store.refreshMetaDataList()
+				response.json().then((data) => {
+					store.setMetaDataItem(data)
+				})
+				store.setSelected('metaData')
+				setTimeout(() => (this.closeModal()), 2500)
+				// Reset the form the form
+				this.succes = false
+				this.metaData = { title: '', version: '', description: '' }
 			}).catch((err) => {
-				this.metaDataLoading = false
-				console.error(err)
+				this.error = err
+				this.loading = false
 			})
 		},
 	},

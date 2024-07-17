@@ -2,6 +2,7 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
+use OCA\OpenCatalogi\Service\DirectoryService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -14,13 +15,29 @@ class DirectoryController extends Controller
     const TEST_ARRAY = [
         "64996753-5109-4396-9f07-17040d7fb137" => [
             "id" => "64996753-5109-4396-9f07-17040d7fb137",
-            "name" => "Directory one",
-            "summary" => "summary for one"
+			"title" => "Directory test 1",
+			"summary" => "A testing directory",
+			"description" => "A testing directory description",
+			"search" => "string",
+			"metadata" => "string",
+			"status" => "A status",
+			"lastSync" => "string",
+			"default" => "string",
+			"available" => "true"
+
         ],
-        "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea" => [
+        "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea" =>[
             "id" => "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea",
-            "name" => "Directory two",
-            "summary" => "summary for two"
+			"title" => "Directory test 2",
+			"summary" => "A testing directory",
+			"description" => "A testing directory description",
+			"search" => "string",
+			"metadata" => "string",
+			"status" => "A status",
+			"lastSync" => "string",
+			"default" => "string",
+			"available" => "true"
+
         ]
     ];
 
@@ -80,7 +97,7 @@ class DirectoryController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function show(string $id, ObjectService $objectService): JSONResponse
+	public function show(string $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
 	{
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -98,7 +115,7 @@ class DirectoryController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function create(ObjectService $objectService): JSONResponse
+	public function create(ObjectService $objectService, DirectoryService $directoryService): JSONResponse
 	{
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -118,6 +135,8 @@ class DirectoryController extends Controller
 			data: $data,
 			config: $dbConfig
 		);
+
+		$directoryService->registerToExternalDirectory(newDirectory: $data);
 
 		// get post from requests
 		return new JSONResponse($returnData);

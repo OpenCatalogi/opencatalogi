@@ -5,7 +5,7 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<MetaDataList />
+			<MetaDataList :search="store.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!store.metaDataItem || store.selected != 'metaData'"
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<MetaDataDetails v-if="store.metaDataItem && store.selected === 'metaData'" :meta-data-id="store.metaDataItem" />
+			<MetaDataDetails v-if="store.metaDataItem && store.selected === 'metaData'" :meta-data-item="store.metaDataItem" />
 		</template>
 	</NcAppContent>
 </template>
@@ -42,12 +42,6 @@ export default {
 		MetaDataList,
 		MetaDataDetails,
 		FileTreeOutline,
-	},
-	data() {
-		return {
-			activeMetaData: false,
-			metaDataId: undefined,
-		}
 	},
 }
 </script>

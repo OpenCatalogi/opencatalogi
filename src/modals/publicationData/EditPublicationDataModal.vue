@@ -3,38 +3,32 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'editPublicationDataModal'"
+		v-if="store.modal === 'editPublicationData'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
-			<h2>Edit publication data</h2>
-
-			<div v-if="!publicationLoading">
-				<div class="form-group">
-					<NcTextField :disabled="loading"
-						:label="store.publicationDataKey"
-						:value.sync="publication.data.data[store.publicationDataKey]"
-						:loading="publicationLoading" />
-				</div>
-
-				<div v-if="succesMessage" class="success">
-					Succesfully updated publication
-				</div>
+		<div class="modal__content">
+			<h2>Bewerk publicatie eigenschappen</h2>
+			<NcNoteCard v-if="succes" type="success">
+				<p>Publicatie eigenschap succesvol bewerkt</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+			<div v-if="!succes" class="form-group">
+				<NcTextField :disabled="loading"
+					:label="store.publicationDataKey"
+					:value.sync="store.publicationItem[store.publicationDataKey]" />
 			</div>
-			<NcLoadingIcon
-				v-if="publicationLoading"
-				:size="100"
-				appearance="dark"
-				name="Publicatie details aan het laden" />
 
-			<NcButton :disabled="!publication.title" type="primary" @click="updatePublication(publication.id)">
-				Submit
+			<NcButton :disabled="!publication.title || loading" type="primary" @click="updatePublication(publication.id)">
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<ContentSaveOutline v-if="!loading" :size="20" />
+			</NcButton>
+			<NcButton
+				@click="store.setModal(false)">
+				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
-
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
 	</NcModal>
 </template>
 
@@ -45,6 +39,7 @@ import {
 	NcTextField,
 	NcLoadingIcon,
 } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditPublicationDataModal',
@@ -53,6 +48,8 @@ export default {
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		// icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {
@@ -73,11 +70,8 @@ export default {
 				options: [],
 			},
 			loading: false,
-			succesMessage: false,
-			catalogiLoading: false,
-			metaDataLoading: false,
-			hasUpdated: false,
-			publicationLoading: false,
+			succes: false,
+			error: false,
 		}
 	},
 	updated() {

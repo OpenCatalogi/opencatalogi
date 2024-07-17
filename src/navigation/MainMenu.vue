@@ -5,11 +5,11 @@ import { store } from '../store.js'
 <template>
 	<NcAppNavigation>
 		<NcAppNavigationList>
-			<NcAppNavigationNewItem name="Publicatie Aanmaken" @new-item="store.modal = 'publicationAdd'">
+			<NcAppNavigationNew text="Publicatie Aanmaken" @click="store.setModal('publicationAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
-			</NcAppNavigationNewItem>
+			</NcAppNavigationNew>
 			<NcAppNavigationItem :active="store.selected === 'dashboard'" name="Dashboard" @click="store.setSelected('dashboard')">
 				<template #icon>
 					<Finance :size="20" />
@@ -18,8 +18,8 @@ import { store } from '../store.js'
 			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="store.selected === 'publication' && store.item === catalogus?._id"
-				@click="store.setSelected('publication'); store.setItem(catalogus?._id)">
+				:active="store.selected === 'publication' && store.catalogiItem === catalogus?._id"
+				@click="store.setSelected('publication'); store.setCatalogiItem(catalogus)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
@@ -202,7 +202,7 @@ import {
 	NcAppNavigation,
 	NcAppNavigationList,
 	NcAppNavigationItem,
-	NcAppNavigationNewItem,
+	NcAppNavigationNew,
 	NcAppNavigationSettings,
 	NcAppSettingsDialog,
 	NcAppSettingsSection,
@@ -228,7 +228,7 @@ export default {
 		NcAppNavigation,
 		NcAppNavigationList,
 		NcAppNavigationItem,
-		NcAppNavigationNewItem,
+		NcAppNavigationNew,
 		NcAppNavigationSettings,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,

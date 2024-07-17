@@ -62,8 +62,16 @@ class SearchController extends Controller
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$filters = $this->request->getParams();
-
 		unset($filters['_route']);
+
+		//@TODO: find a better way to get query params. This fixes it for now.
+		$keys   = array_keys(array: $filters);
+		$values = array_values(array: $filters);
+
+		$keys = str_replace('_', '.', $keys);
+
+		$filters = array_combine(keys: $keys, values: $values);
+
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 

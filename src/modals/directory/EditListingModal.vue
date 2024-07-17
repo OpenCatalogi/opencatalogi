@@ -3,32 +3,34 @@ import { store } from '../../store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'listinEdit'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading" class="modal__content">
-			<h2>Listing bewerken</h2>
-			<div class="form-group">
-				<NcTextField :disabled="loading"
-					label="Naam"
-					maxlength="255"
-					:value.sync="name"
-					required />
-				<NcTextField :disabled="loading"
-					label="Samenvatting"
-					maxlength="255"
-					:value.sync="summery" />
+	<NcModal v-if="store.modal === 'editListing'" ref="modalRef" @close="store.setModal(false)">
+		<div class="modal__content">
+			<h2>Directory bewerken</h2>
+			<NcNoteCard v-if="succes" type="success">
+				<p>Meta data succesvol toegevoegd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+			<div v-if="!succes" class="form-group">
+				<NcTextField label="Url" :value.sync="store.listingItem.url" />
+				<NcTextField label="Status" :value.sync="store.listingItem.status" />
+				<NcTextField label="Last synchronized" :value.sync="store.listingItem.lastSync" />
 			</div>
-			<NcButton :disabled="!externalCatalogName" type="primary" @click="editExternalCatalog">
+			<NcButton v-if="!succes" type="primary" @click="editDirectory()">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
 				Submit
 			</NcButton>
 		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditListingModal',
@@ -37,21 +39,67 @@ export default {
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {
-			name: '',
-			summery: '',
-			succesMessage: false,
 			loading: false,
+			succes: false,
+			error: false,
 		}
 	},
 	methods: {
 		closeModal() {
 			store.modal = false
 		},
-		editExternalCatalog() {
-			this.closeModal()
+		fetchData(id) {
+			this.loading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						this.listing = data
+						this.loading = false
+					})
+				})
+				.catch((err) => {
+					this.error = err
+					this.loading = false
+				})
+		},
+		editDirectory() {
+			this.loading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(this.directory),
+				},
+			).then((response) => {
+				// Set propper modal states
+				this.loading = false
+				this.succes = true
+				// Lets refresh the catalogiList
+				store.refreshMetaDataList()
+				response.json().then((data) => {
+					this.setListingItem(data)
+				})
+				store.setSelected('directory')
+				// Wait and then close the modal
+				setTimeout(() => (this.closeModal()), 2500)
+			}).catch((err) => {
+				this.error = err
+				this.loading = false
+			})
 		},
 	},
 }

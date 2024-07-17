@@ -154,22 +154,6 @@ class AttachmentsController extends Controller
 			config: $dbConfig
 		);
 
-
-		if(
-			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
-		) {
-			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-
-			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
-
-			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
-
-		}
-
         // get post from requests
         return new JSONResponse($returnData);
     }
@@ -202,21 +186,6 @@ class AttachmentsController extends Controller
 			config: $dbConfig
 		);
 
-		if(
-			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
-		) {
-			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-
-			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
-
-			$returnData = $elasticSearchService->updateObject(id: $id, object: $returnData, config: $elasticConfig);
-
-		}
-
 		// get post from requests
 		return new JSONResponse($returnData);
     }
@@ -236,19 +205,6 @@ class AttachmentsController extends Controller
 			filters: $filters,
 			config: $dbConfig
 		);
-
-		if(
-			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
-		) {
-			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-
-			$returnData = $elasticSearchService->removeObject(id: $id, config: $elasticConfig);
-
-		}
 
 		// get post from requests
 		return new JSONResponse($returnData);
