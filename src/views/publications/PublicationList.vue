@@ -32,7 +32,7 @@ import { store } from '../../store.js'
 			<div v-if="!loading">
 				<NcListItem v-for="(publication, i) in store.publicationList.results"
 					:key="`${publication}${i}`"
-					:name="publication?.title"
+					:name="publication.name ?? publication.title"
 					:bold="false"
 					:force-display-actions="true"
 					:active="store.publicationItem.id === publication.id"
@@ -60,13 +60,13 @@ import { store } from '../../store.js'
 							</template>
 							Depubliceren
 						</NcActionButton>
-						<NcActionButton>
+						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('addPublicationData')">
 							<template #icon>
 								<FileTreeOutline :size="20" />
 							</template>
 							Eigenschap toevoegen
 						</NcActionButton>
-						<NcActionButton>
+						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('AddAttachment')">
 							<template #icon>
 								<FilePlusOutline :size="20" />
 							</template>

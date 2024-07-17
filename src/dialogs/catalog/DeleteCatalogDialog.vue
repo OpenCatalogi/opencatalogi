@@ -17,14 +17,15 @@ import { store } from '../../store.js'
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
 		</NcNoteCard>
-		<template v-if="!succes" #actions>
+		<template #actions>
 			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
-				Annuleer
+				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 			<NcButton
+				v-if="!succes"
 				:disabled="loading"
 				icon="Delete"
 				type="error"

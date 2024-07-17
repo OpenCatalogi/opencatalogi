@@ -7,7 +7,7 @@ import { store } from '../../store.js'
 		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
-				<p>Catalogus succesvol toegevoegd</p>
+				<p>Catalogus succesvol bewerkt</p>
 			</NcNoteCard>
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
@@ -65,16 +65,16 @@ export default {
 			store.modal = false
 		},
 		editCatalog() {
-			this.editLoading = true
-			this.errorMessage = false
+			this.loading = true
+			this.error = false
 			fetch(
 				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
 				{
-					method: 'POST',
+					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.catalogi),
+					body: JSON.stringify(store.catalogiItem),
 				},
 			)
 				.then((response) => {
@@ -85,7 +85,12 @@ export default {
 					response.json().then((data) => {
 						store.setCatalogiItem(data)
 					})
-					setTimeout(() => (this.closeModal()), 2500)
+					// Wait for the user to read the feedback then close the model
+					const self = this
+					setTimeout(function() {
+						self.succes = false
+						store.setModal(false)
+					}, 2000)
 				})
 				.catch((err) => {
 					this.loading = false
