@@ -25,7 +25,7 @@ import { store } from '../../store.js'
 				</NcActionButton>
 				<NcActionButton @click="store.setModal('addMetadataDataModal')">
 					<template #icon>
-						<CircleOutline :size="20" />
+						<PlusCircleOutline :size="20" />
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
@@ -92,7 +92,8 @@ import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
-import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
+import CircleOutline from 'vue-material-design-icons/CircleOutline.vue' 
+import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue' 
 
 export default {
 	name: 'MetaDataDetail',
@@ -102,6 +103,7 @@ export default {
 		NcActionButton,
 		NcButton,
 		// Icons
+		PlusCircleOutline,
 		ListBoxOutline,
 		Pencil,
 		Delete,
