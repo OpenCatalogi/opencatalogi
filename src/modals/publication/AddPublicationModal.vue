@@ -3,122 +3,81 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
-		<div v-if="!loading && !successMessage" class="modal__content">
-			<h2>Add publication</h2>
+		<div class="modal__content">
+			<h2>Publicatie toevoegen</h2>
+			<NcNoteCard v-if="succes" type="success">
+				<p>Publicatie succesvol toegevoegd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
 			<div class="formContainer">
-				<div class="form-group">
+				<div v-if="!succes" class="form-group">
 					<NcTextField :disabled="publicationLoading" label="Naam" :value.sync="title" />
-				</div>
-				<div class="form-group">
 					<NcTextArea :disabled="publicationLoading" label="Beschrijving" :value.sync="description" />
-				</div>
-				<div class="form-group">
 					<NcTextField :disabled="loading"
 						label="Categorie"
 						:value.sync="category"
 						:loading="publicationLoading" />
-				</div>
-				<div class="form-group">
 					<NcTextField :disabled="loading"
 						label="Publicatie"
 						:value.sync="publication"
 						:loading="publicationLoading" />
-				</div>
-				<div class="form-group">
 					<NcTextField :disabled="loading"
 						label="Portaal"
 						:value.sync="portal"
 						:loading="publicationLoading" />
-				</div>
-				<div class="form-group">
 					<NcTextField :disabled="loading"
 						label="Status"
 						:value.sync="status"
 						:loading="publicationLoading" />
-				</div>
-				<div class="form-group">
 					<NcTextField :disabled="loading"
 						label="Gepubliceerd"
 						:value.sync="published"
 						:loading="publicationLoading" />
-				</div>
-				<div class="form-group">
 					<p>Featured</p>
 					<NcCheckboxRadioSwitch :disabled="loading"
 						label="Featured"
 						:value.sync="featured"
 						:loading="publicationLoading" />
-				</div>
-				<div class="form-group">
 					<NcTextField :disabled="loading"
 						label="Image"
 						:value.sync="image"
 						:loading="publicationLoading" />
-				</div>
-				<div class="form-group">
 					<NcTextField :disabled="loading"
 						label="Modified"
 						:value.sync="modified"
 						:loading="publicationLoading" />
-				</div>
-				<div class="form-group">
 					<NcTextField :disabled="loading"
 						label="Licentie"
 						:value.sync="license"
 						:loading="publicationLoading" />
-				</div>
-				<div class="selectGrid">
-					<div class="form-group">
-						<NcSelect v-bind="catalogi"
-							v-model="catalogi.value"
-							input-label="Catalogi"
-							:loading="catalogiLoading"
-							:disabled="publicationLoading"
-							required />
-					</div>
-					<div class="form-group">
-						<NcSelect v-bind="metaData"
-							v-model="metaData.value"
-							input-label="MetaData"
-							:loading="metaDataLoading"
-							:disabled="publicationLoading"
-							required />
-					</div>
-				</div>
-				<div class="form-group">
-					<NcTextArea :error="!dataIsValidJson"
+					<NcSelect v-bind="catalogi"
+						v-model="catalogi.value"
+						input-label="Catalogi"
+						:loading="catalogiLoading"
 						:disabled="publicationLoading"
-						label="Data"
-						:value.sync="data" />
-				</div>
-				<div class="form-group">
-					<NcTextArea :error="!attachmentsIsValidJson"
+						required />
+					<NcSelect v-bind="metaData"
+						v-model="metaData.value"
+						input-label="MetaData"
+						:loading="metaDataLoading"
 						:disabled="publicationLoading"
-						label="Bijlagen"
-						:value.sync="attachments" />
-				</div>
-				<div v-if="successMessage" class="successMessage">
-					Succesfully added publication
-				</div>
-				<div v-if="errorMessage" class="errorMessage">
-					Oeps er is iets fout gegaan.
-					Error Code: {{ errorCode }}
+						required />
 				</div>
 			</div>
-			<NcButton :disabled="!title && !catalogi?.value?.id && !metaData?.value?.id || publicationLoading" type="primary" @click="addPublication">
-				Submit
+			<NcButton
+				v-if="!succes"
+				:disabled="(!title && !catalogi?.value?.id && !metaData?.value?.id) || loading"
+				type="primary"
+				@click="addPublication()">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
+				Opslaan
 			</NcButton>
 		</div>
-		<div v-if="successMessage" class="successMessage">
-			Succesfully added publication
-		</div>
-		<div v-if="errorMessage" class="errorMessage">
-			Oeps er is iets fout gegaan.
-			Error Code: {{ errorCode }}
-		</div>
-		<NcLoadingIcon
-			v-if="loading"
-			:size="100" />
 	</NcModal>
 </template>
 
@@ -131,7 +90,9 @@ import {
 	NcSelect,
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
+	NcNoteCard,
 } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'AddPublicationModal',
@@ -143,16 +104,16 @@ export default {
 		NcSelect,
 		NcLoadingIcon,
 		NcCheckboxRadioSwitch,
+		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {
 			title: '',
 			description: '',
-			data: '{}',
 			catalogi: {},
 			metaData: {},
-			data: '',
-			attachments: '',
 			license: '',
 			modified: '',
 			published: '',
@@ -163,13 +124,13 @@ export default {
 			category: '',
 			image: '',
 			errorCode: '',
-			successMessage: false,
-			errorMessage: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
 			publicationLoading: false,
 			hasUpdated: false,
 			loading: false,
+			succes: false,
+			error: false,
 			dataIsValidJson: false,
 			attachmentsIsValidJson: false,
 
@@ -256,8 +217,6 @@ export default {
 			return true
 		},
 		addPublication() {
-			this.publicationLoading = true
-			this.errorMessage = false
 			this.loading = true
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
@@ -271,8 +230,6 @@ export default {
 						description: this.description,
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
-						data: JSON.parse(this.data),
-						attachments: JSON.parse(this.attachments),
 						license: this.license,
 						modified: this.modified,
 						published: this.published,
@@ -287,16 +244,19 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succesMessage = true
-					setTimeout(() => (store.modal = false), 2500)
-					setTimeout(() => (this.succesMessage = false), 2500)
-					store.setRefresh(true)
+					this.succes = true
+					// Lets refresh the catalogiList
+					store.refreshPublicationList()
+					response.json().then((data) => {
+						store.setpublicationItem(data)
+					})
+					store.setSelected('publication')
+					// Clean it all up
+					setTimeout(() => (this.closeModal()), 2500)
 				})
 				.catch((err) => {
-					this.publicationLoading = false
-					this.errorMessage = true
-					this.errorCode = err
-					console.error(err)
+					this.error = err
+					this.loading = false
 				})
 		},
 	},

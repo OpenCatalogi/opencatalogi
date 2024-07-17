@@ -9,41 +9,31 @@ import { store } from '../../store.js'
 		@close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData toevoegen</h2>
-			<div v-if="!loading && !succes" class="form_wrapper">
-				<div class="form-group">
-					<NcTextField label="Titel" :value.sync="title" required="true" />
-				</div>
-				<div class="form-group">
-					<NcTextField label="Versie" :value.sync="version" />
-				</div>
-				<div class="form-group">
-					<NcTextArea label="Beschrijving" :value.sync="description" />
-				</div>
-				<div class="form-group">
-					<NcTextArea label="Properties" :value.sync="properties" />
-				</div>
-				<div v-if="succesMessage" class="success">
-					Succesfully added MetaData
-				</div>
-				<NcButton :disabled="!title" type="primary" @click="addMetaData">
-					Submit
-				</NcButton>
-			</div>
-			<NcLoadingIcon
-				v-if="loading"
-				:size="100" />
 			<NcNoteCard v-if="succes" type="success">
 				<p>Meta data succesvol toegevoegd</p>
 			</NcNoteCard>
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
 			</NcNoteCard>
+			<div v-if="!succes" class="form-group">
+				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
+				<NcTextField label="Versie" :value.sync="metaData.version" />
+				<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
+			</div>
+			<NcButton :disabled="!metaData.title" type="primary" @click="addMetaData">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<ContentSaveOutline v-if="!loading" :size="20" />
+				</template>
+				Submit
+			</NcButton>
 		</div>
 	</NcModal>
 </template>
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'AddMetaDataModal',
@@ -54,23 +44,33 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
+		// Icons
+		ContentSaveOutline,
 	},
 	data() {
 		return {
-			succes: '',
-			title: '',
-			version: '0.0.1',
-			description: '',
-			properties: '',
-			succesMessage: false,
+			metaData: {
+				title: '',
+				version: '',
+				description: '',
+			},
+			metaDataList: [],
+			loading: false,
+			succes: false,
+			error: false,
 		}
 	},
 	methods: {
 		closeModal() {
+			// Reset the form the form
+			this.succes = false
+			this.error = false
+			this.loading = false
+			this.metaData = { title: '', version: '', description: '' }
 			store.modal = false
 		},
 		addMetaData() {
-			this.$emit('metadata', this.title)
+			this.loading = true
 			fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
 				{
@@ -78,18 +78,23 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						title: this.title,
-						version: this.version,
-						description: this.description,
-						properties: this.properties,
-					}),
+					body: JSON.stringify(this.metaData),
 				},
 			)
 				.then((response) => {
+					// Set the form
 					this.loading = false
 					this.succes = true
-					setTimeout(() => (this.closeModal()), 2500)
+					// Lets refresh the catalogiList
+					store.refreshMetaDataList()
+					response.json().then((data) => {
+						store.setMetaDataItem(data)
+					})
+					store.setSelected('metaData')
+					// Update the list
+					setTimeout(() => (
+						this.closeModal()
+					), 2500)
 				})
 				.catch((err) => {
 					this.metaDataLoading = false

@@ -8,7 +8,6 @@ use Symfony\Component\Uid\Uuid;
 
 class SearchService
 {
-
 	public const BASE_OBJECT = [
 		'database'   => 'objects',
 		'collection' => 'json',
@@ -17,22 +16,7 @@ class SearchService
 	public function __construct(
 		private readonly ObjectService $objectService
 	) {
-
-	}
-
-	/**
-	 * Gets a guzzle client based upon given config.
-	 *
-	 * @param array $config The config to be used for the client.
-	 * @return Client
-	 */
-	private function getClient(
-		array $config,
-	): Client
-	{
-		$guzzleConf = $config;
-
-		return new Client($config);
+		$this->client = new Client;
 	}
 
 	private function mergeFacets(array $existingAggregation, array $newAggregation): array
@@ -93,7 +77,7 @@ class SearchService
 		$elasticService = new ElasticSearchService();
 		$localResults = $elasticService->searchObject($parameters, $elasticConfig);
 
-		$client    = $this->getClient(config: []);
+		$client    = new Client();
 		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
 
 		if(count($directory['documents']) === 0) {

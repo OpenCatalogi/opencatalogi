@@ -11,7 +11,7 @@ import { store } from '../store.js'
 			<Directory v-if="store.selected === 'directory'" />
 			<Publications v-if="store.selected === 'publication'" />
 			<Matadata v-if="store.selected === 'metaData'" />
-			<Search v-if="store.selected === 'search'" />
+			<Search v-if="store.selected === 'search'" :search="store.search" />
 		</template>
 	</NcAppContent>
 </template>

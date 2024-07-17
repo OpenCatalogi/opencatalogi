@@ -1,44 +1,57 @@
 <template>
-	<!-- Placeholder -->
+	<!-- Placeholder Div -->
 	<div>
+		<AddAttachmentModal />
+		<EditAttachmentnModal />
 		<AddPublicationModal />
 		<EditPublicationModal />
-		<DeletePublicationModal />
 		<AddMetaDataModal />
 		<EditMetaDataModal />
+		<AddMetadataDataModal />
+		<EditMetadataDataModal />
 		<AddCatalogModal />
 		<EditCatalogModal />
-		<AddDirectoryModal />
-		<EditDirectoryModal />
+		<AddListingModal />
+		<EditListingModal />
 		<EditPublicationDataModal />
+		<AddPublicationDataModal />
 	</div>
 </template>
 
 <script>
+
+import AddAttachmentModal from './attachment/AddAttachmentModal.vue'
+import EditAttachmentnModal from './attachment/EditAttachmentModal.vue'
 import AddPublicationModal from './publication/AddPublicationModal.vue'
 import EditPublicationModal from './publication/EditPublicationModal.vue'
-import DeletePublicationModal from './publication/DeletePublicationModal.vue'
 import AddMetaDataModal from './metaData/AddMetaDataModal.vue'
 import EditMetaDataModal from './metaData/EditMetaDataModal.vue'
+import AddMetadataDataModal from './metadataData/AddMetadataDataModal.vue'
+import EditMetadataDataModal from './metadataData/EditMetadataDataModal.vue'
 import AddCatalogModal from './catalog/AddCatalogModal.vue'
 import EditCatalogModal from './catalog/EditCatalogModal.vue'
-import AddDirectoryModal from './directory/AddDirectoryModal.vue'
-import EditDirectoryModal from './directory/EditDirectoryModal.vue'
+import AddListingModal from './directory/AddListingModal.vue'
+import EditListingModal from './directory/EditListingModal.vue'
 import EditPublicationDataModal from './publicationData/EditPublicationDataModal.vue'
+import AddPublicationDataModal from './publicationData/AddPublicationDataModal.vue'
 
 export default {
 	name: 'Modals',
 	components: {
+		AddAttachmentModal,
+		EditAttachmentnModal,
 		AddPublicationModal,
 		EditPublicationModal,
-		DeletePublicationModal,
 		AddMetaDataModal,
 		EditMetaDataModal,
+		AddMetadataDataModal,
+		EditMetadataDataModal,
 		AddCatalogModal,
 		EditCatalogModal,
-		AddDirectoryModal,
-		EditDirectoryModal,
+		AddListingModal,
+		EditListingModal,
 		EditPublicationDataModal,
+		AddPublicationDataModal,
 	},
 }
 </script>

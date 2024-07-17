@@ -4,76 +4,91 @@ import { store } from '../../store.js'
 
 <template>
 	<div class="detailContainer">
-		<div v-if="!loading" id="app-content">
-			<NcListItem v-for="(publication, i) in publications.results"
-				:key="`${publication}${i}`"
-				:name="publication?.name"
-				:bold="false"
-				:force-display-actions="true"
-				:active="activePublicationId === publication.id"
-				:details="'CC0 1.0'"
-				:counter-number="1"
-				@click="setActive(publication.id)">
+		<div class="head">
+			<h1 class="h1">
+				{{ catalogi.name }}
+			</h1>
+			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
-					<ListBoxOutline :class="activePublicationId === publication.id && 'selectedZaakIcon'"
-						disable-menu
-						:size="44"
-						user="janedoe"
-						display-name="Jane Doe" />
+					<span>
+						<NcLoadingIcon v-if="loading"
+							:size="20"
+							appearance="dark" />
+						<DotsHorizontal v-if="!loading" :size="20" />
+					</span>
 				</template>
-				<template #subname>
-					{{ publication?.summary }}
-				</template>
-				<template #actions>
-					<NcActionButton>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton>
-						Depubliceren
-					</NcActionButton>
-				</template>
-			</NcListItem>
+				<NcActionButton @click="store.setModal('editCatalog')">
+					<template #icon>
+						<Pencil :size="20" />
+					</template>
+					Bewerken
+				</NcActionButton>
+				<NcActionButton disabled class="catalogiDetails-actionsDelete">
+					<template #icon>
+						<Delete :size="20" />
+					</template>
+					Verwijderen
+				</NcActionButton>
+			</NcActions>
 		</div>
-		<NcLoadingIcon v-if="loading"
-			:size="100"
-			appearance="dark"
-			name="Publicatie details aan het laden" />
+
+		<div v-if="catalogi" id="app-content">
+			<div class="detailGrid">
+				<div>
+					<h4>Beschrijving:</h4>
+					<span>{{ catalogi.summary }}</span>
+				</div>
+				<div>
+					<h4>Schema:</h4>
+					<span>{{ catalogi._schema }}</span>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 import {
-	NcLoadingIcon,
-	NcListItem,
+	NcActions,
 	NcActionButton,
+	NcLoadingIcon,
 } from '@nextcloud/vue'
-// eslint-disable-next-line n/no-missing-import
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline'
+
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
 	name: 'CatalogiDetails',
 	components: {
-		NcLoadingIcon,
-		NcListItem,
+		NcActions,
 		NcActionButton,
-		ListBoxOutline,
+		NcLoadingIcon,
+	},
+	props: {
+		catalogiItem: {
+			type: Object,
+			required: true,
+		},
 	},
 	data() {
 		return {
-			catalogi: [],
+			catalogi: false,
 			loading: false,
 		}
 	},
 	watch: {
-		catalogId: {
-			handler(catalogId) {
-				this.fetchData(catalogId)
+		catalogiItem: {
+			handler(catalogiItem) {
+				this.catalogi = catalogiItem
+				this.fetchData(catalogiItem._id)
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.fetchData(store.catalogiId)
+		this.catalogi = store.catalogiItem
+		this.fetchData(store.catalogiItem._id)
 	},
 	methods: {
 		fetchData(catalogId) {
@@ -87,13 +102,11 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						this.catalogi = data
-						// this.oldZaakId = id
 					})
 					this.loading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					// this.oldZaakId = id
 					this.loading = false
 				})
 		},
@@ -163,5 +176,12 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.active.catalogiDetails-actionsDelete {
+    background-color: var(--color-error) !important;
+}
+.active.catalogiDetails-actionsDelete button {
+    color: #EBEBEB !important;
 }
 </style>

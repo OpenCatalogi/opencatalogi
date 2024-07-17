@@ -5,10 +5,10 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<PublicationList />
+			<PublicationList :search="store.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.publicationId || store.selected != 'publication'"
+			<NcEmptyContent v-if="!store.publicationItem.id || store.selected != 'publication'"
 				class="detailContainer"
 				name="Geen publicatie"
 				description="Nog geen publicatie geselecteerd">
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<PublicationDetails v-if="store.publicationId && store.selected === 'publication'" :publication-id="store.publicationId" />
+			<PublicationDetails v-if="store.publicationItem.id && store.selected === 'publication'" :publication-id="store.publicationItem.id " />
 		</template>
 	</NcAppContent>
 </template>

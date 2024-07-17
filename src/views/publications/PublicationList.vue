@@ -7,12 +7,11 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					disabled
-					:value.sync="search"
+					:value.sync="store.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="clearText">
+					@trailing-button-click="store.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -31,27 +30,25 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(publication, i) in publications.results"
+				<NcListItem v-for="(publication, i) in store.publicationList.results"
 					:key="`${publication}${i}`"
-					:name="publication?.title"
+					:name="publication.name ?? publication.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="store.publicationId === publication.id"
+					:active="store.publicationItem.id === publication.id"
 					:details="publication?.license"
 					:counter-number="1"
-					@click="store.setPublicationId(publication.id)">
+					@click="store.setPublicationItem(publication)">
 					<template #icon>
-						<ListBoxOutline :class="store.publicationId === publication.id && 'selectedZaakIcon'"
+						<ListBoxOutline :class="store.publicationItem.id === publication.id && 'selectedZaakIcon'"
 							disable-menu
-							:size="44"
-							user="janedoe"
-							display-name="Jane Doe" />
+							:size="44" />
 					</template>
 					<template #subname>
 						{{ publication?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="editPublication(publication.id)">
+						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('editPublication')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
@@ -63,7 +60,19 @@ import { store } from '../../store.js'
 							</template>
 							Depubliceren
 						</NcActionButton>
-						<NcActionButton class="publicationsList-actionsDelete" @click="deletePublication(publication)">
+						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('addPublicationData')">
+							<template #icon>
+								<FileTreeOutline :size="20" />
+							</template>
+							Eigenschap toevoegen
+						</NcActionButton>
+						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('AddAttachment')">
+							<template #icon>
+								<FilePlusOutline :size="20" />
+							</template>
+							Bijlage toevoegen
+						</NcActionButton>
+						<NcActionButton class="publicationsList-actionsDelete" @click="store.setPublicationItem(publication); store.setDialog('deletePublication')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -90,6 +99,8 @@ import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
+import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 
 export default {
 	name: 'PublicationList',
@@ -102,58 +113,38 @@ export default {
 		Magnify,
 		NcLoadingIcon,
 		NcActions,
+		// Icons
 		Refresh,
 		Plus,
+		FilePlusOutline,
+		FileTreeOutline,
+	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
-			search: '',
 			loading: false,
-			publications: [],
 		}
 	},
 	watch: {
-		store: {
-			handler() {
-				store.refresh && this.fetchData()
+		search: {
+			handler(search) {
+				this.fetchData()
 			},
-			deep: true,
 		},
 	},
 	mounted() {
 		this.fetchData()
 	},
 	methods: {
-		fetchData(newPage) {
+		fetchData() {
 			this.loading = true
-			fetch(
-				'/index.php/apps/opencatalogi/api/publications',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.publications = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
-		},
-		editPublication(id) {
-			store.setPublicationId(id)
-			store.setModal('publicationEdit')
-		},
-		deletePublication(publication) {
-			store.setPublicationId(publication.id)
-			store.setPublicationItem(publication)
-			store.setModal('deletePublication')
-		},
-		clearText() {
-			this.search = ''
+			store.refreshPublicationList()
+			this.loading = false
 		},
 	},
 }

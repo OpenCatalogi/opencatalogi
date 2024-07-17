@@ -4,69 +4,136 @@ import { store } from '../../store.js'
 
 <template>
 	<div class="detailContainer">
-		<div v-if="!loading" id="app-content">
-			<!-- app-content-wrapper is optional, only use if app-content-list  -->
+		<div class="head">
+			<h1 class="h1">
+				{{ metadata.title }}
+			</h1>
+			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+				<template #icon>
+					<span>
+						<NcLoadingIcon v-if="loading"
+							:size="20"
+							appearance="dark" />
+						<DotsHorizontal v-if="!loading" :size="20" />
+					</span>
+				</template>
+				<NcActionButton @click="store.setModal('editMetaData')">
+					<template #icon>
+						<Pencil :size="20" />
+					</template>
+					Bewerken
+				</NcActionButton>
+				<NcActionButton @click="store.setDialog('deleteMetaData')">
+					<template #icon>
+						<Delete :size="20" />
+					</template>
+					Verwijderen
+				</NcActionButton>
+			</NcActions>
+		</div>
+		<div>
 			<div>
-				<h1 class="h1">
-					{{ metaData.title }}
-				</h1>
-				<div>
-					<h4>Beschrijving:</h4>
-					<span>{{ metaData.description }}</span>
-				</div>
-				<div>
-					<h4>Versie:</h4>
-					<span>{{ metaData.version }}</span>
-				</div>
-				<div>
-					<h4>Properties:</h4>
-					<p>{{ metaData.properties }}</p>
-				</div>
+				<h4>Beschrijving:</h4>
+				<span>{{ metadata.description }}</span>
+			</div>
+			<div>
+				<h4>Versie:</h4>
+				<span>{{ metadata.version }}</span>
 			</div>
 		</div>
-		<NcLoadingIcon v-if="loading"
-			:size="100"
-			appearance="dark"
-			name="MetaData details aan het laden" />
+		<div class="tabContainer">
+			<BTabs content-class="mt-3" justified>
+				<BTab title="Eigenschappen" active>
+					<NcButton class="float-right"
+						type="primary"
+						@click="store.setModal('addMetadataDataModal')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Aanmaken
+					</NcButton>
+
+					<NcListItem v-for="(value, key, i) in JSON.parse(metadata?.properties)"
+						:key="`${key}${i}`"
+						:name="key"
+						:bold="false"
+						:force-display-actions="true">
+						<template #icon>
+							<ListBoxOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
+								disable-menu
+								:size="44" />
+						</template>
+						<template #subname>
+							{{ value }}
+						</template>
+						<template #actions>
+							<NcActionButton @click="editMetadataDataItem(key)">
+								<template #icon>
+									<Pencil :size="20" />
+								</template>
+								Bewerken
+							</NcActionButton>
+							<NcActionButton @click="deleteMetadataDataItem(key)">
+								<template #icon>
+									<Delete :size="20" />
+								</template>
+								Verwijderen
+							</NcActionButton>
+						</template>
+					</NcListItem>
+				</BTab>
+			</BTabs>
+		</div>
 	</div>
 </template>
 
 <script>
-import { NcLoadingIcon } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcButton } from '@nextcloud/vue'
+import { BTabs, BTab } from 'bootstrap-vue'
+
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
 	name: 'MetaDataDetail',
 	components: {
 		NcLoadingIcon,
+		NcActions,
+		NcActionButton,
+		NcButton,
 	},
 	props: {
-		metaDataId: {
-			type: String,
+		metaDataItem: {
+			type: Object,
 			required: true,
 		},
 	},
 	data() {
 		return {
-			metaData: [],
+			metadata: [],
 			loading: false,
 		}
 	},
 	watch: {
-		metaDataId: {
-			handler(metaDataId) {
-				this.fetchData(metaDataId)
+		metaDataItem: {
+			handler(metaDataItem) {
+				this.metadata = metaDataItem
+				this.fetchData(metaDataItem?._id)
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.fetchData()
+		this.metadata = store.metaDataItem
+		this.fetchData(store.metaDataItem?._id)
 	},
 	methods: {
-		fetchData() {
+		fetchData(metadataId) {
 			this.loading = true
 			fetch(
-				'/index.php/apps/opencatalogi/api/metadata/' + store.metaDataId,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataId}`,
 				{
 					method: 'GET',
 				},
@@ -83,6 +150,14 @@ export default {
 					// this.oldZaakId = id
 					this.loading = false
 				})
+		},
+		editMetadataDataItem(key) {
+			store.setMetadataDataKey(key)
+			store.setModal('editMetadataDataModal')
+		},
+		deleteMetadataDataItem(key) {
+			store.setMetadataDataKey(key)
+			store.setDialog('deleteMetaDataProperty')
 		},
 	},
 }
@@ -150,5 +225,9 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.float-right {
+    float: right;
 }
 </style>

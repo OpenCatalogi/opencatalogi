@@ -5,10 +5,10 @@ import { store } from '../../store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<CatalogiList />
+			<CatalogiList :search="store.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.catalogiId || store.selected != 'catalogi' "
+			<NcEmptyContent v-if="!store.catalogiItem || store.selected != 'catalogi' "
 				class="detailContainer"
 				name="Geen Catalogi"
 				description="Nog geen catalogi geselecteerd">
@@ -16,12 +16,12 @@ import { store } from '../../store.js'
 					<DatabaseOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="store.setModal('catalogusAdd')">
+					<NcButton type="primary" @click="store.setModal('addCatalog')">
 						Catalogi toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<CatalogiDetails v-if="store.catalogiId && store.selected === 'catalogi'" :catalog-id="store.catalogiId" />
+			<CatalogiDetails v-if="store.catalogiItem && store.selected === 'catalogi'" :catalogi-item="store.catalogiItem" />
 		</template>
 	</NcAppContent>
 </template>
