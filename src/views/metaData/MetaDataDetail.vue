@@ -23,6 +23,12 @@ import { store } from '../../store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
+				<NcActionButton @click="store.setModal('addMetadataDataModal')">
+					<template #icon>
+						<FileTreeOutline :size="20" />
+					</template>
+					Eigenschap toevoegen
+				</NcActionButton>
 				<NcActionButton @click="store.setDialog('deleteMetaData')">
 					<template #icon>
 						<Delete :size="20" />
@@ -44,22 +50,13 @@ import { store } from '../../store.js'
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
-					<NcButton class="float-right"
-						type="primary"
-						@click="store.setModal('addMetadataDataModal')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Aanmaken
-					</NcButton>
-
 					<NcListItem v-for="(value, key, i) in JSON.parse(metadata?.properties)"
 						:key="`${key}${i}`"
 						:name="key"
 						:bold="false"
 						:force-display-actions="true">
 						<template #icon>
-							<ListBoxOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
+							<CircleOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
 								disable-menu
 								:size="44" />
 						</template>
@@ -94,7 +91,8 @@ import { BTabs, BTab } from 'bootstrap-vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
+import Delete from 'vue-material-design-icons/Delete.vue' 
+import CircleOutline from 'vue-material-design-icons/CircleOutline.vue' 
 
 export default {
 	name: 'MetaDataDetail',
@@ -103,6 +101,10 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcButton,
+		// Icons
+		Pencil,
+		Delete,
+		CircleOutline,
 	},
 	props: {
 		metaDataItem: {

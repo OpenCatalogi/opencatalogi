@@ -17,50 +17,40 @@ import { store } from '../../store.js'
 			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Naam"
-					:value.sync="store.publicationItem.title"
-					:loading="publicationLoading" />
-				<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
+					:value.sync="store.publicationItem.title" />
+				<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="store.publicationItem.description" />
 				<NcTextField :disabled="loading"
 					label="Categorie"
-					:value.sync="store.publicationItem.category"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.category" />
 				<NcTextField :disabled="loading"
 					label="Publicatie"
-					:value.sync="store.publicationItem.publication"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.publication" />
 				<NcTextField :disabled="loading"
 					label="Portaal"
-					:value.sync="store.publicationItem.portal"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.portal" />
 				<NcTextField :disabled="loading"
 					label="Status"
-					:value.sync="store.publicationItem.status"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.status" />
 				<NcTextField :disabled="loading"
 					label="Gepubliceerd"
-					:value.sync="store.publicationItem.published"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.published" />
 				<p>Featured</p>
 				<NcCheckboxRadioSwitch :disabled="loading"
 					label="Featured"
-					:value.sync="store.publicationItem.featured"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.featured" />
 				<NcTextField :disabled="loading"
 					label="Image"
-					:value.sync="store.publicationItem.image"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.image" />
 				<NcTextField :disabled="loading"
 					label="Modified"
-					:value.sync="store.publicationItem.modified"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.modified" />
 				<NcTextField :disabled="loading"
 					label="Licentie"
-					:value.sync="store.publicationItem.license"
-					:loading="publicationLoading" />
+					:value.sync="store.publicationItem.license" />
 			</div>
 			<NcButton
 				v-if="!succes"
-				:disabled="!publication.title"
+				:disabled="!store.publicationItem.title"
 				type="primary"
 				@click="updatePublication()">
 				<template #icon>
@@ -216,7 +206,7 @@ export default {
 		updatePublication(id) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${id}`,
+				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -231,7 +221,7 @@ export default {
 					// Lets refresh the catalogiList
 					store.refreshPublicationList()
 					response.json().then((data) => {
-						store.setpublicationItem(data)
+						store.setPublicationItem(data)
 					})
 					store.setSelected('publication')
 					setTimeout(() => (this.closeModal()), 2500)

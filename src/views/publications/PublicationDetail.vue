@@ -149,7 +149,7 @@ import { store } from '../../store.js'
 							@click=" store.setPublicationDataKey(key)
 							">
 							<template #icon>
-								<ListBoxOutline :class="store.publicationDataKey === key && 'selectedZaakIcon'"
+								<CircleOutline :class="store.publicationDataKey === key && 'selectedZaakIcon'"
 									disable-menu
 									:size="44" />
 							</template>
@@ -238,7 +238,8 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue' 
+import CircleOutline from 'vue-material-design-icons/CircleOutline.vue' 
 
 export default {
 	name: 'PublicationDetail',
@@ -256,6 +257,7 @@ export default {
 		OpenInApp,
 		FilePlusOutline,
 		FileTreeOutline,
+		CircleOutline,
 	},
 	props: {
 		publicationId: {
