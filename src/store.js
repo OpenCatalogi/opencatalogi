@@ -188,7 +188,7 @@ export const store = reactive({
 			catalogi: '',
 			metaData: '',
 			license: '',
-			data: [],
+			data: {},
 			modified: '',
 			published: '',
 			status: '',

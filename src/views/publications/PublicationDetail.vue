@@ -17,7 +17,7 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('publicationEdit')">
+				<NcActionButton @click="store.setModal('editPublication')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>

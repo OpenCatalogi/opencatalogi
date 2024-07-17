@@ -17,58 +17,46 @@ import { store } from '../../store.js'
 			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Naam"
-					:value.sync="publication.title"
+					:value.sync="store.publicationItem.title"
 					:loading="publicationLoading" />
 				<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publication.description" />
 				<NcTextField :disabled="loading"
 					label="Categorie"
-					:value.sync="publication.category"
+					:value.sync="store.publicationItem.category"
 					:loading="publicationLoading" />
 				<NcTextField :disabled="loading"
 					label="Publicatie"
-					:value.sync="publication.publication"
+					:value.sync="store.publicationItem.publication"
 					:loading="publicationLoading" />
 				<NcTextField :disabled="loading"
 					label="Portaal"
-					:value.sync="publication.portal"
+					:value.sync="store.publicationItem.portal"
 					:loading="publicationLoading" />
 				<NcTextField :disabled="loading"
 					label="Status"
-					:value.sync="publication.status"
+					:value.sync="store.publicationItem.status"
 					:loading="publicationLoading" />
 				<NcTextField :disabled="loading"
 					label="Gepubliceerd"
-					:value.sync="publication.published"
+					:value.sync="store.publicationItem.published"
 					:loading="publicationLoading" />
 				<p>Featured</p>
 				<NcCheckboxRadioSwitch :disabled="loading"
 					label="Featured"
-					:value.sync="publication.featured"
+					:value.sync="store.publicationItem.featured"
 					:loading="publicationLoading" />
 				<NcTextField :disabled="loading"
 					label="Image"
-					:value.sync="publication.image"
+					:value.sync="store.publicationItem.image"
 					:loading="publicationLoading" />
 				<NcTextField :disabled="loading"
 					label="Modified"
-					:value.sync="publication.modified"
+					:value.sync="store.publicationItem.modified"
 					:loading="publicationLoading" />
 				<NcTextField :disabled="loading"
 					label="Licentie"
-					:value.sync="publication.license"
+					:value.sync="store.publicationItem.license"
 					:loading="publicationLoading" />
-				<NcSelect v-bind="catalogi"
-					v-model="catalogi.value"
-					input-label="Catalogi"
-					:loading="catalogiLoading"
-					:disabled="loading"
-					required />
-				<NcSelect
-					v-bind="metaData"
-					v-model="metaData.value"
-					input-label="MetaData"
-					:loading="catalogiLoading"
-					:disabled="true" />
 			</div>
 			<NcButton
 				v-if="!succes"
@@ -114,21 +102,6 @@ export default {
 	},
 	data() {
 		return {
-			publication: {
-				title: '',
-				description: '',
-				catalogi: {},
-				metaData: {},
-				license: '',
-				modified: '',
-				published: '',
-				status: '',
-				featured: '',
-				publication: '',
-				portal: '',
-				category: '',
-				image: '',
-			},
 			catalogi: {
 				value: [],
 				options: [],
@@ -161,7 +134,7 @@ export default {
 	},
 	methods: {
 		fetchData(id) {
-			this.publicationLoading = true
+			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${id}`,
 				{
@@ -170,17 +143,13 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.publication = data
-						this.publication.data = JSON.stringify(data.data)
-						this.publication.attachments = JSON.stringify(data.attachments)
-						this.catalogi.value = [data.catalogi]
-						this.metaData.value = [data.metaData]
+						this.setSetPublictionsetPublicationItem(data)
 					})
-					this.publicationLoading = false
+					this.loading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					this.publicationLoading = false
+					this.loading = false
 				})
 		},
 		fetchCatalogi() {
@@ -253,23 +222,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						modified: this.publication.modified,
-						license: this.publication.license,
-						published: this.publication.published,
-						status: this.publication.status,
-						featured: this.publication.featured,
-						publication: this.publication.publication,
-						portal: this.publication.portal,
-						category: this.publication.category,
-						image: this.publication.image,
-						title: this.publication.title,
-						description: this.publication.description,
-						catalogi: this.publication.catalogi,
-						metaData: this.publication.metaData,
-						data: JSON.parse(this.publication.data),
-						attachments: JSON.parse(this.publication.attachments),
-					}),
+					body: JSON.stringify(store.publicationItem),
 				},
 			)
 				.then((response) => {
