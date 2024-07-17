@@ -87,6 +87,8 @@ class SearchService
 		$results = $localResults['results'];
 		$aggregations = $localResults['facets'];
 
+		$searchEndpoints = [];
+
 		$promises = [];
 		foreach($directory['documents'] as $instance) {
 			if(
@@ -95,8 +97,16 @@ class SearchService
 			) {
 				continue;
 			}
-			$url = $instance['search'];
-			$promises[] = $client->getAsync($url, ['query' => $parameters]);
+			$searchEndpoints[$instance['search']][] = $instance['catalogId'];
+		}
+
+		unset($parameters['.catalogi']);
+
+		foreach($searchEndpoints as $searchEndpoint => $catalogi) {
+			$parameters['_catalogi'] = $catalogi;
+
+
+			$promises[] = $client->getAsync($searchEndpoint, ['query' => $parameters]);
 		}
 
 		$responses = Utils::settle($promises)->wait();

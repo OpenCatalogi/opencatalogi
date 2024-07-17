@@ -125,13 +125,11 @@ class ElasticSearchService
 			];
 		}
 
-		unset($filters['_search'], $filters['.queries'], $filters['.catalogi']);
+		unset($filters['.search'], $filters['.queries'], $filters['.catalogi']);
 
 		foreach ($filters as $name => $filter) {
 			$body['query']['bool']['must'][] = ['match' => [$name => $filter]];
 		}
-
-//		var_dump($body);
 
 		return $body;
 	}
