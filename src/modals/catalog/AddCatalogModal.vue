@@ -69,7 +69,7 @@ export default {
 		},
 		addCatalog() {
 			this.loading = true
-			this.errorMessage = false
+			this.error = false
 			fetch(
 				'/index.php/apps/opencatalogi/api/catalogi',
 				{

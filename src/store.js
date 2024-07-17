@@ -25,9 +25,9 @@ export const store = reactive({
 	// Publications
 	publicationItem: false,
 	publicationList: [],
-	// ??
 	publicationDataKey: false,
 	attachmentItem: false,
+	publicationAttachments: [],
 	// Lets add some setters
 	setSelected(selected) {
 		this.selected = selected
@@ -185,9 +185,10 @@ export const store = reactive({
 		const publicationDefault = {
 			title: '',
 			description: '',
-			catalogi: {},
-			metaData: {},
+			catalogi: '',
+			metaData: '',
 			license: '',
+			data: [],
 			modified: '',
 			published: '',
 			status: '',
@@ -220,13 +221,55 @@ export const store = reactive({
 				console.error(err)
 			})
 	},
+	getPublicationAttachments(publication) { // @todo this might belong in a service?
+		fetch(
+			'/index.php/apps/opencatalogi/api/attachments',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					this.publicationAttachments = data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+			})
+	},
 	// @todo why does the following run through the store? -- because its impossible with props, and its vital information for the modal.
 	setPublicationDataKey(publicationDataKey) {
 		this.publicationDataKey = publicationDataKey
 		console.log('Active publication data key set to ' + publicationDataKey)
 	},
 	setAttachmentItem(attachmentItem) {
-		this.attachmentItem = attachmentItem
+		// To prevent forms etc from braking we alway use a default/skeleton object
+		const attachmentDefault = {
+			reference: '',
+			title: '',
+			summary: '',
+			description: '',
+			labels: [],
+			accessURL: '',
+			downloadURL: '',
+			type: '',
+			extension: '',
+			size: 0,
+			anonymization: {
+			  anonymized: false,
+			  results: '',
+			},
+			language: {
+			  code: '',
+			  level: '',
+			},
+			version_of: false,
+			hash: false,
+			published: '',
+			modified: '',
+			license: '',
+		  }
+		this.attachmentItem = { ...attachmentDefault, ...attachmentItem }
 		console.log('Active attachment item set to ' + attachmentItem)
 	},
 })

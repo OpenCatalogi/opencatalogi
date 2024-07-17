@@ -29,13 +29,13 @@ import { store } from '../../store.js'
 					</template>
 					Depubliceren
 				</NcActionButton>
-				<NcActionButton>
+				<NcActionButton @click="store.setModal('addPublicationData')">
 					<template #icon>
 						<FileTreeOutline :size="20" />
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
-				<NcActionButton>
+				<NcActionButton @click="store.setModal('AddAttachment')">
 					<template #icon>
 						<FilePlusOutline :size="20" />
 					</template>
@@ -52,31 +52,31 @@ import { store } from '../../store.js'
 		<div class="container">
 			<div class="detailGrid">
 				<div>
-					<h4>Referentie:</h4>
+					<b>Referentie:</b>
 					<span>{{ publication?.data?.reference }}</span>
 				</div>
 				<div>
-					<h4>Samenvatting:</h4>
+					<b>Samenvatting:</b>
 					<span>{{ publication?.data?.summary }}</span>
 				</div>
 				<div>
-					<h4>Beschrijving:</h4>
+					<b>Beschrijving:</b>
 					<span>{{ publication.description }}</span>
 				</div>
 				<div>
-					<h4>Categorie:</h4>
+					<b>Categorie:</b>
 					<span>{{ publication.category }}</span>
 				</div>
 				<div>
-					<h4>Portal:</h4>
+					<b>Portal:</b>
 					<span><a target="_blank" :href="publication.portal">{{ publication.portal }}</a></span>
 				</div>
 				<div>
-					<h4>Foto:</h4>
+					<b>Foto:</b>
 					<span>{{ publication.image }}</span>
 				</div>
 				<div>
-					<h4>Themas:</h4>
+					<b>Themas:</b>
 					<ul>
 						<li v-for="(theme, index) in publication?.data?.themes" :key="index">
 							{{ theme }}
@@ -84,27 +84,27 @@ import { store } from '../../store.js'
 					</ul>
 				</div>
 				<div>
-					<h4>Featured:</h4>
+					<b>Featured:</b>
 					<span>{{ publication?.data?.featured }}</span>
 				</div>
 				<div>
-					<h4>Licentie:</h4>
+					<b>Licentie:</b>
 					<span>{{ publication.license }}</span>
 				</div>
 				<div>
-					<h4>Status:</h4>
+					<b>Status:</b>
 					<span>{{ publication.status }}</span>
 				</div>
 				<div>
-					<h4>Gepubliceerd:</h4>
+					<b>Gepubliceerd:</b>
 					<span>{{ publication.published }}</span>
 				</div>
 				<div>
-					<h4>Gemodificeerd:</h4>
+					<b>Gemodificeerd:</b>
 					<span>{{ publication.modified }}</span>
 				</div>
 				<div>
-					<h4>Catalogi:</h4>
+					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
 						<span>{{ catalogi.name }}</span>
@@ -121,7 +121,7 @@ import { store } from '../../store.js'
 					</div>
 				</div>
 				<div>
-					<h4>Metadata:</h4>
+					<b>Metadata:</b>
 					<span v-if="metaDataLoading">Loading...</span>
 					<div v-if="!metaDataLoading" class="buttonLinkContainer">
 						<span>{{ metadata.title }}</span>
@@ -141,15 +141,7 @@ import { store } from '../../store.js'
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
-						<NcButton class="float-right"
-							type="primary"
-							@click="store.setModal('addPublicationDataModal')">
-							<template #icon>
-								<Pencil :size="20" />
-							</template>
-							Aanmaken
-						</NcButton>
-						<NcListItem v-for="(value, key, i) in publication?.data?.data"
+						<NcListItem v-for="(value, key, i) in publication?.data"
 							:key="`${key}${i}`"
 							:name="key"
 							:bold="false"
@@ -159,9 +151,7 @@ import { store } from '../../store.js'
 							<template #icon>
 								<ListBoxOutline :class="store.publicationDataKey === key && 'selectedZaakIcon'"
 									disable-menu
-									:size="44"
-									user="janedoe"
-									display-name="Jane Doe" />
+									:size="44" />
 							</template>
 							<template #subname>
 								{{ value }}
@@ -184,11 +174,11 @@ import { store } from '../../store.js'
 					</BTab>
 					<BTab title="Bijlagen">
 						<div
-							v-if="publication?.attachments?.length > 0"
+							v-if="store.publicationAttachments.results?.length > 0"
 							class="tabPanel">
-							<NcListItem v-for="(attachment, i) in publication?.attachments"
+							<NcListItem v-for="(attachment, i) in store.publicationAttachments.results"
 								:key="`${attachment}${i}`"
-								:name="attachment?.title"
+								:name="attachment.name ?? attachment.title"
 								:bold="false"
 								:active="store.attachmentId === attachment.id"
 								:force-display-actions="true"
@@ -198,26 +188,27 @@ import { store } from '../../store.js'
 									<CheckCircle v-if="attachment?.published"
 										:class="attachment?.published && 'publishedIcon'"
 										disable-menu
-										:size="44"
-										user="janedoe"
-										display-name="Jane Doe" />
-
+										:size="44" />
 									<ExclamationThick v-if="!attachment?.published"
 										:class="!attachment?.published && 'warningIcon'"
 										disable-menu
-										:size="44"
-										user="janedoe"
-										display-name="Jane Doe" />
+										:size="44" />
 								</template>
 								<template #subname>
 									{{ attachment?.description }}
 								</template>
 								<template #actions>
-									<NcActionButton @click="updatePublication(attachment.id)">
+									<NcActionButton @click="store.setAttachmentItem(attachment); store.setModal('EditAttachment')">
 										<template #icon>
 											<Pencil :size="20" />
 										</template>
 										Bewerken
+									</NcActionButton>
+									<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('deleteAttachment')">
+										<template #icon>
+											<Delete :size="20" />
+										</template>
+										Verwijderen
 									</NcActionButton>
 								</template>
 							</NcListItem>
@@ -316,6 +307,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
+						store.getPublicationAttachments()
 						// this.loading = false
 					})
 				})
@@ -383,33 +375,6 @@ export default {
 		goToCatalogi(id) {
 			store.setCatalogiId(id)
 			store.setSelected('catalogi')
-		},
-		updatePublication() {
-			this.loading = true
-
-			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${this.publicationId}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(
-						{
-
-							attachments: JSON.parse(this.publication.attachments),
-
-						},
-					),
-				},
-			)
-				.then((response) => {
-					this.closeModal()
-				})
-				.catch((err) => {
-					this.loading = false
-					console.error(err)
-				})
 		},
 	},
 }

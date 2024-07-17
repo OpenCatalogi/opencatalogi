@@ -3,30 +3,34 @@ import { store } from '../../store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'addPublicationDataModal'"
+		v-if="store.modal === 'addPublicationData'"
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie eigenschap toevoegen</h2>
-
-			<div v-if="success === -1" class="form-group">
+			<NcNoteCard v-if="succes" type="success">
+				<p>Publicatie eigenschap bewerkt</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Naam"
 					required
-					:value.sync="dataName"
+					:value.sync="key"
 					:loading="loading" />
 
 				<NcTextField :disabled="loading"
 					label="Data"
-					:value.sync="data"
+					:value.sync="value"
 					:loading="loading" />
 			</div>
 
-			<NcButton v-if="success === -1"
-				:loading="loading"
+			<NcButton v-if="!succes"
 				:disabled="loading"
 				type="primary"
-				@click="AddPublicatie()">
+				@click="AddPublicatieEigenschap()">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading" :size="20" />
@@ -36,20 +40,10 @@ import { store } from '../../store.js'
 				Toevoegen
 			</NcButton>
 
-			<div v-if="success > -1">
-				<NcNoteCard v-if="success" type="success" heading="Success!">
-					<p>Succesvol publicatie eigenschap toegevoegd</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error" heading="Error!">
-					<p>{{ successMessage }}</p>
-				</NcNoteCard>
-
-				<NcButton
-					type="primary"
-					@click="closeModal">
-					Sluiten
-				</NcButton>
-			</div>
+			<NcButton
+				@click="store.setModal(false)">
+				{{ succes ? 'Sluiten' : 'Annuleer' }}
+			</NcButton>
 		</div>
 	</NcModal>
 </template>
@@ -77,56 +71,46 @@ export default {
 	},
 	data() {
 		return {
-			dataName: '',
-			data: '',
+			key: '',
+			value: '',
 			loading: false,
-			success: -1,
-			successMessage: '',
-			hasUpdated: false,
-		}
-	},
-	updated() {
-		if (store.modal === 'addPublicationDataModal' && !this.hasUpdated) {
-			this.dataName = ''
-			this.data = ''
-			this.hasUpdated = true
+			success: false,
+			error: false,
 		}
 	},
 	methods: {
-		closeModal() {
-			store.modal = false
-			this.success = -1
-		},
-		AddPublicatie() {
-			const publication = store.publicationItem
-			publication.data.data[this.dataName] = this.data
-
+		AddPublicatieEigenschap() {
+			const publicationProperty = store.publicationItem
+			publicationProperty.data[this.key] = this.value
+			console.log(store.publicationItem)
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${publication.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publication),
+					body: JSON.stringify(store.publicationProperty),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.success = 1
-					this.hasUpdated = false
-					setTimeout(() => {
-						this.closeModal()
-					    this.success = -1
-					}, 3000)
+					this.succes = true
+					// Lets refresh the catalogiList
+					response.json().then((data) => {
+						store.setPublicationItem(data)
+					})
+					// Wait for the user to read the feedback then close the model
+					const self = this
+					setTimeout(function() {
+						self.succes = false
+						store.setModal(false)
+					}, 2000)
 				})
 				.catch((err) => {
 					this.loading = false
-					this.success = 0
-					this.hasUpdated = false
-					this.successMessage = err
-					console.error(err)
+					this.error = err
 				})
 		},
 	},
