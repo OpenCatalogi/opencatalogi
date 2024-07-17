@@ -84,7 +84,6 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					response.json().then((data) => {
-						console.log(data)
 						store.setPublicationItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
