@@ -41,10 +41,11 @@ import { store } from '../../store.js'
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
-					<NcListItem v-for="(value, key, i) in JSON.parse(metadata?.properties)"
+					<NcListItem v-for="(value, key, i) in metadata?.properties"
 						:key="`${key}${i}`"
 						:name="key"
 						:bold="false"
+						:details="value.type ?? 'Onbekend'"
 						:force-display-actions="true">
 						<template #icon>
 							<CircleOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
@@ -52,7 +53,7 @@ import { store } from '../../store.js'
 								:size="44" />
 						</template>
 						<template #subname>
-							{{ value }}
+							{{ value.description }}
 						</template>
 						<template #actions>
 							<NcActionButton @click="editMetadataDataItem(key)">

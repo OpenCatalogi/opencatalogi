@@ -7,18 +7,22 @@ import { store } from '../../store.js'
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div class="modal__content">
-			<h2>Edit Metadata eigenschap "{{ store.metadataDataKey }}"</h2>
+			<h2>Eigenschap "{{ store.metadataDataKey }}" bewerken</h2>
+			<NcNoteCard v-if="succes" type="success">
+				<p>Eigenschap succesvol bewerkt</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
 
 			<div v-if="success === -1" class="form-group">
 				<NcSelect v-bind="typeOptions"
-					v-model="metadata.properties[store.metadataDataKey].type"
-					required
-					:loading="loading" />
+					:value.sync="store.metadataDataKey"
+					required />
 
 				<NcTextField :disabled="loading"
 					label="description"
-					:value.sync="metadata.properties[store.metadataDataKey].description"
-					:loading="loading" />
+					:value.sync="metadata.properties[store.metadataDataKey].description" />
 
 				<NcTextField :disabled="loading"
 					label="format"
@@ -27,10 +31,6 @@ import { store } from '../../store.js'
 				<NcTextField :disabled="loading"
 					label="max date"
 					:value.sync="metadata.properties[store.metadataDataKey].maxDate" />
-
-				<NcTextField :disabled="loading"
-					label="reference"
-					:value.sync="metadata.properties[store.metadataDataKey].$ref" />
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
@@ -56,8 +56,8 @@ import { store } from '../../store.js'
 					:value.sync="metadata.properties[store.metadataDataKey].exclusiveMinimum" />
 			</div>
 
-			<NcButton v-if="success === -1"
-				:disabled="loading"
+			<NcButton v-if="!success"
+				:disabled="!propertyName || !properties.type || loading"
 				type="primary"
 				@click="updateMetadata(metadata.id)">
 				<template #icon>
@@ -68,21 +68,6 @@ import { store } from '../../store.js'
 				</template>
 				Toevoegen
 			</NcButton>
-
-			<div v-if="success > -1">
-				<NcNoteCard v-if="success" type="success" heading="Success!">
-					<p>Succesvol metadata eigenschap "{{ store.metadataDataKey }}" bewerkt</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error" heading="Error!">
-					<p>{{ successMessage }}</p>
-				</NcNoteCard>
-
-				<NcButton
-					type="primary"
-					@click="closeModal">
-					Sluiten
-				</NcButton>
-			</div>
 		</div>
 	</NcModal>
 </template>
@@ -182,9 +167,6 @@ export default {
 					this.loading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
 		updateMetadata(id) {
 			this.loading = true
 			fetch(
@@ -194,25 +176,26 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						...this.metadata,
-						properties: JSON.stringify(this.metadata.properties),
-					}),
+					body: JSON.stringify(store.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.success = 1
+					this.success = true
+					// Lets refresh the catalogiList
+					store.refreshMetaDataList()
+					response.json().then((data) => {
+						store.setMetaDataItem(data)
+					})
 					setTimeout(() => {
-						this.closeModal()
-					    this.success = -1
+						this.store.setModal(false)
+					    this.success = false
 					}, 3000)
 				})
 				.catch((err) => {
 					this.loading = false
-					this.success = 0
-					this.successMessage = err
-					console.error(err)
+					this.success = false
+					this.error = err
 				})
 		},
 	},

@@ -7,9 +7,15 @@ import { store } from '../../store.js'
 		ref="modalRef"
 		@close="store.setModal(false)">
 		<div class="modal__content">
-			<h2>Add Metadata eigenschap</h2>
+			<h2>Eigenschap toevoegen</h2>
+			<NcNoteCard v-if="success" type="success">
+				<p>Eigenschap succesvol toegevoegd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
 
-			<div v-if="success === -1" class="form-group">
+			<div v-if="!success" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Naam"
 					required
@@ -30,10 +36,6 @@ import { store } from '../../store.js'
 				<NcTextField :disabled="loading"
 					label="max date"
 					:value.sync="properties.maxDate" />
-
-				<NcTextField :disabled="loading"
-					label="reference"
-					:value.sync="properties.$ref" />
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
@@ -59,8 +61,8 @@ import { store } from '../../store.js'
 					:value.sync="properties.exclusiveMinimum" />
 			</div>
 
-			<NcButton v-if="success === -1"
-				:disabled="loading"
+			<NcButton v-if="!success"
+				:disabled="!propertyName || !properties.type || loading"
 				type="primary"
 				@click="AddMetadata()">
 				<template #icon>
@@ -72,20 +74,11 @@ import { store } from '../../store.js'
 				Toevoegen
 			</NcButton>
 
-			<div v-if="success > -1">
-				<NcNoteCard v-if="success" type="success" heading="Success!">
-					<p>Succesvol metadata eigenschap toegevoegd</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error" heading="Error!">
-					<p>{{ successMessage }}</p>
-				</NcNoteCard>
-
-				<NcButton
-					type="primary"
-					@click="closeModal">
-					Sluiten
-				</NcButton>
-			</div>
+			<NcButton v-if="success"
+				type="primary"
+				@click="store.setModal(false)">
+				Sluiten
+			</NcButton>
 		</div>
 	</NcModal>
 </template>
@@ -123,7 +116,6 @@ export default {
 				description: '',
 				format: '',
 				maxDate: '',
-				$ref: '',
 				required: false,
 				default: false,
 				cascadeDelete: false,
@@ -140,8 +132,8 @@ export default {
 				],
 			},
 			loading: false,
-			success: -1,
-			successMessage: '',
+			success: false,
+			error: false,
 			hasUpdated: false,
 		}
 	},
@@ -150,37 +142,48 @@ export default {
 			store.modal = false
 		},
 		AddMetadata() {
-			const metadata = store.metaDataItem
-			metadata.properties = JSON.parse(metadata.properties)
-			metadata.properties[this.propertyName] = this.properties
+			store.metaDataItem.properties[this.propertyName] = this.properties
 
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${metadata.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						...metadata,
-						properties: JSON.stringify(metadata.properties),
-					}),
+					body: JSON.stringify(store.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.success = 1
+					this.success = true
+					// Lets refresh the catalogiList
+					store.refreshMetaDataList()
+					response.json().then((data) => {
+						store.setMetaDataItem(data)
+					})
 					setTimeout(() => {
+						// lets reset
+						this.propertyName = ''
+						this.properties = {
+							type: '',
+							description: '',
+							format: '',
+							maxDate: '',
+							required: false,
+							default: false,
+							cascadeDelete: false,
+							exclusiveMinimum: '',
+						}
 						this.closeModal()
-					    this.success = -1
-					}, 3000)
+					    this.success = false
+					}, 2000)
 				})
 				.catch((err) => {
 					this.loading = false
-					this.success = 0
-					this.successMessage = err
-					console.error(err)
+					this.success = false
+					this.error = err
 				})
 		},
 	},

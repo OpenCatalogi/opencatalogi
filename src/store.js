@@ -140,9 +140,15 @@ export const store = reactive({
 			version: '',
 			summery: '',
 			description: '',
-			properties: [],
+			properties: {},
 		}
 		this.metaDataItem = { ...metaDataDefault, ...metaDataItem }
+
+		// for backward compatablity
+		if (typeof this.metaDataItem.properties === 'string') {
+			this.metaDataItem.properties = JSON.parse(this.metaDataItem.properties)
+		}
+
 		console.log('Active metadata object set to ' + metaDataItem.id)
 	},
 	setMetaDataList(metaDataList) {
