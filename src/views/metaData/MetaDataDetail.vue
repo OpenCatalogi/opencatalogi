@@ -56,13 +56,19 @@ import { store } from '../../store.js'
 							{{ value.description }}
 						</template>
 						<template #actions>
-							<NcActionButton @click="editMetadataDataItem(key)">
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setModal('editMetadataDataModal')">
 								<template #icon>
 									<Pencil :size="20" />
 								</template>
 								Bewerken
 							</NcActionButton>
-							<NcActionButton @click="deleteMetadataDataItem(key)">
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('copyMetaDataProperty')">
+								<template #icon>
+									<ContentCopy :size="20" />
+								</template>
+								Kopieren
+							</NcActionButton>
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('deleteMetaDataProperty')">
 								<template #icon>
 									<Delete :size="20" />
 								</template>
@@ -86,6 +92,7 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 
 export default {
 	name: 'MetaDataDetail',
@@ -97,6 +104,7 @@ export default {
 		// Icons
 		PlusCircleOutline,
 		ListBoxOutline,
+		ContentCopy,
 		Pencil,
 		Delete,
 		CircleOutline,
@@ -147,14 +155,6 @@ export default {
 					// this.oldZaakId = id
 					this.loading = false
 				})
-		},
-		editMetadataDataItem(key) {
-			store.setMetadataDataKey(key)
-			store.setModal('editMetadataDataModal')
-		},
-		deleteMetadataDataItem(key) {
-			store.setMetadataDataKey(key)
-			store.setDialog('deleteMetaDataProperty')
 		},
 	},
 }

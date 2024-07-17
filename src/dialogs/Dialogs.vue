@@ -7,6 +7,7 @@
 		<DeleteMetDataDialog />
 		<CopyMetaDataDialog />
 		<DeleteMetaDataPropertiesDialog />
+		<CopyMetaDataPropertiesDialog />
 		<DeletePublicationDialog />
 		<DeletePublicationDataDialog />
 		<DeleteCatalogDialog />
@@ -20,6 +21,7 @@ import DeleteListingDialog from './listing/DeleteListingDialog.vue'
 import DeleteMetDataDialog from './metaData/DeleteMetaDataDialog.vue'
 import CopyMetaDataDialog from './metaData/CopyMetaDataDialog.vue'
 import DeleteMetaDataPropertiesDialog from './metaDataProperties/DeleteMetaDataPropertiesDialog.vue'
+import CopyMetaDataPropertiesDialog from './metaDataProperties/CopyMetaDataPropertiesDialog.vue'
 import DeletePublicationDialog from './publication/DeletePublicationDialog.vue'
 import DeletePublicationDataDialog from './publicationData/DeletePublicationDataDialog.vue'
 
@@ -32,6 +34,7 @@ export default {
 		DeleteMetDataDialog,
 		CopyMetaDataDialog,
 		DeleteMetaDataPropertiesDialog,
+		CopyMetaDataPropertiesDialog,
 		DeletePublicationDialog,
 		DeletePublicationDataDialog,
 	},
