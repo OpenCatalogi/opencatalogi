@@ -105,7 +105,10 @@ class SearchService
 
 		$promises = [];
 		foreach($directory['documents'] as $instance) {
-			if($instance['default'] === false) {
+			if(
+				$instance['default'] === false
+				&& in_array($instance['catalogId'], $parameters['.catalogi']) === false
+			) {
 				continue;
 			}
 			$url = $instance['search'];
