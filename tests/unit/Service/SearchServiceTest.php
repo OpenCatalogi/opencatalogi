@@ -4,7 +4,9 @@ use OCA\OpenCatalogi\Service\SearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Client;
+use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Psr7\Response;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 
@@ -76,14 +78,11 @@ class SearchServiceTest extends TestCase
 
         // Mock Guzzle client
         $clientMock = $this->createMock(Client::class);
-        $responseMock = $this->createMock(PromiseInterface::class);
+        $promiseMock = new FulfilledPromise(new Response(200, [], json_encode(['results' => [], 'facets' => []])));
 
         $clientMock->expects($this->once())
             ->method('getAsync')
-            ->willReturn($responseMock);
-
-        $responseMock->method('wait')
-            ->willReturn(new Response(200, [], json_encode(['results' => [], 'facets' => []])));
+            ->willReturn($promiseMock);
 
         // Use reflection to inject the mock client
         $reflectedClass = new ReflectionClass(SearchService::class);
