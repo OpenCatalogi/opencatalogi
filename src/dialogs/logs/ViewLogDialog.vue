@@ -21,12 +21,19 @@ import { store } from '../../store.js'
 				<td>Created</td>
 			</tr>
 			<tr>
-				<td>Gebruikersgroepen</td>
-				<td></td>
+				<td><b>Wijzigingen</b></td>
+				<td>
+					{
+						"title": {
+							"old":Null
+							"new":"KOPIE: Voorlopige energielabels met BAG-kenmerken"
+						}
+					}
+				</td>
 			</tr>
 		</table>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" @click="store.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
