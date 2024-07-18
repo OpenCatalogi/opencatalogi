@@ -18,6 +18,7 @@
 		<DepublishPublicationDialog />
 		<DeleteCatalogDialog />
 		<DepublishPublicationDialog />
+		<ArchivePublicationDialog />
 		<ViewLogDialog />
 	</div>
 </template>
@@ -38,6 +39,7 @@ import CopyPublicationDialog from './publication/CopyPublicationDialog.vue'
 import DeletePublicationDataDialog from './publicationData/DeletePublicationDataDialog.vue'
 import PublishPublicationDialog from './publication/PublishPublicationDialog.vue'
 import DepublishPublicationDialog from './publication/DepublishPublicationDialog.vue'
+import ArchivePublicationDialog from './publication/ArchivePublicationDialog.vue'
 import ViewLogDialog from './logs/ViewLogDialog.vue'
 
 export default {
@@ -58,6 +60,7 @@ export default {
 		DeletePublicationDataDialog,
 		PublishPublicationDialog,
 		DepublishPublicationDialog,
+		ArchivePublicationDialog,
 		ViewLogDialog,
 	},
 }

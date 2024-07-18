@@ -41,6 +41,12 @@ import { store } from '../../store.js'
 					</template>
 					Depubliseren
 				</NcActionButton>
+				<NcActionButton @click="store.setDialog('archivePublication')">
+					<template #icon>
+						<ArchivePlusOutline :size="20" />
+					</template>
+					Archiveren
+				</NcActionButton>
 				<NcActionButton @click="store.setModal('addPublicationData')">
 					<template #icon>
 						<FileTreeOutline :size="20" />
@@ -216,6 +222,12 @@ import { store } from '../../store.js'
 										</template>
 										Bewerken
 									</NcActionButton>
+									<NcActionButton :disabled="disabled">
+										<template #icon>
+											<Download :size="20" />
+										</template>
+										Download
+									</NcActionButton>
 									<NcActionButton v-if="attachment.status !== 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
@@ -274,22 +286,35 @@ import { store } from '../../store.js'
 					<BTab title="Rechten">
 						<table width="100%">
 							<tr>
-								<td>Openbaar</td>
-								<td>Deze publicatie is openbaar toegankenlijk
+								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankenlijk</td>
+								<td>
+									<NcButton @click="prive = !prive">
+										<template #icon>
+											<LockOpenVariantOutline v-if="!prive"
+												:size="20" />
+											<LockOutline v-if="prive"
+												:size="20" />
+										</template>
+										<span v-if="!prive">Prive maken</span>
+										<span v-if="prive">Openbaar maken</span>
+									</NcButton>
 								</td>
 							</tr>
-							<tr>
+							<tr v-if="prive">
 								<td>Gebruikersgroepen</td>
-								<td></td>
+								<td><NcSelectTags v-model="userGroups" :multiple="true" /></td>
 							</tr>
 						</table>
 					</BTab>
 					<BTab title="Statestieken">
-						<apexchart
+						<apexchart v-if="publication.status === 'published'"
 							width="100%"
 							type="line"
 							:options="chart.options"
 							:series="chart.series" />
+						<NcNoteCard type="info">
+							<p>Er zijn nog geen statestieken over deze publicatie bekend</p>
+						</NcNoteCard>
 					</BTab>
 				</BTabs>
 			</div>
@@ -299,7 +324,7 @@ import { store } from '../../store.js'
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcButton, NcListItem, NcActionLink } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcButton, NcListItem, NcActionLink, NcSelectTags, NcNoteCard } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 
@@ -317,6 +342,10 @@ import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
+import LockOutline from 'vue-material-design-icons/LockOutline.vue'
+import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import Download from 'vue-material-design-icons/Download.vue'
+import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -327,6 +356,8 @@ export default {
 		NcActions,
 		NcButton,
 		NcListItem,
+		NcSelectTags,
+		NcNoteCard,
 		apexchart: VueApexCharts,
 		// Icons
 		CheckCircle,
@@ -342,6 +373,10 @@ export default {
 		CircleOutline,
 		ContentCopy,
 		TimelineQuestionOutline,
+		LockOutline,
+		LockOpenVariantOutline,
+		Download,
+		ArchivePlusOutline,
 	},
 	props: {
 		publicationId: {
@@ -354,10 +389,17 @@ export default {
 			publication: [],
 			catalogi: [],
 			metadata: [],
+			prive: false,
 			loading: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
 			hasUpdated: false,
+			userGroups: [
+				{
+					id: '1',
+					label: 'Content Beheerders',
+				}
+			],
 			chart: {
 				options: {
 					chart: {

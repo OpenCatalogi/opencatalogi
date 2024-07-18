@@ -8,7 +8,7 @@ import { store } from '../../store.js'
 			<div class="listHeader">
 				<NcTextField class="searchField"
 					:value.sync="store.search"
-					label="Search"
+					label="Zoeken"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
 					@trailing-button-click="store.setSearch('')">
@@ -40,9 +40,10 @@ import { store } from '../../store.js'
 					:counter-number="1"
 					@click="store.setPublicationItem(publication)">
 					<template #icon>
-						<ListBoxOutline :class="store.publicationItem.id === publication.id && 'selectedZaakIcon'"
-							disable-menu
-							:size="44" />
+						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
+						<ArchiveOutline v-if="publication.status === 'archived'" :size="44" />
+						<Pencil v-if="publication.status === 'concept'" :size="44" />
+						<AlertOutline v-if="publication.status === 'retracted'" :size="44" />
 					</template>
 					<template #subname>
 						{{ publication?.description }}
@@ -54,17 +55,29 @@ import { store } from '../../store.js'
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="store.setDialog('copyPublication')">
+						<NcActionButton @click="store.setPublicationItem(publication); store.setDialog('copyPublication')">
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
 							Kopieren
 						</NcActionButton>
-						<NcActionButton>
+						<NcActionButton v-if="publication.status !== 'published'" @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
+							<template #icon>
+								<Publish :size="20" />
+							</template>
+							Publiseren
+						</NcActionButton>
+						<NcActionButton v-if="publication.status === 'published'" @click="store.setPublicationItem(publication); store.setDialog('depublishPublication')">
 							<template #icon>
 								<PublishOff :size="20" />
 							</template>
-							Depubliceren
+							Depubliseren
+						</NcActionButton>
+						<NcActionButton @click="store.setPublicationItem(publication); store.setDialog('archivePublication')">
+							<template #icon>
+								<ArchivePlusOutline :size="20" />
+							</template>
+							Archiveren
 						</NcActionButton>
 						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('addPublicationData')">
 							<template #icon>
@@ -108,6 +121,10 @@ import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
+import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
+import Publish from 'vue-material-design-icons/Publish.vue'
+import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 
 export default {
 	name: 'PublicationList',
@@ -126,6 +143,11 @@ export default {
 		FilePlusOutline,
 		FileTreeOutline,
 		ContentCopy,
+		ArchiveOutline,
+		AlertOutline,
+		Pencil,
+		Publish,
+		ArchivePlusOutline,
 	},
 	props: {
 		search: {
