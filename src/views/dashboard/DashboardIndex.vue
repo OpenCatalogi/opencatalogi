@@ -1,7 +1,3 @@
-<script setup>
-import { store } from '../../store.js'
-</script>
-
 <template>
 	<NcAppContent>
 		<div class="dashboardContainer">

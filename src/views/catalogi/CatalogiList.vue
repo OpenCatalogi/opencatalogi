@@ -33,11 +33,11 @@ import { store } from '../../store.js'
 				<NcListItem v-for="(catalogus, i) in store.catalogiList.results"
 					:key="`${catalogus}${i}`"
 					:name="catalogus.name ?? catalogus.title"
-					:active="store.catalogiItem?._id === catalogus?._id"
+					:active="store.catalogiItem?.id === catalogus?.id"
 					:details="'1h'"
 					:counter-number="44"
 					:force-display-actions="true"
-					@click="toggleCatalogiDetailView(catalogus)">
+					@click="store.setCatalogiItem(catalogus)">
 					<template #icon>
 						<DatabaseOutline :class="store.catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
 							disable-menu

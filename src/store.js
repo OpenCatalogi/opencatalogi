@@ -71,7 +71,11 @@ export const store = reactive({
 	// Catlogi
 	setCatalogiItem(catalogiItem) {
 		// To prevent forms etc from braking we alway use a default/skeleton object
-		const catalogiDefault = { name: '', summery: '' }
+		const catalogiDefault = {
+			name: '',
+			summery: '',
+			description: '',
+		}
 		this.catalogiItem = { ...catalogiDefault, ...catalogiItem }
 		console.log('Active catalog item set to ' + catalogiItem.id)
 	},
@@ -133,9 +137,18 @@ export const store = reactive({
 		// To prevent forms etc from braking we alway use a default/skeleton object
 		const metaDataDefault = {
 			name: '',
+			version: '',
 			summery: '',
+			description: '',
+			properties: {},
 		}
 		this.metaDataItem = { ...metaDataDefault, ...metaDataItem }
+
+		// for backward compatablity
+		if (typeof this.metaDataItem.properties === 'string') {
+			this.metaDataItem.properties = JSON.parse(this.metaDataItem.properties)
+		}
+
 		console.log('Active metadata object set to ' + metaDataItem.id)
 	},
 	setMetaDataList(metaDataList) {
@@ -152,10 +165,12 @@ export const store = reactive({
 			.then((response) => {
 				response.json().then((data) => {
 					this.metaDataList = data
+					return data
 				})
 			})
 			.catch((err) => {
 				console.error(err)
+				return err
 			})
 	},
 	setMetadataDataKey(metadataDataKey) {
@@ -188,7 +203,7 @@ export const store = reactive({
 			catalogi: '',
 			metaData: '',
 			license: '',
-			data: [],
+			data: {},
 			modified: '',
 			published: '',
 			status: '',
@@ -215,10 +230,12 @@ export const store = reactive({
 			.then((response) => {
 				response.json().then((data) => {
 					this.publicationList = data
+					return data
 				})
 			})
 			.catch((err) => {
 				console.error(err)
+				return err
 			})
 	},
 	getPublicationAttachments(publication) { // @todo this might belong in a service?
@@ -231,10 +248,46 @@ export const store = reactive({
 			.then((response) => {
 				response.json().then((data) => {
 					this.publicationAttachments = data
+					return data
 				})
 			})
 			.catch((err) => {
 				console.error(err)
+				return err
+			})
+	},
+	getConceptPublitions() { // @todo this might belong in a service?
+		fetch(
+			'/index.php/apps/opencatalogi/api/publications?status=concept',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					return data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+				return err
+			})
+	},
+	getConceptattachments(publication) { // @todo this might belong in a service?
+		fetch(
+			'/index.php/apps/opencatalogi/api/attachments?status=concept',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					return data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+				return err
 			})
 	},
 	// @todo why does the following run through the store? -- because its impossible with props, and its vital information for the modal.

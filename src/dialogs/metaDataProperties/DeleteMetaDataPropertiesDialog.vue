@@ -65,9 +65,7 @@ export default {
 	},
 	methods: {
 		DeleteProperty() {
-			const metadata = store.metaDataItem
-			metadata.properties = JSON.parse(metadata.properties)
-			delete metadata.properties[store.metadataDataKey]
+			delete store.metaDataItem.properties[store.metadataDataKey]
 
 			this.loading = true
 			fetch(
@@ -77,10 +75,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						...metadata,
-						properties: JSON.stringify(metadata.properties),
-					}),
+					body: JSON.stringify(store.metaDataItem),
 				},
 			)
 				.then((response) => {
@@ -88,6 +83,10 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					store.refreshMetaDataList()
+					response.json().then((data) => {
+						store.setMetaDataItem(data)
+					})
+					store.setSelected('metaData')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
