@@ -23,11 +23,29 @@ class DirectoryServiceTest extends TestCase
         $this->objectServiceMock = $this->createMock(ObjectService::class);
 
         $this->configMock->method('getValueString')
-            ->willReturnMap([
+            // ->willReturnMap([
+            //     ['opencatalogi', 'mongodbLocation', 'http://localhost'],
+            //     ['opencatalogi', 'mongodbKey', 'key'],
+            //     ['opencatalogi', 'mongodbCluster', 'cluster']
+            // ]);
+            ->will($this->returnValueMap([
                 ['opencatalogi', 'mongodbLocation', 'http://localhost'],
                 ['opencatalogi', 'mongodbKey', 'key'],
                 ['opencatalogi', 'mongodbCluster', 'cluster']
-            ]);
+            ]));
+
+        // Debugging: check the parameters passed to the mocked method
+        $location = $this->configMock->getValueString('opencatalogi', 'mongodbLocation');
+        $key = $this->configMock->getValueString('opencatalogi', 'mongodbKey');
+        $cluster = $this->configMock->getValueString('opencatalogi', 'mongodbCluster');
+
+        print_r($location); // Should output 'http://localhost'
+        print_r($key);      // Should output 'key'
+        print_r($cluster);  // Should output 'cluster'
+
+        $this->assertEquals('http://localhost', $location);
+        $this->assertEquals('key', $key);
+        $this->assertEquals('cluster', $cluster);
 
         $this->directoryService = new DirectoryService(
             $this->urlGeneratorMock,
@@ -38,7 +56,7 @@ class DirectoryServiceTest extends TestCase
         // Use reflection to set the private $client property
         $this->clientMock = $this->createMock(Client::class);
 
-        $reflection = new \ReflectionClass($this->directoryService);
+        $reflection = new ReflectionClass($this->directoryService);
         $property = $reflection->getProperty('client');
         $property->setAccessible(true);
         $property->setValue($this->directoryService, $this->clientMock);

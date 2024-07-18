@@ -10,11 +10,10 @@ use OCP\IURLGenerator;
 class DirectoryService
 {
 	private Client $client;
-	private IAppConfig $config;
 
 	public function __construct(
 		private readonly IURLGenerator $urlGenerator,
-		IAppConfig $config,
+		private readonly IAppConfig $config,
 		private readonly ObjectService $objectService,
 	)
 	{
