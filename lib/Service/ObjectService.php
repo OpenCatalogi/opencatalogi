@@ -112,11 +112,15 @@ class ObjectService
 			options: ['json' => $object]
 		);
 
-		return json_decode(
+		$result = json_decode(
 			json: $returnData->getBody()->getContents(),
 			associative: true
-		)['document'];
+		);
+
+		return ['document' => $result];
 	}
+
+
 
 	/**
 	 * Updates an object in MongoDB

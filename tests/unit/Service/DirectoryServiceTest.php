@@ -4,7 +4,7 @@ use OCA\OpenCatalogi\Service\DirectoryService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\IAppConfig;
 use OCP\IURLGenerator;
-use PHPUnit\Framework\TestCase;
+use Test\TestCase; 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 
