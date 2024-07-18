@@ -29,11 +29,17 @@ import { store } from '../../store.js'
 					</template>
 					Kopieren
 				</NcActionButton>
-				<NcActionButton>
+				<NcActionButton v-if="store.publicationItem.status === 'concept' || store.publicationItem.status === 'retracted'" @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
+					<template #icon>
+						<Publish :size="20" />
+					</template>
+					Publiseren
+				</NcActionButton>
+				<NcActionButton v-if="store.publicationItem.status === 'published'" @click="store.setPublicationItem(publication); store.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
-					Depubliceren
+					Depubliseren
 				</NcActionButton>
 				<NcActionButton @click="store.setModal('addPublicationData')">
 					<template #icon>
@@ -169,12 +175,6 @@ import { store } from '../../store.js'
 									</template>
 									Bewerken
 								</NcActionButton>
-								<NcActionButton>
-									<template #icon>
-										<PublishOff :size="20" />
-									</template>
-									Depubliceren
-								</NcActionButton>
 								<NcActionButton @click="deletePublicationDataItem(key)">
 									<template #icon>
 										<Delete :size="20" />
@@ -216,6 +216,18 @@ import { store } from '../../store.js'
 										</template>
 										Bewerken
 									</NcActionButton>
+									<NcActionButton v-if="store.status === 'concept' || store.status === 'retracted'" @click="store.setAttachmentItem(publication); store.setDialog('publishAttachment')">
+										<template #icon>
+											<Publish :size="20" />
+										</template>
+										Publiseren
+									</NcActionButton>
+									<NcActionButton v-if="store.status === 'published'" @click="store.setAttachmentItem(publication); store.setDialog('depublishAttachment')">
+										<template #icon>
+											<PublishOff :size="20" />
+										</template>
+										Depubliseren
+									</NcActionButton>
 									<NcActionButton @click="store.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
@@ -252,6 +264,7 @@ import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import Publish from 'vue-material-design-icons/Publish.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
@@ -270,6 +283,11 @@ export default {
 		// Icons
 		CheckCircle,
 		ExclamationThick,
+		DotsHorizontal,
+		Pencil,
+		Delete,
+		Publish,
+		PublishOff,
 		OpenInApp,
 		FilePlusOutline,
 		FileTreeOutline,

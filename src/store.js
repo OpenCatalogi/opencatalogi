@@ -28,6 +28,8 @@ export const store = reactive({
 	publicationDataKey: false,
 	attachmentItem: false,
 	publicationAttachments: [],
+	conceptPublications: [],
+	conceptAttachments: [],
 	// Lets add some setters
 	setSelected(selected) {
 		this.selected = selected
@@ -206,7 +208,7 @@ export const store = reactive({
 			data: {},
 			modified: '',
 			published: '',
-			status: '',
+			status: 'concept',
 			featured: '',
 			publication: '',
 			portal: '',
@@ -256,7 +258,7 @@ export const store = reactive({
 				return err
 			})
 	},
-	getConceptPublitions() { // @todo this might belong in a service?
+	getConceptPublications() { // @todo this might belong in a service?
 		fetch(
 			'/index.php/apps/opencatalogi/api/publications?status=concept',
 			{
@@ -265,6 +267,7 @@ export const store = reactive({
 		)
 			.then((response) => {
 				response.json().then((data) => {
+					this.conceptPublications = data
 					return data
 				})
 			})
@@ -273,7 +276,7 @@ export const store = reactive({
 				return err
 			})
 	},
-	getConceptattachments(publication) { // @todo this might belong in a service?
+	getConceptAttachments(publication) { // @todo this might belong in a service?
 		fetch(
 			'/index.php/apps/opencatalogi/api/attachments?status=concept',
 			{
@@ -282,6 +285,7 @@ export const store = reactive({
 		)
 			.then((response) => {
 				response.json().then((data) => {
+					this.conceptAttachments = data
 					return data
 				})
 			})

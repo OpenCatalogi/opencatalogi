@@ -12,6 +12,8 @@
 		<DeletePublicationDialog />
 		<DeletePublicationDataDialog />
 		<CopyPublicationDialog />
+		<PublishPublicationDialog />
+		<DepublishPublicationDialog />
 		<DeleteCatalogDialog />
 	</div>
 </template>
@@ -28,6 +30,8 @@ import CopyMetaDataPropertiesDialog from './metaDataProperties/CopyMetaDataPrope
 import DeletePublicationDialog from './publication/DeletePublicationDialog.vue'
 import CopyPublicationDialog from './publication/CopyPublicationDialog.vue'
 import DeletePublicationDataDialog from './publicationData/DeletePublicationDataDialog.vue'
+import PublishPublicationDialog from './publication/PublishPublicationDialog.vue'
+import DepublishPublicationDialog from './publication/DepublishPublicationDialog.vue'
 
 export default {
 	name: 'Dialogs',
@@ -43,6 +47,8 @@ export default {
 		DeletePublicationDialog,
 		CopyPublicationDialog,
 		DeletePublicationDataDialog,
+		PublishPublicationDialog,
+		DepublishPublicationDialog,
 	},
 }
 </script>
