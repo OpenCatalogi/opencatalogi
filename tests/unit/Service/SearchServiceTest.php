@@ -4,7 +4,9 @@ use OCA\OpenCatalogi\Service\SearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use Test\TestCase; 
 use GuzzleHttp\Client;
-use GuzzleHttp\Promise\Promise;
+use GuzzleHttp\Promise\Utils;
+use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Psr7\Response;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 
@@ -18,7 +20,8 @@ class SearchServiceTest extends TestCase
     {
         $this->objectServiceMock = $this->createMock(ObjectService::class);
         $this->elasticSearchServiceMock = $this->createMock(ElasticSearchService::class);
-        $this->searchService = new SearchService($this->objectServiceMock);
+
+        $this->searchService = new SearchService($this->objectServiceMock, $this->elasticSearchServiceMock);
     }
 
     public function testSortResultArray()
@@ -28,6 +31,28 @@ class SearchServiceTest extends TestCase
         $this->assertEquals(-1, $this->searchService->sortResultArray($a, $b));
         $this->assertEquals(1, $this->searchService->sortResultArray($b, $a));
         $this->assertEquals(0, $this->searchService->sortResultArray($a, $a));
+    }
+
+    public function testMergeFacets()
+    {
+        $existingAggregation = [
+            ['_id' => 'category1', 'count' => 10],
+            ['_id' => 'category2', 'count' => 5]
+        ];
+        $newAggregation = [
+            ['_id' => 'category1', 'count' => 3],
+            ['_id' => 'category3', 'count' => 7]
+        ];
+
+        $expected = [
+            ['_id' => 'category1', 'count' => 13],
+            ['_id' => 'category2', 'count' => 5],
+            ['_id' => 'category3', 'count' => 7]
+        ];
+
+        $result = $this->searchService->mergeFacets($existingAggregation, $newAggregation);
+
+        $this->assertEquals($expected, $result);
     }
 
     public function testSearch()
@@ -53,22 +78,23 @@ class SearchServiceTest extends TestCase
 
         // Mock Guzzle client
         $clientMock = $this->createMock(Client::class);
-        $promiseMock = $this->createMock(Promise::class);
+        $promiseMock = new FulfilledPromise(new Response(200, [], json_encode(['results' => [], 'facets' => []])));
 
         $clientMock->expects($this->once())
             ->method('getAsync')
             ->willReturn($promiseMock);
 
-        $promiseMock->method('wait')
-            ->willReturn(new Response(200, [], json_encode(['results' => [], 'facets' => []])));
-
         // Use reflection to inject the mock client
-        $reflectedClass = new \ReflectionClass(SearchService::class);
-        $reflectedProperty = $reflectedClass->getProperty('getClient');
+        $reflectedClass = new ReflectionClass(SearchService::class);
+        $reflectedProperty = $reflectedClass->getProperty('client');
         $reflectedProperty->setAccessible(true);
         $reflectedProperty->setValue($this->searchService, $clientMock);
 
-        $results = $this->searchService->search([], [], []);
+        $elasticConfig['location'] = "https://example.com";
+		$elasticConfig['key'] 	   = "dXNlcm5hbWU6cGFzc3dvcmQ=";
+		$elasticConfig['index']    = "objects";
+
+        $results = $this->searchService->search([], $elasticConfig, []);
 
         $this->assertIsArray($results);
         $this->assertArrayHasKey('results', $results);

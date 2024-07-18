@@ -8,18 +8,21 @@ use Symfony\Component\Uid\Uuid;
 
 class SearchService
 {
+    public $client;
+    
 	public const BASE_OBJECT = [
 		'database'   => 'objects',
 		'collection' => 'json',
 	];
 
 	public function __construct(
-		private readonly ObjectService $objectService
+		private readonly ObjectService $objectService,
+		private readonly ElasticSearchService $elasticService
 	) {
-		$this->client = new Client;
+		$this->client = new Client();
 	}
 
-	private function mergeFacets(array $existingAggregation, array $newAggregation): array
+	public function mergeFacets(array $existingAggregation, array $newAggregation): array
 	{
 		$results = [];
 		$existingAggregationMapped = [];
@@ -74,10 +77,9 @@ class SearchService
 	 */
 	public function search(array $parameters, array $elasticConfig, array $dbConfig, array $catalogi = []): array
 	{
-		$elasticService = new ElasticSearchService();
-		$localResults = $elasticService->searchObject($parameters, $elasticConfig);
+        
+		$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
 
-		$client    = new Client();
 		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
 
 		if(count($directory['documents']) === 0) {
@@ -93,7 +95,7 @@ class SearchService
 				continue;
 			}
 			$url = $instance['search'];
-			$promises[] = $client->getAsync($url, ['query' => $parameters]);
+			$promises[] = $this->client->getAsync($url, ['query' => $parameters]);
 		}
 
 		$responses = Utils::settle($promises)->wait();
