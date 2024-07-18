@@ -10,30 +10,38 @@ use GuzzleHttp\Psr7\Response;
 
 class DirectoryServiceTest extends TestCase
 {
-    private $urlGenerator;
-    private $config;
-    private $objectService;
-    private $client;
+    private $urlGeneratorMock;
+    private $configMock;
+    private $objectServiceMock;
+    private $clientMock;
     private $directoryService;
 
     protected function setUp(): void
     {
-        $this->urlGenerator = $this->createMock(IURLGenerator::class);
-        $this->config = $this->createMock(IAppConfig::class);
-        $this->objectService = $this->createMock(ObjectService::class);
+        $this->urlGeneratorMock = $this->createMock(IURLGenerator::class);
+        $this->configMock = $this->createMock(IAppConfig::class);
+        $this->objectServiceMock = $this->createMock(ObjectService::class);
+
+        $this->configMock->method('getValueString')
+            ->willReturnMap([
+                ['opencatalogi', 'mongodbLocation', 'http://localhost'],
+                ['opencatalogi', 'mongodbKey', 'key'],
+                ['opencatalogi', 'mongodbCluster', 'cluster']
+            ]);
 
         $this->directoryService = new DirectoryService(
-            $this->urlGenerator,
-            $this->config,
-            $this->objectService
+            $this->urlGeneratorMock,
+            $this->configMock,
+            $this->objectServiceMock
         );
 
         // Use reflection to set the private $client property
-        $this->client = $this->createMock(Client::class);
+        $this->clientMock = $this->createMock(Client::class);
+
         $reflection = new \ReflectionClass($this->directoryService);
         $property = $reflection->getProperty('client');
         $property->setAccessible(true);
-        $property->setValue($this->directoryService, $this->client);
+        $property->setValue($this->directoryService, $this->clientMock);
     }
 
     public function testRegisterToExternalDirectory()
@@ -47,18 +55,11 @@ class DirectoryServiceTest extends TestCase
 
         $catalogi = [['id' => 'catalog1'], ['id' => 'catalog2']];
 
-        $this->config->method('getValueString')
-            ->willReturnMap([
-                ['opencatalogi', 'mongodbLocation', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', 'key'],
-                ['opencatalogi', 'mongodbCluster', 'cluster']
-            ]);
-
-        $this->objectService->method('findObjects')
+        $this->objectServiceMock->method('findObjects')
             ->with(['_schema' => 'catalog'], $dbConfig)
             ->willReturn(['documents' => $catalogi]);
 
-        $this->client->method('post')
+        $this->clientMock->method('post')
             ->willReturn(new Response(200));
 
         $statusCode = $this->directoryService->registerToExternalDirectory($newDirectory);
@@ -72,7 +73,7 @@ class DirectoryServiceTest extends TestCase
         $responseBody = json_encode(['results' => [['directory' => 'https://example.com/dir1'], ['directory' => 'https://example.com/dir2']]]);
         $response = new Response(200, [], $responseBody);
 
-        $this->client->method('get')
+        $this->clientMock->method('get')
             ->with($directory['directory'])
             ->willReturn($response);
 

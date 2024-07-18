@@ -10,13 +10,15 @@ use OCP\IURLGenerator;
 class DirectoryService
 {
 	private Client $client;
+	private IAppConfig $config;
 
 	public function __construct(
 		private readonly IURLGenerator $urlGenerator,
-		private readonly IAppConfig $config,
+		IAppConfig $config,
 		private readonly ObjectService $objectService,
 	)
 	{
+        $this->config = $config;
 		$this->client = new Client([]);
 	}
 
@@ -39,9 +41,9 @@ class DirectoryService
 
 	public function registerToExternalDirectory (array $newDirectory): int
 	{
-		$dbConfig['base_uri'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbCluster');
+		$dbConfig['base_uri'] = $this->config->getValueString('opencatalogi', 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString('opencatalogi', 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString('opencatalogi', 'mongodbCluster');
 
 		$catalogi = $this->objectService->findObjects(filters: ['_schema' => 'catalog'], config: $dbConfig)['documents'];
 
