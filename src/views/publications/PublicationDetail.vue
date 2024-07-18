@@ -247,6 +247,19 @@ import { store } from '../../store.js'
 							Geen bijlagen gevonden
 						</div>
 					</BTab>
+					<BTab title="Loging">
+						todo
+					</BTab>
+					<BTab title="Rechten">
+						todo
+					</BTab>
+					<BTab title="Statestieken">
+						<apexchart
+							width="100%"
+							type="line"
+							:options="chart.options"
+							:series="chart.series" />
+					</BTab>
 				</BTabs>
 			</div>
 		</div>
@@ -257,6 +270,7 @@ import { store } from '../../store.js'
 // Components
 import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
+import VueApexCharts from 'vue-apexcharts'
 
 // Icons
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
@@ -280,6 +294,7 @@ export default {
 		NcActionButton,
 		NcActions,
 		NcListItem,
+		apexchart: VueApexCharts,
 		// Icons
 		CheckCircle,
 		ExclamationThick,
@@ -309,6 +324,20 @@ export default {
 			catalogiLoading: false,
 			metaDataLoading: false,
 			hasUpdated: false,
+			chart: {
+				options: {
+					chart: {
+						id: 'Aantal bekeken publicaties',
+					},
+					xaxis: {
+						categories: ['7-11', '7-12', '7-13', '7-15', '7-16', '7-17', '7-18'],
+					},
+				},
+				series: [{
+					name: 'Weergaven',
+					data: [0, 0, 0, 0, 0, 0, 15],
+				}],
+			}
 		}
 	},
 	watch: {
