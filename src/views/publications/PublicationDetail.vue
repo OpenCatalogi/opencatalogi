@@ -228,7 +228,7 @@ import { store } from '../../store.js'
 										</template>
 										Depubliseren
 									</NcActionButton>
-									<NcActionButton @click="store.setDialog('copyAttachment')">
+									<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>

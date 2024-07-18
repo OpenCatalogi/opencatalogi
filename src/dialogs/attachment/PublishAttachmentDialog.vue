@@ -30,7 +30,7 @@ import { store } from '../../store.js'
 				v-if="!succes"
 				:disabled="loading"
 				type="primary"
-				@click="CopyAttachment()">
+				@click="PublishAttachment()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<Publish v-if="!loading" :size="20" />
@@ -66,7 +66,7 @@ export default {
 		}
 	},
 	methods: {
-		CopyAttachment() {
+		PublishAttachment() {
 			this.loading = true
 			store.attachmentItem.status = 'published'
 			fetch(
@@ -90,6 +90,7 @@ export default {
 						store.getPublicationAttachments(store.publicationItem.id)
 						// @todo update the publication item
 					}
+					store.getConceptAttachments()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {

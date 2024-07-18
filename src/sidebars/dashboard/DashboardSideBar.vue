@@ -68,20 +68,40 @@ import { store } from '../../store.js'
 				<FileOutline :size="20" />
 			</template>
 			Welke bijlagen vereisen uw aandacht?
-			<NcListItem v-for="(publication, i) in store.conceptAttachments.results"
-				:key="`${publication}${i}`"
-				:name="publication.name ?? publication.title"
+			<NcListItem v-for="(attachment, i) in store.conceptAttachments.results"
+				:key="`${attachment}${i}`"
+				:name="attachment.name ?? attachment.title"
 				:bold="false"
 				:force-display-actions="true"
-				:active="store.publicationItem.id === publication.id"
-				:details="publication?.status">
+				:active="store.attachmentItem.id === attachment.id"
+				:details="attachment?.status">
 				<template #icon>
-					<ListBoxOutline :class="store.publicationItem.id === publication.id && 'selectedZaakIcon'"
+					<ListBoxOutline :class="store.publicationItem.id === attachment.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44" />
 				</template>
 				<template #subname>
 					{{ publication?.description }}
+				</template>
+				<template #actions>
+					<NcActionButton @click="store.setAttachmentItem(attachment); store.setModal('editAttachment')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Bewerken
+					</NcActionButton>
+					<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('publishAttachment')">
+						<template #icon>
+							<Publish :size="20" />
+						</template>
+						Publiseren
+					</NcActionButton>
+					<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('deleteAttachment')">
+						<template #icon>
+							<Delete :size="20" />
+						</template>
+						Verwijderen
+					</NcActionButton>
 				</template>
 			</NcListItem>
 			<NcNoteCard type="success">
