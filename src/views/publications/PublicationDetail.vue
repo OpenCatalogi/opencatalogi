@@ -197,11 +197,11 @@ import { store } from '../../store.js'
 								:details="attachment?.status"
 								@click="store.setAttachmentId(attachment.id)">
 								<template #icon>
-									<CheckCircle v-if="attachment?.published"
+									<CheckCircle v-if="attachment?.status === 'published'"
 										:class="attachment?.published && 'publishedIcon'"
 										disable-menu
 										:size="44" />
-									<ExclamationThick v-if="!attachment?.published"
+									<ExclamationThick v-if="attachment?.status !== 'published'"
 										:class="!attachment?.published && 'warningIcon'"
 										disable-menu
 										:size="44" />
@@ -248,10 +248,41 @@ import { store } from '../../store.js'
 						</div>
 					</BTab>
 					<BTab title="Loging">
-						todo
+						<table width="100%">
+							<tr>
+								<th><b>Tijstip</b></th>
+								<th><b>Gebruiker</b></th>
+								<th><b>Actie</b></th>
+								<th><b>Details</b></th>
+							</tr>
+							<tr>
+								<td>18-07-2024 11:55:21</td>
+								<td>Ruben van der Linde</td>
+								<td>Created</td>
+								<td>
+									<NcButton  @click="store.setDialog('viewLog')">
+										<template #icon>
+											<TimelineQuestionOutline
+												:size="20" />
+										</template>
+										Bekijk details
+									</NcButton>
+								</td>
+							</tr>
+						</table>
 					</BTab>
 					<BTab title="Rechten">
-						todo
+						<table width="100%">
+							<tr>
+								<td>Openbaar</td>
+								<td>Deze publicatie is openbaar toegankenlijk
+								</td>
+							</tr>
+							<tr>
+								<td>Gebruikersgroepen</td>
+								<td></td>
+							</tr>
+						</table>
 					</BTab>
 					<BTab title="Statestieken">
 						<apexchart
@@ -268,7 +299,7 @@ import { store } from '../../store.js'
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcButton, NcListItem, NcActionLink } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 
@@ -285,6 +316,7 @@ import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -293,6 +325,7 @@ export default {
 		NcLoadingIcon,
 		NcActionButton,
 		NcActions,
+		NcButton,
 		NcListItem,
 		apexchart: VueApexCharts,
 		// Icons
@@ -308,6 +341,7 @@ export default {
 		FileTreeOutline,
 		CircleOutline,
 		ContentCopy,
+		TimelineQuestionOutline,
 	},
 	props: {
 		publicationId: {
