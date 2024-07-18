@@ -29,7 +29,7 @@ import { store } from '../../store.js'
 					</template>
 					Kopieren
 				</NcActionButton>
-				<NcActionButton v-if="store.publicationItem.status === 'concept' || store.publicationItem.status === 'retracted'" @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
+				<NcActionButton v-if="store.publicationItem.status !== 'published'" @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
 					<template #icon>
 						<Publish :size="20" />
 					</template>
@@ -194,7 +194,7 @@ import { store } from '../../store.js'
 								:bold="false"
 								:active="store.attachmentId === attachment.id"
 								:force-display-actions="true"
-								:details="attachment?.published ? 'Published' : 'Not Published'"
+								:details="attachment?.status"
 								@click="store.setAttachmentId(attachment.id)">
 								<template #icon>
 									<CheckCircle v-if="attachment?.published"
@@ -216,13 +216,13 @@ import { store } from '../../store.js'
 										</template>
 										Bewerken
 									</NcActionButton>
-									<NcActionButton v-if="store.status === 'concept' || store.status === 'retracted'" @click="store.setAttachmentItem(publication); store.setDialog('publishAttachment')">
+									<NcActionButton v-if="attachment.status !== 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
 										</template>
 										Publiseren
 									</NcActionButton>
-									<NcActionButton v-if="store.status === 'published'" @click="store.setAttachmentItem(publication); store.setDialog('depublishAttachment')">
+									<NcActionButton v-if="attachment.status === 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>

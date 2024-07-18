@@ -328,5 +328,6 @@ export const store = reactive({
 		  }
 		this.attachmentItem = { ...attachmentDefault, ...attachmentItem }
 		console.log('Active attachment item set to ' + attachmentItem)
+		console.log(attachmentItem)
 	},
 })

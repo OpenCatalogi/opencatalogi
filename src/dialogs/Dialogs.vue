@@ -2,7 +2,9 @@
 	<!-- Placeholder div -->
 	<div>
 		<DeleteCatalogDialog />
-		<DeleteAttachmenDialog />
+		<DeleteAttachmentDialog />
+		<PublishAttachmentDialog />
+		<DepublishAttachmentDialog />
 		<CopyAttachmentDialog />
 		<DeleteListingDialog />
 		<DeleteMetDataDialog />
@@ -20,7 +22,9 @@
 
 <script>
 import DeleteCatalogDialog from './catalog/DeleteCatalogDialog.vue'
-import DeleteAttachmenDialog from './attachment/DeleteAttachmentDialog.vue'
+import DeleteAttachmentDialog from './attachment/DeleteAttachmentDialog.vue'
+import PublishAttachmentDialog from './attachment/PublishAttachmentDialog.vue'
+import DepublishAttachmentDialog from './attachment/DepublishAttachmentDialog.vue'
 import CopyAttachmentDialog from './attachment/CopyAttachmentDialog.vue'
 import DeleteListingDialog from './listing/DeleteListingDialog.vue'
 import DeleteMetDataDialog from './metaData/DeleteMetaDataDialog.vue'
@@ -37,7 +41,9 @@ export default {
 	name: 'Dialogs',
 	components: {
 		DeleteCatalogDialog,
-		DeleteAttachmenDialog,
+		DeleteAttachmentDialog,
+		PublishAttachmentDialog,
+		DepublishAttachmentDialog,
 		CopyAttachmentDialog,
 		DeleteListingDialog,
 		DeleteMetDataDialog,
