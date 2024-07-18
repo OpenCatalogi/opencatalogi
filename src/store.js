@@ -165,10 +165,12 @@ export const store = reactive({
 			.then((response) => {
 				response.json().then((data) => {
 					this.metaDataList = data
+					return data
 				})
 			})
 			.catch((err) => {
 				console.error(err)
+				return err
 			})
 	},
 	setMetadataDataKey(metadataDataKey) {
@@ -228,10 +230,12 @@ export const store = reactive({
 			.then((response) => {
 				response.json().then((data) => {
 					this.publicationList = data
+					return data
 				})
 			})
 			.catch((err) => {
 				console.error(err)
+				return err
 			})
 	},
 	getPublicationAttachments(publication) { // @todo this might belong in a service?
@@ -244,10 +248,46 @@ export const store = reactive({
 			.then((response) => {
 				response.json().then((data) => {
 					this.publicationAttachments = data
+					return data
 				})
 			})
 			.catch((err) => {
 				console.error(err)
+				return err
+			})
+	},
+	getConceptPublitions() { // @todo this might belong in a service?
+		fetch(
+			'/index.php/apps/opencatalogi/api/publications?status=concept',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					return data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+				return err
+			})
+	},
+	getConceptattachments(publication) { // @todo this might belong in a service?
+		fetch(
+			'/index.php/apps/opencatalogi/api/attachments?status=concept',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					return data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+				return err
 			})
 	},
 	// @todo why does the following run through the store? -- because its impossible with props, and its vital information for the modal.

@@ -23,7 +23,7 @@ import { store } from '../../store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton>
+				<NcActionButton @click="store.setDialog('copyPublication')">
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
@@ -169,12 +169,6 @@ import { store } from '../../store.js'
 									</template>
 									Bewerken
 								</NcActionButton>
-								<NcActionButton @click="editPublicationDataItem(key)">
-									<template #icon>
-										<ContentCopy :size="20" />
-									</template>
-									Kopieren
-								</NcActionButton>
 								<NcActionButton>
 									<template #icon>
 										<PublishOff :size="20" />
@@ -221,6 +215,12 @@ import { store } from '../../store.js'
 											<Pencil :size="20" />
 										</template>
 										Bewerken
+									</NcActionButton>
+									<NcActionButton @click="store.setDialog('copyAttachment')">
+										<template #icon>
+											<ContentCopy :size="20" />
+										</template>
+										Kopieren
 									</NcActionButton>
 									<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('deleteAttachment')">
 										<template #icon>
