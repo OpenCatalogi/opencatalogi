@@ -18,8 +18,8 @@ import { store } from '../store.js'
 			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="store.selected === 'publication' && store.catalogiItem === catalogus?._id"
-				@click="store.setSelected('publication'); store.setCatalogiItem(catalogus)">
+				:active="catalogus._id === store.selectedCatalogus && store.selected === 'publication'"
+				@click="switchCatalogus(catalogus)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
@@ -335,6 +335,12 @@ export default {
 				.catch((err) => {
 					console.error(err)
 				})
+		},
+		switchCatalogus(catalogus) {
+			if (catalogus._id !== store.selectedCatalogus) store.setPublicationItem(false) // for when you switch catalogus
+			store.setSelected('publication')
+			store.setSelectedCatalogus(catalogus._id)
+			store.setCatalogiItem(catalogus)
 		},
 	},
 }
