@@ -5,6 +5,7 @@ import { reactive } from 'vue'
 export const store = reactive({
 	// The curently active menu item, defaults to '' wich triggers the dashboard
 	selected: 'dashboard',
+	selectedCatalogus: false,
 	// The currently active modal, managed trought the state to ensure that only one modal can be active at the same time
 	modal: false,
 	// The curetnly active dialog
@@ -32,6 +33,10 @@ export const store = reactive({
 	setSelected(selected) {
 		this.selected = selected
 		console.log('Active menu item set to ' + selected)
+	},
+	setSelectedCatalogus(selectedCatalogus) {
+		this.selectedCatalogus = selectedCatalogus
+		console.log('Active catalogus menu set to ' + selectedCatalogus)
 	},
 	setModal(modal) {
 		this.modal = modal

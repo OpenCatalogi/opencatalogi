@@ -30,7 +30,7 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(publication, i) in store.publicationList.results"
+				<NcListItem v-for="(publication, i) in filteredPublications"
 					:key="`${publication}${i}`"
 					:name="publication.name ?? publication.title"
 					:bold="false"
@@ -137,6 +137,14 @@ export default {
 		return {
 			loading: false,
 		}
+	},
+	computed: {
+		filteredPublications() {
+			if (!store?.publicationList?.results) return []
+			return store.publicationList.results.filter((publication) => {
+				return publication.catalogi === store.selectedCatalogus
+			})
+		},
 	},
 	watch: {
 		search: {
