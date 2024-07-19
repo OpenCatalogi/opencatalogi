@@ -39,31 +39,31 @@ class ConfigurationController extends Controller
 	 */
 	public function index(): JSONResponse
 	{
-
 		$data = [];
 		$defaults = [
-		// Getting the config
-			'drcLocation'=>'',
-			'drcKey'=>'',
-			'orcLocation'=>'',
-			'orcKey'=>'',
-			'mongodbLocation'=>'',
-			'mongodbKey'=>'',
+			'drcLocation' => '',
+			'drcKey' => '',
+			'orcLocation' => '',
+			'orcKey' => '',
+			'mongodbLocation' => '',
+			'mongodbKey' => '',
 			'mongodbCluster' => '',
-			'elasticLocation'=>'',
-			'elasticKey'=>'',
+			'elasticLocation' => '',
+			'elasticKey' => '',
 			'elasticIndex' => '',
-			'organisationName'=>'my-organisation',
-			'organisationOin'=> '',
-			'organisationPki'=>''
+			'organisationName' => 'my-organisation',
+			'organisationOin' => '',
+			'organisationPki' => ''
 		];
 
-		// We should filter out unwanted values before this
-		foreach($defaults as $key => $value){
-			$data[$key] =  $this->config->getValueString($this->appName, $key, $value);
+		try {
+			foreach ($defaults as $key => $value) {
+				$data[$key] = $this->config->getValueString($this->appName, $key, $value);
+			}
+			return new JSONResponse($data);
+		} catch (\Exception $e) {
+			return new JSONResponse(['error' => $e->getMessage()], 500);
 		}
-
-		return new JSONResponse($data);
 	}
 
 	/**
@@ -76,12 +76,14 @@ class ConfigurationController extends Controller
 	{
 		$data = $this->request->getParams();
 
-		// We should filter out unwanted values before this
-		foreach($data as $key => $value){
-			$this->config->setValueString($this->appName, $key, $value);
-			$data[$key] =  $this->config->getValueString($this->appName, $key);
+		try {
+			foreach ($data as $key => $value) {
+				$this->config->setValueString($this->appName, $key, $value);
+				$data[$key] = $this->config->getValueString($this->appName, $key);
+			}
+			return new JSONResponse($data);
+		} catch (\Exception $e) {
+			return new JSONResponse(['error' => $e->getMessage()], 500);
 		}
-
-		return new JSONResponse($data);
 	}
 }

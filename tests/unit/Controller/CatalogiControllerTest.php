@@ -2,7 +2,7 @@
 
 namespace OCA\OpenCatalogi\Tests\Controller;
 
-use Test\TestCase; 
+use Test\TestCase;
 use OCA\OpenCatalogi\Controller\CatalogiController;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\IRequest;
@@ -28,7 +28,7 @@ class CatalogiControllerTest extends TestCase
         $this->config = $this->createMock(IAppConfig::class);
         $this->controller = new CatalogiController('opencatalogi', $this->request, $this->config);
 
-        // Zorg ervoor dat de config mock altijd een string retourneert
+        // Ensure the config mock always returns a string
         $this->config->method('getValueString')
             ->willReturn('http://localhost');
     }
@@ -58,6 +58,25 @@ class CatalogiControllerTest extends TestCase
         $this->assertEquals(['results' => [['key' => 'value']]], $response->getData());
     }
 
+    public function testIndexWithError()
+    {
+        $objectService = $this->createMock(ObjectService::class);
+
+        $this->config->method('getValueString')
+            ->willReturnMap([
+                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
+                ['opencatalogi', 'mongodbKey', '', 'someKey'],
+                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
+            ]);
+
+        $this->request->method('getParams')->willReturn(['key' => 'value']);
+        $objectService->method('findObjects')->willThrowException(new \Exception('Database error'));
+
+        $response = $this->controller->index($objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertArrayHasKey('error', $response->getData());
+    }
+
     public function testShow()
     {
         $objectService = $this->createMock(ObjectService::class);
@@ -74,6 +93,24 @@ class CatalogiControllerTest extends TestCase
         $response = $this->controller->show('testId', $objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals(['key' => 'value'], $response->getData());
+    }
+
+    public function testShowWithError()
+    {
+        $objectService = $this->createMock(ObjectService::class);
+
+        $this->config->method('getValueString')
+            ->willReturnMap([
+                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
+                ['opencatalogi', 'mongodbKey', '', 'someKey'],
+                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
+            ]);
+
+        $objectService->method('findObject')->willThrowException(new \Exception('Object not found'));
+
+        $response = $this->controller->show('invalidId', $objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertArrayHasKey('error', $response->getData());
     }
 
     public function testCreate()
@@ -95,6 +132,26 @@ class CatalogiControllerTest extends TestCase
         $this->assertEquals(['key' => 'value'], $response->getData());
     }
 
+    public function testCreateWithError()
+    {
+        $objectService = $this->createMock(ObjectService::class);
+
+        $this->config->method('getValueString')
+            ->willReturnMap([
+                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
+                ['opencatalogi', 'mongodbKey', '', 'someKey'],
+                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
+            ]);
+
+        $this->request->method('getParams')->willReturn(['key' => 'value']);
+        $objectService->method('saveObject')->willThrowException(new \Exception('Save failed'));
+
+        $response = $this->controller->create($objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertArrayHasKey('error', $response->getData());
+        $this->assertEquals('Save failed', $response->getData()['error']);
+    }
+
     public function testUpdate()
     {
         $objectService = $this->createMock(ObjectService::class);
@@ -114,6 +171,26 @@ class CatalogiControllerTest extends TestCase
         $this->assertEquals(['key' => 'newValue'], $response->getData());
     }
 
+    public function testUpdateWithError()
+    {
+        $objectService = $this->createMock(ObjectService::class);
+
+        $this->config->method('getValueString')
+            ->willReturnMap([
+                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
+                ['opencatalogi', 'mongodbKey', '', 'someKey'],
+                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
+            ]);
+
+        $this->request->method('getParams')->willReturn(['key' => 'newValue']);
+        $objectService->method('updateObject')->willThrowException(new \Exception('Update failed'));
+
+        $response = $this->controller->update('invalidId', $objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertArrayHasKey('error', $response->getData());
+        $this->assertEquals('Update failed', $response->getData()['error']);
+    }
+
     public function testDestroy()
     {
         $objectService = $this->createMock(ObjectService::class);
@@ -130,5 +207,24 @@ class CatalogiControllerTest extends TestCase
         $response = $this->controller->destroy('testId', $objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals([], $response->getData());
+    }
+
+    public function testDestroyWithError()
+    {
+        $objectService = $this->createMock(ObjectService::class);
+
+        $this->config->method('getValueString')
+            ->willReturnMap([
+                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
+                ['opencatalogi', 'mongodbKey', '', 'someKey'],
+                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
+            ]);
+
+        $objectService->method('deleteObject')->willThrowException(new \Exception('Delete failed'));
+
+        $response = $this->controller->destroy('invalidId', $objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertArrayHasKey('error', $response->getData());
+        $this->assertEquals('Delete failed', $response->getData()['error']);
     }
 }

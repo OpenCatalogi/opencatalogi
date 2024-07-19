@@ -1,50 +1,97 @@
 PHPUnit 9.6.20 by Sebastian Bergmann and contributors.
 
-...............................................EE.......E         57 / 57 (100%)
+...............................................................  63 / 108 ( 58%)
+.............................EEEFFFE.........                   108 / 108 (100%)
 
-Time: 00:00.806, Memory: 41.76 MB
+Time: 00:01.080, Memory: 41.76 MB
 
-There were 3 errors:
+There were 4 errors:
 
 1) DirectoryServiceTest::testRegisterToExternalDirectory
-TypeError: Mock_IAppConfig_6e142c8f::getValueString(): Return value must be of type string, null returned
+TypeError: Mock_IAppConfig_6fc2eb13::getValueString(): Return value must be of type string, null returned
 
-/var/www/html/apps-extra/opencatalogi/lib/Service/DirectoryService.php:42
-/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:63
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:38
 
 2) DirectoryServiceTest::testFetchFromExternalDirectory
-Error: Cannot use object of type stdClass as array
+TypeError: Mock_IAppConfig_6fc2eb13::getValueString(): Return value must be of type string, null returned
 
-/var/www/html/apps-extra/opencatalogi/lib/Service/DirectoryService.php:89
-/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:84
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:38
 
-3) SearchServiceTest::testSearch
-ReflectionException: Property OCA\OpenCatalogi\Service\SearchService::$getClient does not exist
+3) DirectoryServiceTest::testCreateDirectoryFromResult
+TypeError: Mock_IAppConfig_6fc2eb13::getValueString(): Return value must be of type string, null returned
 
-/var/www/html/apps-extra/opencatalogi/tests/unit/Service/SearchServiceTest.php:67
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:38
+
+4) Service\ElasticSearchServiceTest::testSearchObject
+Elastic\Transport\Exception\NoNodeAvailableException: No alive nodes. All the 1 nodes seem to be down.
+
+/var/www/html/apps-extra/opencatalogi/vendor/elastic/transport/src/NodePool/SimpleNodePool.php:77
+/var/www/html/apps-extra/opencatalogi/vendor/elastic/transport/src/Transport.php:312
+/var/www/html/apps-extra/opencatalogi/vendor/elasticsearch/elasticsearch/src/Client.php:168
+/var/www/html/apps-extra/opencatalogi/vendor/elasticsearch/elasticsearch/src/Traits/ClientEndpointsTrait.php:1614
+/var/www/html/apps-extra/opencatalogi/lib/Service/ElasticSearchService.php:177
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/ElasticSearchServiceTest.php:82
+
+--
+
+There were 3 failures:
+
+1) Service\ElasticSearchServiceTest::testAddObject
+Failed asserting that two arrays are equal.
+--- Expected
++++ Actual
+@@ @@
+ Array (
+-    'field' => 'value'
++    'exception' => Array (...)
+ )
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/ElasticSearchServiceTest.php:29
+
+2) Service\ElasticSearchServiceTest::testRemoveObject
+Failed asserting that two arrays are equal.
+--- Expected
++++ Actual
+@@ @@
+ Array (
++    'exception' => Array (...)
+ )
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/ElasticSearchServiceTest.php:47
+
+3) Service\ElasticSearchServiceTest::testUpdateObject
+Failed asserting that two arrays are equal.
+--- Expected
++++ Actual
+@@ @@
+ Array (
++    'exception' => Array (...)
+ )
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/ElasticSearchServiceTest.php:65
 
 ERRORS!
-Tests: 57, Assertions: 90, Errors: 3.
+Tests: 108, Assertions: 185, Errors: 4, Failures: 3.
 
 
 [1;37;40mCode Coverage Report:      [0m
-[1;37;40m  2024-07-17 17:55:13      [0m
+[1;37;40m  2024-07-19 14:46:55      [0m
 [1;37;40m                           [0m
 [1;37;40m Summary:                  [0m
 [37;41m  Classes: 15.38% (2/13)   [0m
-[37;41m  Methods: 48.10% (38/79)  [0m
-[30;43m  Lines:   60.74% (410/675)[0m
+[30;43m  Methods: 53.16% (42/79)  [0m
+[30;43m  Lines:   75.29% (521/692)[0m
 
 OCA\OpenCatalogi\AppInfo\Application
   [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/  3)[0m
 OCA\OpenCatalogi\Controller\AttachmentsController
   [30;43mMethods:  55.56% ( 5/ 9)[0m   [30;43mLines:  82.67% ( 62/ 75)[0m
 OCA\OpenCatalogi\Controller\CatalogiController
-  [30;43mMethods:  57.14% ( 4/ 7)[0m   [30;42mLines:  93.44% ( 57/ 61)[0m
+  [30;43mMethods:  57.14% ( 4/ 7)[0m   [30;42mLines:  93.94% ( 62/ 66)[0m
 OCA\OpenCatalogi\Controller\ConfigurationController
-  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% ( 27/ 27)[0m
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% ( 31/ 31)[0m
 OCA\OpenCatalogi\Controller\DashboardController
-  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% (  8/  8)[0m
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [37;41mLines:  47.06% (  8/ 17)[0m
 OCA\OpenCatalogi\Controller\DirectoryController
   [30;43mMethods:  85.71% ( 6/ 7)[0m   [30;42mLines:  96.77% ( 60/ 62)[0m
 OCA\OpenCatalogi\Controller\MetaDataController
@@ -52,12 +99,12 @@ OCA\OpenCatalogi\Controller\MetaDataController
 OCA\OpenCatalogi\Controller\PublicationsController
   [37;41mMethods:  33.33% ( 3/ 9)[0m   [30;43mLines:  60.40% ( 61/101)[0m
 OCA\OpenCatalogi\Controller\SearchController
-  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 31)[0m
+  [30;42mMethods: 100.00% ( 4/ 4)[0m   [30;42mLines: 100.00% ( 31/ 31)[0m
 OCA\OpenCatalogi\Service\DirectoryService
-  [37;41mMethods:   0.00% ( 0/ 6)[0m   [37;41mLines:   0.00% (  0/ 42)[0m
+  [37;41mMethods:   0.00% ( 0/ 6)[0m   [37;41mLines:   0.00% (  0/ 43)[0m
 OCA\OpenCatalogi\Service\ElasticSearchService
-  [37;41mMethods:   0.00% ( 0/ 9)[0m   [37;41mLines:   0.00% (  0/ 78)[0m
+  [37;41mMethods:  11.11% ( 1/ 9)[0m   [37;41mLines:  41.03% ( 32/ 78)[0m
 OCA\OpenCatalogi\Service\ObjectService
   [30;43mMethods:  85.71% ( 6/ 7)[0m   [30;42mLines:  96.10% ( 74/ 77)[0m
 OCA\OpenCatalogi\Service\SearchService
-  [37;41mMethods:  40.00% ( 2/ 5)[0m   [37;41mLines:   4.08% (  2/ 49)[0m
+  [30;43mMethods:  60.00% ( 3/ 5)[0m   [30;43mLines:  87.23% ( 41/ 47)[0m

@@ -2,7 +2,7 @@
 
 namespace OCA\OpenCatalogi\Tests\Controller;
 
-use Test\TestCase; 
+use Test\TestCase;
 use OCA\OpenCatalogi\Controller\MetaDataController;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\IAppConfig;
@@ -31,6 +31,9 @@ class MetaDataControllerTest extends TestCase
         $this->config = $this->createMock(IAppConfig::class);
         $this->objectService = $this->createMock(ObjectService::class);
         $this->controller = new MetaDataController('opencatalogi', $this->request, $this->config);
+
+        $this->config->method('getValueString')
+            ->will($this->returnValue('someValue'));
     }
 
     public function testPage()
@@ -41,43 +44,31 @@ class MetaDataControllerTest extends TestCase
 
     public function testIndex()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
-        $this->objectService->method('findObjects')->willReturn([
-            'documents' => MetaDataController::TEST_ARRAY
-        ]);
+        $this->objectService->method('findObjects')
+            ->willReturn(['documents' => MetaDataController::TEST_ARRAY]);
 
         $response = $this->controller->index($this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-
-        $expectedData = [
-            "results" => MetaDataController::TEST_ARRAY
-        ];
-
-        $this->assertEquals($expectedData, $response->getData());
+        $this->assertEquals(["results" => MetaDataController::TEST_ARRAY], $response->getData());
     }
 
     public function testIndexWithInvalidFilters()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
         $this->request->method('getParams')->willReturn(['_invalid' => 'value']);
 
-        $this->objectService->method('findObjects')->willReturn(['documents' => []]);
+        $this->objectService->method('findObjects')
+            ->willReturn(['documents' => []]);
 
         $response = $this->controller->index($this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-
-        $expectedData = ["results" => []];
-        $this->assertEquals($expectedData, $response->getData());
+        $this->assertEquals(["results" => []], $response->getData());
     }
 
     public function testShow()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
         $id = '6892aeb1-d92d-4da5-ad41-f1c3278f40c2';
-        $this->objectService->method('findObject')->willReturn(MetaDataController::TEST_ARRAY[$id]);
+        $this->objectService->method('findObject')
+            ->willReturn(MetaDataController::TEST_ARRAY[$id]);
 
         $response = $this->controller->show($id, $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
@@ -86,10 +77,9 @@ class MetaDataControllerTest extends TestCase
 
     public function testShowWithNonExistentId()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
         $id = 'non-existent-id';
-        $this->objectService->method('findObject')->willReturn([]);
+        $this->objectService->method('findObject')
+            ->willReturn([]);
 
         $response = $this->controller->show($id, $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
@@ -98,8 +88,6 @@ class MetaDataControllerTest extends TestCase
 
     public function testCreate()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
         $data = [
             "id" => "new-id",
             "title" => "New Metadata",
@@ -110,8 +98,8 @@ class MetaDataControllerTest extends TestCase
         ];
 
         $this->request->method('getParams')->willReturn($data);
-
-        $this->objectService->method('saveObject')->willReturn($data);
+        $this->objectService->method('saveObject')
+            ->willReturn($data);
 
         $response = $this->controller->create($this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
@@ -120,8 +108,6 @@ class MetaDataControllerTest extends TestCase
 
     public function testUpdate()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
         $id = '6892aeb1-d92d-4da5-ad41-f1c3278f40c2';
         $data = [
             "title" => "Updated Metadata",
@@ -133,7 +119,8 @@ class MetaDataControllerTest extends TestCase
         $this->request->method('getParams')->willReturn($data);
 
         $updatedData = array_merge(MetaDataController::TEST_ARRAY[$id], $data);
-        $this->objectService->method('updateObject')->willReturn($updatedData);
+        $this->objectService->method('updateObject')
+            ->willReturn($updatedData);
 
         $response = $this->controller->update($id, $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
@@ -142,8 +129,6 @@ class MetaDataControllerTest extends TestCase
 
     public function testUpdateWithNonExistentId()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
         $id = 'non-existent-id';
         $data = [
             "title" => "Updated Metadata",
@@ -154,7 +139,8 @@ class MetaDataControllerTest extends TestCase
 
         $this->request->method('getParams')->willReturn($data);
 
-        $this->objectService->method('updateObject')->willReturn([]);
+        $this->objectService->method('updateObject')
+            ->willReturn([]);
 
         $response = $this->controller->update($id, $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
@@ -163,11 +149,9 @@ class MetaDataControllerTest extends TestCase
 
     public function testDestroy()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
         $id = '6892aeb1-d92d-4da5-ad41-f1c3278f40c2';
-
-        $this->objectService->method('deleteObject')->willReturn([]);
+        $this->objectService->method('deleteObject')
+            ->willReturn([]);
 
         $response = $this->controller->destroy($id, $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
@@ -176,14 +160,91 @@ class MetaDataControllerTest extends TestCase
 
     public function testDestroyWithNonExistentId()
     {
-        $this->config->method('getValueString')->willReturn('someValue');
-
         $id = 'non-existent-id';
-
-        $this->objectService->method('deleteObject')->willReturn([]);
+        $this->objectService->method('deleteObject')
+            ->willReturn([]);
 
         $response = $this->controller->destroy($id, $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals([], $response->getData());
+    }
+
+    // Exception Handling Tests
+    public function testIndexThrowsException()
+    {
+        $this->objectService->method('findObjects')
+            ->willThrowException(new \Exception('Database error'));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Database error');
+
+        $this->controller->index($this->objectService);
+    }
+
+    public function testShowThrowsException()
+    {
+        $id = '6892aeb1-d92d-4da5-ad41-f1c3278f40c2';
+        $this->objectService->method('findObject')
+            ->willThrowException(new \Exception('Object not found'));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Object not found');
+
+        $this->controller->show($id, $this->objectService);
+    }
+
+    public function testCreateThrowsException()
+    {
+        $data = [
+            "id" => "new-id",
+            "title" => "New Metadata",
+            "description" => "A new testing metadata",
+            "version" => "0.0.1",
+            "properties" => '{}',
+            "_schema" => "metadata"
+        ];
+
+        $this->request->method('getParams')->willReturn($data);
+        $this->objectService->method('saveObject')
+            ->willThrowException(new \Exception('Save failed'));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Save failed');
+
+        $this->controller->create($this->objectService);
+    }
+
+    public function testUpdateThrowsException()
+    {
+        $id = '6892aeb1-d92d-4da5-ad41-f1c3278f40c2';
+        $data = [
+            "title" => "Updated Metadata",
+            "description" => "An updated testing metadata",
+            "version" => "0.0.2",
+            "properties" => '{}'
+        ];
+
+        $this->request->method('getParams')->willReturn($data);
+
+        $this->objectService->method('updateObject')
+            ->willThrowException(new \Exception('Update failed'));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Update failed');
+
+        $this->controller->update($id, $this->objectService);
+    }
+
+    public function testDestroyThrowsException()
+    {
+        $id = '6892aeb1-d92d-4da5-ad41-f1c3278f40c2';
+
+        $this->objectService->method('deleteObject')
+            ->willThrowException(new \Exception('Delete failed'));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Delete failed');
+
+        $this->controller->destroy($id, $this->objectService);
     }
 }
