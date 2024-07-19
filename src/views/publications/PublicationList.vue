@@ -30,13 +30,13 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(publication, i) in store.publicationList.results"
+				<NcListItem v-for="(publication, i) in filteredPublications"
 					:key="`${publication}${i}`"
 					:name="publication.name ?? publication.title"
 					:bold="false"
 					:force-display-actions="true"
 					:active="store.publicationItem.id === publication.id"
-					:details="publication?.license"
+					:details="publication?.status"
 					:counter-number="1"
 					@click="store.setPublicationItem(publication)">
 					<template #icon>
@@ -53,6 +53,12 @@ import { store } from '../../store.js'
 								<Pencil :size="20" />
 							</template>
 							Bewerken
+						</NcActionButton>
+						<NcActionButton @click="store.setDialog('copyPublication')">
+							<template #icon>
+								<ContentCopy :size="20" />
+							</template>
+							Kopieren
 						</NcActionButton>
 						<NcActionButton>
 							<template #icon>
@@ -101,6 +107,7 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 
 export default {
 	name: 'PublicationList',
@@ -118,6 +125,7 @@ export default {
 		Plus,
 		FilePlusOutline,
 		FileTreeOutline,
+		ContentCopy,
 	},
 	props: {
 		search: {
@@ -129,6 +137,14 @@ export default {
 		return {
 			loading: false,
 		}
+	},
+	computed: {
+		filteredPublications() {
+			if (!store?.publicationList?.results) return []
+			return store.publicationList.results.filter((publication) => {
+				return publication.catalogi === store.selectedCatalogus
+			})
+		},
 	},
 	watch: {
 		search: {

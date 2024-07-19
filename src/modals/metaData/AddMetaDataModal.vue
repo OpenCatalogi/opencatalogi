@@ -18,14 +18,19 @@ import { store } from '../../store.js'
 			<div v-if="!succes" class="form-group">
 				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
 				<NcTextField label="Versie" :value.sync="metaData.version" />
-				<NcTextArea label="Beschrijving" :value.sync="metaData.description" />
+				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="metaData.summery" />
+				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metaData.description" />
 			</div>
-			<NcButton :disabled="!metaData.title" type="primary" @click="addMetaData">
+			<NcButton
+				v-if="!succes"
+				:disabled="!metaData.title || loading"
+				type="primary"
+				@click="addMetaData">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
-				Submit
+				Toevoegen
 			</NcButton>
 		</div>
 	</NcModal>
@@ -52,6 +57,7 @@ export default {
 			metaData: {
 				title: '',
 				version: '',
+				summery: '',
 				description: '',
 			},
 			metaDataList: [],
@@ -61,14 +67,6 @@ export default {
 		}
 	},
 	methods: {
-		closeModal() {
-			// Reset the form the form
-			this.succes = false
-			this.error = false
-			this.loading = false
-			this.metaData = { title: '', version: '', description: '' }
-			store.modal = false
-		},
 		addMetaData() {
 			this.loading = true
 			fetch(
@@ -92,9 +90,12 @@ export default {
 					})
 					store.setSelected('metaData')
 					// Update the list
-					setTimeout(() => (
-						this.closeModal()
-					), 2500)
+					const self = this
+					setTimeout(function() {
+						self.succes = false
+						this.metaData = { title: '', version: '', summery: '', description: '' }
+						store.setModal(false)
+					}, 2000)
 				})
 				.catch((err) => {
 					this.metaDataLoading = false

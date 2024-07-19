@@ -7,8 +7,8 @@
 		<EditPublicationModal />
 		<AddMetaDataModal />
 		<EditMetaDataModal />
-		<AddMetadataDataModal />
-		<EditMetadataDataModal />
+		<AddMetaDataPropertyModal />
+		<EditMetaDataPropertyModal />
 		<AddCatalogModal />
 		<EditCatalogModal />
 		<AddListingModal />
@@ -26,8 +26,10 @@ import AddPublicationModal from './publication/AddPublicationModal.vue'
 import EditPublicationModal from './publication/EditPublicationModal.vue'
 import AddMetaDataModal from './metaData/AddMetaDataModal.vue'
 import EditMetaDataModal from './metaData/EditMetaDataModal.vue'
-import AddMetadataDataModal from './metadataData/AddMetadataDataModal.vue'
-import EditMetadataDataModal from './metadataData/EditMetadataDataModal.vue'
+
+import AddMetaDataPropertyModal from './metaData/AddMetaDataPropertyModal.vue'
+import EditMetaDataPropertyModal from './metaData/EditMetaDataPropertyModal.vue'
+
 import AddCatalogModal from './catalog/AddCatalogModal.vue'
 import EditCatalogModal from './catalog/EditCatalogModal.vue'
 import AddListingModal from './directory/AddListingModal.vue'
@@ -44,8 +46,8 @@ export default {
 		EditPublicationModal,
 		AddMetaDataModal,
 		EditMetaDataModal,
-		AddMetadataDataModal,
-		EditMetadataDataModal,
+		AddMetaDataPropertyModal,
+		EditMetaDataPropertyModal,
 		AddCatalogModal,
 		EditCatalogModal,
 		AddListingModal,

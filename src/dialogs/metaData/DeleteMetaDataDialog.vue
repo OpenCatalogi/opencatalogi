@@ -8,7 +8,7 @@ import { store } from '../../store.js'
 		name="Metadata verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.metaDataItem.name ?? store.metaDataItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ store.metaDataItem.title ?? store.metaDataItem.name }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Metadata succesvol verwijderd</p>

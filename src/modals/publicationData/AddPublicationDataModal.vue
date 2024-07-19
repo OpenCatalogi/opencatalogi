@@ -28,7 +28,7 @@ import { store } from '../../store.js'
 			</div>
 
 			<NcButton v-if="!succes"
-				:disabled="loading"
+				:disabled="loading || !key || !value"
 				type="primary"
 				@click="AddPublicatieEigenschap()">
 				<template #icon>
@@ -74,15 +74,13 @@ export default {
 			key: '',
 			value: '',
 			loading: false,
-			success: false,
+			succes: false,
 			error: false,
 		}
 	},
 	methods: {
 		AddPublicatieEigenschap() {
-			const publicationProperty = store.publicationItem
-			publicationProperty.data[this.key] = this.value
-			console.log(store.publicationItem)
+			store.publicationItem.data[this.key] = this.value
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
@@ -91,7 +89,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationProperty),
+					body: JSON.stringify(store.publicationItem),
 				},
 			)
 				.then((response) => {
