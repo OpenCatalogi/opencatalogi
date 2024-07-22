@@ -8,7 +8,6 @@ use Symfony\Component\Uid\Uuid;
 
 class SearchService
 {
-
 	public const BASE_OBJECT = [
 		'database'   => 'objects',
 		'collection' => 'json',
@@ -17,22 +16,7 @@ class SearchService
 	public function __construct(
 		private readonly ObjectService $objectService
 	) {
-
-	}
-
-	/**
-	 * Gets a guzzle client based upon given config.
-	 *
-	 * @param array $config The config to be used for the client.
-	 * @return Client
-	 */
-	private function getClient(
-		array $config,
-	): Client
-	{
-		$guzzleConf = $config;
-
-		return new Client($config);
+		$this->client = new Client;
 	}
 
 	private function mergeFacets(array $existingAggregation, array $newAggregation): array
@@ -93,7 +77,7 @@ class SearchService
 		$elasticService = new ElasticSearchService();
 		$localResults = $elasticService->searchObject($parameters, $elasticConfig);
 
-		$client    = $this->getClient(config: []);
+		$client    = new Client();
 		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
 
 		if(count($directory['documents']) === 0) {
@@ -103,13 +87,27 @@ class SearchService
 		$results = $localResults['results'];
 		$aggregations = $localResults['facets'];
 
+		$searchEndpoints = [];
+
 		$promises = [];
 		foreach($directory['documents'] as $instance) {
-			if($instance['default'] === false) {
+			if(
+				$instance['default'] === false
+				&& isset($parameters['.catalogi']) === true
+				&& in_array($instance['catalogId'], $parameters['.catalogi']) === false
+			) {
 				continue;
 			}
-			$url = $instance['search'];
-			$promises[] = $client->getAsync($url, ['query' => $parameters]);
+			$searchEndpoints[$instance['search']][] = $instance['catalogId'];
+		}
+
+		unset($parameters['.catalogi']);
+
+		foreach($searchEndpoints as $searchEndpoint => $catalogi) {
+			$parameters['_catalogi'] = $catalogi;
+
+
+			$promises[] = $client->getAsync($searchEndpoint, ['query' => $parameters]);
 		}
 
 		$responses = Utils::settle($promises)->wait();
