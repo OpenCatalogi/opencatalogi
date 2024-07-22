@@ -62,6 +62,9 @@ import { store } from '../../store.js'
 					</NcActionButton>
 				</template>
 			</NcListItem>
+			<NcNoteCard v-if="!store.conceptPublications.results.length > 0" type="success">
+				<p>Er zijn op dit moment geen publicaties die uw aandacht vereisen</p>
+			</NcNoteCard>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="share-tab" name="Bijlagen" :order="3">
 			<template #icon>
@@ -104,7 +107,7 @@ import { store } from '../../store.js'
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard type="success">
+			<NcNoteCard v-if="!store.conceptAttachments.results.length > 0" type="success">
 				<p>Er zijn op dit moment geen bijlagen die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>

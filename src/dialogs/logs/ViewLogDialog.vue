@@ -24,10 +24,10 @@ import { store } from '../../store.js'
 				<td><b>Wijzigingen</b></td>
 				<td>
 					{
-						"title": {
-							"old":Null
-							"new":"KOPIE: Voorlopige energielabels met BAG-kenmerken"
-						}
+					"title": {
+					"old":Null
+					"new":"KOPIE: Voorlopige energielabels met BAG-kenmerken"
+					}
 					}
 				</td>
 			</tr>
