@@ -272,7 +272,7 @@ import { store } from '../../store.js'
 								<td>Ruben van der Linde</td>
 								<td>Created</td>
 								<td>
-									<NcButton  @click="store.setDialog('viewLog')">
+									<NcButton @click="store.setDialog('viewLog')">
 										<template #icon>
 											<TimelineQuestionOutline
 												:size="20" />
@@ -398,7 +398,7 @@ export default {
 				{
 					id: '1',
 					label: 'Content Beheerders',
-				}
+				},
 			],
 			chart: {
 				options: {
@@ -413,7 +413,7 @@ export default {
 					name: 'Weergaven',
 					data: [0, 0, 0, 0, 0, 0, 15],
 				}],
-			}
+			},
 		}
 	},
 	watch: {
