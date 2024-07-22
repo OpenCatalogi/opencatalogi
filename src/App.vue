@@ -8,7 +8,7 @@
 	</NcContent>
 </template>
 
-<script>
+<script lang="ts">
 
 import { NcContent } from '@nextcloud/vue'
 import MainMenu from './navigation/MainMenu.vue'
