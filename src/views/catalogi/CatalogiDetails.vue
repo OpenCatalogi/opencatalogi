@@ -31,18 +31,19 @@ import { store } from '../../store.js'
 				</NcActionButton>
 			</NcActions>
 		</div>
-
-		<div v-if="catalogi" id="app-content">
-			<div class="detailGrid">
-				<div>
-					<h4>Beschrijving:</h4>
-					<span>{{ catalogi.summary }}</span>
-				</div>
-				<div>
-					<h4>Schema:</h4>
-					<span>{{ catalogi._schema }}</span>
-				</div>
-			</div>
+		<span>{{ catalogi.description }}</span>
+		<div class="tabContainer">
+			<BTabs content-class="mt-3" justified>
+				<BTab title="Eigenschappen" active>
+					adsa
+				</BTab>
+				<BTab title="Toegang" active>
+					Publiek of alleen bepaalde rollen
+				</BTab>
+				<BTab title="Metadata" active>
+					adsa
+				</BTab>
+			</BTabs>
 		</div>
 	</div>
 </template>
@@ -53,6 +54,7 @@ import {
 	NcActionButton,
 	NcLoadingIcon,
 } from '@nextcloud/vue'
+import { BTabs, BTab } from 'bootstrap-vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'

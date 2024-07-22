@@ -89,13 +89,27 @@ class SearchService
 		$results = $localResults['results'];
 		$aggregations = $localResults['facets'];
 
+		$searchEndpoints = [];
+
 		$promises = [];
 		foreach($directory['documents'] as $instance) {
-			if($instance['default'] === false) {
+			if(
+				$instance['default'] === false
+				&& isset($parameters['.catalogi']) === true
+				&& in_array($instance['catalogId'], $parameters['.catalogi']) === false
+			) {
 				continue;
 			}
-			$url = $instance['search'];
-			$promises[] = $this->client->getAsync($url, ['query' => $parameters]);
+			$searchEndpoints[$instance['search']][] = $instance['catalogId'];
+		}
+
+		unset($parameters['.catalogi']);
+
+		foreach($searchEndpoints as $searchEndpoint => $catalogi) {
+			$parameters['_catalogi'] = $catalogi;
+
+
+			$promises[] = $client->getAsync($searchEndpoint, ['query' => $parameters]);
 		}
 
 		$responses = Utils::settle($promises)->wait();
