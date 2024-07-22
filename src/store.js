@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 // The store script handles app whide variables (or state), for the use of these variables and there governing concepts read the design.md
 import { reactive } from 'vue'
+import { Catalogi } from './entities/index.js'
 
 export const store = reactive({
 	// The curently active menu item, defaults to '' wich triggers the dashboard
@@ -77,17 +78,23 @@ export const store = reactive({
 	},
 	// Catlogi
 	setCatalogiItem(catalogiItem) {
-		// To prevent forms etc from braking we alway use a default/skeleton object
-		const catalogiDefault = {
-			name: '',
-			summery: '',
-			description: '',
-		}
-		this.catalogiItem = { ...catalogiDefault, ...catalogiItem }
+		this.catalogiItem = new Catalogi(
+			catalogiItem.id,
+			catalogiItem.name,
+			catalogiItem.summary,
+			catalogiItem._schema,
+			catalogiItem._id,
+		)
 		console.log('Active catalog item set to ' + catalogiItem.id)
 	},
-	setCatalogiList(catalogiList) {
-		this.catalogiList = catalogiList
+	setCatalogList(catalogiList) {
+		this.catalogiList = catalogiList.map((catalogiItem) => new Catalogi(
+			catalogiItem.id,
+			catalogiItem.name,
+			catalogiItem.summary,
+			catalogiItem._schema,
+			catalogiItem._id,
+		))
 		console.log('Catalogi list set to ' + catalogiList.length + ' item')
 	},
 	refreshCatalogiList() { // @todo this might belong in a service?
@@ -99,7 +106,13 @@ export const store = reactive({
 		)
 			.then((response) => {
 				response.json().then((data) => {
-					this.catalogiList = data
+					this.catalogiList = data.results.map((catalogiItem) => new Catalogi(
+						catalogiItem.id,
+						catalogiItem.name,
+						catalogiItem.summary,
+						catalogiItem._schema,
+						catalogiItem._id,
+					))
 				})
 			})
 			.catch((err) => {

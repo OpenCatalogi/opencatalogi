@@ -30,7 +30,7 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(catalogus, i) in store.catalogiList.results"
+				<NcListItem v-for="(catalogus, i) in store.catalogiList"
 					:key="`${catalogus}${i}`"
 					:name="catalogus.name ?? catalogus.title"
 					:active="store.catalogiItem?.id === catalogus?.id"

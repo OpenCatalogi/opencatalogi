@@ -9,7 +9,7 @@ import { store } from '../../store.js'
 		message="'"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.catalogiItem.name ?? store.catalogiItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ store.catalogiItem.name ?? store.catalogiItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Catalogus succesvol verwijderd</p>
