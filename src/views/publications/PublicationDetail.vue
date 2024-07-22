@@ -29,11 +29,23 @@ import { store } from '../../store.js'
 					</template>
 					Kopieren
 				</NcActionButton>
-				<NcActionButton>
+				<NcActionButton v-if="store.publicationItem.status !== 'published'" @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
+					<template #icon>
+						<Publish :size="20" />
+					</template>
+					Publiseren
+				</NcActionButton>
+				<NcActionButton v-if="store.publicationItem.status === 'published'" @click="store.setPublicationItem(publication); store.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
-					Depubliceren
+					Depubliseren
+				</NcActionButton>
+				<NcActionButton @click="store.setDialog('archivePublication')">
+					<template #icon>
+						<ArchivePlusOutline :size="20" />
+					</template>
+					Archiveren
 				</NcActionButton>
 				<NcActionButton @click="store.setModal('addPublicationData')">
 					<template #icon>
@@ -169,12 +181,6 @@ import { store } from '../../store.js'
 									</template>
 									Bewerken
 								</NcActionButton>
-								<NcActionButton>
-									<template #icon>
-										<PublishOff :size="20" />
-									</template>
-									Depubliceren
-								</NcActionButton>
 								<NcActionButton @click="deletePublicationDataItem(key)">
 									<template #icon>
 										<Delete :size="20" />
@@ -194,14 +200,14 @@ import { store } from '../../store.js'
 								:bold="false"
 								:active="store.attachmentId === attachment.id"
 								:force-display-actions="true"
-								:details="attachment?.published ? 'Published' : 'Not Published'"
+								:details="attachment?.status"
 								@click="store.setAttachmentId(attachment.id)">
 								<template #icon>
-									<CheckCircle v-if="attachment?.published"
+									<CheckCircle v-if="attachment?.status === 'published'"
 										:class="attachment?.published && 'publishedIcon'"
 										disable-menu
 										:size="44" />
-									<ExclamationThick v-if="!attachment?.published"
+									<ExclamationThick v-if="attachment?.status !== 'published'"
 										:class="!attachment?.published && 'warningIcon'"
 										disable-menu
 										:size="44" />
@@ -216,7 +222,25 @@ import { store } from '../../store.js'
 										</template>
 										Bewerken
 									</NcActionButton>
-									<NcActionButton @click="store.setDialog('copyAttachment')">
+									<NcActionButton :disabled="disabled">
+										<template #icon>
+											<Download :size="20" />
+										</template>
+										Download
+									</NcActionButton>
+									<NcActionButton v-if="attachment.status !== 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('publishAttachment')">
+										<template #icon>
+											<Publish :size="20" />
+										</template>
+										Publiseren
+									</NcActionButton>
+									<NcActionButton v-if="attachment.status === 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('depublishAttachment')">
+										<template #icon>
+											<PublishOff :size="20" />
+										</template>
+										Depubliseren
+									</NcActionButton>
+									<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>
@@ -235,6 +259,63 @@ import { store } from '../../store.js'
 							Geen bijlagen gevonden
 						</div>
 					</BTab>
+					<BTab title="Loging">
+						<table width="100%">
+							<tr>
+								<th><b>Tijstip</b></th>
+								<th><b>Gebruiker</b></th>
+								<th><b>Actie</b></th>
+								<th><b>Details</b></th>
+							</tr>
+							<tr>
+								<td>18-07-2024 11:55:21</td>
+								<td>Ruben van der Linde</td>
+								<td>Created</td>
+								<td>
+									<NcButton  @click="store.setDialog('viewLog')">
+										<template #icon>
+											<TimelineQuestionOutline
+												:size="20" />
+										</template>
+										Bekijk details
+									</NcButton>
+								</td>
+							</tr>
+						</table>
+					</BTab>
+					<BTab title="Rechten">
+						<table width="100%">
+							<tr>
+								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankenlijk</td>
+								<td>
+									<NcButton @click="prive = !prive">
+										<template #icon>
+											<LockOpenVariantOutline v-if="!prive"
+												:size="20" />
+											<LockOutline v-if="prive"
+												:size="20" />
+										</template>
+										<span v-if="!prive">Prive maken</span>
+										<span v-if="prive">Openbaar maken</span>
+									</NcButton>
+								</td>
+							</tr>
+							<tr v-if="prive">
+								<td>Gebruikersgroepen</td>
+								<td><NcSelectTags v-model="userGroups" :multiple="true" /></td>
+							</tr>
+						</table>
+					</BTab>
+					<BTab title="Statestieken">
+						<apexchart v-if="publication.status === 'published'"
+							width="100%"
+							type="line"
+							:options="chart.options"
+							:series="chart.series" />
+						<NcNoteCard type="info">
+							<p>Er zijn nog geen statestieken over deze publicatie bekend</p>
+						</NcNoteCard>
+					</BTab>
 				</BTabs>
 			</div>
 		</div>
@@ -243,8 +324,9 @@ import { store } from '../../store.js'
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcButton, NcListItem, NcActionLink, NcSelectTags, NcNoteCard } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
+import VueApexCharts from 'vue-apexcharts'
 
 // Icons
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
@@ -252,12 +334,18 @@ import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import Publish from 'vue-material-design-icons/Publish.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
+import LockOutline from 'vue-material-design-icons/LockOutline.vue'
+import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import Download from 'vue-material-design-icons/Download.vue'
+import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -266,15 +354,29 @@ export default {
 		NcLoadingIcon,
 		NcActionButton,
 		NcActions,
+		NcButton,
 		NcListItem,
+		NcSelectTags,
+		NcNoteCard,
+		apexchart: VueApexCharts,
 		// Icons
 		CheckCircle,
 		ExclamationThick,
+		DotsHorizontal,
+		Pencil,
+		Delete,
+		Publish,
+		PublishOff,
 		OpenInApp,
 		FilePlusOutline,
 		FileTreeOutline,
 		CircleOutline,
 		ContentCopy,
+		TimelineQuestionOutline,
+		LockOutline,
+		LockOpenVariantOutline,
+		Download,
+		ArchivePlusOutline,
 	},
 	props: {
 		publicationId: {
@@ -287,10 +389,31 @@ export default {
 			publication: [],
 			catalogi: [],
 			metadata: [],
+			prive: false,
 			loading: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
 			hasUpdated: false,
+			userGroups: [
+				{
+					id: '1',
+					label: 'Content Beheerders',
+				}
+			],
+			chart: {
+				options: {
+					chart: {
+						id: 'Aantal bekeken publicaties',
+					},
+					xaxis: {
+						categories: ['7-11', '7-12', '7-13', '7-15', '7-16', '7-17', '7-18'],
+					},
+				},
+				series: [{
+					name: 'Weergaven',
+					data: [0, 0, 0, 0, 0, 0, 15],
+				}],
+			}
 		}
 	},
 	watch: {

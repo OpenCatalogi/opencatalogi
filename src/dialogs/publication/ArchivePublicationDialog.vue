@@ -4,23 +4,20 @@ import { store } from '../../store.js'
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'copyAttachment'"
-		name="Bijlage kopieren"
+		v-if="store.dialog === 'archivePublication'"
+		name="Publicatie archiveren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.attachmentItem.name ?? store.attachmentItem.title }}</b> kopieren?
+			Wil je <b>{{ store.publicationItem.name ?? store.publicationItem.title }}</b> archiveren? Dit betekend dat de publicatie wordt de gepubliseerd en niet langer vindbaar is. Bij de eerste volgende gelegendheid wordt de publicatie <b>automatisch</b> over gebracht naar het digitaal archief.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Bijlage succesvol gekopierd</p>
+			<p>Publicatie succesvol gearchiveerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton
-				:disabled="loading"
-				icon=""
-				@click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -29,13 +26,14 @@ import { store } from '../../store.js'
 			<NcButton
 				v-if="!succes"
 				:disabled="loading"
+				icon="Delete"
 				type="primary"
-				@click="CopyAttachment()">
+				@click="ArchivePublication()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentCopy v-if="!loading" :size="20" />
+					<ArchivePlusOutline v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Archiveren
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -45,10 +43,10 @@ import { store } from '../../store.js'
 import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 
 import Cancel from 'vue-material-design-icons/Cancel.vue'
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 
 export default {
-	name: 'CopyAttachmentDialog',
+	name: 'ArchivePublicationDialog',
 	components: {
 		NcDialog,
 		NcButton,
@@ -56,7 +54,7 @@ export default {
 		NcLoadingIcon,
 		// Icons
 		Cancel,
-		ContentCopy,
+		ArchivePlusOutline,
 	},
 	data() {
 		return {
@@ -66,38 +64,30 @@ export default {
 		}
 	},
 	methods: {
-		CopyAttachment() {
+		ArchivePublication() {
 			this.loading = true
-			store.attachmentItem.title = 'KOPIE: ' + store.attachmentItem.title
-			store.attachmentItem.status = 'concept'
-			delete store.attachmentItem.id
-			delete store.attachmentItem._id
+			store.publicationItem.status = 'archived'
 			fetch(
-				'/index.php/apps/opencatalogi/api/attachments',
+				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
 				{
-					method: 'POST',
+					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.attachmentItem),
+					body: JSON.stringify(store.publicationItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
-					// Lets refresh the attachment list
-					response.json().then((data) => {
-						store.setAttachmentItem(data)
-					})
-					if (store.publicationItem?.id) {
-						store.getPublicationAttachments(store.publicationItem.id)
-						// @todo update the publication item
-					}
+					// Lets refresh the catalogiList
+					store.refreshPublicationList()
+					store.getConceptPublications()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setAttachmentItem(false)
+						store.setPublicationItem(false)
 						store.setDialog(false)
 					}, 2000)
 				})

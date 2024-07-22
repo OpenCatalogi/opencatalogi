@@ -4,14 +4,14 @@ import { store } from '../../store.js'
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'copyAttachment'"
-		name="Bijlage kopieren"
+		v-if="store.dialog === 'depublishAttachment'"
+		name="Bijlage depubliseren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.attachmentItem.name ?? store.attachmentItem.title }}</b> kopieren?
+			Wil je <b>{{ store.attachmentItem.name ?? store.attachmentItem.title }}</b> depubliseren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Bijlage succesvol gekopierd</p>
+			<p>Bijlage succesvol gedepubliseerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -33,9 +33,9 @@ import { store } from '../../store.js'
 				@click="CopyAttachment()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentCopy v-if="!loading" :size="20" />
+					<PublishOff v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Depubliseren
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -45,10 +45,10 @@ import { store } from '../../store.js'
 import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 
 import Cancel from 'vue-material-design-icons/Cancel.vue'
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 
 export default {
-	name: 'CopyAttachmentDialog',
+	name: 'DepublishAttachmentDialog',
 	components: {
 		NcDialog,
 		NcButton,
@@ -56,7 +56,7 @@ export default {
 		NcLoadingIcon,
 		// Icons
 		Cancel,
-		ContentCopy,
+		PublishOff,
 	},
 	data() {
 		return {
@@ -68,14 +68,12 @@ export default {
 	methods: {
 		CopyAttachment() {
 			this.loading = true
-			store.attachmentItem.title = 'KOPIE: ' + store.attachmentItem.title
-			store.attachmentItem.status = 'concept'
-			delete store.attachmentItem.id
-			delete store.attachmentItem._id
+			store.attachmentItem.status = 'retracted'
+			store.attachmentItem.published = ''
 			fetch(
-				'/index.php/apps/opencatalogi/api/attachments',
+				`/index.php/apps/opencatalogi/api/attachments/${store.attachmentItem.id}`,
 				{
-					method: 'POST',
+					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},

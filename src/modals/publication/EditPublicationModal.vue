@@ -44,9 +44,15 @@ import { store } from '../../store.js'
 				<NcTextField :disabled="loading"
 					label="Modified"
 					:value.sync="store.publicationItem.modified" />
+				<b>Juridisch</b>
 				<NcTextField :disabled="loading"
 					label="Licentie"
 					:value.sync="store.publicationItem.license" />
+				<b>Toegang</b>
+				<NcSelectTags
+					:value.sync="store.publicationItem.userGroups"
+					input-label="Gebruikers groepen"
+					:multiple="true" />
 			</div>
 			<NcButton
 				v-if="!succes"
@@ -69,6 +75,7 @@ import {
 	NcModal,
 	NcTextField,
 	NcTextArea,
+	NcSelectTags,
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
 	NcNoteCard,
@@ -81,6 +88,7 @@ export default {
 		NcModal,
 		NcTextField,
 		NcTextArea,
+		NcSelectTags,
 		NcCheckboxRadioSwitch,
 		NcButton,
 		NcLoadingIcon,

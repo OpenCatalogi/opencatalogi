@@ -77,6 +77,30 @@ import { store } from '../../store.js'
 						</template>
 					</NcListItem>
 				</BTab>
+				<BTab title="Loging">
+					<table width="100%">
+						<tr>
+							<th><b>Tijstip</b></th>
+							<th><b>Gebruiker</b></th>
+							<th><b>Actie</b></th>
+							<th><b>Details</b></th>
+						</tr>
+						<tr>
+							<td>18-07-2024 11:55:21</td>
+							<td>Ruben van der Linde</td>
+							<td>Created</td>
+							<td>
+								<NcButton>
+									<template #icon>
+										<TimelineQuestionOutline
+											:size="20" />
+									</template>
+									Bekijk details
+								</NcButton>
+							</td>
+						</tr>
+					</table>
+				</BTab>
 			</BTabs>
 		</div>
 	</div>

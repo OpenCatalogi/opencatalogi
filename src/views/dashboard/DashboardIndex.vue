@@ -3,7 +3,7 @@
 		<div class="dashboardContainer">
 			<h2>Dashboard</h2>
 		</div>
-		<b>Aantal zoekopdrachten afglopen maand</B>
+		<b>Aantal zoekopdrachten afgelopen maand</B>
 		<apexchart
 			width="500"
 			type="line"
@@ -27,15 +27,15 @@ export default {
 		return {
 			options: {
 				chart: {
-					id: 'vuechart-example',
+					id: 'Aantal bekeken publicaties',
 				},
 				xaxis: {
-					categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+					categories: ['7-11', '7-12', '7-13', '7-15', '7-16', '7-17', '7-18'],
 				},
 			},
 			series: [{
-				name: 'series-1',
-				data: [30, 40, 45, 50, 49, 60, 70, 91],
+				name: 'Weergaven',
+				data: [30, 40, 45, 50, 49, 60, 55],
 			}],
 		}
 	},
