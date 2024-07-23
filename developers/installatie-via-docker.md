@@ -38,13 +38,6 @@ Check deze links voor extra info en hulp:
 * [Componenten](https://nextcloud-vue-components.netlify.app/)
 * [Developen op WSL met Visual Studio](https://code.visualstudio.com/docs/remote/wsl)
 
-### Wat Voor Ons Lekker Werkt
-
-Wij gebruiken de volgende tools en extensies voor de beste ontwikkelervaring:
-
-* [VSCode Remote - WSL](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl)
-* [Volar (Vue.js ondersteuning)](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
-
 ### Frontend Aanpassingen
 
 Wil je de frontend aanpassen? Bewerk dan de inhoud in de `.vue`-bestanden. Na elke wijziging moet je `npm run dev` draaien. Een handige truc is om `npm run watch` te gebruiken; dit commando houdt veranderingen in de `.vue`-bestanden in de gaten en past ze direct toe. Vergeet niet om de pagina te verversen na elke wijziging.
