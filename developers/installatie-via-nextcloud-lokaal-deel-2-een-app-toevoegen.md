@@ -35,8 +35,8 @@ De code voor de app staat er nu, maar in Nextcloud moeten apps geactiveerd worde
 In het volgende scherm, zie je aan de linkerzijde een navigatie menu. Klik op "Disabled apps". Je ziet een overzicht met de apps die in de "apps-extra"-directory zitten. . \
 
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>Het enablen van de applicatie</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption><p>Het enablen van de applicatie</p></figcaption></figure>
 
 Zodra je klikt op "enable" verschijnt deze links bovenin, naast het Nextcloud logo. Dit zijn de shortcut-icoontjes voor de geactiveerde applicaties. Klik op het icoontje van OpenCatalogi en je zit in de app!
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>

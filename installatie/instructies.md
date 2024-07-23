@@ -11,7 +11,7 @@ Volg deze stappen om Nextcloud eenvoudig te installeren en te gebruiken:
    * Je ontvangt een activatiemail, dit kan tot 6 uur duren. Zoals altijd, check ook de spambox.
    * Eenmaal ingelogd ziet het scherm er zo uit:\
      \
-     ![](<../.gitbook/assets/image (4).png>) \\
+     ![](<../.gitbook/assets/image (4) (1).png>) \\
 2. **Nextcloud-app installeren via de appstore**:
 
 Let op! Je hebt hier een admin-account voor nodig. Dit werkt mogelijk niet met trail-versies.
@@ -19,7 +19,7 @@ Let op! Je hebt hier een admin-account voor nodig. Dit werkt mogelijk niet met t
 * Navigeer naar jouw profiel log, rechts in de Nextcloud app. Klik erop en kies "Apps" .
 
 \
-![](<../.gitbook/assets/image (1) (1).png>)
+![](<../.gitbook/assets/image (1) (1) (1).png>)
 
 3. **OpenCatalogi installeren**:
 

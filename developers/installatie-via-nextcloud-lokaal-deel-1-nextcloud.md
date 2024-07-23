@@ -220,6 +220,6 @@ Open je browser en ga naar [http://nextcloud.local/](http://nextcloud.local/) om
 
 ℹ️ De gebruikersnaam en het wachtwoord zijn voor alle gebruikers hetzelfde.
 
-En dat is het! Volg deze stappen zorgvuldig om je ontwikkelomgeving voor Nextcloud op te zetten. \
+En dat is het! Volg deze stappen zorgvuldig om je ontwikkelomgeving voor Nextcloud op te zetten.\
 \
-![](<../.gitbook/assets/image (3).png>)
+![](<../.gitbook/assets/image (3) (1).png>)
