@@ -2,7 +2,7 @@
 
 namespace OCA\OpenCatalogi\Tests\Controller;
 
-use Test\TestCase; 
+use Test\TestCase;
 use OCA\OpenCatalogi\Controller\DashboardController;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -29,6 +29,24 @@ class DashboardControllerTest extends TestCase
         $this->assertInstanceOf(TemplateResponse::class, $response);
     }
 
+    public function testPageWithError()
+    {
+        $this->controller = $this->getMockBuilder(DashboardController::class)
+            ->setConstructorArgs(['opencatalogi', $this->request])
+            ->onlyMethods(['page'])
+            ->getMock();
+
+        $this->controller->method('page')
+            ->will($this->throwException(new \Exception('Template load error')));
+
+        try {
+            $this->controller->page('testParam');
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Template load error', $e->getMessage());
+        }
+    }
+
     public function testIndex()
     {
         $response = $this->controller->index();
@@ -50,5 +68,23 @@ class DashboardControllerTest extends TestCase
         ];
 
         $this->assertEquals($expectedData, $response->getData());
+    }
+
+    public function testIndexWithError()
+    {
+        $this->controller = $this->getMockBuilder(DashboardController::class)
+            ->setConstructorArgs(['opencatalogi', $this->request])
+            ->onlyMethods(['index'])
+            ->getMock();
+
+        $this->controller->method('index')
+            ->will($this->throwException(new \Exception('Data retrieval error')));
+
+        try {
+            $this->controller->index();
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Data retrieval error', $e->getMessage());
+        }
     }
 }

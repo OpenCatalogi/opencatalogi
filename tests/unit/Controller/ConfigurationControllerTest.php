@@ -2,7 +2,7 @@
 
 namespace OCA\OpenCatalogi\Tests\Controller;
 
-use Test\TestCase; 
+use Test\TestCase;
 use OCA\OpenCatalogi\Controller\ConfigurationController;
 use OCP\IRequest;
 use OCP\IAppConfig;
@@ -60,6 +60,17 @@ class ConfigurationControllerTest extends TestCase
         $this->assertEquals($expectedData, $response->getData());
     }
 
+    public function testIndexWithError()
+    {
+        $this->config->method('getValueString')
+            ->will($this->throwException(new \Exception('Error retrieving configuration')));
+
+        $response = $this->controller->index();
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertArrayHasKey('error', $response->getData());
+        $this->assertEquals('Error retrieving configuration', $response->getData()['error']);
+    }
+
     public function testCreate()
     {
         $this->request->method('getParams')->willReturn([
@@ -74,7 +85,6 @@ class ConfigurationControllerTest extends TestCase
                 ['opencatalogi', 'drcKey', 'newKey']
             );
 
-        // Zorg ervoor dat de mock de juiste waarden retourneert
         $this->config->method('getValueString')
             ->will($this->returnCallback(function ($appName, $key, $default) {
                 $values = [
@@ -90,5 +100,21 @@ class ConfigurationControllerTest extends TestCase
             'drcLocation' => 'newLocation',
             'drcKey' => 'newKey'
         ], $response->getData());
+    }
+
+    public function testCreateWithError()
+    {
+        $this->request->method('getParams')->willReturn([
+            'drcLocation' => 'newLocation',
+            'drcKey' => 'newKey'
+        ]);
+
+        $this->config->method('setValueString')
+            ->will($this->throwException(new \Exception('Error saving configuration')));
+
+        $response = $this->controller->create();
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertArrayHasKey('error', $response->getData());
+        $this->assertEquals('Error saving configuration', $response->getData()['error']);
     }
 }

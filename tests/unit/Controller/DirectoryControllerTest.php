@@ -44,6 +44,24 @@ class DirectoryControllerTest extends TestCase
         $this->assertInstanceOf(TemplateResponse::class, $response);
     }
 
+    public function testPageWithError()
+    {
+        $this->controller = $this->getMockBuilder(DirectoryController::class)
+            ->setConstructorArgs(['opencatalogi', $this->request, $this->config])
+            ->onlyMethods(['page'])
+            ->getMock();
+
+        $this->controller->method('page')
+            ->will($this->throwException(new \Exception('Template load error')));
+
+        try {
+            $this->controller->page('testParam');
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Template load error', $e->getMessage());
+        }
+    }
+
     public function testIndex()
     {
         $this->config->method('getValueString')->willReturn('someValue');
@@ -77,6 +95,20 @@ class DirectoryControllerTest extends TestCase
         $this->assertEquals($expectedData, $response->getData());
     }
 
+    public function testIndexWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+
+        $this->objectService->method('findObjects')->willThrowException(new \Exception('Database error'));
+
+        try {
+            $this->controller->index($this->objectService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Database error', $e->getMessage());
+        }
+    }
+
     public function testShow()
     {
         $this->config->method('getValueString')->willReturn('someValue');
@@ -99,6 +131,20 @@ class DirectoryControllerTest extends TestCase
         $response = $this->controller->show($id, $this->objectService, $this->directoryService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals([], $response->getData());
+    }
+
+    public function testShowWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+
+        $this->objectService->method('findObject')->willThrowException(new \Exception('Object not found'));
+
+        try {
+            $this->controller->show('nonExistentId', $this->objectService, $this->directoryService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Object not found', $e->getMessage());
+        }
     }
 
     public function testCreate()
@@ -127,6 +173,36 @@ class DirectoryControllerTest extends TestCase
         $response = $this->controller->create($this->objectService, $this->directoryService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals($data, $response->getData());
+    }
+
+    public function testCreateWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+
+        $data = [
+            "id" => "new-id",
+            "title" => "New Directory",
+            "summary" => "A new testing directory",
+            "description" => "A new testing directory description",
+            "search" => "string",
+            "metadata" => "string",
+            "status" => "A status",
+            "lastSync" => "string",
+            "default" => "string",
+            "available" => "true",
+            "_schema" => "directory"
+        ];
+
+        $this->request->method('getParams')->willReturn($data);
+
+        $this->objectService->method('saveObject')->willThrowException(new \Exception('Save failed'));
+
+        try {
+            $this->controller->create($this->objectService, $this->directoryService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Save failed', $e->getMessage());
+        }
     }
 
     public function testUpdate()
@@ -182,6 +258,21 @@ class DirectoryControllerTest extends TestCase
         $this->assertEquals([], $response->getData());
     }
 
+    public function testUpdateWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+
+        $this->request->method('getParams')->willReturn(['key' => 'newValue']);
+        $this->objectService->method('updateObject')->willThrowException(new \Exception('Update failed'));
+
+        try {
+            $this->controller->update('invalidId', $this->objectService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Update failed', $e->getMessage());
+        }
+    }
+
     public function testDestroy()
     {
         $this->config->method('getValueString')->willReturn('someValue');
@@ -206,5 +297,19 @@ class DirectoryControllerTest extends TestCase
         $response = $this->controller->destroy($id, $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals([], $response->getData());
+    }
+
+    public function testDestroyWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+
+        $this->objectService->method('deleteObject')->willThrowException(new \Exception('Delete failed'));
+
+        try {
+            $this->controller->destroy('invalidId', $this->objectService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Delete failed', $e->getMessage());
+        }
     }
 }

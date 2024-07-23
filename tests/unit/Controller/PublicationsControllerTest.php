@@ -51,6 +51,24 @@ class PublicationsControllerTest extends TestCase
         $this->assertInstanceOf(TemplateResponse::class, $response);
     }
 
+    public function testPageWithError()
+    {
+        $this->controller = $this->getMockBuilder(PublicationsController::class)
+            ->setConstructorArgs(['opencatalogi', $this->request, $this->config])
+            ->onlyMethods(['page'])
+            ->getMock();
+
+        $this->controller->method('page')
+            ->will($this->throwException(new \Exception('Template load error')));
+
+        try {
+            $this->controller->page(null);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Template load error', $e->getMessage());
+        }
+    }
+
     public function testIndex()
     {
         $this->config->method('getValueString')->willReturn('someValue');
@@ -58,15 +76,43 @@ class PublicationsControllerTest extends TestCase
 
         $response = $this->controller->index($this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals(['results' => []], $response->getData());
+    }
+
+    public function testIndexWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+        $this->objectService->method('findObjects')->willThrowException(new \Exception('Database error'));
+
+        try {
+            $this->controller->index($this->objectService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Database error', $e->getMessage());
+        }
     }
 
     public function testShow()
     {
         $this->config->method('getValueString')->willReturn('someValue');
-        $this->objectService->method('findObject')->willReturn([]);
+        $this->objectService->method('findObject')->willReturn(['key' => 'value']);
 
         $response = $this->controller->show('some-id', $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals(['key' => 'value'], $response->getData());
+    }
+
+    public function testShowWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+        $this->objectService->method('findObject')->willThrowException(new \Exception('Object not found'));
+
+        try {
+            $this->controller->show('non-existent-id', $this->objectService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Object not found', $e->getMessage());
+        }
     }
 
     public function testCreate()
@@ -79,6 +125,22 @@ class PublicationsControllerTest extends TestCase
 
         $response = $this->controller->create($this->objectService, $this->elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals(['id' => 'some-id'], $response->getData());
+    }
+
+    public function testCreateWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+        $this->objectService->method('saveObject')->willThrowException(new \Exception('Save failed'));
+
+        $this->request->method('getParams')->willReturn(['_schema' => 'publication']);
+
+        try {
+            $this->controller->create($this->objectService, $this->elasticSearchService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Save failed', $e->getMessage());
+        }
     }
 
     public function testUpdate()
@@ -91,6 +153,22 @@ class PublicationsControllerTest extends TestCase
 
         $response = $this->controller->update('some-id', $this->objectService, $this->elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals(['id' => 'some-id'], $response->getData());
+    }
+
+    public function testUpdateWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+        $this->objectService->method('updateObject')->willThrowException(new \Exception('Update failed'));
+
+        $this->request->method('getParams')->willReturn(['_schema' => 'publication']);
+
+        try {
+            $this->controller->update('some-id', $this->objectService, $this->elasticSearchService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Update failed', $e->getMessage());
+        }
     }
 
     public function testDestroy()
@@ -101,6 +179,20 @@ class PublicationsControllerTest extends TestCase
 
         $response = $this->controller->destroy('some-id', $this->objectService, $this->elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
+    }
+
+    public function testDestroyWithError()
+    {
+        $this->config->method('getValueString')->willReturn('someValue');
+        $this->objectService->method('deleteObject')->willThrowException(new \Exception('Delete failed'));
+
+        try {
+            $this->controller->destroy('some-id', $this->objectService, $this->elasticSearchService);
+            $this->fail('Expected exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals('Delete failed', $e->getMessage());
+        }
     }
 
     // Unhappy flow tests
@@ -112,6 +204,7 @@ class PublicationsControllerTest extends TestCase
 
         $response = $this->controller->show('non-existent-id', $this->objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
     }
 
     public function testCreateWithInvalidData()
@@ -123,6 +216,7 @@ class PublicationsControllerTest extends TestCase
 
         $response = $this->controller->create($this->objectService, $this->elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
     }
 
     public function testUpdateWithNonExistentId()
@@ -134,6 +228,7 @@ class PublicationsControllerTest extends TestCase
 
         $response = $this->controller->update('non-existent-id', $this->objectService, $this->elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
     }
 
     public function testDestroyWithNonExistentId()
@@ -143,5 +238,6 @@ class PublicationsControllerTest extends TestCase
 
         $response = $this->controller->destroy('non-existent-id', $this->objectService, $this->elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
     }
 }

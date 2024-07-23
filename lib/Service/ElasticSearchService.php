@@ -114,18 +114,30 @@ class ElasticSearchService
 			]
 		];
 
-		if(isset($filters['_search']) === true) {
-			$body['query']['bool']['must'][] = ['query_string' => ['query' => '*'.$filters['_search'].'*']];
+		if(isset($filters['.search']) === true) {
+			$body['query']['bool']['must'][] = ['query_string' => ['query' => '*'.$filters['.search'].'*']];
 		}
 
-		if(isset($filters['_queries']) === true) {
-			foreach($filters['_queries'] as $query) {
+		if(isset($filters['.queries']) === true) {
+			foreach($filters['.queries'] as $query) {
 				$body['runtime_mappings'][$query] = ['type' => 'keyword'];
 				$body['aggs'][$query] = ['terms' => ['field' => $query]];
 			}
 		}
 
-		unset($filters['_search'], $filters['_queries']);
+		if(isset($filters['.catalogi']) === true) {
+//			var_dump($filters['.catalogi']);
+			$body['query']['bool']['must'][] = [
+				'match' => [
+					'catalogi._id' => [
+						'query' => implode(separator: " ", array: $filters['.catalogi']),
+						'operator' => 'OR'
+					]
+				]
+			];
+		}
+
+		unset($filters['.search'], $filters['.queries'], $filters['.catalogi']);
 
 		foreach ($filters as $name => $filter) {
 			$body['query']['bool']['must'][] = ['match' => [$name => $filter]];

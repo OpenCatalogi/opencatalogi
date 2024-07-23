@@ -8,6 +8,7 @@ import { store } from '../../store.js'
 			<h1 class="h1">
 				{{ metadata.title }}
 			</h1>
+			<span>{{ metadata.description }}</span>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
@@ -23,6 +24,12 @@ import { store } from '../../store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
+				<NcActionButton @click="store.setModal('addMetadataDataModal')">
+					<template #icon>
+						<PlusCircleOutline :size="20" />
+					</template>
+					Eigenschap toevoegen
+				</NcActionButton>
 				<NcActionButton @click="store.setDialog('deleteMetaData')">
 					<template #icon>
 						<Delete :size="20" />
@@ -31,49 +38,37 @@ import { store } from '../../store.js'
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<div>
-			<div>
-				<h4>Beschrijving:</h4>
-				<span>{{ metadata.description }}</span>
-			</div>
-			<div>
-				<h4>Versie:</h4>
-				<span>{{ metadata.version }}</span>
-			</div>
-		</div>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
-					<NcButton class="float-right"
-						type="primary"
-						@click="store.setModal('addMetadataDataModal')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Aanmaken
-					</NcButton>
-
-					<NcListItem v-for="(value, key, i) in JSON.parse(metadata?.properties)"
+					<NcListItem v-for="(value, key, i) in metadata?.properties"
 						:key="`${key}${i}`"
 						:name="key"
 						:bold="false"
+						:details="value.type ?? 'Onbekend'"
 						:force-display-actions="true">
 						<template #icon>
-							<ListBoxOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
+							<CircleOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
 								disable-menu
 								:size="44" />
 						</template>
 						<template #subname>
-							{{ value }}
+							{{ value.description }}
 						</template>
 						<template #actions>
-							<NcActionButton @click="editMetadataDataItem(key)">
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setModal('editMetadataDataModal')">
 								<template #icon>
 									<Pencil :size="20" />
 								</template>
 								Bewerken
 							</NcActionButton>
-							<NcActionButton @click="deleteMetadataDataItem(key)">
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('copyMetaDataProperty')">
+								<template #icon>
+									<ContentCopy :size="20" />
+								</template>
+								Kopieren
+							</NcActionButton>
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('deleteMetaDataProperty')">
 								<template #icon>
 									<Delete :size="20" />
 								</template>
@@ -82,19 +77,45 @@ import { store } from '../../store.js'
 						</template>
 					</NcListItem>
 				</BTab>
+				<BTab title="Loging">
+					<table width="100%">
+						<tr>
+							<th><b>Tijstip</b></th>
+							<th><b>Gebruiker</b></th>
+							<th><b>Actie</b></th>
+							<th><b>Details</b></th>
+						</tr>
+						<tr>
+							<td>18-07-2024 11:55:21</td>
+							<td>Ruben van der Linde</td>
+							<td>Created</td>
+							<td>
+								<NcButton>
+									<template #icon>
+										<TimelineQuestionOutline
+											:size="20" />
+									</template>
+									Bekijk details
+								</NcButton>
+							</td>
+						</tr>
+					</table>
+				</BTab>
 			</BTabs>
 		</div>
 	</div>
 </template>
 
 <script>
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcButton } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
+import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 
 export default {
 	name: 'MetaDataDetail',
@@ -102,7 +123,12 @@ export default {
 		NcLoadingIcon,
 		NcActions,
 		NcActionButton,
-		NcButton,
+		// Icons
+		PlusCircleOutline,
+		ContentCopy,
+		Pencil,
+		Delete,
+		CircleOutline,
 	},
 	props: {
 		metaDataItem: {
@@ -150,14 +176,6 @@ export default {
 					// this.oldZaakId = id
 					this.loading = false
 				})
-		},
-		editMetadataDataItem(key) {
-			store.setMetadataDataKey(key)
-			store.setModal('editMetadataDataModal')
-		},
-		deleteMetadataDataItem(key) {
-			store.setMetadataDataKey(key)
-			store.setDialog('deleteMetaDataProperty')
 		},
 	},
 }

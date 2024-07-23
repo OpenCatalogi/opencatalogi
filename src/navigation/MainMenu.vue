@@ -18,8 +18,8 @@ import { store } from '../store.js'
 			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="store.selected === 'publication' && store.catalogiItem === catalogus?._id"
-				@click="store.setSelected('publication'); store.setCatalogiItem(catalogus)">
+				:active="catalogus._id === store.selectedCatalogus && store.selected === 'publication'"
+				@click="switchCatalogus(catalogus)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
@@ -162,12 +162,22 @@ import { store } from '../store.js'
 					<NcButton aria-label="Save"
 						type="primary"
 						wide
-						@click="saveConfig()">
+						@click="saveConfig(); feedbackPosition = 'top'">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
 						Save
 					</NcButton>
+					<div v-if="feedbackPosition === 'top' && configurationSuccess !== -1">
+						<NcNoteCard :type="configurationSuccess ? 'success' : 'error'">
+							<p>
+								{{ configurationSuccess ?
+									'Success saving configuration' :
+									'Failed saving configuration'
+								}}
+							</p>
+						</NcNoteCard>
+					</div>
 				</NcAppSettingsSection>
 				<NcAppSettingsSection id="organisation" name="Organisation" doc-url="zaakafhandel.app">
 					<template #icon>
@@ -185,12 +195,22 @@ import { store } from '../store.js'
 					<NcButton aria-label="Save"
 						type="primary"
 						wide
-						@click="saveConfig()">
+						@click="saveConfig(); feedbackPosition = 'bottom'">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
 						Save
 					</NcButton>
+					<div v-if="feedbackPosition === 'bottom' && configurationSuccess !== -1">
+						<NcNoteCard :type="configurationSuccess ? 'success' : 'error'">
+							<p>
+								{{ configurationSuccess ?
+									'Success saving configuration' :
+									'Failed saving configuration'
+								}}
+							</p>
+						</NcNoteCard>
+					</div>
 				</NcAppSettingsSection>
 			</NcAppSettingsDialog>
 		</NcAppNavigationSettings>
@@ -209,6 +229,7 @@ import {
 	NcButton,
 	NcTextField,
 	NcTextArea,
+	NcNoteCard,
 } from '@nextcloud/vue'
 
 import Connection from 'vue-material-design-icons/Connection.vue'
@@ -225,6 +246,7 @@ import Finance from 'vue-material-design-icons/Finance.vue'
 export default {
 	name: 'MainMenu',
 	components: {
+		// components
 		NcAppNavigation,
 		NcAppNavigationList,
 		NcAppNavigationItem,
@@ -235,6 +257,9 @@ export default {
 		NcTextField,
 		NcTextArea,
 		NcButton,
+		NcNoteCard,
+
+		// icons
 		Plus,
 		Connection,
 		DatabaseEyeOutline,
@@ -276,6 +301,9 @@ export default {
 				organisationOin: '',
 				organisationPki: '',
 			},
+			configurationSuccess: -1,
+			feedbackPosition: '',
+			debounceTimeout: false,
 		}
 	},
 	mounted() {
@@ -326,15 +354,37 @@ export default {
 				body: JSON.stringify(this.configuration),
 			}
 
+			const debounceNotification = (status) => {
+				this.configurationSuccess = status
+
+				if (this.debounceTimeout) {
+					clearTimeout(this.debounceTimeout)
+				}
+
+				this.debounceTimeout = setTimeout(() => {
+					this.feedbackPosition = undefined
+					this.configurationSuccess = -1
+				}, 1500)
+			}
+
 			fetch('/index.php/apps/opencatalogi/configuration', requestOptions)
 				.then((response) => {
+					debounceNotification(response.ok)
+
 					response.json().then((data) => {
 						this.configuration = data
 					})
 				})
 				.catch((err) => {
+					debounceNotification(false)
 					console.error(err)
 				})
+		},
+		switchCatalogus(catalogus) {
+			if (catalogus._id !== store.selectedCatalogus) store.setPublicationItem(false) // for when you switch catalogus
+			store.setSelected('publication')
+			store.setSelectedCatalogus(catalogus._id)
+			store.setCatalogiItem(catalogus)
 		},
 	},
 }
