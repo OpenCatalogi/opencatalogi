@@ -8,7 +8,7 @@ import { publicationStore, UIStore } from '../../store/store.js'
 		name="Bijlage verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Bijlage succesvol verwijderd</p>
