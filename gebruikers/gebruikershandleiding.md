@@ -1,12 +1,14 @@
 ---
 description: >-
   Deze handleiding gaat ervan uit dat de gebruiker beschikt tot een werkende
-  OpenCatalogi-Nextcloud app
+  OpenCatalogi-Nextcloud app.
 ---
 
 # Gebruikershandleiding
 
-De gebruikersbeheerinterface is intuïtief. Aan de linkerkant van de pagina bevindt zich een overzicht van catalogi. Met de blauwe knop bovenaan kun je een publicatie aanmaken. Dit opent een modal genaamd "Publicatie toevoegen".
+### Publicaties beheren
+
+De gebruikersbeheerinterface werkt intuïtief. Aan de linkerkant van de pagina bevindt zich een overzicht van catalogi. Met de blauwe knop bovenaan kun je een publicatie aanmaken. Dit opent een modal genaamd "Publicatie toevoegen".
 
 Hieronder is een voorbeeld van een ingevulde modal voor het aanmaken van een Woo-publicatie.\
 

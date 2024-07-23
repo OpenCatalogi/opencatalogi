@@ -17,9 +17,9 @@ Onze app ondersteunt de Common Ground-aanpak, waardoor je snel toegang hebt tot 
 
 Deze documentatie is bedoeld voor diverse doelgroepen:
 
-* **Gebruikers:** iedereen die wilt delen binnen het netwerk.
-* **Developers:** Ontwikkelaars die bijdragen aan de OpenCatalogi-projecten en behoefte hebben aan gedetailleerde technische informatie en API-documentatie.
-* **Beheerders van OpenCatalogi-publicaties:** Professionals die verantwoordelijk zijn voor het beheren en onderhouden van het federatief netwerk voor publicaites en componenten.
+* [**Gebruikers:**](broken-reference) iedereen die wilt delen binnen het netwerk.
+* [**Developers**](broken-reference)**:** Ontwikkelaars die bijdragen aan de OpenCatalogi-projecten en behoefte hebben aan gedetailleerde technische informatie en API-documentatie.
+* [**Beheerders van OpenCatalogi-publicaties**](broken-reference)**:** Professionals die verantwoordelijk zijn voor het beheren en onderhouden van het federatief netwerk voor publicaites en componenten.
 
 Voor meer informatie over OpenCatalogi en onze gemeenschappelijke inspanningen, bezoek onze [GitHub-pagina](https://github.com/OpenCatalogi) of de officiële website op [OpenCatalogi.nl](https://opencatalogi.nl).
 
