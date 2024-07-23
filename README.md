@@ -1,31 +1,26 @@
-# Open Catalogi
+---
+description: >-
+  Welkom bij de gebruikersdocumentatie voor de OpenCatalogi Nextcloud App. Veel
+  succes met het gebruik van de app. Voor vragen of bijdragen, neem gerust
+  contact met ons op.
+coverY: 0
+---
 
-## Documentatie
+# Welkom
 
-- [Icons](https://pictogrammers.com/library/mdi/)
-- [Layout](https://docs.nextcloud.com/server/latest/developer_manual/design/layout.html)
-- [Componenten](https://nextcloud-vue-components.netlify.app/)
-- [Developing on wsl with visual studio](https://code.visualstudio.com/docs/remote/wsl)
+Deze documentatie richt zich op het gebruik van onze beheerapplicatie, speciaal ontworpen voor het beheren van publicaties en catalogi binnen het federatief netwerk. De OpenCatalogi Nextcloud App is een eenvoudig te installeren:
 
-## Onze favo dev omgeving
+* [Quickstart via Docker](developers/installatie-via-docker.md)
+* [De repository te clonen en in de Nextcloud omgeving te zetten.](developers/installatie-via-nextcloud-lokaal-deel-2-een-app-toevoegen.md)
 
-- https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl
-- https://marketplace.visualstudio.com/items?itemName=Vue.volar
+Onze app ondersteunt de Common Ground-aanpak, waardoor je snel toegang hebt tot bestaande IT-oplossingen die je kunt hergebruiken om de ontwikkeltijd te verkorten en de kosten te verlagen. In deze gids vind je stapsgewijze instructies, nuttige tips en best practices om je te helpen bij het optimaal beheren van je federatief netwerk, zoals publicaties of softwarecomponenten.
 
-# Frontend veranderen
-Om de frontend te veranderen verander je de content in de .vue bestanden.
-Elke keer als je iets hebt gewijzigd in en .vue bestand dan moet je `npm run dev` draaien. Een makkelijkere manier om dit bij te houden is `npm run watch` dit commando kijkt naar veranderingen in de .vue bestanden en zet dit meteen door.
-Je moet wel elke keer als je iets veranderd verversen
+Deze documentatie is bedoeld voor diverse doelgroepen:
 
-# Grafieken
-Voor grafieken gebruiken we APEXCHARTS
-https://apexcharts.com/vue-chart-demos/area-charts/spline/
+* **Gebruikers:** iedereen die wilt delen binnen het netwerk.
+* **Developers:** Ontwikkelaars die bijdragen aan de OpenCatalogi-projecten en behoefte hebben aan gedetailleerde technische informatie en API-documentatie.
+* **Beheerders van OpenCatalogi-publicaties:** Professionals die verantwoordelijk zijn voor het beheren en onderhouden van het federatief netwerk voor publicaites en componenten.
 
-# Vue
-Voor de project gebruiken we vue 2.7
-## De repository draaien
-### Quick start
-Deze repository bevat een quick start docker compose file. Deze docker compose file bevat een init-container die ervoor zorgt dat de applicatie in één keer kan worden gestart. Om deze te gebruiken is [docker](https://docker.com) vereist. Als docker is geïnstalleerd kan de applicatie worden gestart door in deze map het commando `docker compose up` te draaien.
-Wanneer de nextcloud container aangeeft ready te zijn (`[core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'`), kan deze benaderd worden via http://localhost:8080. Na inloggen (er komt eerst een scherm om een account aan te maken) kan in het rechtermenu de app aangezet worden onder het gebruikersmenu en dan 'apps' -> 'jouw apps' -> opencatalogi -> inschakelen.
+Voor meer informatie over OpenCatalogi en onze gemeenschappelijke inspanningen, bezoek onze [GitHub-pagina](https://github.com/OpenCatalogi) of de officiële website op [OpenCatalogi.nl](https://opencatalogi.nl).
 
-Daarna kan de opencatalogi-app worden geopend via het hoofdmenu, en bij instellingen -> configuratie moeten dan worden ingevuld: een MongoDB API met sleutel en clusternaam, en voor het activeren van het zoekendpoint een elasticsearch met API key en index.
+Veel succes met het gebruik van de app. Voor vragen of bijdragen, neem gerust contact met ons op via support@conduction.nl.

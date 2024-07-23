@@ -21,7 +21,7 @@ class ObjectService
 	 * @param array $config The config to be used for the client.
 	 * @return Client
 	 */
-	private function getClient(array $config): Client
+	public function getClient(array $config): Client
 	{
 		$guzzleConf = $config;
 		unset($guzzleConf['mongodbCluster']);
@@ -112,11 +112,15 @@ class ObjectService
 			options: ['json' => $object]
 		);
 
-		return json_decode(
+		$result = json_decode(
 			json: $returnData->getBody()->getContents(),
 			associative: true
-		)['document'];
+		);
+
+		return ['document' => $result];
 	}
+
+
 
 	/**
 	 * Updates an object in MongoDB
