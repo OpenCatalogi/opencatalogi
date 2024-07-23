@@ -43,8 +43,6 @@ import { store } from '../../store/store.js'
 import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
-const catalogiStore = useCatalogiStore()
-
 export default {
 	name: 'AddCatalogModal',
 	components: {
@@ -64,6 +62,7 @@ export default {
 			succes: false,
 			error: false,
 			errorCode: '',
+			catalogiStore: useCatalogiStore(),
 		}
 	},
 	methods: {
@@ -90,9 +89,9 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					catalogiStore.refreshCatalogiList()
+					this.catalogiStore.refreshCatalogiList()
 					response.json().then((data) => {
-						catalogiStore.setCatalogiItem(data)
+						this.catalogiStore.setCatalogiItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this

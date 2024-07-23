@@ -1,4 +1,5 @@
 <script setup>
+import { store } from '../../store/store.js'
 import { useCatalogiStore } from '../../store/catalogi.js'
 import { Catalogi } from '../../entities/index.js'
 </script>
@@ -78,6 +79,7 @@ export default {
 		return {
 			catalogi: false,
 			loading: false,
+			catalogiStore: useCatalogiStore(),
 		}
 	},
 	watch: {
@@ -90,8 +92,8 @@ export default {
 		},
 	},
 	mounted() {
-		this.catalogi = useCatalogiStore().catalogiItem
-		this.fetchData(useCatalogiStore().catalogiItem._id)
+		this.catalogi = this.catalogiStore.catalogiItem
+		this.fetchData(this.catalogiStore.catalogiItem._id)
 	},
 	methods: {
 		fetchData(catalogId) {

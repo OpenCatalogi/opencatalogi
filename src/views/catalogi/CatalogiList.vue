@@ -84,8 +84,6 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
-const catalogiStore = useCatalogiStore()
-
 export default {
 	name: 'CatalogiList',
 	components: {
@@ -112,6 +110,7 @@ export default {
 		return {
 			loading: false,
 			catalogi: [],
+			catalogiStore: useCatalogiStore(),
 		}
 	},
 	watch: {
@@ -127,7 +126,7 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			catalogiStore.refreshCatalogiList()
+			this.catalogiStore.refreshCatalogiList()
 			this.loading = false
 		},
 	},

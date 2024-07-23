@@ -47,8 +47,6 @@ import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
-const catalogiStore = useCatalogiStore()
-
 export default {
 	name: 'DeleteCatalogDialog',
 	components: {
@@ -62,7 +60,8 @@ export default {
 	},
 	data() {
 		return {
-			catalogiItem: catalogiStore.catalogiItem,
+			catalogiStore: useCatalogiStore(),
+			catalogiItem: this.catalogiStore.catalogiItem,
 			loading: false,
 			succes: false,
 			error: false,
@@ -84,12 +83,12 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					catalogiStore.refreshCatalogiList()
+					this.catalogiStore.refreshCatalogiList()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						catalogiStore.setCatalogiItem(false)
+						this.catalogiStore.setCatalogiItem(false)
 						store.setDialog(false)
 					}, 2000)
 				})
