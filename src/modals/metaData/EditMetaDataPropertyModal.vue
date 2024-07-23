@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store.js'
+import { store } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
