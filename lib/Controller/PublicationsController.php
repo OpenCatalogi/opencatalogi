@@ -168,39 +168,37 @@ class PublicationsController extends Controller
 			}
 		}
 
-		if($this->config->getValueBool())
+		if($this->config->getValueBool(app: $this->appName, key: 'share')) {
+			$returnData = $this->publicationMapper->createFromArray($data);
+		} else {
+			$data['_schema'] = 'publication';
 
-		$result = $publicationMapper->createFromArray($data);
+			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+			$returnData = $objectService->saveObject(
+				data: $data,
+				config: $dbConfig
+			);
+		}
+		/*
+		if(
+			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
+			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
+			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
+		) {
+			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
 
-		return new JSONResponse($result);
+			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
 
-		$data['_schema'] = 'publication';
+			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
 
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-//		$returnData = $objectService->saveObject(
-//			data: $data,
-//			config: $dbConfig
-//		);
-//
-//
-//		if(
-//			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
-//			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
-//			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
-//		) {
-//			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-//			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-//			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-//
-//			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
-//
-//			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
-//
-//		}
+		}
+		*/
 //        // get post from requests
-//        return new JSONResponse($returnData);
+        return new JSONResponse($returnData);
     }
 
     /**
