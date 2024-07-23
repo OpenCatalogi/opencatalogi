@@ -1,19 +1,27 @@
 /* eslint-disable no-console */
+import { Catalogi } from '../../entities/index.js'
+
 export default {
 	catalogiItem: false,
 	catalogiList: [],
 	setCatalogiItem(catalogiItem) {
-		// To prevent forms etc from braking we alway use a default/skeleton object
-		const catalogiDefault = {
-			name: '',
-			summery: '',
-			description: '',
-		}
-		this.catalogiItem = { ...catalogiDefault, ...catalogiItem }
+		this.catalogiItem = new Catalogi(
+			catalogiItem.id,
+			catalogiItem.name,
+			catalogiItem.summary,
+			catalogiItem._schema,
+			catalogiItem._id,
+		)
 		console.log('Active catalog item set to ' + catalogiItem.id)
 	},
 	setCatalogiList(catalogiList) {
-		this.catalogiList = catalogiList
+		this.catalogiList = catalogiList.map((catalogiItem) => new Catalogi(
+			catalogiItem.id,
+			catalogiItem.name,
+			catalogiItem.summary,
+			catalogiItem._schema,
+			catalogiItem._id,
+		))
 		console.log('Catalogi list set to ' + catalogiList.length + ' item')
 	},
 	refreshCatalogiList() { // @todo this might belong in a service?
@@ -25,7 +33,13 @@ export default {
 		)
 			.then((response) => {
 				response.json().then((data) => {
-					this.catalogiList = data
+					this.catalogiList = data.results.map((catalogiItem) => new Catalogi(
+						catalogiItem.id,
+						catalogiItem.name,
+						catalogiItem.summary,
+						catalogiItem._schema,
+						catalogiItem._id,
+					))
 				})
 			})
 			.catch((err) => {
