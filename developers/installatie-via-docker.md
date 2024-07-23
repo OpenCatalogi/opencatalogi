@@ -2,7 +2,7 @@
 description: >-
   Dit document biedt een stapsgewijze handleiding voor het opzetten van een
   Nextcloud-instance met de OpenCatalogi-app. We geven je een overzicht van de
-  benodigde kennis, systeemeisen, installatie-instr
+  benodigde kennis, systeemeisen, etc.
 ---
 
 # Installatie via Docker
