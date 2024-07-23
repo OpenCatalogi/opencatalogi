@@ -1,12 +1,8 @@
----
-description: (vervolg van deel 1)
----
-
-# Installatie via Nextcloud lokaal - deel 2: een app toevoegen
+# De OpenCatalogi-app toevoegen aan Nextcloud
 
 ### De code voor de OpenCatalogi-app
 
-Het toevoegen van een Nextcloud app is niet moeilijk, maar het helpt wel als je basiskennis hebt van git en hoe applicatiestructuren ingedeeld zijn. Deze handleiding gaat uit van een succesvolle installatie van Nextcloud en de\
+Het toevoegen van een Nextcloud app is niet moeilijk, maar het helpt wel als je basiskennis hebt van git en hoe applicatiestructuren ingedeeld zijn. Deze handleiding gaat uit van een succesvolle installatie van Nextcloud. Er is [hiervoor](https://cloud.nextcloud.com/s/iyNGp8ryWxc7Efa?path=%2F1%20Setting%20up%20a%20development%20environment) een goede tutorial te vinden van Nextcloud zelf.\
 \
 De makkelijkste manier is om naar de repository te gaan van de OpenCatalogi-Nextcloud app en de code hier te kopieren naar de juiste Nextcloud-directory.\
 \
