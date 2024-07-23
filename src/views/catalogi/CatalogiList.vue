@@ -31,16 +31,16 @@ import { store } from '../../store/store.js'
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(catalogus, i) in useCatalogiStore().catalogiList"
+				<NcListItem v-for="(catalogus, i) in catalogiStore.catalogiList"
 					:key="`${catalogus}${i}`"
 					:name="catalogus.name ?? catalogus.title"
-					:active="useCatalogiStore().catalogiItem?.id === catalogus?.id"
+					:active="catalogiStore.catalogiItem?.id === catalogus?.id"
 					:details="'1h'"
 					:counter-number="44"
 					:force-display-actions="true"
-					@click="useCatalogiStore().setCatalogiItem(catalogus)">
+					@click="catalogiStore.setCatalogiItem(catalogus)">
 					<template #icon>
-						<DatabaseOutline :class="useCatalogiStore().catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
+						<DatabaseOutline :class="catalogiStore.catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44" />
 					</template>
@@ -48,13 +48,13 @@ import { store } from '../../store/store.js'
 						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="useCatalogiStore().setCatalogiItem(catalogus); store.setModal('editCatalog')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); store.setModal('editCatalog')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="useCatalogiStore().setCatalogiItem(catalogus); store.setDialog('deleteCatalog')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); store.setDialog('deleteCatalog')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -83,6 +83,8 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
+
+const catalogiStore = useCatalogiStore()
 
 export default {
 	name: 'CatalogiList',
@@ -125,7 +127,7 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			useCatalogiStore().refreshCatalogiList()
+			catalogiStore.refreshCatalogiList()
 			this.loading = false
 		},
 	},

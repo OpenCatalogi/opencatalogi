@@ -1,4 +1,5 @@
 <script setup>
+import { useCatalogiStore } from '../../store/catalogi.js'
 import { store } from '../../store/store.js'
 </script>
 
@@ -9,7 +10,7 @@ import { store } from '../../store/store.js'
 		message="'"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.catalogiItem.name ?? store.catalogiItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ catalogiItem.name ?? catalogiItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Catalogus succesvol verwijderd</p>
@@ -46,6 +47,8 @@ import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
+const catalogiStore = useCatalogiStore()
+
 export default {
 	name: 'DeleteCatalogDialog',
 	components: {
@@ -59,6 +62,7 @@ export default {
 	},
 	data() {
 		return {
+			catalogiItem: catalogiStore.catalogiItem,
 			loading: false,
 			succes: false,
 			error: false,
@@ -68,7 +72,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogiItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -80,12 +84,12 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshCatalogiList()
+					catalogiStore.refreshCatalogiList()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setCatalogiItem(false)
+						catalogiStore.setCatalogiItem(false)
 						store.setDialog(false)
 					}, 2000)
 				})

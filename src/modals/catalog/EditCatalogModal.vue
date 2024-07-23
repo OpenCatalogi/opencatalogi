@@ -1,4 +1,5 @@
 <script setup>
+import { useCatalogiStore } from '../../store/catalogi.js'
 import { store } from '../../store/store.js'
 </script>
 
@@ -16,12 +17,12 @@ import { store } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Naam"
 					maxlength="255"
-					:value.sync="store.catalogiItem.name"
+					:value.sync="catalogiStore.catalogiItem.name"
 					required />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
-					:value.sync="store.catalogiItem.summary" />
+					:value.sync="catalogiStore.catalogiItem.summary" />
 			</div>
 			<NcButton
 				v-if="!succes"
@@ -41,6 +42,8 @@ import { store } from '../../store/store.js'
 <script>
 import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+
+const catalogiStore = useCatalogiStore()
 
 export default {
 	name: 'EditCatalogModal',
@@ -68,22 +71,22 @@ export default {
 			this.loading = true
 			this.error = false
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.catalogiItem),
+					body: JSON.stringify(catalogiStore.catalogiItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshCatalogiList()
+					catalogiStore.refreshCatalogiList()
 					response.json().then((data) => {
-						store.setCatalogiItem(data)
+						catalogiStore.setCatalogiItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
