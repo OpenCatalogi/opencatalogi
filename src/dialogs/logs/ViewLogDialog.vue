@@ -1,10 +1,10 @@
 <script setup>
-import { UIStore } from '../../store/store.js'
+import { navigationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="UIStore.dialog === 'viewLog'"
+		v-if="navigationStore.dialog === 'viewLog'"
 		name="Bekijk log regel"
 		:can-close="false">
 		<table width="100%">
@@ -33,7 +33,7 @@ import { UIStore } from '../../store/store.js'
 			</tr>
 		</table>
 		<template #actions>
-			<NcButton :disabled="loading" @click="UIStore.setDialog(false)">
+			<NcButton :disabled="loading" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>

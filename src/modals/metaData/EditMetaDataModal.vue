@@ -1,12 +1,12 @@
 <script setup>
-import { UIStore, metadataStore } from '../../store/store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcModal
-		v-if="UIStore.modal === 'editMetaData'"
+		v-if="navigationStore.modal === 'editMetaData'"
 		ref="modalRef"
-		@close="UIStore.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -99,12 +99,12 @@ export default {
 				response.json().then((data) => {
 					metadataStore.setMetaDataItem(data)
 				})
-				UIStore.setSelected('metaData')
+				navigationStore.setSelected('metaData')
 				// Wait for the user to read the feedback then close the model
 				const self = this
 				setTimeout(function() {
 					self.succes = false
-					UIStore.setModal(false)
+					navigationStore.setModal(false)
 				}, 2000)
 			}).catch((err) => {
 				this.error = err

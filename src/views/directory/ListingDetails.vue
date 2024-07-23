@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, directoryStore } from '../../store/store.js'
+import { navigationStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -17,13 +17,13 @@ import { UIStore, directoryStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="directoryStore.setListingItem(listing); UIStore.setModal('editListing')">
+				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="directoryStore.setListingItem(listing); UIStore.setDialog('deleteListing')">
+				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>

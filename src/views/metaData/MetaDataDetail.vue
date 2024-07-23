@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, metadataStore } from '../../store/store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -18,19 +18,19 @@ import { UIStore, metadataStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="UIStore.setModal('editMetaData')">
+				<NcActionButton @click="navigationStore.setModal('editMetaData')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="UIStore.setModal('addMetadataDataModal')">
+				<NcActionButton @click="navigationStore.setModal('addMetadataDataModal')">
 					<template #icon>
 						<PlusCircleOutline :size="20" />
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
-				<NcActionButton @click="UIStore.setDialog('deleteMetaData')">
+				<NcActionButton @click="navigationStore.setDialog('deleteMetaData')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -56,19 +56,19 @@ import { UIStore, metadataStore } from '../../store/store.js'
 							{{ value.description }}
 						</template>
 						<template #actions>
-							<NcActionButton @click="metadataStore.setMetadataDataKey(key); UIStore.setModal('editMetadataDataModal')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setModal('editMetadataDataModal')">
 								<template #icon>
 									<Pencil :size="20" />
 								</template>
 								Bewerken
 							</NcActionButton>
-							<NcActionButton @click="metadataStore.setMetadataDataKey(key); UIStore.setDialog('copyMetaDataProperty')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('copyMetaDataProperty')">
 								<template #icon>
 									<ContentCopy :size="20" />
 								</template>
 								Kopieren
 							</NcActionButton>
-							<NcActionButton @click="metadataStore.setMetadataDataKey(key); UIStore.setDialog('deleteMetaDataProperty')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('deleteMetaDataProperty')">
 								<template #icon>
 									<Delete :size="20" />
 								</template>

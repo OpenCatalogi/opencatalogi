@@ -1,10 +1,10 @@
 <script setup>
-import { publicationStore, UIStore } from '../../store/store.js'
+import { publicationStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="UIStore.dialog === 'publishAttachment'"
+		v-if="navigationStore.dialog === 'publishAttachment'"
 		name="Bijlage publiseren"
 		:can-close="false">
 		<p v-if="!succes">
@@ -20,7 +20,7 @@ import { publicationStore, UIStore } from '../../store/store.js'
 			<NcButton
 				:disabled="loading"
 				icon=""
-				@click="UIStore.setDialog(false)">
+				@click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -97,7 +97,7 @@ export default {
 					setTimeout(function() {
 						self.succes = false
 						publicationStore.setAttachmentItem(false)
-						UIStore.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

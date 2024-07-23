@@ -1,10 +1,10 @@
 <script setup>
-import { catalogiStore, UIStore } from '../../store/store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="UIStore.dialog === 'deleteCatalog'"
+		v-if="navigationStore.dialog === 'deleteCatalog'"
 		name="Catalogus verwijderen"
 		message="'"
 		:can-close="false">
@@ -18,7 +18,7 @@ import { catalogiStore, UIStore } from '../../store/store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="UIStore.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -87,7 +87,7 @@ export default {
 					setTimeout(function() {
 						self.succes = false
 						catalogiStore.setCatalogiItem(false)
-						UIStore.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

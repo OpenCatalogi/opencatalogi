@@ -1,11 +1,11 @@
 <script setup>
-import { UIStore, metadataStore } from '../../store/store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="UIStore.modal === 'editMetadataDataModal'"
+		v-if="navigationStore.modal === 'editMetadataDataModal'"
 		ref="modalRef"
-		@close="UIStore.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap "{{ metadataStore.metadataDataKey }}" bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -127,10 +127,10 @@ export default {
 		}
 	},
 	updated() {
-		if (UIStore.modal === 'editMetadataDataModal' && this.hasUpdated) {
+		if (navigationStore.modal === 'editMetadataDataModal' && this.hasUpdated) {
 			if (this.dataKey !== metadataStore.metadataDataKey) this.hasUpdated = false
 		}
-		if (UIStore.modal === 'editMetadataDataModal' && !this.hasUpdated) {
+		if (navigationStore.modal === 'editMetadataDataModal' && !this.hasUpdated) {
 			this.metadata = {
 				...metadataStore.metaDataItem,
 				properties: JSON.parse(metadataStore.metaDataItem.properties),
@@ -189,7 +189,7 @@ export default {
 						metadataStore.setMetaDataItem(data)
 					})
 					setTimeout(() => {
-						UIStore.setModal(false)
+						navigationStore.setModal(false)
 					    this.success = false
 					}, 3000)
 				})

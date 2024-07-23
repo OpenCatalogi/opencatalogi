@@ -1,10 +1,10 @@
 <script setup>
-import { UIStore, metadataStore } from '../../store/store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="UIStore.dialog === 'copyMetaDataProperty'"
+		v-if="navigationStore.dialog === 'copyMetaDataProperty'"
 		name="Metadata eigenschap verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
@@ -17,7 +17,7 @@ import { UIStore, metadataStore } from '../../store/store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="UIStore.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -87,12 +87,12 @@ export default {
 					response.json().then((data) => {
 						metadataStore.setMetaDataItem(data)
 					})
-					UIStore.setSelected('metaData')
+					navigationStore.setSelected('metaData')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						UIStore.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, searchStore, directoryStore } from '../../store/store.js'
+import { navigationStore, searchStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -21,7 +21,7 @@ import { UIStore, searchStore, directoryStore } from '../../store/store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="UIStore.setModal('addListing')">
+					<NcActionButton @click="navigationStore.setModal('addListing')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -46,13 +46,13 @@ import { UIStore, searchStore, directoryStore } from '../../store/store.js'
 					{{ listing?.title }}
 				</template>
 				<template #actions>
-					<NcActionButton @click="directoryStore.setListingItem(listing); UIStore.setModal('editListing')">
+					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="directoryStore.setListingItem(listing); UIStore.setDialog('deleteListing')">
+					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
 						<template #icon>
 							<Delete :size="20" />
 						</template>

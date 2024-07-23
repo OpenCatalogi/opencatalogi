@@ -1,16 +1,16 @@
 <script setup>
-import { UIStore, catalogiStore, publicationStore } from '../store/store.js'
+import { navigationStore, catalogiStore, publicationStore } from '../store/store.js'
 </script>
 
 <template>
 	<NcAppNavigation>
 		<NcAppNavigationList>
-			<NcAppNavigationNew text="Publicatie Aanmaken" @click="UIStore.setModal('publicationAdd')">
+			<NcAppNavigationNew text="Publicatie Aanmaken" @click="navigationStore.setModal('publicationAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNew>
-			<NcAppNavigationItem :active="UIStore.selected === 'dashboard'" name="Dashboard" @click="UIStore.setSelected('dashboard')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'dashboard'" name="Dashboard" @click="navigationStore.setSelected('dashboard')">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
@@ -18,13 +18,13 @@ import { UIStore, catalogiStore, publicationStore } from '../store/store.js'
 			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.name"
-				:active="catalogus._id === UIStore.selectedCatalogus && UIStore.selected === 'publication'"
+				:active="catalogus._id === navigationStore.selectedCatalogus && navigationStore.selected === 'publication'"
 				@click="switchCatalogus(catalogus)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="UIStore.selected === 'search'" name="Search" @click="UIStore.setSelected('search')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'search'" name="Search" @click="navigationStore.setSelected('search')">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -32,17 +32,17 @@ import { UIStore, catalogiStore, publicationStore } from '../store/store.js'
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="UIStore.selected === 'catalogi'" name="Catalogi" @click="UIStore.setSelected('catalogi')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'catalogi'" name="Catalogi" @click="navigationStore.setSelected('catalogi')">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="UIStore.selected === 'directory'" name="Directory" @click="UIStore.setSelected('directory')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'directory'" name="Directory" @click="navigationStore.setSelected('directory')">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="UIStore.selected === 'metaData'" name="MetaData" @click="UIStore.setSelected('metaData')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'metaData'" name="MetaData" @click="navigationStore.setSelected('metaData')">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
@@ -382,9 +382,9 @@ export default {
 				})
 		},
 		switchCatalogus(catalogus) {
-			if (catalogus._id !== UIStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
-			UIStore.setSelected('publication')
-			UIStore.setSelectedCatalogus(catalogus._id)
+			if (catalogus._id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
+			navigationStore.setSelected('publication')
+			navigationStore.setSelectedCatalogus(catalogus._id)
 			catalogiStore.setCatalogiItem(catalogus)
 		},
 	},

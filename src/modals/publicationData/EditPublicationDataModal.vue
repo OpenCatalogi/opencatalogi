@@ -1,11 +1,11 @@
 <script setup>
-import { UIStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="UIStore.modal === 'editPublicationData'"
+		v-if="navigationStore.modal === 'editPublicationData'"
 		ref="modalRef"
-		@close="UIStore.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bewerk publicatie eigenschappen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -25,7 +25,7 @@ import { UIStore, publicationStore } from '../../store/store.js'
 				<ContentSaveOutline v-if="!loading" :size="20" />
 			</NcButton>
 			<NcButton
-				@click="UIStore.setModal(false)">
+				@click="navigationStore.setModal(false)">
 				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
@@ -76,7 +76,7 @@ export default {
 		}
 	},
 	updated() {
-		if (UIStore.modal === 'editPublicationDataModal' && !this.hasUpdated) {
+		if (navigationStore.modal === 'editPublicationDataModal' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
 			this.fetchData(publicationStore.publicationId)
@@ -168,7 +168,7 @@ export default {
 				},
 			)
 				.then(() => {
-					UIStore.setModal(false)
+					navigationStore.setModal(false)
 				})
 				.catch((err) => {
 					this.loading = false

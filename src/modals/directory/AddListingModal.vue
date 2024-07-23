@@ -1,9 +1,9 @@
 <script setup>
-import { UIStore, directoryStore } from '../../store/store.js'
+import { navigationStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="UIStore.modal === 'addListing'" ref="modalRef" @close="UIStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'addListing'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -88,7 +88,7 @@ export default {
 					response.json().then((data) => {
 						directoryStore.setListingItem(data)
 					})
-					UIStore.setSelected('directory')
+					navigationStore.setSelected('directory')
 					// Wait and then close the modal
 					setTimeout(() => (this.closeModal()), 2500)
 				})

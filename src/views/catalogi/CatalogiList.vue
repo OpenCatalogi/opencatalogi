@@ -1,5 +1,5 @@
 <script setup>
-import { catalogiStore, UIStore, searchStore } from '../../store/store.js'
+import { catalogiStore, navigationStore, searchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -21,7 +21,7 @@ import { catalogiStore, UIStore, searchStore } from '../../store/store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="UIStore.setModal('addCatalog')">
+					<NcActionButton @click="navigationStore.setModal('addCatalog')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -47,13 +47,13 @@ import { catalogiStore, UIStore, searchStore } from '../../store/store.js'
 						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); UIStore.setModal('editCatalog')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setModal('editCatalog')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); UIStore.setDialog('deleteCatalog')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setDialog('deleteCatalog')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>

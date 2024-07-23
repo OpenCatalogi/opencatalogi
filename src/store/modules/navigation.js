@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { defineStore } from 'pinia'
 
-export const useUIStore = defineStore('ui', {
+export const useNavigationStore = defineStore('ui', {
 	state: () => ({
 		// The currently active menu item, defaults to '' which triggers the dashboard
 		selected: 'dashboard',

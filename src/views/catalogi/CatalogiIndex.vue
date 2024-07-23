@@ -1,5 +1,5 @@
 <script setup>
-import { catalogiStore, UIStore, searchStore } from '../../store/store.js'
+import { catalogiStore, navigationStore, searchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import { catalogiStore, UIStore, searchStore } from '../../store/store.js'
 			<CatalogiList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!catalogiStore.catalogiItem || UIStore.selected != 'catalogi' "
+			<NcEmptyContent v-if="!catalogiStore.catalogiItem || navigationStore.selected != 'catalogi' "
 				class="detailContainer"
 				name="Geen Catalogi"
 				description="Nog geen catalogi geselecteerd">
@@ -16,12 +16,12 @@ import { catalogiStore, UIStore, searchStore } from '../../store/store.js'
 					<DatabaseOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="UIStore.setModal('addCatalog')">
+					<NcButton type="primary" @click="navigationStore.setModal('addCatalog')">
 						Catalogi toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<CatalogiDetails v-if="catalogiStore.catalogiItem && UIStore.selected === 'catalogi'" :catalogi-item="catalogiStore.catalogiItem" />
+			<CatalogiDetails v-if="catalogiStore.catalogiItem && navigationStore.selected === 'catalogi'" :catalogi-item="catalogiStore.catalogiItem" />
 		</template>
 	</NcAppContent>
 </template>

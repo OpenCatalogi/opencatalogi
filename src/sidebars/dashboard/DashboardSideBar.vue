@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, searchStore, publicationStore } from '../../store/store.js'
+import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -36,25 +36,25 @@ import { UIStore, searchStore, publicationStore } from '../../store/store.js'
 					{{ publication?.description }} wdsfdf
 				</template>
 				<template #actions>
-					<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setSelected('publication');">
+					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setSelected('publication');">
 						<template #icon>
 							<ListBoxOutline :size="20" />
 						</template>
 						Bekijken
 					</NcActionButton>
-					<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setModal('editPublication')">
+					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('editPublication')">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('publishPublication')">
+					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 						<template #icon>
 							<Publish :size="20" />
 						</template>
 						Publiseren
 					</NcActionButton>
-					<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('deletePublication')">
+					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('deletePublication')">
 						<template #icon>
 							<Delete :size="20" />
 						</template>
@@ -87,19 +87,19 @@ import { UIStore, searchStore, publicationStore } from '../../store/store.js'
 					{{ publication?.description }}
 				</template>
 				<template #actions>
-					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setModal('editAttachment')">
+					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('editAttachment')">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setDialog('publishAttachment')">
+					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 						<template #icon>
 							<Publish :size="20" />
 						</template>
 						Publiseren
 					</NcActionButton>
-					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setDialog('deleteAttachment')">
+					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 						<template #icon>
 							<Delete :size="20" />
 						</template>

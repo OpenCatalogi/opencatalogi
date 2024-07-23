@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, searchStore, metadataStore } from '../../store/store.js'
+import { navigationStore, searchStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import { UIStore, searchStore, metadataStore } from '../../store/store.js'
 			<MetaDataList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!metadataStore.metaDataItem || UIStore.selected != 'metaData'"
+			<NcEmptyContent v-if="!metadataStore.metaDataItem || navigationStore.selected != 'metaData'"
 				class="detailContainer"
 				name="Geen Metadata"
 				description="Nog geen metadata beschrijving geselecteerd">
@@ -16,12 +16,12 @@ import { UIStore, searchStore, metadataStore } from '../../store/store.js'
 					<FileTreeOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="UIStore.setModal('addMetaData')">
+					<NcButton type="primary" @click="navigationStore.setModal('addMetaData')">
 						Metadata beschrijving toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<MetaDataDetails v-if="metadataStore.metaDataItem && UIStore.selected === 'metaData'" :meta-data-item="metadataStore.metaDataItem" />
+			<MetaDataDetails v-if="metadataStore.metaDataItem && navigationStore.selected === 'metaData'" :meta-data-item="metadataStore.metaDataItem" />
 		</template>
 	</NcAppContent>
 </template>

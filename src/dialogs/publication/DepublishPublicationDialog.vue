@@ -1,10 +1,10 @@
 <script setup>
-import { UIStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="UIStore.dialog === 'depublishPublication'"
+		v-if="navigationStore.dialog === 'depublishPublication'"
 		name="Publicatie de-publiseren"
 		:can-close="false">
 		<p v-if="!succes">
@@ -17,7 +17,7 @@ import { UIStore, publicationStore } from '../../store/store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="UIStore.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -90,7 +90,7 @@ export default {
 					setTimeout(function() {
 						self.succes = false
 						publicationStore.setPublicationItem(false)
-						UIStore.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

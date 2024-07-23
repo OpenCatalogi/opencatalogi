@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, searchStore, publicationStore } from '../../store/store.js'
+import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -21,7 +21,7 @@ import { UIStore, searchStore, publicationStore } from '../../store/store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="UIStore.setModal('publicationAdd')">
+					<NcActionButton @click="navigationStore.setModal('publicationAdd')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -49,49 +49,49 @@ import { UIStore, searchStore, publicationStore } from '../../store/store.js'
 						{{ publication?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setModal('editPublication')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('editPublication')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('copyPublication')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('copyPublication')">
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
 							Kopieren
 						</NcActionButton>
-						<NcActionButton v-if="publication.status !== 'published'" @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('publishPublication')">
+						<NcActionButton v-if="publication.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 							<template #icon>
 								<Publish :size="20" />
 							</template>
 							Publiseren
 						</NcActionButton>
-						<NcActionButton v-if="publication.status === 'published'" @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('depublishPublication')">
+						<NcActionButton v-if="publication.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 							<template #icon>
 								<PublishOff :size="20" />
 							</template>
 							Depubliseren
 						</NcActionButton>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('archivePublication')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('archivePublication')">
 							<template #icon>
 								<ArchivePlusOutline :size="20" />
 							</template>
 							Archiveren
 						</NcActionButton>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setModal('addPublicationData')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('addPublicationData')">
 							<template #icon>
 								<FileTreeOutline :size="20" />
 							</template>
 							Eigenschap toevoegen
 						</NcActionButton>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setModal('AddAttachment')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('AddAttachment')">
 							<template #icon>
 								<FilePlusOutline :size="20" />
 							</template>
 							Bijlage toevoegen
 						</NcActionButton>
-						<NcActionButton class="publicationsList-actionsDelete" @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('deletePublication')">
+						<NcActionButton class="publicationsList-actionsDelete" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('deletePublication')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -165,7 +165,7 @@ export default {
 		filteredPublications() {
 			if (!publicationStore?.publicationList?.results) return []
 			return publicationStore.publicationList.results.filter((publication) => {
-				return publication.catalogi === UIStore.selectedCatalogus
+				return publication.catalogi === navigationStore.selectedCatalogus
 			})
 		},
 	},

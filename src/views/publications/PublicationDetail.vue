@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -17,49 +17,49 @@ import { UIStore, publicationStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="UIStore.setModal('editPublication')">
+				<NcActionButton @click="navigationStore.setModal('editPublication')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="UIStore.setDialog('copyPublication')">
+				<NcActionButton @click="navigationStore.setDialog('copyPublication')">
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
 					Kopieren
 				</NcActionButton>
-				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('publishPublication')">
+				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 					<template #icon>
 						<Publish :size="20" />
 					</template>
 					Publiseren
 				</NcActionButton>
-				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('depublishPublication')">
+				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
 					Depubliseren
 				</NcActionButton>
-				<NcActionButton @click="UIStore.setDialog('archivePublication')">
+				<NcActionButton @click="navigationStore.setDialog('archivePublication')">
 					<template #icon>
 						<ArchivePlusOutline :size="20" />
 					</template>
 					Archiveren
 				</NcActionButton>
-				<NcActionButton @click="UIStore.setModal('addPublicationData')">
+				<NcActionButton @click="navigationStore.setModal('addPublicationData')">
 					<template #icon>
 						<FileTreeOutline :size="20" />
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
-				<NcActionButton @click="UIStore.setModal('AddAttachment')">
+				<NcActionButton @click="navigationStore.setModal('AddAttachment')">
 					<template #icon>
 						<FilePlusOutline :size="20" />
 					</template>
 					Bijlage toevoegen
 				</NcActionButton>
-				<NcActionButton @click="UIStore.setDialog('deletePublication')">
+				<NcActionButton @click="navigationStore.setDialog('deletePublication')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -216,7 +216,7 @@ import { UIStore, publicationStore } from '../../store/store.js'
 									{{ attachment?.description }}
 								</template>
 								<template #actions>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setModal('EditAttachment')">
+									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
 										<template #icon>
 											<Pencil :size="20" />
 										</template>
@@ -228,25 +228,25 @@ import { UIStore, publicationStore } from '../../store/store.js'
 										</template>
 										Download
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status !== 'published'" @click="publicationStore.setAttachmentItem(attachment); UIStore.setDialog('publishAttachment')">
+									<NcActionButton v-if="attachment.status !== 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
 										</template>
 										Publiseren
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); UIStore.setDialog('depublishAttachment')">
+									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
 										Depubliseren
 									</NcActionButton>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setDialog('copyAttachment')">
+									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>
 										Kopieren
 									</NcActionButton>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setDialog('deleteAttachment')">
+									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 										<template #icon>
 											<Delete :size="20" />
 										</template>
@@ -272,7 +272,7 @@ import { UIStore, publicationStore } from '../../store/store.js'
 								<td>Ruben van der Linde</td>
 								<td>Created</td>
 								<td>
-									<NcButton @click="UIStore.setDialog('viewLog')">
+									<NcButton @click="navigationStore.setDialog('viewLog')">
 										<template #icon>
 											<TimelineQuestionOutline
 												:size="20" />
@@ -497,27 +497,27 @@ export default {
 		},
 		deletePublication() {
 			publicationStore.setPublicationItem(this.publication)
-			UIStore.setModal('deletePublication')
+			navigationStore.setModal('deletePublication')
 		},
 		editPublicationDataItem(key) {
 			publicationStore.setPublicationDataKey(key)
-			UIStore.setModal('editPublicationDataModal')
+			navigationStore.setModal('editPublicationDataModal')
 		},
 		deletePublicationDataItem(key) {
 			publicationStore.setPublicationDataKey(key)
-			UIStore.setDialog('deletePublicationDataDialog')
+			navigationStore.setDialog('deletePublicationDataDialog')
 		},
 		editPublicationAttachmentItem(key) {
 			publicationStore.setPublicationDataKey(key)
-			UIStore.setModal('editPublicationDataModal')
+			navigationStore.setModal('editPublicationDataModal')
 		},
 		goToMetadata(metadata) {
 			publicationStore.setMetaDataItem(metadata)
-			UIStore.setSelected('metaData')
+			navigationStore.setSelected('metaData')
 		},
 		goToCatalogi(id) {
 			publicationStore.setCatalogiId(id)
-			UIStore.setSelected('catalogi')
+			navigationStore.setSelected('catalogi')
 		},
 	},
 }

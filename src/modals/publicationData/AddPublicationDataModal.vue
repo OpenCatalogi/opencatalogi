@@ -1,11 +1,11 @@
 <script setup>
-import { UIStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="UIStore.modal === 'addPublicationData'"
+		v-if="navigationStore.modal === 'addPublicationData'"
 		ref="modalRef"
-		@close="UIStore.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie eigenschap toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -41,7 +41,7 @@ import { UIStore, publicationStore } from '../../store/store.js'
 			</NcButton>
 
 			<NcButton
-				@click="UIStore.setModal(false)">
+				@click="navigationStore.setModal(false)">
 				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
@@ -104,7 +104,7 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						UIStore.setModal(false)
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

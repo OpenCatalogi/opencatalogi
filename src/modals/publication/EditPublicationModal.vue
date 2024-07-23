@@ -1,11 +1,11 @@
 <script setup>
-import { UIStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="UIStore.modal === 'editPublication'"
+		v-if="navigationStore.modal === 'editPublication'"
 		ref="modalRef"
-		@close="UIStore.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Edit publication</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -118,11 +118,11 @@ export default {
 		this.publication = publicationStore.publicationItem
 	},
 	updated() {
-		if (UIStore.modal === 'publicationEdit' && this.hasUpdated) {
+		if (navigationStore.modal === 'publicationEdit' && this.hasUpdated) {
 			if (this.publication.id === publicationStore.publicationItem.id) return
 			this.hasUpdated = false
 		}
-		if (UIStore.modal === 'publicationEdit' && !this.hasUpdated) {
+		if (navigationStore.modal === 'publicationEdit' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
 			this.fetchData(publicationStore.publicationItem.id)
@@ -227,8 +227,8 @@ export default {
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
 					})
-					UIStore.setSelected('publication')
-					setTimeout(() => UIStore.setModal(false), 2500)
+					navigationStore.setSelected('publication')
+					setTimeout(() => navigationStore.setModal(false), 2500)
 				})
 				.catch((err) => {
 					this.error = err

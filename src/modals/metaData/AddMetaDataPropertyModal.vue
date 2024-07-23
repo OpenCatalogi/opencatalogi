@@ -1,11 +1,11 @@
 <script setup>
-import { UIStore, metadataStore } from '../../store/store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="UIStore.modal === 'addMetadataDataModal'"
+		v-if="navigationStore.modal === 'addMetadataDataModal'"
 		ref="modalRef"
-		@close="UIStore.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap toevoegen</h2>
 			<NcNoteCard v-if="success" type="success">
@@ -76,7 +76,7 @@ import { UIStore, metadataStore } from '../../store/store.js'
 
 			<NcButton v-if="success"
 				type="primary"
-				@click="UIStore.setModal(false)">
+				@click="navigationStore.setModal(false)">
 				Sluiten
 			</NcButton>
 		</div>
@@ -174,7 +174,7 @@ export default {
 							cascadeDelete: false,
 							exclusiveMinimum: '',
 						}
-						UIStore.setModal(false)
+						navigationStore.setModal(false)
 					    this.success = false
 					}, 2000)
 				})

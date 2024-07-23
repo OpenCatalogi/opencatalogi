@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, searchStore, directoryStore } from '../../store/store.js'
+import { navigationStore, searchStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import { UIStore, searchStore, directoryStore } from '../../store/store.js'
 			<DirectoryList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!directoryStore.listingItem || UIStore.selected != 'directory' "
+			<NcEmptyContent v-if="!directoryStore.listingItem || navigationStore.selected != 'directory' "
 				class="detailContainer"
 				name="Geen directory"
 				description="Nog geen directory geselecteerd">
@@ -16,12 +16,12 @@ import { UIStore, searchStore, directoryStore } from '../../store/store.js'
 					<LayersOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="UIStore.setModal('addListing')">
+					<NcButton type="primary" @click="navigationStore.setModal('addListing')">
 						Directory toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<ListingDetails v-if="directoryStore.listingItem && UIStore.selected === 'directory'" :listing-item="directoryStore.listingItem" />
+			<ListingDetails v-if="directoryStore.listingItem && navigationStore.selected === 'directory'" :listing-item="directoryStore.listingItem" />
 		</template>
 	</NcAppContent>
 </template>

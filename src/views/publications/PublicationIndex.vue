@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, searchStore, publicationStore } from '../../store/store.js'
+import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import { UIStore, searchStore, publicationStore } from '../../store/store.js'
 			<PublicationList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!publicationStore.publicationItem.id || UIStore.selected != 'publication'"
+			<NcEmptyContent v-if="!publicationStore.publicationItem.id || navigationStore.selected != 'publication'"
 				class="detailContainer"
 				name="Geen publicatie"
 				description="Nog geen publicatie geselecteerd">
@@ -16,12 +16,12 @@ import { UIStore, searchStore, publicationStore } from '../../store/store.js'
 					<ListBoxOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="UIStore.setModal('publicationAdd')">
+					<NcButton type="primary" @click="navigationStore.setModal('publicationAdd')">
 						Publicatie toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<PublicationDetails v-if="publicationStore.publicationItem.id && UIStore.selected === 'publication'" :publication-id="publicationStore.publicationItem.id " />
+			<PublicationDetails v-if="publicationStore.publicationItem.id && navigationStore.selected === 'publication'" :publication-id="publicationStore.publicationItem.id " />
 		</template>
 	</NcAppContent>
 </template>

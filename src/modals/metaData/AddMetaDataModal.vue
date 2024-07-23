@@ -1,12 +1,12 @@
 <script setup>
-import { UIStore, metadataStore } from '../../store/store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcModal
-		v-if="UIStore.modal === 'addMetaData'"
+		v-if="navigationStore.modal === 'addMetaData'"
 		ref="modalRef"
-		@close="UIStore.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -89,13 +89,13 @@ export default {
 					response.json().then((data) => {
 						metadataStore.setMetaDataItem(data)
 					})
-					UIStore.setSelected('metaData')
+					navigationStore.setSelected('metaData')
 					// Update the list
 					const self = this
 					setTimeout(function() {
 						self.succes = false
 						this.metaData = { title: '', version: '', summery: '', description: '' }
-						UIStore.setModal(false)
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

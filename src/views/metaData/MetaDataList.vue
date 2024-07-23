@@ -1,5 +1,5 @@
 <script setup>
-import { UIStore, searchStore, metadataStore } from '../../store/store.js'
+import { navigationStore, searchStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -21,7 +21,7 @@ import { UIStore, searchStore, metadataStore } from '../../store/store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="UIStore.setModal('addMetaData')">
+					<NcActionButton @click="navigationStore.setModal('addMetaData')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -47,19 +47,19 @@ import { UIStore, searchStore, metadataStore } from '../../store/store.js'
 						{{ metaData.summery }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); UIStore.setModal('editMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setModal('editMetaData')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); UIStore.setDialog('copyMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setDialog('copyMetaData')">
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
 							Kopieren
 						</NcActionButton>
-						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); UIStore.setDialog('deleteMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setDialog('deleteMetaData')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>

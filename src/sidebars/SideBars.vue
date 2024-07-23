@@ -1,12 +1,12 @@
 <script setup>
-import { UIStore } from '../store/store.js'
+import { navigationStore } from '../store/store.js'
 </script>
 
 <template>
 	<div>
 		<!-- Placeholder div for all of the sidebars-->
-		<SearchSideBar v-if="UIStore.selected === 'search'" />
-		<DashboardSideBar v-if="UIStore.selected === 'dashboard'" />
+		<SearchSideBar v-if="navigationStore.selected === 'search'" />
+		<DashboardSideBar v-if="navigationStore.selected === 'dashboard'" />
 	</div>
 </template>
 

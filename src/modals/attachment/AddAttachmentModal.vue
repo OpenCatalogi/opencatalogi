@@ -1,9 +1,9 @@
 <script setup>
-import { UIStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="UIStore.modal === 'AddAttachment'" ref="modalRef" @close="UIStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'AddAttachment'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bijlage toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -79,7 +79,7 @@ export default {
 	},
 	methods: {
 		closeModal() {
-			UIStore.modal = false
+			navigationStore.modal = false
 		},
 		addAttachment() {
 			this.loading = true
@@ -110,7 +110,7 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						UIStore.setModal(false)
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

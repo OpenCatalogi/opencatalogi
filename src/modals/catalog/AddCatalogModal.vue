@@ -1,9 +1,9 @@
 <script setup>
-import { catalogiStore, UIStore } from '../../store/store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="UIStore.modal === 'addCatalog'" ref="modalRef" @close="UIStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'addCatalog'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -65,7 +65,7 @@ export default {
 	},
 	methods: {
 		closeModal() {
-			UIStore.modal = false
+			navigationStore.modal = false
 		},
 		addCatalog() {
 			this.loading = true
@@ -95,7 +95,7 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						UIStore.setModal(false)
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

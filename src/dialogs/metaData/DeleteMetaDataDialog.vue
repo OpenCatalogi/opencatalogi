@@ -1,10 +1,10 @@
 <script setup>
-import { UIStore, metadataStore } from '../../store/store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="UIStore.dialog === 'deleteMetaData'"
+		v-if="navigationStore.dialog === 'deleteMetaData'"
 		name="Metadata verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
@@ -17,7 +17,7 @@ import { UIStore, metadataStore } from '../../store/store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="UIStore.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -86,7 +86,7 @@ export default {
 					setTimeout(function() {
 						self.succes = false
 						metadataStore.setMetaDataItem(false)
-						UIStore.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

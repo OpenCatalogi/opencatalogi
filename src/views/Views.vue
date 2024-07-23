@@ -1,17 +1,17 @@
 <script setup>
-import { UIStore, searchStore } from '../store/store.js'
+import { navigationStore, searchStore } from '../store/store.js'
 </script>
 
 <template>
 	<!-- Placeholder div for all of the views-->
 	<NcAppContent>
 		<template #default>
-			<Catalogi v-if="UIStore.selected === 'catalogi'" />
-			<Dashboard v-if="UIStore.selected === 'dashboard'" />
-			<Directory v-if="UIStore.selected === 'directory'" />
-			<Publications v-if="UIStore.selected === 'publication'" />
-			<Matadata v-if="UIStore.selected === 'metaData'" />
-			<Search v-if="UIStore.selected === 'search'" :search="searchStore.search" />
+			<Catalogi v-if="navigationStore.selected === 'catalogi'" />
+			<Dashboard v-if="navigationStore.selected === 'dashboard'" />
+			<Directory v-if="navigationStore.selected === 'directory'" />
+			<Publications v-if="navigationStore.selected === 'publication'" />
+			<Matadata v-if="navigationStore.selected === 'metaData'" />
+			<Search v-if="navigationStore.selected === 'search'" :search="searchStore.search" />
 		</template>
 	</NcAppContent>
 </template>
