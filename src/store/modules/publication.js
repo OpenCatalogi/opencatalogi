@@ -91,7 +91,7 @@ export const usePublicationStore = defineStore('publication', {
 					return err
 				})
 		},
-		getConceptAttachments(publication) { // @todo this might belong in a service?
+		getConceptAttachments() { // @todo this might belong in a service?
 			fetch(
 				'/index.php/apps/opencatalogi/api/attachments?status=concept',
 				{

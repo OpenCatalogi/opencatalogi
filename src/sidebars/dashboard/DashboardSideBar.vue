@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useSearchStore, usePublicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -12,7 +12,7 @@ import { store } from '../../store/store.js'
 			</template>
 			Zoek snel in het voor uw beschickbare federatieve netwerk
 			<NcTextField class="searchField"
-				:value.sync="store.search"
+				:value.sync="searchStore.search"
 				label="Search" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="settings-tab" name="Publicaties" :order="2">
@@ -20,15 +20,15 @@ import { store } from '../../store/store.js'
 				<ListBoxOutline :size="20" />
 			</template>
 			Welke publicaties vereisen uw aandacht?
-			<NcListItem v-for="(publication, i) in store.conceptPublications.results"
+			<NcListItem v-for="(publication, i) in publicationStore.conceptPublications.results"
 				:key="`${publication}${i}`"
 				:name="publication.name ?? publication.title"
 				:bold="false"
 				:force-display-actions="true"
-				:active="store.publicationItem.id === publication.id"
+				:active="publicationStore.publicationItem.id === publication.id"
 				:details="publication?.status">
 				<template #icon>
-					<ListBoxOutline :class="store.publicationItem.id === publication.id && 'selectedZaakIcon'"
+					<ListBoxOutline :class="publicationStore.publicationItem.id === publication.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44" />
 				</template>
@@ -36,25 +36,25 @@ import { store } from '../../store/store.js'
 					{{ publication?.description }} wdsfdf
 				</template>
 				<template #actions>
-					<NcActionButton @click="store.setPublicationItem(publication); store.setSelected('publication');">
+					<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setSelected('publication');">
 						<template #icon>
 							<ListBoxOutline :size="20" />
 						</template>
 						Bekijken
 					</NcActionButton>
-					<NcActionButton @click="store.setPublicationItem(publication); store.setModal('editPublication')">
+					<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setModal('editPublication')">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
+					<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('publishPublication')">
 						<template #icon>
 							<Publish :size="20" />
 						</template>
 						Publiseren
 					</NcActionButton>
-					<NcActionButton @click="store.setPublicationItem(publication); store.setDialog('deletePublication')">
+					<NcActionButton @click="publicationStore.setPublicationItem(publication); UIStore.setDialog('deletePublication')">
 						<template #icon>
 							<Delete :size="20" />
 						</template>
@@ -62,7 +62,7 @@ import { store } from '../../store/store.js'
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard v-if="!store.conceptPublications.results.length > 0" type="success">
+			<NcNoteCard v-if="!publicationStore.conceptPublications.results.length > 0" type="success">
 				<p>Er zijn op dit moment geen publicaties die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>
@@ -71,15 +71,15 @@ import { store } from '../../store/store.js'
 				<FileOutline :size="20" />
 			</template>
 			Welke bijlagen vereisen uw aandacht?
-			<NcListItem v-for="(attachment, i) in store.conceptAttachments.results"
+			<NcListItem v-for="(attachment, i) in publicationStore.conceptAttachments.results"
 				:key="`${attachment}${i}`"
 				:name="attachment.name ?? attachment.title"
 				:bold="false"
 				:force-display-actions="true"
-				:active="store.attachmentItem.id === attachment.id"
+				:active="publicationStore.attachmentItem.id === attachment.id"
 				:details="attachment?.status">
 				<template #icon>
-					<ListBoxOutline :class="store.publicationItem.id === attachment.id && 'selectedZaakIcon'"
+					<ListBoxOutline :class="publicationStore.publicationItem.id === attachment.id && 'selectedZaakIcon'"
 						disable-menu
 						:size="44" />
 				</template>
@@ -87,19 +87,19 @@ import { store } from '../../store/store.js'
 					{{ publication?.description }}
 				</template>
 				<template #actions>
-					<NcActionButton @click="store.setAttachmentItem(attachment); store.setModal('editAttachment')">
+					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setModal('editAttachment')">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('publishAttachment')">
+					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setDialog('publishAttachment')">
 						<template #icon>
 							<Publish :size="20" />
 						</template>
 						Publiseren
 					</NcActionButton>
-					<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('deleteAttachment')">
+					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); UIStore.setDialog('deleteAttachment')">
 						<template #icon>
 							<Delete :size="20" />
 						</template>
@@ -107,7 +107,7 @@ import { store } from '../../store/store.js'
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard v-if="!store.conceptAttachments.results.length > 0" type="success">
+			<NcNoteCard v-if="!publicationStore.conceptAttachments.results.length > 0" type="success">
 				<p>Er zijn op dit moment geen bijlagen die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>
@@ -142,13 +142,16 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			searchStore: useSearchStore(),
+			publicationStore: usePublicationStore(),
 			publications: false,
 			attachments: false,
 		}
 	},
 	mounted() {
-		store.getConceptPublications()
-		store.getConceptAttachments()
+		this.publicationStore.getConceptPublications()
+		this.publicationStore.getConceptAttachments()
 	},
 }
 </script>
