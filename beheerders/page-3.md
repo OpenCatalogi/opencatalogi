@@ -6,4 +6,4 @@ description: >-
 
 # Gebruikershandleiding
 
-(todo: het beheren van MijnOpenCatalogi)
+(todo: het beheren van MijnOpenCatalogi, het beheren en inrichten van autorisaties)
