@@ -29,3 +29,10 @@ Na het opslaan van de publicatie, is deze zichtbaar onder de catalogi "Woo". Om 
 Onder is een voorbeeld van een publicatie en de Actie-mogelijkheden.
 
 <figure><img src="../.gitbook/assets/image (17).png" alt="" width="375"><figcaption></figcaption></figure>
+
+### Web - en Gebruikersstatistieken
+
+todo: toevoegen metrics aan het dashboard, voorbeeld:\
+
+
+<figure><img src="../.gitbook/assets/image.png" alt="" width="375"><figcaption></figcaption></figure>
