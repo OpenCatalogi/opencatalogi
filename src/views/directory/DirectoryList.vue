@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useSearchStore, useDirectoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,11 +7,11 @@ import { store } from '../../store/store.js'
 		<ul v-if="!loading">
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="store.search"
+					:value.sync="searchStore.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="store.setSearch('')">
+					@trailing-button-click="searchStore.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -21,7 +21,7 @@ import { store } from '../../store/store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('addListing')">
+					<NcActionButton @click="UIStore.setModal('addListing')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -30,15 +30,15 @@ import { store } from '../../store/store.js'
 				</NcActions>
 			</div>
 
-			<NcListItem v-for="(listing, i) in store.listingList.results"
+			<NcListItem v-for="(listing, i) in directoryStore.listingList.results"
 				:key="`${listing}${i}`"
 				:name="listing.name ?? listing.title"
-				:active="store.listingItem?.id === listing?.id"
+				:active="directoryStore.listingItem?.id === listing?.id"
 				:details="'1h'"
 				:counter-number="45"
-				@click="store.setListingItem(listing)">
+				@click="directoryStore.setListingItem(listing)">
 				<template #icon>
-					<LayersOutline :class="store.listingItem?.id === listing?.id && 'selectedIcon'"
+					<LayersOutline :class="directoryStore.listingItem?.id === listing?.id && 'selectedIcon'"
 						disable-menu
 						:size="44" />
 				</template>
@@ -46,13 +46,13 @@ import { store } from '../../store/store.js'
 					{{ listing?.title }}
 				</template>
 				<template #actions>
-					<NcActionButton @click="store.setListingItem(listing); store.setModal('editListing')">
+					<NcActionButton @click="directoryStore.setListingItem(listing); UIStore.setModal('editListing')">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
 						Bewerken
 					</NcActionButton>
-					<NcActionButton @click="store.setListingItem(listing); store.setDialog('deleteListing')">
+					<NcActionButton @click="directoryStore.setListingItem(listing); UIStore.setDialog('deleteListing')">
 						<template #icon>
 							<Delete :size="20" />
 						</template>
@@ -103,6 +103,9 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			searchStore: useSearchStore(),
+			directoryStore: useDirectoryStore(),
 			loading: false,
 		}
 	},
@@ -119,7 +122,7 @@ export default {
 	methods: {
 		fetchData(newPage) {
 			this.loading = true
-			store.refreshListingList()
+			this.directoryStore.refreshListingList()
 			this.loading = false
 		},
 	},

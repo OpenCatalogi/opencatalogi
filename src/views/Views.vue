@@ -1,17 +1,17 @@
 <script setup>
-import { store } from '../store/store.js'
+import { useUIStore, useSearchStore } from '../store/store.js'
 </script>
 
 <template>
-	<!-- Placeholder div for all of the vieuws-->
+	<!-- Placeholder div for all of the views-->
 	<NcAppContent>
 		<template #default>
-			<Catalogi v-if="store.selected === 'catalogi'" />
-			<Dashboard v-if="store.selected === 'dashboard'" />
-			<Directory v-if="store.selected === 'directory'" />
-			<Publications v-if="store.selected === 'publication'" />
-			<Matadata v-if="store.selected === 'metaData'" />
-			<Search v-if="store.selected === 'search'" :search="store.search" />
+			<Catalogi v-if="UIStore.selected === 'catalogi'" />
+			<Dashboard v-if="UIStore.selected === 'dashboard'" />
+			<Directory v-if="UIStore.selected === 'directory'" />
+			<Publications v-if="UIStore.selected === 'publication'" />
+			<Matadata v-if="UIStore.selected === 'metaData'" />
+			<Search v-if="UIStore.selected === 'search'" :search="searchStore.search" />
 		</template>
 	</NcAppContent>
 </template>
@@ -35,6 +35,12 @@ export default {
 		Publications,
 		Search,
 		NcAppContent,
+	},
+	data() {
+		return {
+			UIStore: useUIStore(),
+			searchStore: useSearchStore(),
+		}
 	},
 }
 </script>

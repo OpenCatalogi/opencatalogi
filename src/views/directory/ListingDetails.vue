@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useDirectoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -17,13 +17,13 @@ import { store } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setListingItem(listing); store.setModal('editListing')">
+				<NcActionButton @click="directoryStore.setListingItem(listing); UIStore.setModal('editListing')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="store.setListingItem(listing); store.setDialog('deleteListing')">
+				<NcActionButton @click="directoryStore.setListingItem(listing); UIStore.setDialog('deleteListing')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -88,6 +88,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			directoryStore: useDirectoryStore(),
 			listing: [],
 			loading: false,
 		}
@@ -102,7 +104,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.fetchData(store.listingItem?.id)
+		this.fetchData(this.directoryStore.listingItem?.id)
 	},
 	methods: {
 		fetchData(listingId) {

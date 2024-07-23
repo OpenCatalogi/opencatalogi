@@ -4,7 +4,7 @@ import { useCatalogiStore, useUIStore } from '../../store/store.js'
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deleteCatalog'"
+		v-if="UIStore.dialog === 'deleteCatalog'"
 		name="Catalogus verwijderen"
 		message="'"
 		:can-close="false">

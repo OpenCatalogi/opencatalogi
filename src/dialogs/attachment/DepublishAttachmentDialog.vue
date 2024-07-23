@@ -4,7 +4,7 @@ import { usePublicationStore, useUIStore } from '../../store/store.js'
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'depublishAttachment'"
+		v-if="UIStore.dialog === 'depublishAttachment'"
 		name="Bijlage depubliseren"
 		:can-close="false">
 		<p v-if="!succes">

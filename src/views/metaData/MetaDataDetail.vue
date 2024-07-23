@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useMetadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -18,19 +18,19 @@ import { store } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('editMetaData')">
+				<NcActionButton @click="UIStore.setModal('editMetaData')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="store.setModal('addMetadataDataModal')">
+				<NcActionButton @click="UIStore.setModal('addMetadataDataModal')">
 					<template #icon>
 						<PlusCircleOutline :size="20" />
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
-				<NcActionButton @click="store.setDialog('deleteMetaData')">
+				<NcActionButton @click="UIStore.setDialog('deleteMetaData')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -48,7 +48,7 @@ import { store } from '../../store/store.js'
 						:details="value.type ?? 'Onbekend'"
 						:force-display-actions="true">
 						<template #icon>
-							<CircleOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
+							<CircleOutline :class="metadataStore.metadataDataKey === key && 'selectedZaakIcon'"
 								disable-menu
 								:size="44" />
 						</template>
@@ -56,19 +56,19 @@ import { store } from '../../store/store.js'
 							{{ value.description }}
 						</template>
 						<template #actions>
-							<NcActionButton @click="store.setMetadataDataKey(key); store.setModal('editMetadataDataModal')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); UIStore.setModal('editMetadataDataModal')">
 								<template #icon>
 									<Pencil :size="20" />
 								</template>
 								Bewerken
 							</NcActionButton>
-							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('copyMetaDataProperty')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); UIStore.setDialog('copyMetaDataProperty')">
 								<template #icon>
 									<ContentCopy :size="20" />
 								</template>
 								Kopieren
 							</NcActionButton>
-							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('deleteMetaDataProperty')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); UIStore.setDialog('deleteMetaDataProperty')">
 								<template #icon>
 									<Delete :size="20" />
 								</template>
@@ -138,6 +138,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			metadataStore: useMetadataStore(),
 			metadata: [],
 			loading: false,
 		}
@@ -152,8 +154,8 @@ export default {
 		},
 	},
 	mounted() {
-		this.metadata = store.metaDataItem
-		this.fetchData(store.metaDataItem?._id)
+		this.metadata = this.metadataStore.metaDataItem
+		this.fetchData(this.metadataStore.metaDataItem?._id)
 	},
 	methods: {
 		fetchData(metadataId) {
