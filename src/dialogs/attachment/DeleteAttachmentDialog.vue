@@ -16,18 +16,22 @@ import { store } from '../../store.js'
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
 		</NcNoteCard>
-		<template v-if="!succes" #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+		<template #actions>
+			<NcButton
+				:disabled="loading"
+				icon=""
+				@click="store.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
-				Annuleer
+				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 			<NcButton
+				v-if="!succes"
 				:disabled="loading"
 				icon="Delete"
 				type="error"
-				@click="DeleteCatalog()">
+				@click="DeleteAttachment()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<Delete v-if="!loading" :size="20" />
@@ -63,10 +67,10 @@ export default {
 		}
 	},
 	methods: {
-		DeleteCatalog() {
+		DeleteAttachment() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/attachment/${store.attachmentItem.id}`,
+				`/index.php/apps/opencatalogi/api/attachments/${store.attachmentItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -77,8 +81,11 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.succes = true
-					// Lets refresh the catalogiList
-					store.refreshCatalogiList()
+					// Lets refresh the attachment list
+					if (store.publicationItem?.id) {
+						store.getPublicationAttachments(store.publicationItem.id)
+						// @todo update the publication item
+					}
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {

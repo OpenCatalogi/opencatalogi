@@ -7,7 +7,7 @@ import { store } from '../../store.js'
 		v-if="store.modal === 'editMetaData'"
 		ref="modalRef"
 		@close="store.setModal(false)">
-		<div v-if="!succes" class="modal__content">
+		<div class="modal__content">
 			<h2>MetaData bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
 				<p>Meta data succesvol gewijzigd</p>
@@ -15,16 +15,17 @@ import { store } from '../../store.js'
 			<NcNoteCard v-if="error" type="error">
 				<p>{{ error }}</p>
 			</NcNoteCard>
-			<div class="form-group">
+			<div v-if="!succes" class="form-group">
 				<NcTextField label="Titel" :disabled="loading" :value.sync="store.metaDataItem.title" />
-			</div>
-			<div class="form-group">
 				<NcTextField label="Versie" :disabled="loading" :value.sync="store.metaDataItem.version" />
-			</div>
-			<div class="form-group">
+				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="store.metaDataItem.summery" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="store.metaDataItem.description" />
 			</div>
-			<NcButton :disabled="!store.metaDataItem.title || loading" type="primary" @click="editMetaData">
+			<NcButton
+				v-if="!succes"
+				:disabled="!store.metaDataItem.title || loading"
+				type="primary"
+				@click="editMetaData">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
@@ -69,7 +70,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaData = data
+						store.setMetaDataItem(data)
 					})
 					this.loading = false
 				})
@@ -84,13 +85,13 @@ export default {
 		editMetaData() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem?._id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem?.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.metaData),
+					body: JSON.stringify(store.metaDataItem),
 				},
 			).then((response) => {
 				this.loading = false
@@ -101,10 +102,12 @@ export default {
 					store.setMetaDataItem(data)
 				})
 				store.setSelected('metaData')
-				setTimeout(() => (this.closeModal()), 2500)
-				// Reset the form the form
-				this.succes = false
-				this.metaData = { title: '', version: '', description: '' }
+				// Wait for the user to read the feedback then close the model
+				const self = this
+				setTimeout(function() {
+					self.succes = false
+					store.setModal(false)
+				}, 2000)
 			}).catch((err) => {
 				this.error = err
 				this.loading = false

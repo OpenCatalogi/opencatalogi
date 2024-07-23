@@ -17,17 +17,47 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('publicationEdit')">
+				<NcActionButton @click="store.setModal('editPublication')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton>
+				<NcActionButton @click="store.setDialog('copyPublication')">
+					<template #icon>
+						<ContentCopy :size="20" />
+					</template>
+					Kopieren
+				</NcActionButton>
+				<NcActionButton v-if="store.publicationItem.status !== 'published'" @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
+					<template #icon>
+						<Publish :size="20" />
+					</template>
+					Publiseren
+				</NcActionButton>
+				<NcActionButton v-if="store.publicationItem.status === 'published'" @click="store.setPublicationItem(publication); store.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
-					Depubliceren
+					Depubliseren
+				</NcActionButton>
+				<NcActionButton @click="store.setDialog('archivePublication')">
+					<template #icon>
+						<ArchivePlusOutline :size="20" />
+					</template>
+					Archiveren
+				</NcActionButton>
+				<NcActionButton @click="store.setModal('addPublicationData')">
+					<template #icon>
+						<FileTreeOutline :size="20" />
+					</template>
+					Eigenschap toevoegen
+				</NcActionButton>
+				<NcActionButton @click="store.setModal('AddAttachment')">
+					<template #icon>
+						<FilePlusOutline :size="20" />
+					</template>
+					Bijlage toevoegen
 				</NcActionButton>
 				<NcActionButton @click="store.setDialog('deletePublication')">
 					<template #icon>
@@ -40,11 +70,59 @@ import { store } from '../../store.js'
 		<div class="container">
 			<div class="detailGrid">
 				<div>
-					<h4>Beschrijving:</h4>
+					<b>Referentie:</b>
+					<span>{{ publication?.data?.reference }}</span>
+				</div>
+				<div>
+					<b>Samenvatting:</b>
+					<span>{{ publication?.data?.summary }}</span>
+				</div>
+				<div>
+					<b>Beschrijving:</b>
 					<span>{{ publication.description }}</span>
 				</div>
 				<div>
-					<h4>Catalogi:</h4>
+					<b>Categorie:</b>
+					<span>{{ publication.category }}</span>
+				</div>
+				<div>
+					<b>Portal:</b>
+					<span><a target="_blank" :href="publication.portal">{{ publication.portal }}</a></span>
+				</div>
+				<div>
+					<b>Foto:</b>
+					<span>{{ publication.image }}</span>
+				</div>
+				<div>
+					<b>Themas:</b>
+					<ul>
+						<li v-for="(theme, index) in publication?.data?.themes" :key="index">
+							{{ theme }}
+						</li>
+					</ul>
+				</div>
+				<div>
+					<b>Featured:</b>
+					<span>{{ publication?.data?.featured }}</span>
+				</div>
+				<div>
+					<b>Licentie:</b>
+					<span>{{ publication.license }}</span>
+				</div>
+				<div>
+					<b>Status:</b>
+					<span>{{ publication.status }}</span>
+				</div>
+				<div>
+					<b>Gepubliceerd:</b>
+					<span>{{ publication.published }}</span>
+				</div>
+				<div>
+					<b>Gemodificeerd:</b>
+					<span>{{ publication.modified }}</span>
+				</div>
+				<div>
+					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
 						<span>{{ catalogi.name }}</span>
@@ -61,7 +139,7 @@ import { store } from '../../store.js'
 					</div>
 				</div>
 				<div>
-					<h4>Metadata:</h4>
+					<b>Metadata:</b>
 					<span v-if="metaDataLoading">Loading...</span>
 					<div v-if="!metaDataLoading" class="buttonLinkContainer">
 						<span>{{ metadata.title }}</span>
@@ -81,7 +159,7 @@ import { store } from '../../store.js'
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
-						<NcListItem v-for="(value, key, i) in publication?.data?.data"
+						<NcListItem v-for="(value, key, i) in publication?.data"
 							:key="`${key}${i}`"
 							:name="key"
 							:bold="false"
@@ -89,11 +167,9 @@ import { store } from '../../store.js'
 							@click=" store.setPublicationDataKey(key)
 							">
 							<template #icon>
-								<ListBoxOutline :class="store.publicationDataKey === key && 'selectedZaakIcon'"
+								<CircleOutline :class="store.publicationDataKey === key && 'selectedZaakIcon'"
 									disable-menu
-									:size="44"
-									user="janedoe"
-									display-name="Jane Doe" />
+									:size="44" />
 							</template>
 							<template #subname>
 								{{ value }}
@@ -105,45 +181,76 @@ import { store } from '../../store.js'
 									</template>
 									Bewerken
 								</NcActionButton>
+								<NcActionButton @click="deletePublicationDataItem(key)">
+									<template #icon>
+										<Delete :size="20" />
+									</template>
+									Verwijderen
+								</NcActionButton>
 							</template>
 						</NcListItem>
 					</BTab>
 					<BTab title="Bijlagen">
 						<div
-							v-if="publication?.attachments?.length > 0"
+							v-if="store.publicationAttachments.results?.length > 0"
 							class="tabPanel">
-							<NcListItem v-for="(attachment, i) in publication?.attachments"
+							<NcListItem v-for="(attachment, i) in store.publicationAttachments.results"
 								:key="`${attachment}${i}`"
-								:name="attachment?.title"
+								:name="attachment.name ?? attachment.title"
 								:bold="false"
 								:active="store.attachmentId === attachment.id"
 								:force-display-actions="true"
-								:details="attachment?.published ? 'Published' : 'Not Published'"
+								:details="attachment?.status"
 								@click="store.setAttachmentId(attachment.id)">
 								<template #icon>
-									<CheckCircle v-if="attachment?.published"
+									<CheckCircle v-if="attachment?.status === 'published'"
 										:class="attachment?.published && 'publishedIcon'"
 										disable-menu
-										:size="44"
-										user="janedoe"
-										display-name="Jane Doe" />
-
-									<ExclamationThick v-if="!attachment?.published"
+										:size="44" />
+									<ExclamationThick v-if="attachment?.status !== 'published'"
 										:class="!attachment?.published && 'warningIcon'"
 										disable-menu
-										:size="44"
-										user="janedoe"
-										display-name="Jane Doe" />
+										:size="44" />
 								</template>
 								<template #subname>
 									{{ attachment?.description }}
 								</template>
 								<template #actions>
-									<NcActionButton @click="updatePublication(attachment.id)">
+									<NcActionButton @click="store.setAttachmentItem(attachment); store.setModal('EditAttachment')">
 										<template #icon>
 											<Pencil :size="20" />
 										</template>
 										Bewerken
+									</NcActionButton>
+									<NcActionButton :disabled="disabled">
+										<template #icon>
+											<Download :size="20" />
+										</template>
+										Download
+									</NcActionButton>
+									<NcActionButton v-if="attachment.status !== 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('publishAttachment')">
+										<template #icon>
+											<Publish :size="20" />
+										</template>
+										Publiseren
+									</NcActionButton>
+									<NcActionButton v-if="attachment.status === 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('depublishAttachment')">
+										<template #icon>
+											<PublishOff :size="20" />
+										</template>
+										Depubliseren
+									</NcActionButton>
+									<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('copyAttachment')">
+										<template #icon>
+											<ContentCopy :size="20" />
+										</template>
+										Kopieren
+									</NcActionButton>
+									<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('deleteAttachment')">
+										<template #icon>
+											<Delete :size="20" />
+										</template>
+										Verwijderen
 									</NcActionButton>
 								</template>
 							</NcListItem>
@@ -151,6 +258,63 @@ import { store } from '../../store.js'
 						<div v-else class="tabPanel">
 							Geen bijlagen gevonden
 						</div>
+					</BTab>
+					<BTab title="Loging">
+						<table width="100%">
+							<tr>
+								<th><b>Tijstip</b></th>
+								<th><b>Gebruiker</b></th>
+								<th><b>Actie</b></th>
+								<th><b>Details</b></th>
+							</tr>
+							<tr>
+								<td>18-07-2024 11:55:21</td>
+								<td>Ruben van der Linde</td>
+								<td>Created</td>
+								<td>
+									<NcButton @click="store.setDialog('viewLog')">
+										<template #icon>
+											<TimelineQuestionOutline
+												:size="20" />
+										</template>
+										Bekijk details
+									</NcButton>
+								</td>
+							</tr>
+						</table>
+					</BTab>
+					<BTab title="Rechten">
+						<table width="100%">
+							<tr>
+								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankenlijk</td>
+								<td>
+									<NcButton @click="prive = !prive">
+										<template #icon>
+											<LockOpenVariantOutline v-if="!prive"
+												:size="20" />
+											<LockOutline v-if="prive"
+												:size="20" />
+										</template>
+										<span v-if="!prive">Prive maken</span>
+										<span v-if="prive">Openbaar maken</span>
+									</NcButton>
+								</td>
+							</tr>
+							<tr v-if="prive">
+								<td>Gebruikersgroepen</td>
+								<td><NcSelectTags v-model="userGroups" :multiple="true" /></td>
+							</tr>
+						</table>
+					</BTab>
+					<BTab title="Statestieken">
+						<apexchart v-if="publication.status === 'published'"
+							width="100%"
+							type="line"
+							:options="chart.options"
+							:series="chart.series" />
+						<NcNoteCard type="info">
+							<p>Er zijn nog geen statestieken over deze publicatie bekend</p>
+						</NcNoteCard>
 					</BTab>
 				</BTabs>
 			</div>
@@ -160,18 +324,28 @@ import { store } from '../../store.js'
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcActionLink } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcButton, NcListItem, NcActionLink, NcSelectTags, NcNoteCard } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
+import VueApexCharts from 'vue-apexcharts'
 
 // Icons
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
 import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import Publish from 'vue-material-design-icons/Publish.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
+import LockOutline from 'vue-material-design-icons/LockOutline.vue'
+import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import Download from 'vue-material-design-icons/Download.vue'
+import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -180,12 +354,29 @@ export default {
 		NcLoadingIcon,
 		NcActionButton,
 		NcActions,
+		NcButton,
 		NcListItem,
+		NcSelectTags,
+		NcNoteCard,
+		apexchart: VueApexCharts,
 		// Icons
 		CheckCircle,
 		ExclamationThick,
-		ListBoxOutline,
+		DotsHorizontal,
+		Pencil,
+		Delete,
+		Publish,
+		PublishOff,
 		OpenInApp,
+		FilePlusOutline,
+		FileTreeOutline,
+		CircleOutline,
+		ContentCopy,
+		TimelineQuestionOutline,
+		LockOutline,
+		LockOpenVariantOutline,
+		Download,
+		ArchivePlusOutline,
 	},
 	props: {
 		publicationId: {
@@ -198,10 +389,31 @@ export default {
 			publication: [],
 			catalogi: [],
 			metadata: [],
+			prive: false,
 			loading: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
 			hasUpdated: false,
+			userGroups: [
+				{
+					id: '1',
+					label: 'Content Beheerders',
+				},
+			],
+			chart: {
+				options: {
+					chart: {
+						id: 'Aantal bekeken publicaties',
+					},
+					xaxis: {
+						categories: ['7-11', '7-12', '7-13', '7-15', '7-16', '7-17', '7-18'],
+					},
+				},
+				series: [{
+					name: 'Weergaven',
+					data: [0, 0, 0, 0, 0, 0, 15],
+				}],
+			},
 		}
 	},
 	watch: {
@@ -237,6 +449,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
+						store.getPublicationAttachments()
 						// this.loading = false
 					})
 				})
@@ -286,12 +499,14 @@ export default {
 			store.setModal('deletePublication')
 		},
 		editPublicationDataItem(key) {
-			store.setPublicationId(this.publicationId)
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
 		},
+		deletePublicationDataItem(key) {
+			store.setPublicationDataKey(key)
+			store.setDialog('deletePublicationDataDialog')
+		},
 		editPublicationAttachmentItem(key) {
-			store.setPublicationId(this.publicationId)
 			store.setPublicationDataKey(key)
 			store.setModal('editPublicationDataModal')
 		},
@@ -302,33 +517,6 @@ export default {
 		goToCatalogi(id) {
 			store.setCatalogiId(id)
 			store.setSelected('catalogi')
-		},
-		updatePublication() {
-			this.loading = true
-
-			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${this.publicationId}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(
-						{
-
-							attachments: JSON.parse(this.publication.attachments),
-
-						},
-					),
-				},
-			)
-				.then((response) => {
-					this.closeModal()
-				})
-				.catch((err) => {
-					this.loading = false
-					console.error(err)
-				})
 		},
 	},
 }
@@ -378,5 +566,9 @@ h4 {
 .buttonLinkContainer{
 	display: flex;
     align-items: center;
+}
+
+.float-right {
+    float: right;
 }
 </style>

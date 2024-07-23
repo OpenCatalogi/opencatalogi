@@ -1,30 +1,50 @@
-<script setup>
-import { store } from '../../store.js'
-</script>
-
 <template>
 	<NcAppContent>
 		<div class="dashboardContainer">
-			<h1>Titel Dashboard</h1>
-			<p>Selected menu item {{ store.selected }}</p>
+			<h2>Dashboard</h2>
 		</div>
+		<b>Aantal zoekopdrachten afgelopen maand</B>
+		<apexchart
+			width="500"
+			type="line"
+			:options="options"
+			:series="series" />
 	</NcAppContent>
 </template>
 
 <script>
 
 import { NcAppContent } from '@nextcloud/vue'
+import VueApexCharts from 'vue-apexcharts'
 
 export default {
 	name: 'DashboardIndex',
 	components: {
 		NcAppContent,
+		apexchart: VueApexCharts,
+	},
+	data() {
+		return {
+			options: {
+				chart: {
+					id: 'Aantal bekeken publicaties',
+				},
+				xaxis: {
+					categories: ['7-11', '7-12', '7-13', '7-15', '7-16', '7-17', '7-18'],
+				},
+			},
+			series: [{
+				name: 'Weergaven',
+				data: [30, 40, 45, 50, 49, 60, 55],
+			}],
+		}
 	},
 }
 </script>
+
 <style>
 .dashboardContainer {
-    margin-inline-start: 75px;
+    margin-inline-start: 65px;
     margin-block-start: 20px
 }
 </style>

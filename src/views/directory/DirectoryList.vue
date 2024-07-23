@@ -32,7 +32,7 @@ import { store } from '../../store.js'
 
 			<NcListItem v-for="(listing, i) in store.listingList.results"
 				:key="`${listing}${i}`"
-				:name="listing?.title"
+				:name="listing.name ?? listing.title"
 				:active="store.listingItem?.id === listing?.id"
 				:details="'1h'"
 				:counter-number="45"

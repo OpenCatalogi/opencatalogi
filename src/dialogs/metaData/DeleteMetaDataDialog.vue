@@ -8,7 +8,7 @@ import { store } from '../../store.js'
 		name="Metadata verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.metaDataItem.name ?? store.metaDataItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ store.metaDataItem.title ?? store.metaDataItem.name }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Metadata succesvol verwijderd</p>
@@ -16,14 +16,15 @@ import { store } from '../../store.js'
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
 		</NcNoteCard>
-		<template v-if="!succes" #actions>
+		<template #actions>
 			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
-				Annuleer
+				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 			<NcButton
+				v-if="!succes"
 				:disabled="loading"
 				icon="Delete"
 				type="error"

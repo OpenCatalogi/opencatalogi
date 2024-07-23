@@ -4,14 +4,26 @@ namespace OCA\OpenCatalogi\Service;
 
 
 
-use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientInterface;
 use Elastic\Elasticsearch\ClientBuilder;
 use Symfony\Component\Uid\Uuid;
+use OCA\OpenCatalogi\Service\ElasticSearchClientAdapter;
 
 class ElasticSearchService
 {
-	private function getClient(array $config): Client
+    private $clientAdapter;
+
+    public function __construct(ElasticSearchClientAdapter $clientAdapter)
+    {
+        $this->clientAdapter = $clientAdapter;
+    }
+
+	private function getClient(array $config): ElasticSearchClientAdapter
 	{
+        if ($this->clientAdapter) {
+            return $this->clientAdapter;
+        }
+
 		$uri    = $config['location'];
 		$apiKey = explode(separator: ':', string: base64_decode(string: $config['key']));
 
@@ -20,7 +32,7 @@ class ElasticSearchService
 			->setApiKey(apiKey: $apiKey[1],id: $apiKey[0])
 			->build();
 
-		return $client;
+        return new ElasticSearchClientAdapter($client);
 	}
 
 
@@ -34,7 +46,7 @@ class ElasticSearchService
 	 */
 	public function addObject(array $object, array $config): array
 	{
-		$client = $this->getClient(config: $config);
+        $client = $this->getClient(config: $config);
 
 		if(isset($object['_id']) === true) {
 			unset($object['_id']);
@@ -59,7 +71,7 @@ class ElasticSearchService
 
 	public function removeObject(string $id, array $config): array
 	{
-		$client = $this->getClient(config: $config);
+        $client = $this->getClient(config: $config);
 
 		try {
 			$client->delete(params: [
@@ -74,7 +86,7 @@ class ElasticSearchService
 
 	public function updateObject(string $id, array $object, array $config): array
 	{
-		$client = $this->getClient(config: $config);
+        $client = $this->getClient(config: $config);
 
 		if(isset($object['_id']) === true) {
 			unset($object['_id']);
@@ -92,7 +104,7 @@ class ElasticSearchService
 		}
 	}
 
-	private function parseFilters (array $filters): array
+	public function parseFilters (array $filters): array
 	{
 		$body = [
 			'query' => [
@@ -102,18 +114,30 @@ class ElasticSearchService
 			]
 		];
 
-		if(isset($filters['_search']) === true) {
-			$body['query']['bool']['must'][] = ['query_string' => ['query' => '*'.$filters['_search'].'*']];
+		if(isset($filters['.search']) === true) {
+			$body['query']['bool']['must'][] = ['query_string' => ['query' => '*'.$filters['.search'].'*']];
 		}
 
-		if(isset($filters['_queries']) === true) {
-			foreach($filters['_queries'] as $query) {
+		if(isset($filters['.queries']) === true) {
+			foreach($filters['.queries'] as $query) {
 				$body['runtime_mappings'][$query] = ['type' => 'keyword'];
 				$body['aggs'][$query] = ['terms' => ['field' => $query]];
 			}
 		}
 
-		unset($filters['_search'], $filters['_queries']);
+		if(isset($filters['.catalogi']) === true) {
+//			var_dump($filters['.catalogi']);
+			$body['query']['bool']['must'][] = [
+				'match' => [
+					'catalogi._id' => [
+						'query' => implode(separator: " ", array: $filters['.catalogi']),
+						'operator' => 'OR'
+					]
+				]
+			];
+		}
+
+		unset($filters['.search'], $filters['.queries'], $filters['.catalogi']);
 
 		foreach ($filters as $name => $filter) {
 			$body['query']['bool']['must'][] = ['match' => [$name => $filter]];
@@ -122,7 +146,7 @@ class ElasticSearchService
 		return $body;
 	}
 
-	private function formatResults(array $hit): array
+	public function formatResults(array $hit): array
 	{
 		$source = $hit['_source'];
 
@@ -140,7 +164,7 @@ class ElasticSearchService
 	 *
 	 * @return array The rewritten array.
 	 */
-	private function renameBucketItems(array $bucketItem): array
+	public function renameBucketItems(array $bucketItem): array
 	{
 		return [
 			'_id'   => $bucketItem['key'],
@@ -156,7 +180,7 @@ class ElasticSearchService
 	 *
 	 * @return array The mapped result.
 	 */
-	private function mapAggregationResults(array $result): array
+	public function mapAggregationResults(array $result): array
 	{
 		$buckets = $result['buckets'];
 

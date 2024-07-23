@@ -33,11 +33,10 @@ import { store } from '../../store.js'
 			<div v-if="!loading">
 				<NcListItem v-for="(metaData, i) in store.metaDataList.results"
 					:key="`${metaData}${i}`"
-					:name="metaData?.title"
+					:name="metaData.title ?? metaData.name"
 					:active="store.metaDataItem?._id === metaData?._id"
-					:details="metaData.version ?? '1h'"
+					:details="metaData.version ?? 'Onbekend'"
 					:force-display-actions="true"
-					:counter-number="44"
 					@click="store.setMetaDataItem(metaData)">
 					<template #icon>
 						<FileTreeOutline :class="store.metaDataItem?._id === metaData?.id && 'selectedIcon'"
@@ -45,8 +44,7 @@ import { store } from '../../store.js'
 							:size="44" />
 					</template>
 					<template #subname>
-						{{ metaData?.summary }}
-						{{ metaData?.description }}
+						{{ metaData.summery }}
 					</template>
 					<template #actions>
 						<NcActionButton @click="store.setMetaDataItem(metaData); store.setModal('editMetaData')">
@@ -54,6 +52,12 @@ import { store } from '../../store.js'
 								<Pencil :size="20" />
 							</template>
 							Bewerken
+						</NcActionButton>
+						<NcActionButton @click="store.setMetaDataItem(metaData); store.setDialog('copyMetaData')">
+							<template #icon>
+								<ContentCopy :size="20" />
+							</template>
+							Kopieren
 						</NcActionButton>
 						<NcActionButton @click="store.setMetaDataItem(metaData); store.setDialog('deleteMetaData')">
 							<template #icon>
@@ -82,6 +86,7 @@ import Magnify from 'vue-material-design-icons/Magnify.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 
@@ -101,6 +106,7 @@ export default {
 		Refresh,
 		Plus,
 		Pencil,
+		ContentCopy,
 		Delete,
 	},
 	props: {

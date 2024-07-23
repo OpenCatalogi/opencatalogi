@@ -8,6 +8,7 @@ import { store } from '../../store.js'
 			<h1 class="h1">
 				{{ metadata.title }}
 			</h1>
+			<span>{{ metadata.description }}</span>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
@@ -23,6 +24,12 @@ import { store } from '../../store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
+				<NcActionButton @click="store.setModal('addMetadataDataModal')">
+					<template #icon>
+						<PlusCircleOutline :size="20" />
+					</template>
+					Eigenschap toevoegen
+				</NcActionButton>
 				<NcActionButton @click="store.setDialog('deleteMetaData')">
 					<template #icon>
 						<Delete :size="20" />
@@ -31,29 +38,84 @@ import { store } from '../../store.js'
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<div>
-			<div>
-				<h4>Beschrijving:</h4>
-				<span>{{ metadata.description }}</span>
-			</div>
-			<div>
-				<h4>Versie:</h4>
-				<span>{{ metadata.version }}</span>
-			</div>
-			<div>
-				<h4>Properties:</h4>
-				<p>{{ metadata.properties }}</p>
-			</div>
+		<div class="tabContainer">
+			<BTabs content-class="mt-3" justified>
+				<BTab title="Eigenschappen" active>
+					<NcListItem v-for="(value, key, i) in metadata?.properties"
+						:key="`${key}${i}`"
+						:name="key"
+						:bold="false"
+						:details="value.type ?? 'Onbekend'"
+						:force-display-actions="true">
+						<template #icon>
+							<CircleOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
+								disable-menu
+								:size="44" />
+						</template>
+						<template #subname>
+							{{ value.description }}
+						</template>
+						<template #actions>
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setModal('editMetadataDataModal')">
+								<template #icon>
+									<Pencil :size="20" />
+								</template>
+								Bewerken
+							</NcActionButton>
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('copyMetaDataProperty')">
+								<template #icon>
+									<ContentCopy :size="20" />
+								</template>
+								Kopieren
+							</NcActionButton>
+							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('deleteMetaDataProperty')">
+								<template #icon>
+									<Delete :size="20" />
+								</template>
+								Verwijderen
+							</NcActionButton>
+						</template>
+					</NcListItem>
+				</BTab>
+				<BTab title="Loging">
+					<table width="100%">
+						<tr>
+							<th><b>Tijstip</b></th>
+							<th><b>Gebruiker</b></th>
+							<th><b>Actie</b></th>
+							<th><b>Details</b></th>
+						</tr>
+						<tr>
+							<td>18-07-2024 11:55:21</td>
+							<td>Ruben van der Linde</td>
+							<td>Created</td>
+							<td>
+								<NcButton>
+									<template #icon>
+										<TimelineQuestionOutline
+											:size="20" />
+									</template>
+									Bekijk details
+								</NcButton>
+							</td>
+						</tr>
+					</table>
+				</BTab>
+			</BTabs>
 		</div>
 	</div>
 </template>
 
 <script>
-import { NcLoadingIcon, NcActions, NcActionButton } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
+import { BTabs, BTab } from 'bootstrap-vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
+import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 
 export default {
 	name: 'MetaDataDetail',
@@ -61,6 +123,12 @@ export default {
 		NcLoadingIcon,
 		NcActions,
 		NcActionButton,
+		// Icons
+		PlusCircleOutline,
+		ContentCopy,
+		Pencil,
+		Delete,
+		CircleOutline,
 	},
 	props: {
 		metaDataItem: {
@@ -175,5 +243,9 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.float-right {
+    float: right;
 }
 </style>

@@ -5,12 +5,14 @@ import { reactive } from 'vue'
 export const store = reactive({
 	// The curently active menu item, defaults to '' wich triggers the dashboard
 	selected: 'dashboard',
+	selectedCatalogus: false,
 	// The currently active modal, managed trought the state to ensure that only one modal can be active at the same time
 	modal: false,
 	// The curetnly active dialog
 	dialog: false,
 	// The current search term
 	search: '',
+	searchResults: '',
 	// Catlogi
 	catalogiItem: false,
 	catalogiList: [],
@@ -20,16 +22,23 @@ export const store = reactive({
 	// Metadata
 	metaDataItem: false,
 	metaDataList: [],
+	metadataDataKey: false,
 	// Publications
 	publicationItem: false,
 	publicationList: [],
-	// ??
 	publicationDataKey: false,
 	attachmentItem: false,
+	publicationAttachments: [],
+	conceptPublications: [],
+	conceptAttachments: [],
 	// Lets add some setters
 	setSelected(selected) {
 		this.selected = selected
 		console.log('Active menu item set to ' + selected)
+	},
+	setSelectedCatalogus(selectedCatalogus) {
+		this.selectedCatalogus = selectedCatalogus
+		console.log('Active catalogus menu set to ' + selectedCatalogus)
 	},
 	setModal(modal) {
 		this.modal = modal
@@ -43,13 +52,37 @@ export const store = reactive({
 		this.search = search
 		console.log('Active search set to ' + search)
 	},
+	setSearchResults(searchResults) {
+		this.searchResults = searchResults
+		console.log('Active search set to ' + searchResults)
+	},
+	getSearchResults() {
+		fetch(
+			'/index.php/apps/opencatalogi/api/search?_search=' + this.search,
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					this.searchResults = data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+			})
+	},
 	clearSearch() {
 		this.search = ''
 	},
 	// Catlogi
 	setCatalogiItem(catalogiItem) {
 		// To prevent forms etc from braking we alway use a default/skeleton object
-		const catalogiDefault = { name: '', summery: '' }
+		const catalogiDefault = {
+			name: '',
+			summery: '',
+			description: '',
+		}
 		this.catalogiItem = { ...catalogiDefault, ...catalogiItem }
 		console.log('Active catalog item set to ' + catalogiItem.id)
 	},
@@ -111,9 +144,18 @@ export const store = reactive({
 		// To prevent forms etc from braking we alway use a default/skeleton object
 		const metaDataDefault = {
 			name: '',
+			version: '',
 			summery: '',
+			description: '',
+			properties: {},
 		}
 		this.metaDataItem = { ...metaDataDefault, ...metaDataItem }
+
+		// for backward compatablity
+		if (typeof this.metaDataItem.properties === 'string') {
+			this.metaDataItem.properties = JSON.parse(this.metaDataItem.properties)
+		}
+
 		console.log('Active metadata object set to ' + metaDataItem.id)
 	},
 	setMetaDataList(metaDataList) {
@@ -130,11 +172,34 @@ export const store = reactive({
 			.then((response) => {
 				response.json().then((data) => {
 					this.metaDataList = data
+					return data
 				})
 			})
 			.catch((err) => {
 				console.error(err)
+				return err
 			})
+	},
+	setMetadataDataKey(metadataDataKey) {
+		this.metadataDataKey = metadataDataKey
+		console.log('Active metadata data key set to ' + metadataDataKey)
+	},
+	getMetadataPropertyKeys(property) {
+		const defaultKeys = {
+			type: '',
+			description: '',
+			required: false,
+			default: false,
+			format: '',
+			$ref: '',
+			cascadeDelete: false,
+			maxDate: '',
+			exclusiveMinimum: 0,
+		}
+
+		const propertyKeys = JSON.parse(this.metaDataItem.properties)[property]
+
+		return { ...defaultKeys, ...propertyKeys }
 	},
 	// Publications
 	setPublicationItem(publicationItem) {
@@ -142,12 +207,13 @@ export const store = reactive({
 		const publicationDefault = {
 			title: '',
 			description: '',
-			catalogi: {},
-			metaData: {},
+			catalogi: '',
+			metaData: '',
 			license: '',
+			data: {},
 			modified: '',
 			published: '',
-			status: '',
+			status: 'concept',
 			featured: '',
 			publication: '',
 			portal: '',
@@ -171,19 +237,102 @@ export const store = reactive({
 			.then((response) => {
 				response.json().then((data) => {
 					this.publicationList = data
+					return data
 				})
 			})
 			.catch((err) => {
 				console.error(err)
+				return err
 			})
 	},
-	// @todo why does the following run through the store?
+	getPublicationAttachments(publication) { // @todo this might belong in a service?
+		fetch(
+			'/index.php/apps/opencatalogi/api/attachments',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					this.publicationAttachments = data
+					return data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+				return err
+			})
+	},
+	getConceptPublications() { // @todo this might belong in a service?
+		fetch(
+			'/index.php/apps/opencatalogi/api/publications?status=concept',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					this.conceptPublications = data
+					return data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+				return err
+			})
+	},
+	getConceptAttachments(publication) { // @todo this might belong in a service?
+		fetch(
+			'/index.php/apps/opencatalogi/api/attachments?status=concept',
+			{
+				method: 'GET',
+			},
+		)
+			.then((response) => {
+				response.json().then((data) => {
+					this.conceptAttachments = data
+					return data
+				})
+			})
+			.catch((err) => {
+				console.error(err)
+				return err
+			})
+	},
+	// @todo why does the following run through the store? -- because its impossible with props, and its vital information for the modal.
 	setPublicationDataKey(publicationDataKey) {
 		this.publicationDataKey = publicationDataKey
 		console.log('Active publication data key set to ' + publicationDataKey)
 	},
 	setAttachmentItem(attachmentItem) {
-		this.attachmentItem = attachmentItem
+		// To prevent forms etc from braking we alway use a default/skeleton object
+		const attachmentDefault = {
+			reference: '',
+			title: '',
+			summary: '',
+			description: '',
+			labels: [],
+			accessURL: '',
+			downloadURL: '',
+			type: '',
+			extension: '',
+			size: 0,
+			anonymization: {
+			  anonymized: false,
+			  results: '',
+			},
+			language: {
+			  code: '',
+			  level: '',
+			},
+			version_of: false,
+			hash: false,
+			published: '',
+			modified: '',
+			license: '',
+		  }
+		this.attachmentItem = { ...attachmentDefault, ...attachmentItem }
 		console.log('Active attachment item set to ' + attachmentItem)
+		console.log(attachmentItem)
 	},
 })
