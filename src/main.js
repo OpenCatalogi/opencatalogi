@@ -1,6 +1,12 @@
 import Vue from 'vue'
+import { createPinia, PiniaVuePlugin } from 'pinia'
 import App from './App.vue'
 Vue.mixin({ methods: { t, n } })
 
-const View = Vue.extend(App)
-new View().$mount('#opencatalogi')
+Vue.use(PiniaVuePlugin)
+const pinia = createPinia()
+
+new Vue({
+	pinia,
+	render: h => h(App),
+}).$mount('#opencatalogi')

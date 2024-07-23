@@ -28,6 +28,7 @@
     "@nextcloud/vue": "^8.12.0",
     "apexcharts": "^3.50.0",
     "bootstrap-vue": "^2.23.1",
+    "pinia": "^2.1.7",
     "vue": "^2.7.14",
     "vue-apexcharts": "^1.6.2",
     "vue-loading-overlay": "^3.4.3",
