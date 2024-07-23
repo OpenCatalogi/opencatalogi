@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, usePublicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'copyPublication'"
+		v-if="UIStore.dialog === 'copyPublication'"
 		name="Publicatie kopieren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.publicationItem.name ?? store.publicationItem.title }}</b> kopieren?
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> kopieren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Publicatie succesvol gekopierd</p>
@@ -17,7 +17,7 @@ import { store } from '../../store/store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="UIStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -57,6 +57,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			publicationStore: usePublicationStore(),
 			loading: false,
 			succes: false,
 			error: false,
@@ -65,13 +67,13 @@ export default {
 	methods: {
 		CopyPublication() {
 			this.loading = true
-			store.publicationItem.title = 'KOPIE: ' + store.publicationItem.title
-			if (Object.keys(store.publicationItem.data).length === 0) {
-				delete store.publicationItem.data
+			this.publicationStore.publicationItem.title = 'KOPIE: ' + this.publicationStore.publicationItem.title
+			if (Object.keys(this.publicationStore.publicationItem.data).length === 0) {
+				delete this.publicationStore.publicationItem.data
 			}
-			delete store.publicationItem.id
-			delete store.publicationItem._id
-			store.publicationItem.status = 'concept'
+			delete this.publicationStore.publicationItem.id
+			delete this.publicationStore.publicationItem._id
+			this.publicationStore.publicationItem.status = 'concept'
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -79,24 +81,24 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationItem),
+					body: JSON.stringify(this.publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshPublicationList()
+					this.publicationStore.refreshPublicationList()
 					response.json().then((data) => {
-						store.setPublicationItem(data)
+						this.publicationStore.setPublicationItem(data)
 					})
-					store.setSelected('publication')
+					this.UIStore.setSelected('publication')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setPublicationItem(false)
-						store.setDialog(false)
+						this.publicationStore.setPublicationItem(false)
+						this.UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

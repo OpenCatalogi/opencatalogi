@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { defineStore } from 'pinia'
-import { Catalogi } from '../entities/index.js'
+import { Catalogi } from '../../entities/index.js'
 
 export const useCatalogiStore = defineStore('catalogi', {
 	state: () => ({

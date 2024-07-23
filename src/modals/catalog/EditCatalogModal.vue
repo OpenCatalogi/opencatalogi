@@ -1,10 +1,9 @@
 <script setup>
-import { useCatalogiStore } from '../../store/catalogi.js'
-import { store } from '../../store/store.js'
+import { useCatalogiStore, useUIStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'editCatalog'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="UIStore.modal === 'editCatalog'" ref="modalRef" @close="UIStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -56,15 +55,16 @@ export default {
 	},
 	data() {
 		return {
+			catalogiStore: useCatalogiStore(),
+			UIStore: useUIStore(),
 			loading: false,
 			succes: false,
 			error: false,
-			catalogiStore: useCatalogiStore(),
 		}
 	},
 	methods: {
 		closeModal() {
-			store.modal = false
+			this.UIStore.modal = false
 		},
 		editCatalog() {
 			this.loading = true
@@ -91,7 +91,7 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setModal(false)
+						this.UIStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

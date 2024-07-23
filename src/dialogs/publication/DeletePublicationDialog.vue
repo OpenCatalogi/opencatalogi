@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, usePublicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deletePublication'"
+		v-if="UIStore.dialog === 'deletePublication'"
 		name="Publicatie verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.publicationItem.name ?? store.publicationItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Publicatie succesvol verwijderd</p>
@@ -17,7 +17,7 @@ import { store } from '../../store/store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="UIStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -58,6 +58,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			publicationStore: usePublicationStore(),
 			loading: false,
 			succes: false,
 			error: false,
@@ -67,7 +69,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${this.publicationStore.publicationItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -79,13 +81,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshPublicationList()
+					this.publicationStore.refreshPublicationList()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setPublicationItem(false)
-						store.setDialog(false)
+						this.publicationStore.setPublicationItem(false)
+						this.UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { usePublicationStore, useUIStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deleteAttachment'"
+		v-if="UIStore.dialog === 'deleteAttachment'"
 		name="Bijlage verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.attachmentItem.name ?? store.attachmentItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Bijlage succesvol verwijderd</p>
@@ -61,6 +61,8 @@ export default {
 	},
 	data() {
 		return {
+			publicationStore: usePublicationStore(),
+			UIStore: useUIStore(),
 			loading: false,
 			succes: false,
 			error: false,
@@ -70,7 +72,7 @@ export default {
 		DeleteAttachment() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/attachments/${store.attachmentItem.id}`,
+				`/index.php/apps/opencatalogi/api/attachments/${this.publicationStore.attachmentItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -82,16 +84,16 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the attachment list
-					if (store.publicationItem?.id) {
-						store.getPublicationAttachments(store.publicationItem.id)
+					if (this.publicationStore.publicationItem?.id) {
+						this.publicationStore.getPublicationAttachments(this.publicationStore.publicationItem.id)
 						// @todo update the publication item
 					}
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setAttachmentItem(false)
-						store.setDialog(false)
+						this.publicationStore.setAttachmentItem(false)
+						this.UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

@@ -1,6 +1,5 @@
 <script setup>
-import { useCatalogiStore } from '../../store/catalogi.js'
-import { store } from '../../store/store.js'
+import { useCatalogiStore, useUIStore, useSearchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -8,11 +7,11 @@ import { store } from '../../store/store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="store.search"
+					:value.sync="searchStore.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="store.setSearch('')">
+					@trailing-button-click="searchStore.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -22,7 +21,7 @@ import { store } from '../../store/store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('addCatalog')">
+					<NcActionButton @click="UIStore.setModal('addCatalog')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -108,9 +107,11 @@ export default {
 	},
 	data() {
 		return {
+			catalogiStore: useCatalogiStore(),
+			searchStore: useSearchStore(),
+			UIStore: useUIStore(),
 			loading: false,
 			catalogi: [],
-			catalogiStore: useCatalogiStore(),
 		}
 	},
 	watch: {

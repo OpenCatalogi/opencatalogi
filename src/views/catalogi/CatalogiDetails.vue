@@ -1,6 +1,5 @@
 <script setup>
-import { store } from '../../store/store.js'
-import { useCatalogiStore } from '../../store/catalogi.js'
+import { useCatalogiStore, useUIStore } from '../../store/store.js'
 import { Catalogi } from '../../entities/index.js'
 </script>
 
@@ -19,7 +18,7 @@ import { Catalogi } from '../../entities/index.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('editCatalog')">
+				<NcActionButton @click="UIStore.setModal('editCatalog')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
@@ -77,9 +76,10 @@ export default {
 	},
 	data() {
 		return {
+			catalogiStore: useCatalogiStore(),
+			UIStore: useUIStore(),
 			catalogi: false,
 			loading: false,
-			catalogiStore: useCatalogiStore(),
 		}
 	},
 	watch: {

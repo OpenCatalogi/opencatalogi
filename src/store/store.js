@@ -1,18 +1,19 @@
 /* eslint-disable no-console */
 // The store script handles app wide variables (or state), for the use of these variables and there governing concepts read the design.md
-import { reactive } from 'vue'
-import uiState from './modules/uiState.js'
-import search from './modules/search.js'
-import directory from './modules/directory.js'
-import metadata from './modules/metadata.js'
-import publication from './modules/publication.js'
+import { useUIStore } from './modules/ui.js'
+import { useSearchStore } from './modules/search.js'
+import { useCatalogiStore } from './modules/catalogi.js'
+import { useDirectoryStore } from './modules/directory.js'
+import { useMetadataStore } from './modules/metadata.js'
+import { usePublicationStore } from './modules/publication.js'
 
-export const store = reactive({
+export {
 	// generic
-	...uiState,
-	...search,
+	useUIStore,
+	useSearchStore,
 	// feature-specific
-	...directory,
-	...metadata,
-	...publication,
-})
+	useCatalogiStore,
+	useDirectoryStore,
+	useMetadataStore,
+	usePublicationStore,
+}

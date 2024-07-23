@@ -1,6 +1,5 @@
 <script setup>
-import { useCatalogiStore } from '../../store/catalogi.js'
-import { store } from '../../store/store.js'
+import { useCatalogiStore, useUIStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -19,7 +18,7 @@ import { store } from '../../store/store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="UIStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -60,8 +59,9 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
 			catalogiStore: useCatalogiStore(),
-			catalogiItem: this.catalogiStore.catalogiItem,
+			catalogiItem: useCatalogiStore().catalogiItem,
 			loading: false,
 			succes: false,
 			error: false,
@@ -89,7 +89,7 @@ export default {
 					setTimeout(function() {
 						self.succes = false
 						this.catalogiStore.setCatalogiItem(false)
-						store.setDialog(false)
+						this.UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {
