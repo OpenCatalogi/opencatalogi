@@ -13,22 +13,9 @@ webpackConfig.stats = {
 const appId = "opencatalogi";
 webpackConfig.entry = {
   main: {
-    import: path.join(__dirname, "src", "main.ts"),
+    import: path.join(__dirname, "src", "main.js"),
     filename: appId + "-main.js",
   },
 };
-
-// Add the ts-loader for TypeScript files
-webpackConfig.module.rules.push({
-    test: /\.ts$/,
-    loader: "ts-loader",
-    exclude: /node_modules/,
-    options: {
-        appendTsSuffixTo: [/\.vue$/],
-    },
-});
-
-// Resolve .ts and .tsx extensions
-webpackConfig.resolve.extensions.push(".ts", ".tsx");
 
 module.exports = webpackConfig;
