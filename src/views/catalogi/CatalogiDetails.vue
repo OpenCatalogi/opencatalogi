@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useCatalogiStore } from '../../store/catalogi.js'
 import { Catalogi } from '../../entities/index.js'
 </script>
 
@@ -90,8 +90,8 @@ export default {
 		},
 	},
 	mounted() {
-		this.catalogi = store.catalogiItem
-		this.fetchData(store.catalogiItem._id)
+		this.catalogi = useCatalogiStore().catalogiItem
+		this.fetchData(useCatalogiStore().catalogiItem._id)
 	},
 	methods: {
 		fetchData(catalogId) {

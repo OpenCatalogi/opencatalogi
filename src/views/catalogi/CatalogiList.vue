@@ -1,4 +1,5 @@
 <script setup>
+import { useCatalogiStore } from '../../store/catalogi.js'
 import { store } from '../../store/store.js'
 </script>
 
@@ -30,16 +31,16 @@ import { store } from '../../store/store.js'
 				</NcActions>
 			</div>
 			<div v-if="!loading">
-				<NcListItem v-for="(catalogus, i) in store.catalogiList"
+				<NcListItem v-for="(catalogus, i) in useCatalogiStore().catalogiList"
 					:key="`${catalogus}${i}`"
 					:name="catalogus.name ?? catalogus.title"
-					:active="store.catalogiItem?.id === catalogus?.id"
+					:active="useCatalogiStore().catalogiItem?.id === catalogus?.id"
 					:details="'1h'"
 					:counter-number="44"
 					:force-display-actions="true"
-					@click="store.setCatalogiItem(catalogus)">
+					@click="useCatalogiStore().setCatalogiItem(catalogus)">
 					<template #icon>
-						<DatabaseOutline :class="store.catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
+						<DatabaseOutline :class="useCatalogiStore().catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44" />
 					</template>
@@ -47,13 +48,13 @@ import { store } from '../../store/store.js'
 						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="store.setCatalogiItem(catalogus); store.setModal('editCatalog')">
+						<NcActionButton @click="useCatalogiStore().setCatalogiItem(catalogus); store.setModal('editCatalog')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="store.setCatalogiItem(catalogus); store.setDialog('deleteCatalog')">
+						<NcActionButton @click="useCatalogiStore().setCatalogiItem(catalogus); store.setDialog('deleteCatalog')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -124,7 +125,7 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			store.refreshCatalogiList()
+			useCatalogiStore().refreshCatalogiList()
 			this.loading = false
 		},
 	},

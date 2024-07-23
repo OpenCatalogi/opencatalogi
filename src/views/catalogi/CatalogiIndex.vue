@@ -1,4 +1,5 @@
 <script setup>
+import { useCatalogiStore } from '../../store/catalogi.js'
 import { store } from '../../store/store.js'
 </script>
 
@@ -8,7 +9,7 @@ import { store } from '../../store/store.js'
 			<CatalogiList :search="store.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.catalogiItem || store.selected != 'catalogi' "
+			<NcEmptyContent v-if="!useCatalogiStore().catalogiItem || store.selected != 'catalogi' "
 				class="detailContainer"
 				name="Geen Catalogi"
 				description="Nog geen catalogi geselecteerd">
@@ -21,7 +22,7 @@ import { store } from '../../store/store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<CatalogiDetails v-if="store.catalogiItem && store.selected === 'catalogi'" :catalogi-item="store.catalogiItem" />
+			<CatalogiDetails v-if="useCatalogiStore().catalogiItem && store.selected === 'catalogi'" :catalogi-item="useCatalogiStore().catalogiItem" />
 		</template>
 	</NcAppContent>
 </template>
