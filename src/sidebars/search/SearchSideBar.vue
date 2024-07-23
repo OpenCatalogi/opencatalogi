@@ -19,7 +19,9 @@ import { store } from '../../store.js'
 			<template #icon>
 				<DatabaseOutline :size="20" />
 			</template>
-			Catalogi tab content
+			<NcCheckboxRadioSwitch type="switch">
+				Catalogi naam
+			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="share-tab" name="Metdata" :order="3">
 			<template #icon>
@@ -31,7 +33,7 @@ import { store } from '../../store.js'
 </template>
 <script>
 
-import { NcAppSidebar, NcAppSidebarTab, NcTextField } from '@nextcloud/vue'
+import { NcAppSidebar, NcAppSidebarTab, NcTextField, NcCheckboxRadioSwitch } from '@nextcloud/vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
@@ -42,6 +44,7 @@ export default {
 		NcAppSidebar,
 		NcAppSidebarTab,
 		NcTextField,
+		NcCheckboxRadioSwitch,
 		// Icons
 		Magnify,
 		DatabaseOutline,
