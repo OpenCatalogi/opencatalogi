@@ -1,5 +1,5 @@
 <script setup>
-import { useCatalogiStore, useUIStore, useSearchStore } from '../../store/store.js'
+import { catalogiStore, UIStore, searchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -47,13 +47,13 @@ import { useCatalogiStore, useUIStore, useSearchStore } from '../../store/store.
 						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); store.setModal('editCatalog')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); UIStore.setModal('editCatalog')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); store.setDialog('deleteCatalog')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); UIStore.setDialog('deleteCatalog')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -107,9 +107,7 @@ export default {
 	},
 	data() {
 		return {
-			catalogiStore: useCatalogiStore(),
-			searchStore: useSearchStore(),
-			UIStore: useUIStore(),
+
 			loading: false,
 			catalogi: [],
 		}
@@ -127,7 +125,7 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			this.catalogiStore.refreshCatalogiList()
+			catalogiStore.refreshCatalogiList()
 			this.loading = false
 		},
 	},

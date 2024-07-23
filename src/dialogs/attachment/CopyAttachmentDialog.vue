@@ -1,5 +1,5 @@
 <script setup>
-import { usePublicationStore, useUIStore } from '../../store/store.js'
+import { publicationStore, UIStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -60,8 +60,7 @@ export default {
 	},
 	data() {
 		return {
-			publicationStore: usePublicationStore(),
-			UIStore: useUIStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -70,10 +69,10 @@ export default {
 	methods: {
 		CopyAttachment() {
 			this.loading = true
-			this.publicationStore.attachmentItem.title = 'KOPIE: ' + this.publicationStore.attachmentItem.title
-			this.publicationStore.attachmentItem.status = 'concept'
-			delete this.publicationStore.attachmentItem.id
-			delete this.publicationStore.attachmentItem._id
+			publicationStore.attachmentItem.title = 'KOPIE: ' + publicationStore.attachmentItem.title
+			publicationStore.attachmentItem.status = 'concept'
+			delete publicationStore.attachmentItem.id
+			delete publicationStore.attachmentItem._id
 			fetch(
 				'/index.php/apps/opencatalogi/api/attachments',
 				{
@@ -81,7 +80,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publicationStore.attachmentItem),
+					body: JSON.stringify(publicationStore.attachmentItem),
 				},
 			)
 				.then((response) => {
@@ -89,18 +88,18 @@ export default {
 					this.succes = true
 					// Lets refresh the attachment list
 					response.json().then((data) => {
-						this.publicationStore.setAttachmentItem(data)
+						publicationStore.setAttachmentItem(data)
 					})
-					if (this.publicationStore.publicationItem?.id) {
-						this.publicationStore.getPublicationAttachments(this.publicationStore.publicationItem.id)
+					if (publicationStore.publicationItem?.id) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
 						// @todo update the publication item
 					}
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.publicationStore.setAttachmentItem(false)
-						this.UIStore.setDialog(false)
+						publicationStore.setAttachmentItem(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

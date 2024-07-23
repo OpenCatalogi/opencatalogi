@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useDirectoryStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, directoryStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -45,9 +45,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			directoryStore: useDirectoryStore(),
-			metadataStore: useMetadataStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -57,7 +55,7 @@ export default {
 		fetchData(id) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${this.directoryStore.listingItem.id}`,
+				`/index.php/apps/opencatalogi/api/directory/${directoryStore.listingItem.id}`,
 				{
 					method: 'GET',
 				},
@@ -76,7 +74,7 @@ export default {
 		editDirectory() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${this.directoryStore.listingItem.id}`,
+				`/index.php/apps/opencatalogi/api/directory/${directoryStore.listingItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -89,11 +87,11 @@ export default {
 				this.loading = false
 				this.succes = true
 				// Lets refresh the catalogiList
-				this.metadataStore.refreshMetaDataList()
+				metadataStore.refreshMetaDataList()
 				response.json().then((data) => {
 					this.setListingItem(data)
 				})
-				this.UIStore.setSelected('directory')
+				UIStore.setSelected('directory')
 				// Wait and then close the modal
 				setTimeout(() => (this.closeModal()), 2500)
 			}).catch((err) => {

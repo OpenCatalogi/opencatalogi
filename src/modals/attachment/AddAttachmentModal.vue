@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -68,19 +68,18 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
 		}
 	},
 	mounted() {
-		this.publicationStore.setAttachmentItem([])
+		publicationStore.setAttachmentItem([])
 	},
 	methods: {
 		closeModal() {
-			this.UIStore.modal = false
+			UIStore.modal = false
 		},
 		addAttachment() {
 			this.loading = true
@@ -92,26 +91,26 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publicationStore.attachmentItem),
+					body: JSON.stringify(publicationStore.attachmentItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the attachment list
-					if (this.publicationStore.publicationItem?.id) {
-						this.publicationStore.getPublicationAttachments(this.publicationStore.publicationItem.id)
+					if (publicationStore.publicationItem?.id) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
 						// @todo update the publication item
 					}
 					// store.refreshCatalogiList()
 					response.json().then((data) => {
-						this.publicationStore.setAttachmentItem(data)
+						publicationStore.setAttachmentItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.UIStore.setModal(false)
+						UIStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

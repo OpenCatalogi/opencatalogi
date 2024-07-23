@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useCatalogiStore, usePublicationStore } from '../store/store.js'
+import { UIStore, catalogiStore, publicationStore } from '../store/store.js'
 </script>
 
 <template>
@@ -273,9 +273,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			catalogiStore: useCatalogiStore(),
-			publicationStore: usePublicationStore(),
+
 			// all of this is settings and should be moved
 			settingsOpen: false,
 			orc_location: '',
@@ -384,10 +382,10 @@ export default {
 				})
 		},
 		switchCatalogus(catalogus) {
-			if (catalogus._id !== this.UIStore.selectedCatalogus) this.publicationStore.setPublicationItem(false) // for when you switch catalogus
-			this.UIStore.setSelected('publication')
-			this.UIStore.setSelectedCatalogus(catalogus._id)
-			this.catalogiStore.setCatalogiItem(catalogus)
+			if (catalogus._id !== UIStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
+			UIStore.setSelected('publication')
+			UIStore.setSelectedCatalogus(catalogus._id)
+			catalogiStore.setCatalogiItem(catalogus)
 		},
 	},
 }

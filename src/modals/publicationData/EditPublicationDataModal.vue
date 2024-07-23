@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
@@ -53,8 +53,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			publication: {
 				title: '',
 				description: '',
@@ -77,10 +76,10 @@ export default {
 		}
 	},
 	updated() {
-		if (this.UIStore.modal === 'editPublicationDataModal' && !this.hasUpdated) {
+		if (UIStore.modal === 'editPublicationDataModal' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(this.publicationStore.publicationId)
+			this.fetchData(publicationStore.publicationId)
 			this.hasUpdated = true
 		}
 	},
@@ -169,7 +168,7 @@ export default {
 				},
 			)
 				.then(() => {
-					this.UIStore.setModal(false)
+					UIStore.setModal(false)
 				})
 				.catch((err) => {
 					this.loading = false

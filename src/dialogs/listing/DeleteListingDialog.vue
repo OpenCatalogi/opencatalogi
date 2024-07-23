@@ -1,5 +1,5 @@
 <script setup>
-import { useDirectoryStore, useUIStore } from '../../store/store.js'
+import { directoryStore, UIStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -58,8 +58,7 @@ export default {
 	},
 	data() {
 		return {
-			directoryStore: useDirectoryStore(),
-			UIStore: useUIStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -69,7 +68,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${this.directoryStore.listingItem.id}`,
+				`/index.php/apps/opencatalogi/api/directory/${directoryStore.listingItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -81,13 +80,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.directoryStore.refreshListingList()
+					directoryStore.refreshListingList()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.directoryStore.setListingItem(false)
-						this.UIStore.setDialog(false)
+						directoryStore.setListingItem(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

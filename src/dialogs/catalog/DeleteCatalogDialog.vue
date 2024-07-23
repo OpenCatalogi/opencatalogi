@@ -1,5 +1,5 @@
 <script setup>
-import { useCatalogiStore, useUIStore } from '../../store/store.js'
+import { catalogiStore, UIStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -59,9 +59,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			catalogiStore: useCatalogiStore(),
-			catalogiItem: useCatalogiStore().catalogiItem,
+			catalogiItem: catalogiStore.catalogiItem,
 			loading: false,
 			succes: false,
 			error: false,
@@ -83,13 +81,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.catalogiStore.refreshCatalogiList()
+					catalogiStore.refreshCatalogiList()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.catalogiStore.setCatalogiItem(false)
-						this.UIStore.setDialog(false)
+						catalogiStore.setCatalogiItem(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

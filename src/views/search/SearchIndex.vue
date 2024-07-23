@@ -1,5 +1,5 @@
 <script setup>
-import { useSearchStore } from '../../store/store.js'
+import { searchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -58,18 +58,18 @@ export default {
 	},
 	data() {
 		return {
-			searchStore: useSearchStore(),
+
 		}
 	},
 	watch: {
 		search: {
 			handler(search) {
-				this.searchStore.getSearchResults()
+				searchStore.getSearchResults()
 			},
 		},
 	},
 	mounted() {
-		this.searchStore.getSearchResults()
+		searchStore.getSearchResults()
 	},
 	methods: {
 		goToLink(link) {

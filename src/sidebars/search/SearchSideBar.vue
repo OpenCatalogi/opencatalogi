@@ -1,5 +1,5 @@
 <script setup>
-import { useSearchStore } from '../../store/store.js'
+import { searchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -49,7 +49,7 @@ export default {
 	},
 	data() {
 		return {
-			searchStore: useSearchStore(),
+
 			starred: false,
 		}
 	},

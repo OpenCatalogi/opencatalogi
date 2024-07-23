@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useSearchStore, useDirectoryStore } from '../../store/store.js'
+import { UIStore, searchStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -103,9 +103,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			searchStore: useSearchStore(),
-			directoryStore: useDirectoryStore(),
+
 			loading: false,
 		}
 	},
@@ -122,7 +120,7 @@ export default {
 	methods: {
 		fetchData(newPage) {
 			this.loading = true
-			this.directoryStore.refreshListingList()
+			directoryStore.refreshListingList()
 			this.loading = false
 		},
 	},

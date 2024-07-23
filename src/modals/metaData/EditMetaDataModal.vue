@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -54,8 +54,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			metadataStore: useMetadataStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -72,7 +71,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metadataStore.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
 					this.loading = false
 				})
@@ -84,28 +83,28 @@ export default {
 		editMetaData() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${this.metadataStore.metaDataItem?.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem?.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.metadataStore.metaDataItem),
+					body: JSON.stringify(metadataStore.metaDataItem),
 				},
 			).then((response) => {
 				this.loading = false
 				this.succes = true
 				// Lets refresh the catalogiList
-				this.metadataStore.refreshMetaDataList()
+				metadataStore.refreshMetaDataList()
 				response.json().then((data) => {
-					this.metadataStore.setMetaDataItem(data)
+					metadataStore.setMetaDataItem(data)
 				})
-				this.UIStore.setSelected('metaData')
+				UIStore.setSelected('metaData')
 				// Wait for the user to read the feedback then close the model
 				const self = this
 				setTimeout(function() {
 					self.succes = false
-					this.UIStore.setModal(false)
+					UIStore.setModal(false)
 				}, 2000)
 			}).catch((err) => {
 				this.error = err

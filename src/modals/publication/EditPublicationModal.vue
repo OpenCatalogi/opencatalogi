@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
@@ -98,8 +98,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			catalogi: {
 				value: [],
 				options: [],
@@ -116,17 +115,17 @@ export default {
 		}
 	},
 	mounted() {
-		this.publication = this.publicationStore.publicationItem
+		this.publication = publicationStore.publicationItem
 	},
 	updated() {
-		if (this.UIStore.modal === 'publicationEdit' && this.hasUpdated) {
-			if (this.publication.id === this.publicationStore.publicationItem.id) return
+		if (UIStore.modal === 'publicationEdit' && this.hasUpdated) {
+			if (this.publication.id === publicationStore.publicationItem.id) return
 			this.hasUpdated = false
 		}
-		if (this.UIStore.modal === 'publicationEdit' && !this.hasUpdated) {
+		if (UIStore.modal === 'publicationEdit' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(this.publicationStore.publicationItem.id)
+			this.fetchData(publicationStore.publicationItem.id)
 			this.hasUpdated = true
 		}
 	},
@@ -211,25 +210,25 @@ export default {
 		updatePublication(id) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${this.publicationStore.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publicationStore.publicationItem),
+					body: JSON.stringify(publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.publicationStore.refreshPublicationList()
+					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
-						this.publicationStore.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
-					this.UIStore.setSelected('publication')
-					setTimeout(() => this.UIStore.setModal(false), 2500)
+					UIStore.setSelected('publication')
+					setTimeout(() => UIStore.setModal(false), 2500)
 				})
 				.catch((err) => {
 					this.error = err

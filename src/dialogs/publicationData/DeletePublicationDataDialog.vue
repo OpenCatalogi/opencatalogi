@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -58,8 +58,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -67,12 +66,12 @@ export default {
 	},
 	methods: {
 		DeleteProperty() {
-			const publication = this.publicationStore.publicationItem
-			delete publication?.data[this.publicationStore.publicationDataKey]
+			const publication = publicationStore.publicationItem
+			delete publication?.data[publicationStore.publicationDataKey]
 
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${this.publicationStore.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -86,13 +85,13 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					response.json().then((data) => {
-						this.publicationStore.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.UIStore.setDialog(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

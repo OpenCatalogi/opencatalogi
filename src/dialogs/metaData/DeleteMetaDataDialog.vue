@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -58,8 +58,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			metadataStore: useMetadataStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -69,7 +68,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${this.metadataStore.metaDataItem.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -81,13 +80,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.metadataStore.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.metadataStore.setMetaDataItem(false)
-						this.UIStore.setDialog(false)
+						metadataStore.setMetaDataItem(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -68,8 +68,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -80,31 +79,31 @@ export default {
 			this.loading = true
 			this.error = false
 			fetch(
-				`/index.php/apps/opencatalogi/api/attachments/${this.publicationStore.attachmentItem.id}`,
+				`/index.php/apps/opencatalogi/api/attachments/${publicationStore.attachmentItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publicationStore.attachmentItem),
+					body: JSON.stringify(publicationStore.attachmentItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					if (this.publicationStore.publicationItem?.id) {
-						this.publicationStore.getPublicationAttachments(this.publicationStore.publicationItem.id)
+					if (publicationStore.publicationItem?.id) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
 						// @todo update the publication item
 					}
 					response.json().then((data) => {
-						this.publicationStore.setAttachmentItem(data)
+						publicationStore.setAttachmentItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.UIStore.setModal(false)
+						UIStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

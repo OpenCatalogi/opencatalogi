@@ -1,5 +1,5 @@
 <script setup>
-import { useCatalogiStore, useUIStore } from '../../store/store.js'
+import { catalogiStore, UIStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -55,8 +55,6 @@ export default {
 	},
 	data() {
 		return {
-			catalogiStore: useCatalogiStore(),
-			UIStore: useUIStore(),
 			name: '',
 			summary: '',
 			loading: false,
@@ -67,7 +65,7 @@ export default {
 	},
 	methods: {
 		closeModal() {
-			this.UIStore.modal = false
+			UIStore.modal = false
 		},
 		addCatalog() {
 			this.loading = true
@@ -89,15 +87,15 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.catalogiStore.refreshCatalogiList()
+					catalogiStore.refreshCatalogiList()
 					response.json().then((data) => {
-						this.catalogiStore.setCatalogiItem(data)
+						catalogiStore.setCatalogiItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.UIStore.setModal(false)
+						UIStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

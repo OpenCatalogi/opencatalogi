@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -54,8 +54,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			metadataStore: useMetadataStore(),
+
 			metaData: {
 				title: '',
 				version: '',
@@ -86,17 +85,17 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.metadataStore.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						this.metadataStore.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
-					this.UIStore.setSelected('metaData')
+					UIStore.setSelected('metaData')
 					// Update the list
 					const self = this
 					setTimeout(function() {
 						self.succes = false
 						this.metaData = { title: '', version: '', summery: '', description: '' }
-						this.UIStore.setModal(false)
+						UIStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

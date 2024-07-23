@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -138,8 +138,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			metadataStore: useMetadataStore(),
+
 			metadata: [],
 			loading: false,
 		}
@@ -154,8 +153,8 @@ export default {
 		},
 	},
 	mounted() {
-		this.metadata = this.metadataStore.metaDataItem
-		this.fetchData(this.metadataStore.metaDataItem?._id)
+		this.metadata = metadataStore.metaDataItem
+		this.fetchData(metadataStore.metaDataItem?._id)
 	},
 	methods: {
 		fetchData(metadataId) {

@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -58,8 +58,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -68,30 +67,30 @@ export default {
 	methods: {
 		DepublishPublication() {
 			this.loading = true
-			this.publicationStore.publicationItem.status = 'retracted'
-			this.publicationStore.publicationItem.published = ''
+			publicationStore.publicationItem.status = 'retracted'
+			publicationStore.publicationItem.published = ''
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${this.publicationStore.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publicationStore.publicationItem),
+					body: JSON.stringify(publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.publicationStore.refreshPublicationList()
-					this.publicationStore.getConceptPublications()
+					publicationStore.refreshPublicationList()
+					publicationStore.getConceptPublications()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.publicationStore.setPublicationItem(false)
-						this.UIStore.setDialog(false)
+						publicationStore.setPublicationItem(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

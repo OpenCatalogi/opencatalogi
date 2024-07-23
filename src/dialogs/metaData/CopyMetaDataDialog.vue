@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -57,8 +57,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			metadataStore: useMetadataStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -67,12 +66,12 @@ export default {
 	methods: {
 		CopyMetadata() {
 			this.loading = true
-			this.metadataStore.metaDataItem.title = 'KOPIE: ' + this.metadataStore.metaDataItem.title
-			if (Object.keys(this.metadataStore.metaDataItem.properties).length === 0) {
-				delete this.metadataStore.metaDataItem.properties
+			metadataStore.metaDataItem.title = 'KOPIE: ' + metadataStore.metaDataItem.title
+			if (Object.keys(metadataStore.metaDataItem.properties).length === 0) {
+				delete metadataStore.metaDataItem.properties
 			}
-			delete this.metadataStore.metaDataItem.id
-			delete this.metadataStore.metaDataItem._id
+			delete metadataStore.metaDataItem.id
+			delete metadataStore.metaDataItem._id
 			fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
 				{
@@ -80,23 +79,23 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.metadataStore.metaDataItem),
+					body: JSON.stringify(metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.metadataStore.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						this.metadataStore.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
-					this.UIStore.setSelected('metaData')
+					UIStore.setSelected('metaData')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.UIStore.setDialog(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

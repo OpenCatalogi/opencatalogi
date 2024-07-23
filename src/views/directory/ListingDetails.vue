@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useDirectoryStore } from '../../store/store.js'
+import { UIStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -88,8 +88,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			directoryStore: useDirectoryStore(),
+
 			listing: [],
 			loading: false,
 		}
@@ -104,7 +103,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.fetchData(this.directoryStore.listingItem?.id)
+		this.fetchData(directoryStore.listingItem?.id)
 	},
 	methods: {
 		fetchData(listingId) {

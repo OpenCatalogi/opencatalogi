@@ -1,5 +1,5 @@
 <script setup>
-import { usePublicationStore, useUIStore } from '../../store/store.js'
+import { publicationStore, UIStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -20,7 +20,7 @@ import { usePublicationStore, useUIStore } from '../../store/store.js'
 			<NcButton
 				:disabled="loading"
 				icon=""
-				@click="store.setDialog(false)">
+				@click="UIStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -61,8 +61,7 @@ export default {
 	},
 	data() {
 		return {
-			publicationStore: usePublicationStore(),
-			UIStore: useUIStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -72,7 +71,7 @@ export default {
 		DeleteAttachment() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/attachments/${this.publicationStore.attachmentItem.id}`,
+				`/index.php/apps/opencatalogi/api/attachments/${publicationStore.attachmentItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -84,16 +83,16 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the attachment list
-					if (this.publicationStore.publicationItem?.id) {
-						this.publicationStore.getPublicationAttachments(this.publicationStore.publicationItem.id)
+					if (publicationStore.publicationItem?.id) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
 						// @todo update the publication item
 					}
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.publicationStore.setAttachmentItem(false)
-						this.UIStore.setDialog(false)
+						publicationStore.setAttachmentItem(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

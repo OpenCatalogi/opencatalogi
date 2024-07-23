@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -386,8 +386,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			publication: [],
 			catalogi: [],
 			metadata: [],
@@ -421,10 +420,10 @@ export default {
 	watch: {
 		publicationId: {
 			handler(publicationId) {
-				this.publication = this.publicationStore.publicationItem
-				this.fetchCatalogi(this.publicationStore.publicationItem.catalogi)
-				this.fetchMetaData(this.publicationStore.publicationItem.metaData)
-				this.fetchData(this.publicationStore.publicationItem.id)
+				this.publication = publicationStore.publicationItem
+				this.fetchCatalogi(publicationStore.publicationItem.catalogi)
+				this.fetchMetaData(publicationStore.publicationItem.metaData)
+				this.fetchData(publicationStore.publicationItem.id)
 			},
 			deep: true,
 		},
@@ -432,11 +431,11 @@ export default {
 	},
 	mounted() {
 
-		this.publication = this.publicationStore.publicationItem
+		this.publication = publicationStore.publicationItem
 
-		this.fetchCatalogi(this.publicationStore.publicationItem.catalogi, true)
-		this.fetchMetaData(this.publicationStore.publicationItem.metaData, true)
-		this.fetchData(this.publicationStore.publicationItem.id)
+		this.fetchCatalogi(publicationStore.publicationItem.catalogi, true)
+		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
+		this.fetchData(publicationStore.publicationItem.id)
 
 	},
 	methods: {
@@ -451,7 +450,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
-						this.publicationStore.getPublicationAttachments()
+						publicationStore.getPublicationAttachments()
 						// this.loading = false
 					})
 				})
@@ -497,28 +496,28 @@ export default {
 				})
 		},
 		deletePublication() {
-			this.publicationStore.setPublicationItem(this.publication)
-			this.UIStore.setModal('deletePublication')
+			publicationStore.setPublicationItem(this.publication)
+			UIStore.setModal('deletePublication')
 		},
 		editPublicationDataItem(key) {
-			this.publicationStore.setPublicationDataKey(key)
-			this.UIStore.setModal('editPublicationDataModal')
+			publicationStore.setPublicationDataKey(key)
+			UIStore.setModal('editPublicationDataModal')
 		},
 		deletePublicationDataItem(key) {
-			this.publicationStore.setPublicationDataKey(key)
-			this.UIStore.setDialog('deletePublicationDataDialog')
+			publicationStore.setPublicationDataKey(key)
+			UIStore.setDialog('deletePublicationDataDialog')
 		},
 		editPublicationAttachmentItem(key) {
-			this.publicationStore.setPublicationDataKey(key)
-			this.UIStore.setModal('editPublicationDataModal')
+			publicationStore.setPublicationDataKey(key)
+			UIStore.setModal('editPublicationDataModal')
 		},
 		goToMetadata(metadata) {
-			this.publicationStore.setMetaDataItem(metadata)
-			this.UIStore.setSelected('metaData')
+			publicationStore.setMetaDataItem(metadata)
+			UIStore.setSelected('metaData')
 		},
 		goToCatalogi(id) {
-			this.publicationStore.setCatalogiId(id)
-			this.UIStore.setSelected('catalogi')
+			publicationStore.setCatalogiId(id)
+			UIStore.setSelected('catalogi')
 		},
 	},
 }

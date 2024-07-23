@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, metadataStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
@@ -99,8 +99,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			metadataStore: useMetadataStore(),
+
 			metadata: {
 				title: '',
 				description: '',
@@ -128,18 +127,18 @@ export default {
 		}
 	},
 	updated() {
-		if (this.UIStore.modal === 'editMetadataDataModal' && this.hasUpdated) {
-			if (this.dataKey !== this.metadataStore.metadataDataKey) this.hasUpdated = false
+		if (UIStore.modal === 'editMetadataDataModal' && this.hasUpdated) {
+			if (this.dataKey !== metadataStore.metadataDataKey) this.hasUpdated = false
 		}
-		if (this.UIStore.modal === 'editMetadataDataModal' && !this.hasUpdated) {
+		if (UIStore.modal === 'editMetadataDataModal' && !this.hasUpdated) {
 			this.metadata = {
-				...this.metadataStore.metaDataItem,
-				properties: JSON.parse(this.metadataStore.metaDataItem.properties),
+				...metadataStore.metaDataItem,
+				properties: JSON.parse(metadataStore.metaDataItem.properties),
 			}
-			this.metadata.properties[this.metadataStore.metadataDataKey] = this.metadataStore.getMetadataPropertyKeys(this.metadataStore.metadataDataKey)
-			this.fetchData(this.metadataStore.metaDataItem.id)
+			this.metadata.properties[metadataStore.metadataDataKey] = metadataStore.getMetadataPropertyKeys(metadataStore.metadataDataKey)
+			this.fetchData(metadataStore.metaDataItem.id)
 
-			this.dataKey = this.metadataStore.metadataDataKey
+			this.dataKey = metadataStore.metadataDataKey
 			this.hasUpdated = true
 		}
 	},
@@ -154,13 +153,13 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metadataStore.metaDataItem = data
+						metadataStore.metaDataItem = data
 
 						this.metadata = {
-							...this.metadataStore.metaDataItem,
-							properties: JSON.parse(this.metadataStore.metaDataItem.properties),
+							...metadataStore.metaDataItem,
+							properties: JSON.parse(metadataStore.metaDataItem.properties),
 						}
-						this.metadata.properties[this.metadataStore.metadataDataKey] = this.metadataStore.getMetadataPropertyKeys(this.metadataStore.metadataDataKey)
+						this.metadata.properties[metadataStore.metadataDataKey] = metadataStore.getMetadataPropertyKeys(metadataStore.metadataDataKey)
 					})
 					this.loading = false
 				})
@@ -178,19 +177,19 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.metadataStore.metaDataItem),
+					body: JSON.stringify(metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.success = true
 					// Lets refresh the catalogiList
-					this.metadataStore.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						this.metadataStore.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
 					setTimeout(() => {
-						this.UIStore.setModal(false)
+						UIStore.setModal(false)
 					    this.success = false
 					}, 3000)
 				})

@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useDirectoryStore } from '../../store/store.js'
+import { UIStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -47,8 +47,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			directoryStore: useDirectoryStore(),
+
 			directory: {
 				url: '',
 			},
@@ -85,11 +84,11 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.directoryStore.refreshListingList()
+					directoryStore.refreshListingList()
 					response.json().then((data) => {
-						this.directoryStore.setListingItem(data)
+						directoryStore.setListingItem(data)
 					})
-					this.UIStore.setSelected('directory')
+					UIStore.setSelected('directory')
 					// Wait and then close the modal
 					setTimeout(() => (this.closeModal()), 2500)
 				})

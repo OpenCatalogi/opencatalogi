@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, metadataStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
@@ -110,8 +110,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			metadataStore: useMetadataStore(),
+
 			propertyName: '',
 			properties: {
 				type: '',
@@ -141,26 +140,26 @@ export default {
 	},
 	methods: {
 		AddMetadata() {
-			this.metadataStore.metaDataItem.properties[this.propertyName] = this.properties
+			metadataStore.metaDataItem.properties[this.propertyName] = this.properties
 
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${this.metadataStore.metaDataItem.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.metadataStore.metaDataItem),
+					body: JSON.stringify(metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.success = true
 					// Lets refresh the catalogiList
-					this.metadataStore.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						this.metadataStore.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
 					setTimeout(() => {
 						// lets reset
@@ -175,7 +174,7 @@ export default {
 							cascadeDelete: false,
 							exclusiveMinimum: '',
 						}
-						this.UIStore.setModal(false)
+						UIStore.setModal(false)
 					    this.success = false
 					}, 2000)
 				})

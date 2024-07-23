@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal v-if="UIStore.modal === 'publicationAdd'" ref="modalRef" @close="UIStore.setModal(false)">
@@ -110,8 +110,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			title: '',
 			description: '',
 			catalogi: {},
@@ -153,7 +152,7 @@ export default {
 		},
 	},
 	updated() {
-		if (this.UIStore.modal === 'publicationAdd' && !this.hasUpdated) {
+		if (UIStore.modal === 'publicationAdd' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
 			this.hasUpdated = true
@@ -244,13 +243,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.publicationStore.refreshPublicationList()
+					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
-						this.publicationStore.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
-					this.UIStore.setSelected('publication')
+					UIStore.setSelected('publication')
 					// Clean it all up
-					setTimeout(() => this.UIStore.setModal(false), 2500)
+					setTimeout(() => UIStore.setModal(false), 2500)
 				})
 				.catch((err) => {
 					this.error = err

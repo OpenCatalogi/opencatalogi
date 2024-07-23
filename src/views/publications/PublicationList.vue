@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useSearchStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, searchStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -157,17 +157,15 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			searchStore: useSearchStore(),
-			publicationStore: usePublicationStore(),
+
 			loading: false,
 		}
 	},
 	computed: {
 		filteredPublications() {
-			if (!this.publicationStore?.publicationList?.results) return []
-			return this.publicationStore.publicationList.results.filter((publication) => {
-				return publication.catalogi === this.UIStore.selectedCatalogus
+			if (!publicationStore?.publicationList?.results) return []
+			return publicationStore.publicationList.results.filter((publication) => {
+				return publication.catalogi === UIStore.selectedCatalogus
 			})
 		},
 	},
@@ -184,7 +182,7 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			this.publicationStore.refreshPublicationList()
+			publicationStore.refreshPublicationList()
 			this.loading = false
 		},
 	},

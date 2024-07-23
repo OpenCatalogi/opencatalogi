@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
@@ -71,8 +71,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			key: '',
 			value: '',
 			loading: false,
@@ -82,16 +81,16 @@ export default {
 	},
 	methods: {
 		AddPublicatieEigenschap() {
-			this.publicationStore.publicationItem.data[this.key] = this.value
+			publicationStore.publicationItem.data[this.key] = this.value
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${this.publicationStore.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publicationStore.publicationItem),
+					body: JSON.stringify(publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
@@ -99,13 +98,13 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					response.json().then((data) => {
-						this.publicationStore.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.UIStore.setModal(false)
+						UIStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

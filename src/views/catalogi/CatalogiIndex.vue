@@ -1,5 +1,5 @@
 <script setup>
-import { useCatalogiStore, useUIStore, useSearchStore } from '../../store/store.js'
+import { catalogiStore, UIStore, searchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -45,9 +45,7 @@ export default {
 	},
 	data() {
 		return {
-			catalogiStore: useCatalogiStore(),
-			UIStore: useUIStore(),
-			searchStore: useSearchStore(),
+
 		}
 	},
 }

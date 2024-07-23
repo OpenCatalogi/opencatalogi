@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useSearchStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, searchStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -142,16 +142,14 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			searchStore: useSearchStore(),
-			publicationStore: usePublicationStore(),
+
 			publications: false,
 			attachments: false,
 		}
 	},
 	mounted() {
-		this.publicationStore.getConceptPublications()
-		this.publicationStore.getConceptAttachments()
+		publicationStore.getConceptPublications()
+		publicationStore.getConceptAttachments()
 	},
 }
 </script>

@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, usePublicationStore } from '../../store/store.js'
+import { UIStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -57,8 +57,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			publicationStore: usePublicationStore(),
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -67,13 +66,13 @@ export default {
 	methods: {
 		CopyPublication() {
 			this.loading = true
-			this.publicationStore.publicationItem.title = 'KOPIE: ' + this.publicationStore.publicationItem.title
-			if (Object.keys(this.publicationStore.publicationItem.data).length === 0) {
-				delete this.publicationStore.publicationItem.data
+			publicationStore.publicationItem.title = 'KOPIE: ' + publicationStore.publicationItem.title
+			if (Object.keys(publicationStore.publicationItem.data).length === 0) {
+				delete publicationStore.publicationItem.data
 			}
-			delete this.publicationStore.publicationItem.id
-			delete this.publicationStore.publicationItem._id
-			this.publicationStore.publicationItem.status = 'concept'
+			delete publicationStore.publicationItem.id
+			delete publicationStore.publicationItem._id
+			publicationStore.publicationItem.status = 'concept'
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -81,24 +80,24 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publicationStore.publicationItem),
+					body: JSON.stringify(publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					this.publicationStore.refreshPublicationList()
+					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
-						this.publicationStore.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
-					this.UIStore.setSelected('publication')
+					UIStore.setSelected('publication')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						this.publicationStore.setPublicationItem(false)
-						this.UIStore.setDialog(false)
+						publicationStore.setPublicationItem(false)
+						UIStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

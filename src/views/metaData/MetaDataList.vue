@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore, useSearchStore, useMetadataStore } from '../../store/store.js'
+import { UIStore, searchStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -117,9 +117,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
-			searchStore: useSearchStore(),
-			metadataStore: useMetadataStore(),
+
 			loading: true,
 		}
 	},
@@ -136,7 +134,7 @@ export default {
 	methods: {
 		fetchData(newPage) {
 			this.loading = true
-			this.metadataStore.refreshMetaDataList()
+			metadataStore.refreshMetaDataList()
 			this.loading = false
 		},
 	},

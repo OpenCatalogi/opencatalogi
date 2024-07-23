@@ -1,5 +1,5 @@
 <script setup>
-import { useUIStore } from '../../store/store.js'
+import { UIStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -58,7 +58,7 @@ export default {
 	},
 	data() {
 		return {
-			UIStore: useUIStore(),
+
 			loading: false,
 		}
 	},
