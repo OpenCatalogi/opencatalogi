@@ -15,7 +15,7 @@
 
 ## BEHEERDERS
 
-* [Page 3](beheerders/page-3.md)
+* [Gebruikershandleiding](beheerders/page-3.md)
 
 ## Developers
 

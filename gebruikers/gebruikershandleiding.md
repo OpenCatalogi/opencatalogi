@@ -6,3 +6,4 @@ description: >-
 
 # Gebruikershandleiding
 
+(todo: hoe om te gaan met publicaties)
