@@ -4,6 +4,8 @@ namespace OCA\OpenCatalogi\Controller;
 
 use Elastic\Elasticsearch\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use OCA\opencatalogi\lib\Db\Publication;
+use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
@@ -32,6 +34,7 @@ class PublicationsController extends Controller
 	(
 		$appName,
 		IRequest $request,
+		private readonly PublicationMapper $publicationMapper,
 		private readonly IAppConfig $config
 	)
     {
@@ -109,6 +112,8 @@ class PublicationsController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
+		return new JSONResponse($this->publicationMapper->findAll());
+
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -155,10 +160,6 @@ class PublicationsController extends Controller
      */
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
 		$data = $this->request->getParams();
 
 		foreach($data as $key => $value) {
@@ -167,30 +168,39 @@ class PublicationsController extends Controller
 			}
 		}
 
+		if($this->config->getValueBool())
+
+		$result = $publicationMapper->createFromArray($data);
+
+		return new JSONResponse($result);
+
 		$data['_schema'] = 'publication';
 
-		$returnData = $objectService->saveObject(
-			data: $data,
-			config: $dbConfig
-		);
-
-
-		if(
-			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
-		) {
-			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-
-			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
-
-			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
-
-		}
-        // get post from requests
-        return new JSONResponse($returnData);
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+//		$returnData = $objectService->saveObject(
+//			data: $data,
+//			config: $dbConfig
+//		);
+//
+//
+//		if(
+//			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
+//			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
+//			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
+//		) {
+//			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+//			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+//			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+//
+//			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
+//
+//			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
+//
+//		}
+//        // get post from requests
+//        return new JSONResponse($returnData);
     }
 
     /**

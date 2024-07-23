@@ -85,7 +85,9 @@ class DirectoryService
 	{
 		$result = $this->client->get($directory['directory']);
 
-		$results = json_decode($result->getBody()->getContents());
+		$results = json_decode($result->getBody()->getContents(), true);
+
+		var_dump($results);
 
 		foreach($results['results'] as $record) {
 			$this->createDirectoryFromResult($record);
