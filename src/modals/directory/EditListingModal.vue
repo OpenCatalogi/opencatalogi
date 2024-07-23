@@ -1,9 +1,9 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useDirectoryStore, useMetadataStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'editListing'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="UIStore.modal === 'editListing'" ref="modalRef" @close="UIStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -13,9 +13,9 @@ import { store } from '../../store/store.js'
 				<p>{{ error }}</p>
 			</NcNoteCard>
 			<div v-if="!succes" class="form-group">
-				<NcTextField label="Url" :value.sync="store.listingItem.url" />
-				<NcTextField label="Status" :value.sync="store.listingItem.status" />
-				<NcTextField label="Last synchronized" :value.sync="store.listingItem.lastSync" />
+				<NcTextField label="Url" :value.sync="directoryStore.listingItem.url" />
+				<NcTextField label="Status" :value.sync="directoryStore.listingItem.status" />
+				<NcTextField label="Last synchronized" :value.sync="directoryStore.listingItem.lastSync" />
 			</div>
 			<NcButton v-if="!succes" type="primary" @click="editDirectory()">
 				<template #icon>
@@ -45,19 +45,19 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			directoryStore: useDirectoryStore(),
+			metadataStore: useMetadataStore(),
 			loading: false,
 			succes: false,
 			error: false,
 		}
 	},
 	methods: {
-		closeModal() {
-			store.modal = false
-		},
 		fetchData(id) {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
+				`/index.php/apps/opencatalogi/api/directory/${this.directoryStore.listingItem.id}`,
 				{
 					method: 'GET',
 				},
@@ -76,7 +76,7 @@ export default {
 		editDirectory() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
+				`/index.php/apps/opencatalogi/api/directory/${this.directoryStore.listingItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -89,11 +89,11 @@ export default {
 				this.loading = false
 				this.succes = true
 				// Lets refresh the catalogiList
-				store.refreshMetaDataList()
+				this.metadataStore.refreshMetaDataList()
 				response.json().then((data) => {
 					this.setListingItem(data)
 				})
-				store.setSelected('directory')
+				this.UIStore.setSelected('directory')
 				// Wait and then close the modal
 				setTimeout(() => (this.closeModal()), 2500)
 			}).catch((err) => {

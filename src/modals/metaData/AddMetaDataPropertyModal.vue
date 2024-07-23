@@ -1,11 +1,11 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useMetadataStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'addMetadataDataModal'"
+		v-if="UIStore.modal === 'addMetadataDataModal'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="UIStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap toevoegen</h2>
 			<NcNoteCard v-if="success" type="success">
@@ -76,7 +76,7 @@ import { store } from '../../store/store.js'
 
 			<NcButton v-if="success"
 				type="primary"
-				@click="store.setModal(false)">
+				@click="UIStore.setModal(false)">
 				Sluiten
 			</NcButton>
 		</div>
@@ -110,6 +110,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			metadataStore: useMetadataStore(),
 			propertyName: '',
 			properties: {
 				type: '',
@@ -138,30 +140,27 @@ export default {
 		}
 	},
 	methods: {
-		closeModal() {
-			store.modal = false
-		},
 		AddMetadata() {
-			store.metaDataItem.properties[this.propertyName] = this.properties
+			this.metadataStore.metaDataItem.properties[this.propertyName] = this.properties
 
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${this.metadataStore.metaDataItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.metaDataItem),
+					body: JSON.stringify(this.metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.success = true
 					// Lets refresh the catalogiList
-					store.refreshMetaDataList()
+					this.metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						this.metadataStore.setMetaDataItem(data)
 					})
 					setTimeout(() => {
 						// lets reset
@@ -176,7 +175,7 @@ export default {
 							cascadeDelete: false,
 							exclusiveMinimum: '',
 						}
-						this.closeModal()
+						this.UIStore.setModal(false)
 					    this.success = false
 					}, 2000)
 				})

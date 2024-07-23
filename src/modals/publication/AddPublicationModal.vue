@@ -1,8 +1,8 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, usePublicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="store.modal === 'publicationAdd'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="UIStore.modal === 'publicationAdd'" ref="modalRef" @close="UIStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -110,6 +110,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			publicationStore: usePublicationStore(),
 			title: '',
 			description: '',
 			catalogi: {},
@@ -151,7 +153,7 @@ export default {
 		},
 	},
 	updated() {
-		if (store.modal === 'publicationAdd' && !this.hasUpdated) {
+		if (this.UIStore.modal === 'publicationAdd' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
 			this.hasUpdated = true
@@ -204,10 +206,6 @@ export default {
 					this.metaDataLoading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
-
 		isJsonString(str) {
 			try {
 				JSON.parse(str)
@@ -246,13 +244,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshPublicationList()
+					this.publicationStore.refreshPublicationList()
 					response.json().then((data) => {
-						store.setpublicationItem(data)
+						this.publicationStore.setPublicationItem(data)
 					})
-					store.setSelected('publication')
+					this.UIStore.setSelected('publication')
 					// Clean it all up
-					setTimeout(() => (this.closeModal()), 2500)
+					setTimeout(() => this.UIStore.setModal(false), 2500)
 				})
 				.catch((err) => {
 					this.error = err

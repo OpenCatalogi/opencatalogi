@@ -1,12 +1,12 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useMetadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcModal
-		v-if="store.modal === 'editMetaData'"
+		v-if="UIStore.modal === 'editMetaData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="UIStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -16,14 +16,14 @@ import { store } from '../../store/store.js'
 				<p>{{ error }}</p>
 			</NcNoteCard>
 			<div v-if="!succes" class="form-group">
-				<NcTextField label="Titel" :disabled="loading" :value.sync="store.metaDataItem.title" />
-				<NcTextField label="Versie" :disabled="loading" :value.sync="store.metaDataItem.version" />
-				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="store.metaDataItem.summery" />
-				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="store.metaDataItem.description" />
+				<NcTextField label="Titel" :disabled="loading" :value.sync="metadataStore.metaDataItem.title" />
+				<NcTextField label="Versie" :disabled="loading" :value.sync="metadataStore.metaDataItem.version" />
+				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="metadataStore.metaDataItem.summery" />
+				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metadataStore.metaDataItem.description" />
 			</div>
 			<NcButton
 				v-if="!succes"
-				:disabled="!store.metaDataItem.title || loading"
+				:disabled="!metadataStore.metaDataItem.title || loading"
 				type="primary"
 				@click="editMetaData">
 				<template #icon>
@@ -54,6 +54,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			metadataStore: useMetadataStore(),
 			loading: false,
 			succes: false,
 			error: false,
@@ -70,7 +72,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						this.metadataStore.setMetaDataItem(data)
 					})
 					this.loading = false
 				})
@@ -79,34 +81,31 @@ export default {
 					this.loading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
 		editMetaData() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem?.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${this.metadataStore.metaDataItem?.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.metaDataItem),
+					body: JSON.stringify(this.metadataStore.metaDataItem),
 				},
 			).then((response) => {
 				this.loading = false
 				this.succes = true
 				// Lets refresh the catalogiList
-				store.refreshMetaDataList()
+				this.metadataStore.refreshMetaDataList()
 				response.json().then((data) => {
-					store.setMetaDataItem(data)
+					this.metadataStore.setMetaDataItem(data)
 				})
-				store.setSelected('metaData')
+				this.UIStore.setSelected('metaData')
 				// Wait for the user to read the feedback then close the model
 				const self = this
 				setTimeout(function() {
 					self.succes = false
-					store.setModal(false)
+					this.UIStore.setModal(false)
 				}, 2000)
 			}).catch((err) => {
 				this.error = err

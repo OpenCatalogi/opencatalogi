@@ -1,9 +1,9 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useDirectoryStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'addListing'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="UIStore.modal === 'addListing'" ref="modalRef" @close="UIStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -47,6 +47,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			directoryStore: useDirectoryStore(),
 			directory: {
 				url: '',
 			},
@@ -56,9 +58,6 @@ export default {
 		}
 	},
 	methods: {
-		closeModal() {
-			store.modal = false
-		},
 		addDirectory() {
 			this.loading = true
 			this.$emit('metadata', this.title)
@@ -86,11 +85,11 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshListingList()
+					this.directoryStore.refreshListingList()
 					response.json().then((data) => {
-						store.setListingItem(data)
+						this.directoryStore.setListingItem(data)
 					})
-					store.setSelected('directory')
+					this.UIStore.setSelected('directory')
 					// Wait and then close the modal
 					setTimeout(() => (this.closeModal()), 2500)
 				})

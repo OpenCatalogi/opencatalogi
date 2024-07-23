@@ -1,13 +1,13 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, useMetadataStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'editMetadataDataModal'"
+		v-if="UIStore.modal === 'editMetadataDataModal'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="UIStore.setModal(false)">
 		<div class="modal__content">
-			<h2>Eigenschap "{{ store.metadataDataKey }}" bewerken</h2>
+			<h2>Eigenschap "{{ metadataStore.metadataDataKey }}" bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
 				<p>Eigenschap succesvol bewerkt</p>
 			</NcNoteCard>
@@ -17,43 +17,43 @@ import { store } from '../../store/store.js'
 
 			<div v-if="success === -1" class="form-group">
 				<NcSelect v-bind="typeOptions"
-					:value.sync="store.metadataDataKey"
+					:value.sync="metadataStore.metadataDataKey"
 					required />
 
 				<NcTextField :disabled="loading"
 					label="description"
-					:value.sync="metadata.properties[store.metadataDataKey].description" />
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].description" />
 
 				<NcTextField :disabled="loading"
 					label="format"
-					:value.sync="metadata.properties[store.metadataDataKey].format" />
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].format" />
 
 				<NcTextField :disabled="loading"
 					label="max date"
-					:value.sync="metadata.properties[store.metadataDataKey].maxDate" />
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].maxDate" />
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
-					:checked.sync="metadata.properties[store.metadataDataKey].required">
+					:checked.sync="metadata.properties[metadataStore.metadataDataKey].required">
 					Required
 				</NcCheckboxRadioSwitch>
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
-					:checked.sync="metadata.properties[store.metadataDataKey].default">
+					:checked.sync="metadata.properties[metadataStore.metadataDataKey].default">
 					Default
 				</NcCheckboxRadioSwitch>
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
-					:checked.sync="metadata.properties[store.metadataDataKey].cascadeDelete">
+					:checked.sync="metadata.properties[metadataStore.metadataDataKey].cascadeDelete">
 					Cascade delete
 				</NcCheckboxRadioSwitch>
 
 				<NcTextField :disabled="loading"
 					type="number"
 					label="Exclusive minimum"
-					:value.sync="metadata.properties[store.metadataDataKey].exclusiveMinimum" />
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].exclusiveMinimum" />
 			</div>
 
 			<NcButton v-if="!success"
@@ -99,6 +99,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			metadataStore: useMetadataStore(),
 			metadata: {
 				title: '',
 				description: '',
@@ -126,18 +128,18 @@ export default {
 		}
 	},
 	updated() {
-		if (store.modal === 'editMetadataDataModal' && this.hasUpdated) {
-			if (this.dataKey !== store.metadataDataKey) this.hasUpdated = false
+		if (this.UIStore.modal === 'editMetadataDataModal' && this.hasUpdated) {
+			if (this.dataKey !== this.metadataStore.metadataDataKey) this.hasUpdated = false
 		}
-		if (store.modal === 'editMetadataDataModal' && !this.hasUpdated) {
+		if (this.UIStore.modal === 'editMetadataDataModal' && !this.hasUpdated) {
 			this.metadata = {
-				...store.metaDataItem,
-				properties: JSON.parse(store.metaDataItem.properties),
+				...this.metadataStore.metaDataItem,
+				properties: JSON.parse(this.metadataStore.metaDataItem.properties),
 			}
-			this.metadata.properties[store.metadataDataKey] = store.getMetadataPropertyKeys(store.metadataDataKey)
-			this.fetchData(store.metaDataItem.id)
+			this.metadata.properties[this.metadataStore.metadataDataKey] = this.metadataStore.getMetadataPropertyKeys(this.metadataStore.metadataDataKey)
+			this.fetchData(this.metadataStore.metaDataItem.id)
 
-			this.dataKey = store.metadataDataKey
+			this.dataKey = this.metadataStore.metadataDataKey
 			this.hasUpdated = true
 		}
 	},
@@ -152,13 +154,13 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						store.metaDataItem = data
+						this.metadataStore.metaDataItem = data
 
 						this.metadata = {
-							...store.metaDataItem,
-							properties: JSON.parse(store.metaDataItem.properties),
+							...this.metadataStore.metaDataItem,
+							properties: JSON.parse(this.metadataStore.metaDataItem.properties),
 						}
-						this.metadata.properties[store.metadataDataKey] = store.getMetadataPropertyKeys(store.metadataDataKey)
+						this.metadata.properties[this.metadataStore.metadataDataKey] = this.metadataStore.getMetadataPropertyKeys(this.metadataStore.metadataDataKey)
 					})
 					this.loading = false
 				})
@@ -176,19 +178,19 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.metaDataItem),
+					body: JSON.stringify(this.metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.success = true
 					// Lets refresh the catalogiList
-					store.refreshMetaDataList()
+					this.metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						this.metadataStore.setMetaDataItem(data)
 					})
 					setTimeout(() => {
-						this.store.setModal(false)
+						this.UIStore.setModal(false)
 					    this.success = false
 					}, 3000)
 				})

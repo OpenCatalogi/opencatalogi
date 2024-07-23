@@ -1,11 +1,11 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, usePublicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'addPublicationData'"
+		v-if="UIStore.modal === 'addPublicationData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="UIStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie eigenschap toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -41,7 +41,7 @@ import { store } from '../../store/store.js'
 			</NcButton>
 
 			<NcButton
-				@click="store.setModal(false)">
+				@click="UIStore.setModal(false)">
 				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
@@ -71,6 +71,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			publicationStore: usePublicationStore(),
 			key: '',
 			value: '',
 			loading: false,
@@ -80,16 +82,16 @@ export default {
 	},
 	methods: {
 		AddPublicatieEigenschap() {
-			store.publicationItem.data[this.key] = this.value
+			this.publicationStore.publicationItem.data[this.key] = this.value
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${this.publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationItem),
+					body: JSON.stringify(this.publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
@@ -97,13 +99,13 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					response.json().then((data) => {
-						store.setPublicationItem(data)
+						this.publicationStore.setPublicationItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setModal(false)
+						this.UIStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

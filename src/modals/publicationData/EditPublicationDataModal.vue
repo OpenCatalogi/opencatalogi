@@ -1,11 +1,11 @@
 <script setup>
-import { store } from '../../store/store.js'
+import { useUIStore, usePublicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'editPublicationData'"
+		v-if="UIStore.modal === 'editPublicationData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="UIStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bewerk publicatie eigenschappen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -16,8 +16,8 @@ import { store } from '../../store/store.js'
 			</NcNoteCard>
 			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
-					:label="store.publicationDataKey"
-					:value.sync="store.publicationItem[store.publicationDataKey]" />
+					:label="publicationStore.publicationDataKey"
+					:value.sync="publicationStore.publicationItem[publicationStore.publicationDataKey]" />
 			</div>
 
 			<NcButton :disabled="!publication.title || loading" type="primary" @click="updatePublication(publication.id)">
@@ -25,7 +25,7 @@ import { store } from '../../store/store.js'
 				<ContentSaveOutline v-if="!loading" :size="20" />
 			</NcButton>
 			<NcButton
-				@click="store.setModal(false)">
+				@click="UIStore.setModal(false)">
 				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
@@ -53,6 +53,8 @@ export default {
 	},
 	data() {
 		return {
+			UIStore: useUIStore(),
+			publicationStore: usePublicationStore(),
 			publication: {
 				title: '',
 				description: '',
@@ -75,10 +77,10 @@ export default {
 		}
 	},
 	updated() {
-		if (store.modal === 'editPublicationDataModal' && !this.hasUpdated) {
+		if (this.UIStore.modal === 'editPublicationDataModal' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(store.publicationId)
+			this.fetchData(this.publicationStore.publicationId)
 			this.hasUpdated = true
 		}
 	},
@@ -154,9 +156,6 @@ export default {
 					this.metaDataLoading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
 		updatePublication(id) {
 			this.loading = true
 			fetch(
@@ -169,8 +168,8 @@ export default {
 					body: JSON.stringify(this.publication),
 				},
 			)
-				.then((response) => {
-					this.closeModal()
+				.then(() => {
+					this.UIStore.setModal(false)
 				})
 				.catch((err) => {
 					this.loading = false
