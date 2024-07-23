@@ -1,7 +1,6 @@
 # Table of contents
 
 * [Welkom](README.md)
-* [Algemene Informatie](algemene-informatie.md)
 
 ## Installatie
 
