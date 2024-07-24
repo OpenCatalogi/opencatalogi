@@ -128,12 +128,12 @@ export const usePublicationStore = defineStore('publication', {
 				extension: '',
 				size: 0,
 				anonymization: {
-			  anonymized: false,
-			  results: '',
+					anonymized: false,
+					results: '',
 				},
 				language: {
-			  code: '',
-			  level: '',
+					code: '',
+					level: '',
 				},
 				version_of: false,
 				hash: false,

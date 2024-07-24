@@ -9,4 +9,8 @@ module.exports = {
 	moduleNameMapper: {
 		'^@/(.*)$': '<rootDir>/src/$1',
 	},
+	coveragePathIgnorePatterns: [
+		'index.js',
+	],
+	coverageDirectory: '<rootDir>/coverage-frontend/',
 }

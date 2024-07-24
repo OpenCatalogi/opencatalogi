@@ -12,7 +12,8 @@
     "watch": "NODE_ENV=development webpack --config webpack.config.js --progress --watch",
     "lint": "eslint src",
     "lint-fix": "npm run lint -- --fix",
-    "test": "jest",
+    "test": "jest --silent",
+    "test-coverage": "jest --silent --coverage",
     "stylelint": "stylelint src/**/*.vue src/**/*.scss src/**/*.css"
   },
   "browserslist": [

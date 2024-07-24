@@ -10,9 +10,8 @@ export const useDirectoryStore = defineStore('directory', {
 		setListingItem(listingItem) {
 			// To prevent forms etc from braking we alway use a default/skeleton object
 			const listingDefault = {
-				name: '',
-				url: '',
-				summery: '',
+				title: '',
+				summary: '',
 				status: '',
 				lastSync: '',
 			}
