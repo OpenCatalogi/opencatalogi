@@ -30,7 +30,7 @@ import { navigationStore, searchStore, directoryStore } from '../../store/store.
 				</NcActions>
 			</div>
 
-			<NcListItem v-for="(listing, i) in directoryStore.listingList.results"
+			<NcListItem v-for="(listing, i) in directoryStore.listingList"
 				:key="`${listing}${i}`"
 				:name="listing.name ?? listing.title"
 				:active="directoryStore.listingItem?.id === listing?.id"

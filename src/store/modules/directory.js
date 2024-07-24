@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { defineStore } from 'pinia'
+import { Listing } from '../../entities/index.js'
 
 export const useDirectoryStore = defineStore('directory', {
 	state: () => ({
@@ -8,19 +9,14 @@ export const useDirectoryStore = defineStore('directory', {
 	}),
 	actions: {
 		setListingItem(listingItem) {
-			// To prevent forms etc from braking we alway use a default/skeleton object
-			const listingDefault = {
-				name: '',
-				url: '',
-				summery: '',
-				status: '',
-				lastSync: '',
-			}
-			this.listingItem = { ...listingDefault, ...listingItem }
+			if (listingItem instanceof Listing) this.listingItem = listingItem
+			else this.listingItem = createListingItem(listingItem)
 			console.log('Active directory item set to ' + listingItem.id)
 		},
 		setListingList(listingList) {
-			this.listingList = listingList
+			this.listingList = listingList.map(
+				(listingItem) => createListingItem(listingItem),
+			)
 			console.log('Active directory item set to ' + listingList.length)
 		},
 		refreshListingList() {
@@ -30,7 +26,9 @@ export const useDirectoryStore = defineStore('directory', {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.listingList = data
+						this.listingList = data.results.map(
+							(listingItem) => createListingItem(listingItem),
+						)
 					})
 				})
 				.catch((err) => {
@@ -39,3 +37,21 @@ export const useDirectoryStore = defineStore('directory', {
 		},
 	},
 })
+
+const createListingItem = (listingItem) => {
+	return new Listing(
+		listingItem.id,
+		listingItem.title,
+		listingItem.summary,
+		listingItem.description,
+		listingItem.search,
+		listingItem.directory,
+		listingItem.metadata,
+		listingItem.status,
+		listingItem.lastSync,
+		listingItem.default,
+		listingItem.available,
+		listingItem._schema,
+		listingItem._id,
+	)
+}
