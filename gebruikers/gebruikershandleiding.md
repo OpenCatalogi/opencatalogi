@@ -15,7 +15,7 @@ Hieronder is een voorbeeld van een ingevulde modal voor het aanmaken van een Woo
 
 <div align="left">
 
-<figure><img src="../.gitbook/assets/image (2).png" alt="" width="371"><figcaption><p>Het eerste gedeelte - gegevens over de publicatie</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1).png" alt="" width="371"><figcaption><p>Het eerste gedeelte - gegevens over de publicatie</p></figcaption></figure>
 
  
 
@@ -35,4 +35,4 @@ Onder is een voorbeeld van een publicatie en de Actie-mogelijkheden.
 todo: toevoegen metrics aan het dashboard, voorbeeld:\
 
 
-<figure><img src="../.gitbook/assets/image (1).png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1).png" alt="" width="375"><figcaption></figcaption></figure>

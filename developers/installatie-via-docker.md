@@ -60,15 +60,25 @@ Volg deze eenvoudige stappen om de applicatie te starten:
 8.  **Schakel de OpenCatalogi-app in**
 
     * Klik op het profielicoontje rechtbovenin. Kies "Apps"
+
+    <figure><img src="../.gitbook/assets/image.png" alt="" width="375"><figcaption><p>Het profielmenu, met onder andere de appinstellingen</p></figcaption></figure>
+
     * Kies dan links "jouw apps" en zoek "OpenCatalogi" op.
+
+    <figure><img src="../.gitbook/assets/image (2).png" alt="" width="188"><figcaption><p>links het menu voor de appinstellingen</p></figcaption></figure>
+
     * Activeer de app door te klikken op inschakelen\
 
 
-    <figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
-9. **Configureer de OpenCatalogi-app**
-   * Open de OpenCatalogi-app via de navigeerbalk links bovenin het scherm. Het zal het meest rechtse icoontje zijn.
-   * Vul bij 'instellingen' -> 'configuratie' de benodigde gegevens in:
-     * Een MongoDB API met sleutel en clusternaam.
-     * Voor het activeren van het zoekendpoint: een Elasticsearch met API key en index.
+    <figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption><p>activatie van een app</p></figcaption></figure>
+9.  **Configureer de OpenCatalogi-app**
+
+    * Open de OpenCatalogi-app via de navigeerbalk links bovenin het scherm. Het zal het meest rechtse icoontje zijn.
+
+    <figure><img src="../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
+
+    * Vul bij 'instellingen' -> 'configuratie' de benodigde gegevens in:
+      * Een MongoDB API met sleutel en clusternaam.
+      * Voor het activeren van het zoekendpoint: een Elasticsearch met API key en index.
 
 En dat is het! Volg deze stappen om de OpenCatalogi-app snel en soepel op te zetten.

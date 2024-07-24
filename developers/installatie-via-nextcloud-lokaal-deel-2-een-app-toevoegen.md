@@ -35,4 +35,4 @@ In het volgende scherm, zie je aan de linkerzijde een navigatie menu. Klik op "D
 
 Zodra je klikt op "enable" verschijnt deze links bovenin, naast het Nextcloud logo. Dit zijn de shortcut-icoontjes voor de geactiveerde applicaties. Klik op het icoontje van OpenCatalogi en je zit in de app!
 
-<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt=""><figcaption></figcaption></figure>
