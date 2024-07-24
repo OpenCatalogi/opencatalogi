@@ -32,19 +32,17 @@ Volg deze eenvoudige stappen om de applicatie te starten:
    * Ga naar de [OpenCatalogi repository](https://github.com/ConductionNL/opencatalogi).
    * Klik op de groene knop “Code” en selecteer “Download ZIP”.
    * Pak het gedownloade ZIP-bestand uit naar een map op jouw computer.
-4. **Open de Command Line Interface (CLI)**
-   * Op Windows: Zoek naar “cmd” in het startmenu en open het.
-5. **Navigeer naar de Uitgepakte Map**
+4. **Navigeer naar de Uitgepakte Map**
    * klik op het `docker-setup.exe`-bestand. Dit start Docker op.&#x20;
    *   Wacht tot de applicatie is opgestart. Dit kan een 5-10 minuten duren. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
 
        ```css
        [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
        ```
-6. **Ga naar de Webpagina**
+5. **Ga naar de Webpagina**
    * Open je webbrowser en ga naar [http://localhost:8080](http://localhost:8080).
    * Maak een account aan en log in (dit werkt met admin als log **en** admin wachtwoord).
-7.  **Schakel de OpenCatalogi-app in**
+6.  **Schakel de OpenCatalogi-app in**
 
     * Klik op het profielicoontje rechtbovenin. Kies "Apps"
 
@@ -58,7 +56,7 @@ Volg deze eenvoudige stappen om de applicatie te starten:
 
 
     <figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption><p>activatie van een app</p></figcaption></figure>
-8.  **Configureer de OpenCatalogi-app**
+7.  **Configureer de OpenCatalogi-app**
 
     * Open de OpenCatalogi-app via de navigeerbalk links bovenin het scherm. Het zal het meest rechtse icoontje zijn.
 
