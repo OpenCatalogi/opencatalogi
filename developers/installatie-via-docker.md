@@ -17,8 +17,6 @@ Om alles soepel te laten draaien, heb je het volgende nodig:
 
 ### De Applicatie Draaien in een Container van Docker
 
-###
-
 **Snel Aan de Slag**
 
 Deze repository heeft een snelle start met een Docker Compose-bestand. Hiermee kun je de applicatie in één keer opstarten.
