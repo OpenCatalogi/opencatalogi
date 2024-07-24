@@ -4,35 +4,22 @@ namespace OCA\OpenCatalogi\Service;
 
 
 
-use Elastic\Elasticsearch\ClientInterface;
+use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use Symfony\Component\Uid\Uuid;
-use OCA\OpenCatalogi\Service\ElasticSearchClientAdapter;
 
 class ElasticSearchService
 {
-    private $clientAdapter;
 
-    public function __construct(ElasticSearchClientAdapter $clientAdapter)
-    {
-        $this->clientAdapter = $clientAdapter;
-    }
-
-	private function getClient(array $config): ElasticSearchClientAdapter
+	private function getClient(array $config): Client
 	{
-        if ($this->clientAdapter) {
-            return $this->clientAdapter;
-        }
-
 		$uri    = $config['location'];
 		$apiKey = explode(separator: ':', string: base64_decode(string: $config['key']));
 
-		$client = ClientBuilder::create()
+		return ClientBuilder::create()
 			->setHosts([$uri])
 			->setApiKey(apiKey: $apiKey[1],id: $apiKey[0])
 			->build();
-
-        return new ElasticSearchClientAdapter($client);
 	}
 
 
@@ -93,7 +80,7 @@ class ElasticSearchService
 		}
 
 		try {
-			$client->update(params: [
+			$client->index(params: [
 				'index' => $config['index'],
 				'id'    => $id,
 				'body'  => ['doc' => $object],
