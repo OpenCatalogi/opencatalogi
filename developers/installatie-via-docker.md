@@ -17,6 +17,8 @@ Om alles soepel te laten draaien, heb je het volgende nodig:
 
 ### De Applicatie Draaien in een Container van Docker
 
+###
+
 **Snel Aan de Slag**
 
 Deze repository heeft een snelle start met een Docker Compose-bestand. Hiermee kun je de applicatie in één keer opstarten.
@@ -35,29 +37,16 @@ Volg deze eenvoudige stappen om de applicatie te starten:
 4. **Open de Command Line Interface (CLI)**
    * Op Windows: Zoek naar “cmd” in het startmenu en open het.
 5. **Navigeer naar de Uitgepakte Map**
-   *   Typ in de CLI:
-
-       ```sh
-       cd pad/naar/uitgepakte/map
-       ```
-
-       Vervang “pad/naar/uitgepakte/map” door de locatie waar je de bestanden hebt uitgepakt.
-6. **Start de Applicatie**
-   * Zorg ervoor dat Docker Desktop-applicatie opgestart is.
-   *   Typ in de CLI (in de folder van de uitgepakte bestanden):
-
-       ```sh
-       docker compose up
-       ```
+   * klik op het `docker-setup.exe`-bestand. Dit start Docker op.&#x20;
    *   Wacht tot de applicatie is opgestart. Dit kan een 5-10 minuten duren. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
 
        ```css
        [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
        ```
-7. **Ga naar de Webpagina**
+6. **Ga naar de Webpagina**
    * Open je webbrowser en ga naar [http://localhost:8080](http://localhost:8080).
    * Maak een account aan en log in (dit werkt met admin als log **en** admin wachtwoord).
-8.  **Schakel de OpenCatalogi-app in**
+7.  **Schakel de OpenCatalogi-app in**
 
     * Klik op het profielicoontje rechtbovenin. Kies "Apps"
 
@@ -71,7 +60,7 @@ Volg deze eenvoudige stappen om de applicatie te starten:
 
 
     <figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption><p>activatie van een app</p></figcaption></figure>
-9.  **Configureer de OpenCatalogi-app**
+8.  **Configureer de OpenCatalogi-app**
 
     * Open de OpenCatalogi-app via de navigeerbalk links bovenin het scherm. Het zal het meest rechtse icoontje zijn.
 
