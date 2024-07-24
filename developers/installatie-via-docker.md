@@ -7,41 +7,68 @@ description: >-
 
 # Installatie via Demo/Test-omgeving via Docker
 
-### Wat Je Moet Weten
-
-Voordat je begint, is het handig als je een beetje bekend bent met:
-
-* Docker en Docker Compose
-* Command line interface (CLI)
-* Basisbegrip van webapplicaties en API's
-
-### Wat Je Nodig Hebt
+#### Wat Je Nodig Hebt
 
 Om alles soepel te laten draaien, heb je het volgende nodig:
 
-* Docker: [Download en installatie](https://docker.com)
-* WSL2 (Windows Subsystem for Linux) als je Windows gebruikt
-* Een systeem met minimaal 4 GB RAM en 2 CPU's
+* [**Docker:**](https://www.docker.com/products/docker-desktop/) en Docker Desktop
+* [**WSL2:**](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows Subsystem for Linux) als je Windows gebruikt. Dit kan geïnstalleerd worden via de Microsoft Store.
+* **Systeemeisen:** Minimaal 4 GB RAM en 2 CPU's
 
-### Frontend Aanpassingen
+### De Applicatie Draaien in een Container van Docker
 
-Wil je de frontend aanpassen? Bewerk dan de inhoud in de `.vue`-bestanden. Na elke wijziging moet je `npm run dev` draaien. Een handige truc is om `npm run watch` te gebruiken; dit commando houdt veranderingen in de `.vue`-bestanden in de gaten en past ze direct toe. Vergeet niet om de pagina te verversen na elke wijziging.
+**Snel Aan de Slag**
 
-### De Repository Draaien
+Deze repository heeft een snelle start met een Docker Compose-bestand. Hiermee kun je de applicatie in één keer opstarten.
 
-#### Snel Aan de Slag
+Volg deze eenvoudige stappen om de applicatie te starten:
 
-Deze repository heeft een snelle start met een Docker Compose-bestand. Hiermee kun je de applicatie in één keer opstarten. Je hebt hiervoor [Docker](https://docker.com) nodig.
+1. **Download Docker Desktop**
+   * Ga naar Docker Desktop en download het installatieprogramma voor jouw besturingssysteem (Windows of Mac).
+   * Volg de installatie-instructies en zorg ervoor dat Docker Desktop succesvol geïnstalleerd is.
+2. **Start Docker Desktop**
+   * Open Docker Desktop. Het kan een paar minuten duren voordat Docker volledig is opgestart. Wacht tot je een melding krijgt dat Docker gereed is.
+3. **Download de Repository**
+   * Ga naar de [OpenCatalogi repository](https://github.com/ConductionNL/opencatalogi).
+   * Klik op de groene knop “Code” en selecteer “Download ZIP”.
+   * Pak het gedownloade ZIP-bestand uit naar een map op jouw computer.
+4. **Open de Command Line Interface (CLI)**
+   * Op Windows: Zoek naar “cmd” in het startmenu en open het.
+5. **Navigeer naar de Uitgepakte Map**
+   *   Typ in de CLI:
 
-Volg deze stappen om de applicatie te starten:
+       ```sh
+       cd pad/naar/uitgepakte/map
+       ```
 
-1. Installeer Docker als je dat nog niet hebt gedaan.
-2. Voer in de hoofdmap van de repository het commando `docker compose up` uit.
-3. Wacht tot de Nextcloud-container aangeeft dat deze klaar is (`[core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'`), en ga dan naar [http://localhost:8080](http://localhost:8080).
-4. Maak een account aan en log in.&#x20;
-5. Schakel de OpenCatalogi-app in via het gebruikersmenu: 'apps' -> 'jouw apps' -> 'opencatalogi' -> 'inschakelen'.&#x20;
-6. Open daarna de OpenCatalogi-app via het hoofdmenu en vul bij 'instellingen' -> 'configuratie' de benodigde gegevens in:
-   * Een MongoDB API met sleutel en clusternaam
-   * Voor het activeren van het zoekendpoint: een Elasticsearch met API key en index
+       Vervang “pad/naar/uitgepakte/map” door de locatie waar je de bestanden hebt uitgepakt.
+6. **Start de Applicatie**
+   * Zorg ervoor dat Docker Desktop-applicatie opgestart is.
+   *   Typ in de CLI (in de folder van de uitgepakte bestanden):
+
+       ```sh
+       docker compose up
+       ```
+   *   Wacht tot de applicatie is opgestart. Dit kan een 5-10 minuten duren. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
+
+       ```css
+       [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+       ```
+7. **Ga naar de Webpagina**
+   * Open je webbrowser en ga naar [http://localhost:8080](http://localhost:8080).
+   * Maak een account aan en log in (dit werkt met admin als log **en** admin wachtwoord).
+8.  **Schakel de OpenCatalogi-app in**
+
+    * Klik op het profielicoontje rechtbovenin. Kies "Apps"
+    * Kies dan links "jouw apps" en zoek "OpenCatalogi" op.
+    * Activeer de app door te klikken op inschakelen\
+
+
+    <figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+9. **Configureer de OpenCatalogi-app**
+   * Open de OpenCatalogi-app via de navigeerbalk links bovenin het scherm. Het zal het meest rechtse icoontje zijn.
+   * Vul bij 'instellingen' -> 'configuratie' de benodigde gegevens in:
+     * Een MongoDB API met sleutel en clusternaam.
+     * Voor het activeren van het zoekendpoint: een Elasticsearch met API key en index.
 
 En dat is het! Volg deze stappen om de OpenCatalogi-app snel en soepel op te zetten.

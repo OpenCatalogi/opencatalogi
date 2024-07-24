@@ -35,4 +35,4 @@ Onder is een voorbeeld van een publicatie en de Actie-mogelijkheden.
 todo: toevoegen metrics aan het dashboard, voorbeeld:\
 
 
-<figure><img src="../.gitbook/assets/image.png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1).png" alt="" width="375"><figcaption></figcaption></figure>
