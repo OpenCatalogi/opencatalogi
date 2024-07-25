@@ -4,8 +4,8 @@ export type TPublication = {
     id: string
 	title: string
 	summary: string
-	reference?: string
 	description?: string
+	reference?: string
 	image?: string
 	category?: string
 	portal?: string

@@ -16,7 +16,8 @@ export class Catalogi implements TCatalogi {
 	/* istanbul ignore next */ // Jest does not recognize the code coverage of these 2 methods
 	private hydrate(data: TCatalogi) {
 		this.id = data?.id || ''
-		this.title = data?.title || ''
+		// @ts-expect-error data.name is not supposed to exist but you can still get it from the backend, so this is just backwards compatibility
+		this.title = data?.title || data?.name || ''
 		this.summary = data?.summary || ''
 		this.description = data?.description || ''
 		this.image = data?.image || ''

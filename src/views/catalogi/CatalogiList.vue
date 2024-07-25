@@ -29,10 +29,11 @@ import { catalogiStore, navigationStore, searchStore } from '../../store/store.j
 					</NcActionButton>
 				</NcActions>
 			</div>
+
 			<div v-if="!loading">
 				<NcListItem v-for="(catalogus, i) in catalogiStore.catalogiList"
 					:key="`${catalogus}${i}`"
-					:name="catalogus.name ?? catalogus.title"
+					:name="catalogus.title"
 					:active="catalogiStore.catalogiItem?.id === catalogus?.id"
 					:details="'1h'"
 					:counter-number="44"

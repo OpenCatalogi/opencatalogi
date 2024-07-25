@@ -1,13 +1,12 @@
 <script setup>
 import { catalogiStore, navigationStore } from '../../store/store.js'
-import { Catalogi } from '../../entities/index.js'
 </script>
 
 <template>
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ catalogi.name }}
+				{{ catalogi.title }}
 			</h1>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
@@ -76,26 +75,38 @@ export default {
 	},
 	data() {
 		return {
-
 			catalogi: false,
 			loading: false,
+			upToDate: false,
 		}
 	},
 	watch: {
 		catalogiItem: {
-			handler(catalogiItem) {
-				this.catalogi = catalogiItem
-				this.fetchData(catalogiItem._id)
+			handler(newCatalogiItem, oldCatalogiItem) {
+				// why this? because when you fetch a new item it changes the reference to said item, which in return causes it to fetch again (a.k.a. infinite loop)
+				// run the fetch only once to update the item
+				if (!this.upToDate || JSON.stringify(newCatalogiItem) !== JSON.stringify(oldCatalogiItem)) {
+					this.catalogi = newCatalogiItem
+					this.fetchData(newCatalogiItem.id)
+					this.upToDate = true
+				}
+				// if item changed run fetch again (this also runs the top 👆 one again)
+				// if (JSON.stringify(newCatalogiItem) !== JSON.stringify(oldCatalogiItem)) {
+				// 	this.catalogi = newCatalogiItem
+				// 	this.fetchData(newCatalogiItem.id)
+				// 	this.upToDate = false
+				// }
 			},
 			deep: true,
 		},
 	},
 	mounted() {
 		this.catalogi = catalogiStore.catalogiItem
-		this.fetchData(catalogiStore.catalogiItem._id)
+		this.fetchData(catalogiStore.catalogiItem.id)
 	},
 	methods: {
 		fetchData(catalogId) {
+            console.log('[FETCH DATA]')
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/catalogi/${catalogId}`,
@@ -105,13 +116,8 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.catalogi = new Catalogi(
-							data.id,
-							data.name,
-							data.summary,
-							data._schema,
-							data._id,
-						)
+						catalogiStore.setCatalogiItem(data)
+						this.catalogi = catalogiStore.catalogiItem
 					})
 					this.loading = false
 				})
