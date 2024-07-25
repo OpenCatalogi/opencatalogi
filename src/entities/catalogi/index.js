@@ -1,1 +1,1 @@
-export * from './catalogi.js'
+export * from './catalogi.ts'

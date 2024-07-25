@@ -3,6 +3,7 @@
 "editor.defaultFormatter": "dbaeumer.vscode-eslint",
 "editor.formatOnSave": true,
 "cSpell.words": [
+    "nextcloud",
     "opencatalogi",
     "pinia"
 ]
