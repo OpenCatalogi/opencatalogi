@@ -11,53 +11,73 @@ describe('Catalogi Store', () => {
 
 	it('sets catalogi item correctly', () => {
 		const store = useCatalogiStore()
-		const catalogiItem = {
-			id: '1',
-			name: 'Test Catalogi',
-			summary: 'This is a test catalogi',
-			_schema: 'Test Schema',
-			_id: 'Test ID',
-		}
 
-		store.setCatalogiItem(catalogiItem)
+		store.setCatalogiItem(testData[0])
 
 		expect(store.catalogiItem).toBeInstanceOf(Catalogi)
-		expect(store.catalogiItem.id).toBe(catalogiItem.id)
-		expect(store.catalogiItem.name).toBe(catalogiItem.name)
-		expect(store.catalogiItem.summary).toBe(catalogiItem.summary)
-		expect(store.catalogiItem._schema).toBe(catalogiItem._schema)
-		expect(store.catalogiItem._id).toBe(catalogiItem._id)
+		expect(store.catalogiItem).toEqual(testData[0])
+
+		expect(store.catalogiItem.validate()).toBe(true)
 	})
 
 	it('sets catalogi list correctly', () => {
 		const store = useCatalogiStore()
-		const catalogiList = [
-			{
-				id: '1',
-				name: 'Test Catalogi 1',
-				summary: 'This is test catalogi 1',
-				_schema: 'Test Schema 1',
-				_id: 'Test ID 1',
-			},
-			{
-				id: '2',
-				name: 'Test Catalogi 2',
-				summary: 'This is test catalogi 2',
-				_schema: 'Test Schema 2',
-				_id: 'Test ID 2',
-			},
-		]
 
-		store.setCatalogiList(catalogiList)
+		store.setCatalogiList(testData)
 
-		expect(store.catalogiList).toHaveLength(catalogiList.length)
-		store.catalogiList.forEach((item, index) => {
-			expect(item).toBeInstanceOf(Catalogi)
-			expect(item.id).toBe(catalogiList[index].id)
-			expect(item.name).toBe(catalogiList[index].name)
-			expect(item.summary).toBe(catalogiList[index].summary)
-			expect(item._schema).toBe(catalogiList[index]._schema)
-			expect(item._id).toBe(catalogiList[index]._id)
-		})
+		expect(store.catalogiList).toHaveLength(testData.length)
+
+		// list item 1
+		expect(store.catalogiList[0]).toBeInstanceOf(Catalogi)
+		expect(store.catalogiList[0]).toEqual(testData[0])
+
+		expect(store.catalogiList[0].validate()).toBe(true)
+
+		// list item 2
+		expect(store.catalogiList[1]).toBeInstanceOf(Catalogi)
+		expect(store.catalogiList[1].id).toBe(testData[1].id)
+		expect(store.catalogiList[1].title).toBe(testData[1].title)
+		expect(store.catalogiList[1].summary).toBe(testData[1].summary)
+		expect(store.catalogiList[1].description).toBe(testData[1].description)
+		expect(store.catalogiList[1].image).toBe('')
+		expect(store.catalogiList[1].search).toBe('')
+
+		expect(store.catalogiList[1].validate()).toBe(true)
+
+		// list item 3
+		expect(store.catalogiList[2]).toBeInstanceOf(Catalogi)
+		expect(store.catalogiList[2].id).toBe(testData[2].id)
+		expect(store.catalogiList[2].title).toBe('')
+		expect(store.catalogiList[2].summary).toBe(testData[2].summary)
+		expect(store.catalogiList[2].description).toBe(testData[2].description)
+		expect(store.catalogiList[2].image).toBe(testData[2].image)
+		expect(store.catalogiList[2].search).toBe(testData[2].search)
+
+		expect(store.catalogiList[2].validate()).toBe(false) // id, title and summary are required, causing a falsy result
 	})
 })
+
+const testData = [
+	{
+		id: '1',
+		title: 'Decat',
+		summary: 'a short form summary',
+		description: 'a really really long description about this catalogus',
+		image: 'string',
+		search: 'string',
+	},
+	{
+		id: '2',
+		title: 'Woo',
+		summary: 'a short form summary',
+		description: 'a really really long description about this catalogus',
+	},
+	{
+		id: '3',
+		title: '',
+		summary: 'a short form summary',
+		description: 'a really really long description about this catalogus',
+		image: 'string',
+		search: 'string',
+	},
+]

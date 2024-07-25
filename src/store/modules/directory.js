@@ -9,19 +9,12 @@ export const useDirectoryStore = defineStore('directory', {
 	}),
 	actions: {
 		setListingItem(listingItem) {
-			// To prevent forms etc from braking we alway use a default/skeleton object
-			const listingDefault = {
-				title: '',
-				summary: '',
-				status: '',
-				lastSync: '',
-			}
-			this.listingItem = { ...listingDefault, ...listingItem }
+			this.listingItem = new Listing(listingItem)
 			console.log('Active directory item set to ' + listingItem.id)
 		},
 		setListingList(listingList) {
 			this.listingList = listingList.map(
-				(listingItem) => createListingItem(listingItem),
+				(listingItem) => new Listing(listingItem),
 			)
 			console.log('Active directory item set to ' + listingList.length)
 		},
@@ -33,7 +26,7 @@ export const useDirectoryStore = defineStore('directory', {
 				.then((response) => {
 					response.json().then((data) => {
 						this.listingList = data.results.map(
-							(listingItem) => createListingItem(listingItem),
+							(listingItem) => new Listing(listingItem),
 						)
 					})
 				})
@@ -43,21 +36,3 @@ export const useDirectoryStore = defineStore('directory', {
 		},
 	},
 })
-
-const createListingItem = (listingItem) => {
-	return new Listing(
-		listingItem.id,
-		listingItem.title,
-		listingItem.summary,
-		listingItem.description,
-		listingItem.search,
-		listingItem.directory,
-		listingItem.metadata,
-		listingItem.status,
-		listingItem.lastSync,
-		listingItem.default,
-		listingItem.available,
-		listingItem._schema,
-		listingItem._id,
-	)
-}

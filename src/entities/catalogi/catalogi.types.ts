@@ -1,8 +1,8 @@
 export type TCatalogi = {
     id: string
-    name: string
+    title: string
     summary: string
-    description: string
-    image: string
-    search: string
+    description?: string
+    image?: string
+    search?: string
 }
