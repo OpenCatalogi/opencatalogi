@@ -90,13 +90,6 @@ export default {
 					this.fetchData(newCatalogiItem.id)
 					this.upToDate = true
 				}
-				// if item changed run fetch again (this also runs the top 👆 one again)
-				// if (JSON.stringify(newCatalogiItem) !== JSON.stringify(oldCatalogiItem)) {
-				// 	this.catalogi = newCatalogiItem
-				// 	this.fetchData(newCatalogiItem.id)
-				// 	this.upToDate = false
-				// }
-			},
 			deep: true,
 		},
 	},
