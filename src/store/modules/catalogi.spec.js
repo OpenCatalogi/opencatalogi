@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { setActivePinia, createPinia } from 'pinia'
+
 import { useCatalogiStore } from './catalogi.js'
 import { Catalogi } from '../../entities/index.js'
 

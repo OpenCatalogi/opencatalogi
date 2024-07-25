@@ -13,13 +13,13 @@ export const useMetadataStore = defineStore('metadata', {
 			const metaDataDefault = {
 				name: '',
 				version: '',
-				summery: '',
+				summary: '',
 				description: '',
 				properties: {},
 			}
 			this.metaDataItem = { ...metaDataDefault, ...metaDataItem }
 
-			// for backward compatablity
+			// for backward compatibility
 			if (typeof this.metaDataItem.properties === 'string') {
 				this.metaDataItem.properties = JSON.parse(this.metaDataItem.properties)
 			}
@@ -56,16 +56,16 @@ export const useMetadataStore = defineStore('metadata', {
 			const defaultKeys = {
 				type: '',
 				description: '',
+				format: '',
+				maxDate: '',
 				required: false,
 				default: false,
-				format: '',
-				$ref: '',
+				$ref: '', // $ref should probably be removed as it is not mentioned in the schema
 				cascadeDelete: false,
-				maxDate: '',
 				exclusiveMinimum: 0,
 			}
 
-			const propertyKeys = JSON.parse(this.metaDataItem.properties)[property]
+			const propertyKeys = this.metaDataItem.properties[property]
 
 			return { ...defaultKeys, ...propertyKeys }
 		},

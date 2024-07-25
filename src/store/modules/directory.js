@@ -9,8 +9,14 @@ export const useDirectoryStore = defineStore('directory', {
 	}),
 	actions: {
 		setListingItem(listingItem) {
-			if (listingItem instanceof Listing) this.listingItem = listingItem
-			else this.listingItem = createListingItem(listingItem)
+			// To prevent forms etc from braking we alway use a default/skeleton object
+			const listingDefault = {
+				title: '',
+				summary: '',
+				status: '',
+				lastSync: '',
+			}
+			this.listingItem = { ...listingDefault, ...listingItem }
 			console.log('Active directory item set to ' + listingItem.id)
 		},
 		setListingList(listingList) {
