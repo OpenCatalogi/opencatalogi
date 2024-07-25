@@ -1,9 +1,9 @@
 <script setup>
-import { store } from '../../store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'addCatalog'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'addCatalog'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -65,7 +65,7 @@ export default {
 	},
 	methods: {
 		closeModal() {
-			store.modal = false
+			navigationStore.modal = false
 		},
 		addCatalog() {
 			this.loading = true
@@ -87,15 +87,15 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshCatalogiList()
+					catalogiStore.refreshCatalogiList()
 					response.json().then((data) => {
-						store.setCatalogiItem(data)
+						catalogiStore.setCatalogiItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setModal(false)
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

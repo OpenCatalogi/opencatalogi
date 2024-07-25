@@ -1,9 +1,9 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'EditAttachment'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'EditAttachment'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bijlage bewerken</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -16,28 +16,28 @@ import { store } from '../../store.js'
 				<NcTextField :disabled="loading"
 					label="Titel"
 					maxlength="255"
-					:value.sync="store.attachmentItem.title"
+					:value.sync="publicationStore.attachmentItem.title"
 					required />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
-					:value.sync="store.attachmentItem.summary" />
+					:value.sync="publicationStore.attachmentItem.summary" />
 				<NcTextArea :disabled="loading"
 					label="Beschrijving"
 					maxlength="255"
-					:value.sync="store.attachmentItem.description" />
+					:value.sync="publicationStore.attachmentItem.description" />
 				<NcTextField :disabled="loading"
 					label="Toegangs url"
 					maxlength="255"
-					:value.sync="store.attachmentItem.accessURL" />
+					:value.sync="publicationStore.attachmentItem.accessURL" />
 				<NcTextField :disabled="loading"
 					label="Download URL"
 					maxlength="255"
-					:value.sync="store.attachmentItem.downloadURL" />
+					:value.sync="publicationStore.attachmentItem.downloadURL" />
 			</div>
 			<NcButton
 				v-if="!succes"
-				:disabled="!store.attachmentItem.title || loading"
+				:disabled="!publicationStore.attachmentItem.title || loading"
 				type="primary"
 				@click="editAttachment()">
 				<template #icon>
@@ -68,44 +68,42 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
 		}
 	},
 	methods: {
-		closeModal() {
-			store.modal = false
-		},
 		editAttachment() {
 			this.loading = true
 			this.error = false
 			fetch(
-				`/index.php/apps/opencatalogi/api/attachments/${store.attachmentItem.id}`,
+				`/index.php/apps/opencatalogi/api/attachments/${publicationStore.attachmentItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.attachmentItem),
+					body: JSON.stringify(publicationStore.attachmentItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					if (store.publicationItem?.id) {
-						store.getPublicationAttachments(store.publicationItem.id)
+					if (publicationStore.publicationItem?.id) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
 						// @todo update the publication item
 					}
 					response.json().then((data) => {
-						store.setAttachmentItem(data)
+						publicationStore.setAttachmentItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setModal(false)
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

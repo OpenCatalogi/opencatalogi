@@ -1,5 +1,6 @@
 <script setup>
-import { store } from '../../store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
+import { Catalogi } from '../../entities/index.js'
 </script>
 
 <template>
@@ -17,7 +18,7 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('editCatalog')">
+				<NcActionButton @click="navigationStore.setModal('editCatalog')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
@@ -37,10 +38,10 @@ import { store } from '../../store.js'
 				<BTab title="Eigenschappen" active>
 					adsa
 				</BTab>
-				<BTab title="Toegang" active>
+				<BTab title="Toegang">
 					Publiek of alleen bepaalde rollen
 				</BTab>
-				<BTab title="Metadata" active>
+				<BTab title="Metadata">
 					adsa
 				</BTab>
 			</BTabs>
@@ -75,6 +76,7 @@ export default {
 	},
 	data() {
 		return {
+
 			catalogi: false,
 			loading: false,
 		}
@@ -89,8 +91,8 @@ export default {
 		},
 	},
 	mounted() {
-		this.catalogi = store.catalogiItem
-		this.fetchData(store.catalogiItem._id)
+		this.catalogi = catalogiStore.catalogiItem
+		this.fetchData(catalogiStore.catalogiItem._id)
 	},
 	methods: {
 		fetchData(catalogId) {
@@ -103,7 +105,13 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.catalogi = data
+						this.catalogi = new Catalogi(
+							data.id,
+							data.name,
+							data.summary,
+							data._schema,
+							data._id,
+						)
 					})
 					this.loading = false
 				})

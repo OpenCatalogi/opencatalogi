@@ -1,10 +1,10 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'viewLog'"
+		v-if="navigationStore.dialog === 'viewLog'"
 		name="Bekijk log regel"
 		:can-close="false">
 		<table width="100%">
@@ -33,7 +33,7 @@ import { store } from '../../store.js'
 			</tr>
 		</table>
 		<template #actions>
-			<NcButton :disabled="loading" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -58,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 		}
 	},

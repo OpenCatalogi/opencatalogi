@@ -1,11 +1,11 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'addMetadataDataModal'"
+		v-if="navigationStore.modal === 'addMetadataDataModal'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap toevoegen</h2>
 			<NcNoteCard v-if="success" type="success">
@@ -76,7 +76,7 @@ import { store } from '../../store.js'
 
 			<NcButton v-if="success"
 				type="primary"
-				@click="store.setModal(false)">
+				@click="navigationStore.setModal(false)">
 				Sluiten
 			</NcButton>
 		</div>
@@ -110,6 +110,7 @@ export default {
 	},
 	data() {
 		return {
+
 			propertyName: '',
 			properties: {
 				type: '',
@@ -138,30 +139,27 @@ export default {
 		}
 	},
 	methods: {
-		closeModal() {
-			store.modal = false
-		},
 		AddMetadata() {
-			store.metaDataItem.properties[this.propertyName] = this.properties
+			metadataStore.metaDataItem.properties[this.propertyName] = this.properties
 
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.metaDataItem),
+					body: JSON.stringify(metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.success = true
 					// Lets refresh the catalogiList
-					store.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
 					setTimeout(() => {
 						// lets reset
@@ -176,7 +174,7 @@ export default {
 							cascadeDelete: false,
 							exclusiveMinimum: '',
 						}
-						this.closeModal()
+						navigationStore.setModal(false)
 					    this.success = false
 					}, 2000)
 				})

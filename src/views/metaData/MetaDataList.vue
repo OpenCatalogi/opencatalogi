@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, searchStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,11 +7,11 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="store.search"
+					:value.sync="searchStore.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="store.setSearch('')">
+					@trailing-button-click="searchStore.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('addMetaData')">
+					<NcActionButton @click="navigationStore.setModal('addMetaData')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -31,15 +31,15 @@ import { store } from '../../store.js'
 			</div>
 
 			<div v-if="!loading">
-				<NcListItem v-for="(metaData, i) in store.metaDataList.results"
+				<NcListItem v-for="(metaData, i) in metadataStore.metaDataList.results"
 					:key="`${metaData}${i}`"
 					:name="metaData.title ?? metaData.name"
-					:active="store.metaDataItem?._id === metaData?._id"
+					:active="metadataStore.metaDataItem?._id === metaData?._id"
 					:details="metaData.version ?? 'Onbekend'"
 					:force-display-actions="true"
-					@click="store.setMetaDataItem(metaData)">
+					@click="metadataStore.setMetaDataItem(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataItem?._id === metaData?.id && 'selectedIcon'"
+						<FileTreeOutline :class="metadataStore.metaDataItem?._id === metaData?.id && 'selectedIcon'"
 							disable-menu
 							:size="44" />
 					</template>
@@ -47,19 +47,19 @@ import { store } from '../../store.js'
 						{{ metaData.summery }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="store.setMetaDataItem(metaData); store.setModal('editMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setModal('editMetaData')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="store.setMetaDataItem(metaData); store.setDialog('copyMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setDialog('copyMetaData')">
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
 							Kopieren
 						</NcActionButton>
-						<NcActionButton @click="store.setMetaDataItem(metaData); store.setDialog('deleteMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setDialog('deleteMetaData')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -117,6 +117,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: true,
 		}
 	},
@@ -133,7 +134,7 @@ export default {
 	methods: {
 		fetchData(newPage) {
 			this.loading = true
-			store.refreshMetaDataList()
+			metadataStore.refreshMetaDataList()
 			this.loading = false
 		},
 	},

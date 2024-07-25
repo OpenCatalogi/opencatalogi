@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcAppContent>
 		<template #list>
-			<PublicationList :search="store.search" />
+			<PublicationList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.publicationItem.id || store.selected != 'publication'"
+			<NcEmptyContent v-if="!publicationStore.publicationItem.id || navigationStore.selected != 'publication'"
 				class="detailContainer"
 				name="Geen publicatie"
 				description="Nog geen publicatie geselecteerd">
@@ -16,12 +16,12 @@ import { store } from '../../store.js'
 					<ListBoxOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="store.setModal('publicationAdd')">
+					<NcButton type="primary" @click="navigationStore.setModal('publicationAdd')">
 						Publicatie toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<PublicationDetails v-if="store.publicationItem.id && store.selected === 'publication'" :publication-id="store.publicationItem.id " />
+			<PublicationDetails v-if="publicationStore.publicationItem.id && navigationStore.selected === 'publication'" :publication-id="publicationStore.publicationItem.id " />
 		</template>
 	</NcAppContent>
 </template>
@@ -41,6 +41,11 @@ export default {
 		PublicationList,
 		PublicationDetails,
 		NcButton,
+	},
+	data() {
+		return {
+
+		}
 	},
 }
 </script>
