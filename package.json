@@ -57,7 +57,7 @@
     "stylelint-webpack-plugin": "^5.0.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
-    "vue-jest": "^3.0.7"
+    "vue-jest": "^3.0.7",
     "stylelint-webpack-plugin": "^5.0.1"
   }
 }

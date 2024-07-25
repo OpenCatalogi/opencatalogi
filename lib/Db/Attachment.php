@@ -3,9 +3,10 @@
 namespace OCA\OpenCatalogi\Db;
 
 use DateTime;
+use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
 
-class Attachment extends Entity
+class Attachment extends Entity implements JsonSerializable
 {
 
 	protected ?string $reference    = null;
@@ -52,7 +53,7 @@ class Attachment extends Entity
 		foreach($object as $key => $value) {
 			$method = 'set'.ucfirst($key);
 
-//			var_dump($method);
+			var_dump($method);
 //			if(method_exists(object_or_class: $this, method: $method) === false) {
 //				continue;
 //			}

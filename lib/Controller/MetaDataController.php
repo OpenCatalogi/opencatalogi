@@ -46,7 +46,9 @@ class MetaDataController extends Controller
      */
 	public function index(ObjectService $objectService): JSONResponse
 	{
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->metaDataMapper->findAll());
 		}
 
@@ -78,7 +80,9 @@ class MetaDataController extends Controller
 	 */
 	public function show(string $id, ObjectService $objectService): JSONResponse
 	{
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->metaDataMapper->find(id: $id));
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
@@ -108,7 +112,9 @@ class MetaDataController extends Controller
 			}
 		}
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->metaDataMapper->createFromArray(object: $data));
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
@@ -143,7 +149,9 @@ class MetaDataController extends Controller
 			unset( $data['id']);
 		}
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->metaDataMapper->updateFromArray(id: $id, object: $data));
 		}
 
@@ -169,7 +177,9 @@ class MetaDataController extends Controller
 	 */
 	public function destroy(string $id, ObjectService $objectService): JSONResponse
 	{
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			$this->metaDataMapper->delete($this->metaDataMapper->find($id));
 
 			return new JSONResponse([]);

@@ -17,7 +17,7 @@ class Listing extends Entity implements JsonSerializable
 	protected ?string $directory   = null;
 	protected ?string $metadata    = null;
 	protected ?string $status	   = null;
-	protected ?string $lastSync    = null;
+	protected ?DateTime $lastSync    = null;
 	protected bool    $default	   = false;
 	protected bool    $available   = false;
 
@@ -42,7 +42,7 @@ class Listing extends Entity implements JsonSerializable
 			try {
 				$this->$method($value);
 			} catch (\Exception $exception) {
-
+				var_dump("Erroring writing $key");
 			}
 		}
 

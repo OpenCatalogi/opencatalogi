@@ -37,7 +37,9 @@ class CatalogiController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->catalogMapper->findAll());
 		}
         try {
@@ -71,7 +73,9 @@ class CatalogiController extends Controller
      */
     public function show(string $id, ObjectService $objectService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->catalogMapper->find(id: $id));
 		}
 
@@ -105,7 +109,9 @@ class CatalogiController extends Controller
 				unset($data[$key]);
 			}
 		}
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->catalogMapper->createFromArray(object: $data));
 		}
 
@@ -143,7 +149,9 @@ class CatalogiController extends Controller
 			unset($data['id']);
 		}
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->catalogMapper->updateFromArray(id: $id, object: $data));
 		}
 
@@ -169,7 +177,9 @@ class CatalogiController extends Controller
      */
     public function destroy(string $id, ObjectService $objectService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			$this->catalogMapper->delete($this->catalogMapper->find($id));
 
 			return new JSONResponse([]);

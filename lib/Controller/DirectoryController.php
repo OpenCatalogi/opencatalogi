@@ -77,7 +77,9 @@ class DirectoryController extends Controller
 	 */
 	public function index(ObjectService $objectService): JSONResponse
 	{
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->listingMapper->findAll());
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
@@ -108,7 +110,9 @@ class DirectoryController extends Controller
 	 */
 	public function show(string $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
 	{
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->listingMapper->find(id: $id));
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
@@ -138,7 +142,9 @@ class DirectoryController extends Controller
 			}
 		}
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->listingMapper->createFromArray(object: $data));
 		}
 
@@ -178,7 +184,9 @@ class DirectoryController extends Controller
 		}
 
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->listingMapper->updateFromArray(id: $id, object: $data));
 		}
 
@@ -204,7 +212,9 @@ class DirectoryController extends Controller
 	 */
 	public function destroy(string $id, ObjectService $objectService): JSONResponse
 	{
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			$this->listingMapper->delete($this->listingMapper->find($id));
 
 			return new JSONResponse([]);

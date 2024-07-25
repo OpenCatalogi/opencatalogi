@@ -112,7 +112,9 @@ class PublicationsController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->publicationMapper->findAll());
 		}
 
@@ -144,7 +146,9 @@ class PublicationsController extends Controller
      */
     public function show(string $id, ObjectService $objectService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->publicationMapper->find($id));
 		}
 
@@ -174,7 +178,9 @@ class PublicationsController extends Controller
 			}
 		}
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			$returnData = $this->publicationMapper->createFromArray($data);
 			$returnData = $returnData->jsonSerialize();
 			$dbConfig = [];
@@ -229,7 +235,9 @@ class PublicationsController extends Controller
 			unset( $data['id']);
 		}
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			$returnData = $this->publicationMapper->updateFromArray(id: $id, object: $data);
 			$returnData = $returnData->jsonSerialize();
 
@@ -276,7 +284,9 @@ class PublicationsController extends Controller
      */
     public function destroy(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			$this->publicationMapper->delete($this->publicationMapper->find($id));
 
 			$returnData = [];

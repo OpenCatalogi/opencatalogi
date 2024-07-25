@@ -109,7 +109,7 @@ class Version6Date20240725114845 extends SimpleMigrationStep {
 			$table->addColumn(name: 'status', typeName: TYPES::STRING, options: [
 				'notnull' => false,
 			]);
-			$table->addColumn(name: 'lastSync', typeName: TYPES::DATETIME, options: [
+			$table->addColumn(name: 'last_sync', typeName: TYPES::DATETIME, options: [
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'default', typeName: TYPES::BOOLEAN, options: [
@@ -211,11 +211,9 @@ class Version6Date20240725114845 extends SimpleMigrationStep {
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'anonymization', typeName: TYPES::JSON, options: [
-				'default' => [],
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'language', typeName: TYPES::JSON, options: [
-				'default' => [],
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'published', typeName: TYPES::DATETIME, options: [

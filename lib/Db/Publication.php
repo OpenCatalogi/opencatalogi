@@ -21,16 +21,16 @@ class Publication extends Entity implements JsonSerializable
 	protected ?DateTime $publicationDate = null;
 	protected ?DateTime $modified        = null;
 	protected ?string $featured          = null;
-	protected ?array $organization        = [];
-	protected ?array $data                = [];
-	protected ?array $attachments         = [];
-	protected int $attachmentCount      = 0;
+	protected ?array $organization       = [];
+	protected ?array $data               = [];
+	protected ?array $attachments        = [];
+	protected int $attachmentCount       = 0;
 	protected ?string $schema            = null;
 	protected ?string $status            = null;
 	protected ?string $license           = null;
-	protected ?array $themes              = [];
-	protected ?array $anonymization       = [];
-	protected ?array $languageObject      = [];
+	protected ?array $themes             = [];
+	protected ?array $anonymization      = [];
+	protected ?array $languageObject     = [];
 
 	public function __construct() {
 		$this->addType(fieldName: 'title', type: 'string');

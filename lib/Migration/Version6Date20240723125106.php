@@ -97,15 +97,12 @@ class Version6Date20240723125106 extends SimpleMigrationStep {
 			$table->addColumn(name: 'status', typeName: TYPES::STRING);
 			$table->addColumn(name: 'license', typeName: TYPES::STRING);
 			$table->addColumn(name: 'themes', typeName: TYPES::JSON, options: [
-				'default' => [],
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'anonymization', typeName: TYPES::JSON, options: [
-				'default' => [],
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'language_object', typeName: TYPES::JSON, options: [
-				'default' => [],
 				'notnull' => false,
 			]);
 

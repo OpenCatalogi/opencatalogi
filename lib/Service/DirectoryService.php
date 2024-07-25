@@ -17,7 +17,6 @@ class DirectoryService
 		private readonly ObjectService $objectService,
 	)
 	{
-        $this->config = $config;
 		$this->client = new Client([]);
 	}
 

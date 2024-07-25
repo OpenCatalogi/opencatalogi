@@ -91,7 +91,9 @@ class AttachmentsController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->attachmentMapper->findAll());
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
@@ -122,7 +124,9 @@ class AttachmentsController extends Controller
      */
     public function show(string $id, ObjectService $objectService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->attachmentMapper->find(id: $id));
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
@@ -152,7 +156,9 @@ class AttachmentsController extends Controller
 			}
 		}
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->attachmentMapper->createFromArray(object: $data));
 		}
 
@@ -188,7 +194,9 @@ class AttachmentsController extends Controller
 			unset( $data['id']);
 		}
 
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			return new JSONResponse($this->attachmentMapper->updateFromArray(id: $id, object: $data));
 		}
 
@@ -215,7 +223,9 @@ class AttachmentsController extends Controller
      */
     public function destroy(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		if(true) {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
 			$this->attachmentMapper->delete($this->attachmentMapper->find($id));
 
 			return new JSONResponse([]);
