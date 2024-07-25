@@ -90,6 +90,7 @@ export default {
 					this.fetchData(newCatalogiItem.id)
 					this.upToDate = true
 				}
+			},
 			deep: true,
 		},
 	},
@@ -99,7 +100,6 @@ export default {
 	},
 	methods: {
 		fetchData(catalogId) {
-            console.log('[FETCH DATA]')
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/catalogi/${catalogId}`,
