@@ -3,6 +3,7 @@
 namespace OCA\OpenCatalogi\Controller;
 
 use GuzzleHttp\Exception\GuzzleException;
+use OCA\OpenCatalogi\Db\AttachmentMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
@@ -19,7 +20,8 @@ class AttachmentsController extends Controller
 	(
 		$appName,
 		IRequest $request,
-		private readonly IAppConfig $config
+		private readonly IAppConfig $config,
+		private readonly AttachmentMapper $attachmentMapper
 	)
     {
         parent::__construct($appName, $request);
@@ -89,6 +91,9 @@ class AttachmentsController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
+		if(true) {
+			return new JSONResponse($this->attachmentMapper->findAll());
+		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -117,6 +122,9 @@ class AttachmentsController extends Controller
      */
     public function show(string $id, ObjectService $objectService): JSONResponse
     {
+		if(true) {
+			return new JSONResponse($this->attachmentMapper->find(id: $id));
+		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -135,9 +143,6 @@ class AttachmentsController extends Controller
      */
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$data = $this->request->getParams();
 
@@ -146,6 +151,14 @@ class AttachmentsController extends Controller
 				unset($data[$key]);
 			}
 		}
+
+		if(true) {
+			return new JSONResponse($this->attachmentMapper->createFromArray(object: $data));
+		}
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$data['_schema'] = 'attachment';
 
@@ -164,10 +177,6 @@ class AttachmentsController extends Controller
      */
     public function update(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
 		$data = $this->request->getParams();
 
 		foreach($data as $key => $value) {
@@ -178,6 +187,16 @@ class AttachmentsController extends Controller
 		if (isset($data['id'])) {
 			unset( $data['id']);
 		}
+
+		if(true) {
+			return new JSONResponse($this->attachmentMapper->updateFromArray(id: $id, object: $data));
+		}
+
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
 
 		$filters['_id'] = $id;
 		$returnData = $objectService->updateObject(
@@ -196,6 +215,12 @@ class AttachmentsController extends Controller
      */
     public function destroy(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
+		if(true) {
+			$this->attachmentMapper->delete($this->attachmentMapper->find($id));
+
+			return new JSONResponse([]);
+		}
+
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
