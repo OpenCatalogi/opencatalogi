@@ -63,8 +63,11 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<p>
 						Here you can set the details for varius Connections
 					</p>
-					<NcCheckboxRadioSwitch :checked.sync="configuration.external" type="switch">
-						{{ t('forms', 'Enable sharing') }}
+					<NcCheckboxRadioSwitch :checked.sync="configuration.mongoStorage" type="switch">
+						{{ t('forms', 'Use external storage (e.g. MongoDb) instead of Next Cloud internal storage') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch :checked.sync="configuration.cloudStorage" type="switch">
+						{{ t('forms', 'Use VNG APIs instead of MongoDB') }}
 					</NcCheckboxRadioSwitch>
 					<p>
 						<table>
