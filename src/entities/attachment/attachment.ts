@@ -93,9 +93,9 @@ export class Attachment implements TAttachment {
 			id: this.id,
 			title: this.title,
 			description: this.description,
-			version: this.version,
-			required: this.required,
-			properties: this.properties,
+			// version: this.version,
+			// required: this.required,
+			// properties: this.properties,
 		})
 
 		return result.success
