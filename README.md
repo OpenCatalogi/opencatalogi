@@ -6,7 +6,7 @@ description: >-
 coverY: 0
 ---
 
-https://conduction.gitbook.io/opencatalogi-nextcloud
+Kijk vooral eerst rond op onze Gitbook: https://conduction.gitbook.io/opencatalogi-nextcloud 
 
 
 # Welkom
