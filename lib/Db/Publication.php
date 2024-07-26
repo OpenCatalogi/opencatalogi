@@ -72,6 +72,11 @@ class Publication extends Entity implements JsonSerializable
 			$this->$method($value);
 		}
 
+		$this->setAttachmentCount(0);
+		if($this->attachments !== null) {
+			$this->setAttachmentCount(count($this->getAttachments()));
+		}
+
 		return $this;
 	}
 
@@ -94,7 +99,7 @@ class Publication extends Entity implements JsonSerializable
 			'organization' => $this->organization,
 			'data' => $this->data,
 			'attachments' => $this->attachments,
-			'attachment_count' => $this->attachmentCount,
+			'attachmentCount' => $this->attachmentCount,
 			'schema' => $this->schema,
 			'status' => $this->status,
 			'license' => $this->license,
