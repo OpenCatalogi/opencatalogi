@@ -390,9 +390,9 @@ export default {
 				})
 		},
 		switchCatalogus(catalogus) {
-			if (catalogus._id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
+			if (catalogus.id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
 			navigationStore.setSelected('publication')
-			navigationStore.setSelectedCatalogus(catalogus._id)
+			navigationStore.setSelectedCatalogus(catalogus.id)
 			catalogiStore.setCatalogiItem(catalogus)
 		},
 	},

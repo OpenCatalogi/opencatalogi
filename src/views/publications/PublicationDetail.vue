@@ -164,7 +164,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							:name="key"
 							:bold="false"
 							:force-display-actions="true"
-							@click=" publicationStore.setPublicationDataKey(key)
+							@click="publicationStore.setPublicationDataKey(key)
 							">
 							<template #icon>
 								<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
@@ -379,14 +379,13 @@ export default {
 		ArchivePlusOutline,
 	},
 	props: {
-		publicationId: {
+		publicationItem: {
 			type: String,
 			required: true,
 		},
 	},
 	data() {
 		return {
-
 			publication: [],
 			catalogi: [],
 			metadata: [],
@@ -415,15 +414,18 @@ export default {
 					data: [0, 0, 0, 0, 0, 0, 15],
 				}],
 			},
+			upToDate: false,
 		}
 	},
 	watch: {
-		publicationId: {
-			handler(publicationId) {
-				this.publication = publicationStore.publicationItem
-				this.fetchCatalogi(publicationStore.publicationItem.catalogi)
-				this.fetchMetaData(publicationStore.publicationItem.metaData)
-				this.fetchData(publicationStore.publicationItem.id)
+		publicationItem: {
+			handler(newPublicationItem, oldPublicationItem) {
+				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
+					this.publication = publicationStore.publicationItem
+					this.fetchCatalogi(publicationStore.publicationItem.catalogi)
+					this.fetchMetaData(publicationStore.publicationItem.metaData)
+					this.fetchData(publicationStore.publicationItem.id)
+				}
 			},
 			deep: true,
 		},
@@ -501,7 +503,7 @@ export default {
 		},
 		editPublicationDataItem(key) {
 			publicationStore.setPublicationDataKey(key)
-			navigationStore.setModal('editPublicationDataModal')
+			navigationStore.setModal('editPublicationData')
 		},
 		deletePublicationDataItem(key) {
 			publicationStore.setPublicationDataKey(key)

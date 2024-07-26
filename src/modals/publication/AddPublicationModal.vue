@@ -32,8 +32,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						label="Portaal"
 						:value.sync="publication.portal" />
 					<span>
-						<p>Publicatie datum</p>
-						<NcDateTimePicker v-model="publication.publicationDate"
+						<p>Published</p>
+						<NcDateTimePicker v-model="publication.published"
 							:disabled="loading"
 							label="Publicatie datum" />
 					</span>
@@ -143,12 +143,13 @@ export default {
 				featured: false,
 				portal: '',
 				category: '',
-				publicationDate: new Date(),
+				published: new Date(),
 				organization: '',
-				attachments: '',
+				attachments: '[""]',
 				schema: '',
 				image: '',
 				themes: '',
+				data: {},
 			},
 			catalogi: {},
 			metaData: {},
@@ -266,7 +267,10 @@ export default {
 					})
 					navigationStore.setSelected('publication')
 					// Clean it all up
-					setTimeout(() => navigationStore.setModal(false), 2500)
+					setTimeout(() => {
+						navigationStore.setModal(false)
+						this.succes = false
+					}, 2500)
 				})
 				.catch((err) => {
 					this.error = err

@@ -26,8 +26,4 @@ export type TPublication = {
         anonymized?: string
         results?: string
     }
-	language?: {
-        code?: string
-        level?: string
-    }
 }

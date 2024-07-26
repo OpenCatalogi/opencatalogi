@@ -32,7 +32,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 			<div v-if="!loading">
 				<NcListItem v-for="(publication, i) in filteredPublications"
 					:key="`${publication}${i}`"
-					:name="publication.name ?? publication.title"
+					:name="publication.title"
 					:bold="false"
 					:force-display-actions="true"
 					:active="publicationStore.publicationItem.id === publication.id"
@@ -163,9 +163,9 @@ export default {
 	},
 	computed: {
 		filteredPublications() {
-			if (!publicationStore?.publicationList?.results) return []
-			return publicationStore.publicationList.results.filter((publication) => {
-				return publication.catalogi === navigationStore.selectedCatalogus
+			if (!publicationStore?.publicationList) return []
+			return publicationStore.publicationList.filter((publication) => {
+				return parseInt(publication.catalogi) === navigationStore.selectedCatalogus
 			})
 		},
 	},

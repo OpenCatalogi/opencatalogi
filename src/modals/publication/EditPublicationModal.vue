@@ -33,12 +33,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Portaal"
 					:value.sync="publicationStore.publicationItem.portal" />
-				<NcTextField :disabled="loading"
-					label="Publicatie date"
-					:value.sync="publicationStore.publicationItem.publicationDate" />
-				<NcTextField :disabled="loading"
-					label="Modified"
-					:value.sync="publicationStore.publicationItem.modified" />
+				<span>
+					<p>Published</p>
+					<NcDateTimePicker v-model="publicationStore.publicationItem.published"
+						:disabled="loading"
+						label="Publicatie datum" />
+				</span>
+				<span>
+					<p>Modified</p>
+					<NcDateTimePicker v-model="publicationStore.publicationItem.modified"
+						:disabled="loading"
+						label="Modified" />
+				</span>
 				<NcTextField :disabled="loading"
 					label="Organization"
 					:value.sync="publicationStore.publicationItem.organization" />
@@ -55,9 +61,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Thema's"
 					:value.sync="publicationStore.publicationItem.themes" />
 				<p>Featured</p>
-				<NcCheckboxRadioSwitch :disabled="loading"
-					label="Featured"
-					:value.sync="publicationStore.publicationItem.featured" />
+				<span class="EPM-horizontal">
+					<NcCheckboxRadioSwitch :disabled="loading"
+						label="Featured"
+						:checked.sync="publicationStore.publicationItem.featured">
+						Featured
+					</NcCheckboxRadioSwitch>
+				</span>
 				<NcTextField :disabled="loading"
 					label="Image"
 					:value.sync="publicationStore.publicationItem.image" />
@@ -236,7 +246,10 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.publicationItem),
+					body: JSON.stringify({
+						...publicationStore.publicationItem,
+						id: publicationStore.publicationItem.id.toString(),
+					}),
 				},
 			)
 				.then((response) => {
@@ -273,5 +286,12 @@ export default {
 
 .success {
   color: green;
+}
+
+.EPM-horizontal {
+    display: flex;
+    gap: 4px;
+    flex-direction: row;
+    align-items: center;
 }
 </style>

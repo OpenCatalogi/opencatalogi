@@ -61,7 +61,6 @@ export class Publication implements TPublication {
 		this.license = data.license || ''
 		this.themes = data.themes || ''
 		this.anonymization = data.anonymization || {}
-		this.language = data.language || {}
 	}
 
 	/* istanbul ignore next */
@@ -90,7 +89,6 @@ export class Publication implements TPublication {
 		if (!this.license && typeof this.license !== 'string') return false
 		if (!this.themes && typeof this.themes !== 'string') return false
 		if (!this.anonymization && typeof this.anonymization !== 'object') return false
-		if (!this.language && typeof this.language !== 'object') return false
 		return true
 	}
 

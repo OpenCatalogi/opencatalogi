@@ -17,10 +17,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
 					:label="publicationStore.publicationDataKey"
-					:value.sync="publicationStore.publicationItem[publicationStore.publicationDataKey]" />
+					:value.sync="publicationStore.publicationItem.data[publicationStore.publicationDataKey]" />
 			</div>
 
-			<NcButton :disabled="!publication.title || loading" type="primary" @click="updatePublication(publication.id)">
+			<NcButton :disabled="!publicationStore.publicationItem.data[publicationStore.publicationDataKey] || loading" type="primary" @click="updatePublication(publicationStore.publicationItem.id)">
 				<NcLoadingIcon v-if="loading" :size="20" />
 				<ContentSaveOutline v-if="!loading" :size="20" />
 			</NcButton>
@@ -79,7 +79,7 @@ export default {
 		if (navigationStore.modal === 'editPublicationDataModal' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(publicationStore.publicationId)
+			this.fetchData(publicationStore.publicationItem.id)
 			this.hasUpdated = true
 		}
 	},
@@ -118,7 +118,7 @@ export default {
 							value: this.catalogi.value,
 							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
-								id: catalog[1]._id,
+								id: catalog[1].id,
 								label: catalog[1].name,
 							})),
 
@@ -142,7 +142,7 @@ export default {
 						this.metaData = {
 							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1]._id,
+								id: metaData[1].id,
 								label: metaData[1].name,
 							})),
 
@@ -164,7 +164,10 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publication),
+					body: JSON.stringify({
+						...publicationStore.publicationItem,
+						id: publicationStore.publicationItem.id.toString(),
+					}),
 				},
 			)
 				.then(() => {
