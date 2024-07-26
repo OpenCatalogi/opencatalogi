@@ -60,42 +60,37 @@ export class Attachment implements TAttachment {
 	public validate(): boolean {
 		// https://conduction.stoplight.io/docs/open-catalogi/9zm7p6fnazuod-attachment
 		const schema = z.object({
-			title: z.string().min(1), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
-			summary: z.string().min(1),
-			description: z.string().optional(),
-			reference: z.string().optional(),
-			required: z.string().array().optional(),
-			properties: z.object({
-				id: z.string().min(1),
+			title: z.string().min(25).max(255), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
+			summary: z.string().min(50).max(2500),
+			description: z.string().max(2500).optional(),
+			reference: z.string().max(255).optional(),
+			labels: z.string().array().optional(),
+			accessURL: z.string().url().optional(),
+			downloadURL: z.string().url().optional(),
+			type: z.string().optional(),
+			extension: z.string().optional(),
+			size: z.number().optional(),
+			anonymization: z.object({
+				anonymized: z.boolean().optional(),
+				results: z.string().max(2500).optional(),
+			}).optional(),
+			language: z.object({
+				// this regex checks if the code has either 2 or 3 characters per group, and the -aaa after the first is optional
+				code: z.string()
+					.max(7)
+					.regex(/([a-z]{2,3})(-[a-z]{2,3})?/g, 'language code is not a valid ISO 639-1 code (e.g. en-us)')
+					.optional(),
 				title: z.string().min(1),
-				description: z.string().optional(),
-				type: z.string().optional(),
-				format: z.string().optional(),
-				pattern: z.number().optional(),
-				default: z.string().optional(),
-				behavior: z.string().optional(),
-				required: z.boolean().optional(),
-				deprecated: z.boolean().optional(),
-				minLength: z.number().optional(),
-				maxLength: z.number().optional(),
-				example: z.string().optional(),
-				minimum: z.number().optional(),
-				maximum: z.number().optional(),
-				multipleOf: z.number().optional(),
-				exclusiveMin: z.boolean().optional(),
-				exclusiveMax: z.boolean().optional(),
-				minItems: z.number().optional(),
-				maxItems: z.number().optional(),
-			}).array().optional(),
+			}).optional(),
 		})
 
 		const result = schema.safeParse({
 			id: this.id,
 			title: this.title,
 			description: this.description,
-			version: this.version,
-			required: this.required,
-			properties: this.properties,
+			// version: this.version,
+			// required: this.required,
+			// properties: this.properties,
 		})
 
 		return result.success
