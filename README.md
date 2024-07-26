@@ -6,7 +6,8 @@ description: >-
 coverY: 0
 ---
 
-# Welkom
+> [!NOTE]
+> Mocht je op een of andere manier hier terecht gekomen zijn voor documentatie, kijk dan vooral op eerst onze Gitbook
 
 Deze documentatie richt zich op het gebruik van onze beheerapplicatie, speciaal ontworpen voor het beheren van publicaties en catalogi binnen het federatief netwerk. De OpenCatalogi Nextcloud App is een eenvoudig te installeren:
 
