@@ -57,6 +57,14 @@ export class Metadata implements TMetadata {
 			properties: z.object({
 				id: z.string(),
 				title: z.string(),
+				description: z.string().optional(),
+				type: z.string().optional(),
+				format: z.string().optional(),
+				pattern: z.number().optional(),
+				default: z.string().optional(),
+				behavior: z.string().optional(),
+				required: z.string().optional(),
+				required: z.string().optional(),
 			}).array().optional(),
 		})
 
