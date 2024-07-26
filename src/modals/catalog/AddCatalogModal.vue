@@ -16,12 +16,24 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Naam"
 					maxlength="255"
-					:value.sync="name"
+					:value.sync="catalogi.name"
 					required />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
-					:value.sync="summary" />
+					:value.sync="catalogi.summary" />
+				<NcTextField :disabled="loading"
+					label="Beschrijving"
+					maxlength="255"
+					:value.sync="catalogi.description" />
+				<NcTextField :disabled="loading"
+					label="Image"
+					maxlength="255"
+					:value.sync="catalogi.image" />
+				<NcTextField :disabled="loading"
+					label="Search"
+					maxlength="255"
+					:value.sync="catalogi.search" />
 			</div>
 			<NcButton
 				v-if="!succes"
@@ -55,8 +67,13 @@ export default {
 	},
 	data() {
 		return {
-			name: '',
-			summary: '',
+			catalogi: {
+				title: '',
+				summary: '',
+				description: '',
+				image: '',
+				search: '',
+			},
 			loading: false,
 			succes: false,
 			error: false,
@@ -77,10 +94,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						name: this.name,
-						summary: this.summary,
-					}),
+					body: JSON.stringify(this.catalogi),
 				},
 			)
 				.then((response) => {

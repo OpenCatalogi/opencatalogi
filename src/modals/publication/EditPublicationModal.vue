@@ -16,24 +16,44 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			</NcNoteCard>
 			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Naam"
+					label="Titel"
 					:value.sync="publicationStore.publicationItem.title" />
-				<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="publicationStore.publicationItem.description" />
+				<NcTextArea :disabled="loading"
+					label="Samenvatting"
+					:value.sync="publicationStore.publicationItem.summary" />
+				<NcTextArea :disabled="loading"
+					label="Beschrijving"
+					:value.sync="publicationStore.publicationItem.description" />
+				<NcTextArea :disabled="loading"
+					label="Reference"
+					:value.sync="publicationStore.publicationItem.reference" />
 				<NcTextField :disabled="loading"
 					label="Categorie"
 					:value.sync="publicationStore.publicationItem.category" />
 				<NcTextField :disabled="loading"
-					label="Publicatie"
-					:value.sync="publicationStore.publicationItem.publication" />
-				<NcTextField :disabled="loading"
 					label="Portaal"
 					:value.sync="publicationStore.publicationItem.portal" />
+				<NcTextField :disabled="loading"
+					label="Publicatie date"
+					:value.sync="publicationStore.publicationItem.publicationDate" />
+				<NcTextField :disabled="loading"
+					label="Modified"
+					:value.sync="publicationStore.publicationItem.modified" />
+				<NcTextField :disabled="loading"
+					label="Organization"
+					:value.sync="publicationStore.publicationItem.organization" />
+				<NcTextField :disabled="loading"
+					label="Attachments"
+					:value.sync="publicationStore.publicationItem.attachments" />
+				<NcTextField :disabled="loading"
+					label="Schema"
+					:value.sync="publicationStore.publicationItem.schema" />
 				<NcTextField :disabled="loading"
 					label="Status"
 					:value.sync="publicationStore.publicationItem.status" />
 				<NcTextField :disabled="loading"
-					label="Gepubliceerd"
-					:value.sync="publicationStore.publicationItem.published" />
+					label="Thema's"
+					:value.sync="publicationStore.publicationItem.themes" />
 				<p>Featured</p>
 				<NcCheckboxRadioSwitch :disabled="loading"
 					label="Featured"
@@ -41,18 +61,20 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Image"
 					:value.sync="publicationStore.publicationItem.image" />
-				<NcTextField :disabled="loading"
-					label="Modified"
-					:value.sync="publicationStore.publicationItem.modified" />
 				<b>Juridisch</b>
 				<NcTextField :disabled="loading"
 					label="Licentie"
 					:value.sync="publicationStore.publicationItem.license" />
-				<b>Toegang</b>
-				<NcSelectTags
-					:value.sync="publicationStore.publicationItem.userGroups"
-					input-label="Gebruikers groepen"
-					:multiple="true" />
+				<NcSelect v-bind="catalogi"
+					v-model="publicationStore.publicationItem.catalogi"
+					input-label="Catalogi"
+					:loading="catalogiLoading"
+					required />
+				<NcSelect v-bind="metaData"
+					v-model="publicationStore.publicationItem.metaData"
+					input-label="MetaData"
+					:loading="metaDataLoading"
+					required />
 			</div>
 			<NcButton
 				v-if="!succes"
@@ -75,7 +97,6 @@ import {
 	NcModal,
 	NcTextField,
 	NcTextArea,
-	NcSelectTags,
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
 	NcNoteCard,
@@ -88,7 +109,6 @@ export default {
 		NcModal,
 		NcTextField,
 		NcTextArea,
-		NcSelectTags,
 		NcCheckboxRadioSwitch,
 		NcButton,
 		NcLoadingIcon,
@@ -140,7 +160,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.setSetPublictionsetPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
 					this.loading = false
 				})

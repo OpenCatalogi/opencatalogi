@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { Attachment, Publication } from '../../entities/index.js'
 import { defineStore } from 'pinia'
 
 export const usePublicationStore = defineStore('publication', {
@@ -14,27 +15,11 @@ export const usePublicationStore = defineStore('publication', {
 	actions: {
 		setPublicationItem(publicationItem) {
 		// To prevent forms etc from braking we alway use a default/skeleton object
-			const publicationDefault = {
-				title: '',
-				description: '',
-				catalogi: '',
-				metaData: '',
-				license: '',
-				data: {},
-				modified: '',
-				published: '',
-				status: 'concept',
-				featured: '',
-				publication: '',
-				portal: '',
-				category: '',
-				image: '',
-		 }
-			this.publicationItem = { ...publicationDefault, ...publicationItem }
+			this.publicationItem = new Publication(publicationItem)
 			console.log('Active publication item set to ' + publicationItem.id)
 		},
 		setPublicationList(publicationList) {
-			this.publicationList = publicationList
+			this.publicationList = publicationList.map((publicationItem) => new Publication(publicationItem))
 			console.log('Active publication item set to ' + publicationList.length)
 		},
 		refreshPublicationList() { // @todo this might belong in a service?
@@ -46,7 +31,7 @@ export const usePublicationStore = defineStore('publication', {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.publicationList = data
+						this.setPublicationList(data?.results)
 						return data
 					})
 				})
@@ -64,7 +49,9 @@ export const usePublicationStore = defineStore('publication', {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.publicationAttachments = data
+						this.publicationAttachments = data.results.map(
+							(attachmentItem) => new Attachment(attachmentItem),
+						)
 						return data
 					})
 				})
@@ -115,33 +102,7 @@ export const usePublicationStore = defineStore('publication', {
 			console.log('Active publication data key set to ' + publicationDataKey)
 		},
 		setAttachmentItem(attachmentItem) {
-		// To prevent forms etc from braking we alway use a default/skeleton object
-			const attachmentDefault = {
-				reference: '',
-				title: '',
-				summary: '',
-				description: '',
-				labels: [],
-				accessURL: '',
-				downloadURL: '',
-				type: '',
-				extension: '',
-				size: 0,
-				anonymization: {
-					anonymized: false,
-					results: '',
-				},
-				language: {
-					code: '',
-					level: '',
-				},
-				version_of: false,
-				hash: false,
-				published: '',
-				modified: '',
-				license: '',
-		  }
-			this.attachmentItem = { ...attachmentDefault, ...attachmentItem }
+			this.attachmentItem = new Attachment(attachmentItem)
 			console.log('Active attachment item set to ' + attachmentItem)
 			console.log(attachmentItem)
 		},

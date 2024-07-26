@@ -14,14 +14,26 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			</NcNoteCard>
 			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Naam"
+					label="Titel"
 					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.name"
+					:value.sync="catalogiStore.catalogiItem.title"
 					required />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
 					:value.sync="catalogiStore.catalogiItem.summary" />
+				<NcTextField :disabled="loading"
+					label="Beschrijving"
+					maxlength="255"
+					:value.sync="catalogiStore.catalogiItem.description" />
+				<NcTextField :disabled="loading"
+					label="Image"
+					maxlength="255"
+					:value.sync="catalogiStore.catalogiItem.image" />
+				<NcTextField :disabled="loading"
+					label="Search"
+					maxlength="255"
+					:value.sync="catalogiStore.catalogiItem.search" />
 			</div>
 			<NcButton
 				v-if="!succes"

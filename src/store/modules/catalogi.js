@@ -9,25 +9,12 @@ export const useCatalogiStore = defineStore('catalogi', {
 	}),
 	actions: {
 		setCatalogiItem(catalogiItem) {
-			this.catalogiItem = new Catalogi(
-				catalogiItem.id,
-				catalogiItem.name,
-				catalogiItem.summary,
-				catalogiItem._schema,
-				catalogiItem._id,
-			)
+			this.catalogiItem = new Catalogi(catalogiItem)
 			console.log('Active catalog item set to ' + catalogiItem.id)
 		},
 		setCatalogiList(catalogiList) {
 			this.catalogiList = catalogiList.map(
-				(catalogiItem) =>
-					new Catalogi(
-						catalogiItem.id,
-						catalogiItem.name,
-						catalogiItem.summary,
-						catalogiItem._schema,
-						catalogiItem._id,
-					),
+				(catalogiItem) => new Catalogi(catalogiItem),
 			)
 			console.log('Catalogi list set to ' + catalogiList.length + ' item')
 		},
@@ -40,13 +27,7 @@ export const useCatalogiStore = defineStore('catalogi', {
 					response.json().then((data) => {
 						this.catalogiList = data.results.map(
 							(catalogiItem) =>
-								new Catalogi(
-									catalogiItem.id,
-									catalogiItem.name,
-									catalogiItem.summary,
-									catalogiItem._schema,
-									catalogiItem._id,
-								),
+								new Catalogi(catalogiItem),
 						)
 					})
 				})
