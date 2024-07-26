@@ -39,6 +39,8 @@ class DirectoryService
 
 	public function registerToExternalDirectory (array $newDirectory): int
 	{
+
+		if($this->config->getValueString())
 		$dbConfig['base_uri'] = $this->config->getValueString('opencatalogi', 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString('opencatalogi', 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString('opencatalogi', 'mongodbCluster');

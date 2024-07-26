@@ -49,7 +49,7 @@ class MetaDataController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->metaDataMapper->findAll());
+			return new JSONResponse(['results' =>$this->metaDataMapper->findAll()]);
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');

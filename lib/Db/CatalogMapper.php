@@ -37,7 +37,7 @@ class CatalogMapper extends QBMapper
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
-		return ['results' => $this->findEntities(query: $qb)];
+		return $this->findEntities(query: $qb)n;
 	}
 
 	public function createFromArray(array $object): Catalog
