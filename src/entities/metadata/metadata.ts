@@ -38,7 +38,7 @@ export class Metadata implements TMetadata {
 
 	/* istanbul ignore next */ // Jest does not recognize the code coverage of these 2 methods
 	private hydrate(data: TMetadata) {
-		this.id = data?.id || ''
+		this.id = data?.id?.toString() || ''
 		this.title = data?.title || ''
 		this.description = data?.description || ''
 		this.version = data?.version || ''

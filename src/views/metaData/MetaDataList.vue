@@ -31,7 +31,7 @@ import { navigationStore, searchStore, metadataStore } from '../../store/store.j
 			</div>
 
 			<div v-if="!loading">
-				<NcListItem v-for="(metaData, i) in metadataStore.metaDataList.results"
+				<NcListItem v-for="(metaData, i) in metadataStore.metaDataList"
 					:key="`${metaData}${i}`"
 					:name="metaData.title ?? metaData.name"
 					:active="metadataStore.metaDataItem?.id === metaData?.id"

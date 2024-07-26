@@ -31,7 +31,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<span>{{ catalogi.description }}</span>
+		<span>{{ catalogi.summary }}</span>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
