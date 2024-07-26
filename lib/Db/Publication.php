@@ -18,7 +18,6 @@ class Publication extends Entity implements JsonSerializable
 	protected ?string $portal      		 = null;
 	protected ?string $catalogi    		 = null;
 	protected ?string $metaData    		 = null;
-	protected ?DateTime $publicationDate = null;
 	protected ?DateTime $published = null;
 	protected ?DateTime $modified        = null;
 	protected ?string $featured          = null;
@@ -43,7 +42,6 @@ class Publication extends Entity implements JsonSerializable
 		$this->addType(fieldName: 'portal', type: 'string');
 		$this->addType(fieldName: 'catalogi', type: 'string');
 		$this->addType(fieldName: 'metaData', type: 'string');
-		$this->addType(fieldName: 'publicationDate', type: 'datetime');
 		$this->addType(fieldName: 'published', type: 'datetime');
 		$this->addType(fieldName: 'modified', type: 'datetime');
 		$this->addType(fieldName: 'featured', type: 'boolean');
@@ -93,7 +91,7 @@ class Publication extends Entity implements JsonSerializable
 			'portal' => $this->portal,
 			'catalogi' => $this->catalogi,
 			'metaData' => $this->metaData,
-			'publicationDate' => $this->publicationDate->format('c'),
+			'published' => $this->published->format('c'),
 			'modified'	=> $this->modified->format('c'),
 			'featured' => $this->featured,
 			'organization' => $this->organization,
