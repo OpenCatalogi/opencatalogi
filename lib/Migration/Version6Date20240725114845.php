@@ -51,13 +51,9 @@ class Version6Date20240725114845 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn(name: 'reference', typeName: TYPES::STRING, options: [
+			$table->addColumn(name: 'version', typeName: TYPES::STRING, options: [
 				'notnull' => true,
-				'length' => 255
-			]);
-			$table->addColumn(name: 'summary', typeName: TYPES::STRING, options: [
-				'notnull' => true,
-				'length' => 255
+				'length' => 255,
 			]);
 			$table->addColumn(name: 'description', typeName: TYPES::STRING, options: [
 				'length' => 255,
