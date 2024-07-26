@@ -1,3 +1,4 @@
+import { TAttachment } from '../attachment'
 import { TPublication } from './publication.types'
 
 export class Publication implements TPublication {
@@ -17,7 +18,7 @@ export class Publication implements TPublication {
 	public featured?: boolean
 	public organization?: object[]
 	public data?: object[]
-	public attachments?: string[]
+	public attachments?: TAttachment[]
 	public attachmentCount?: number
 	public schema?: string
 	public status?: string
