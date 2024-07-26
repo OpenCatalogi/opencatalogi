@@ -16,13 +16,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcTextField :disabled="loading"
 						label="Titel"
 						:value.sync="publication.title" />
-					<NcTextArea :disabled="loading"
+					<NcTextField :disabled="loading"
 						label="Samenvatting"
 						:value.sync="publication.summary" />
 					<NcTextArea :disabled="loading"
 						label="Beschrijving"
 						:value.sync="publication.description" />
-					<NcTextArea :disabled="loading"
+					<NcTextField :disabled="loading"
 						label="Reference"
 						:value.sync="publication.reference" />
 					<NcTextField :disabled="loading"
@@ -31,14 +31,20 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcTextField :disabled="loading"
 						label="Portaal"
 						:value.sync="publication.portal" />
+					<span>
+						<p>Publicatie datum</p>
+						<NcDateTimePicker v-model="publication.publicationDate"
+							:disabled="loading"
+							label="Publicatie datum" />
+					</span>
+					<span>
+						<p>Modified</p>
+						<NcDateTimePicker v-model="publication.modified"
+							:disabled="loading"
+							label="Modified" />
+					</span>
 					<NcTextField :disabled="loading"
-						label="Publicatie date"
-						:value.sync="publication.publicationDate" />
-					<NcTextField :disabled="loading"
-						label="Modified"
-						:value.sync="publication.modified" />
-					<NcTextField :disabled="loading"
-						label="Organization"
+						label="Organisatie"
 						:value.sync="publication.organization" />
 					<NcTextField :disabled="loading"
 						label="Attachments"
@@ -52,10 +58,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcTextField :disabled="loading"
 						label="Thema's"
 						:value.sync="publication.themes" />
-					<p>Featured</p>
-					<NcCheckboxRadioSwitch :disabled="loading"
-						label="Featured"
-						:value.sync="publication.featured" />
+					<span class="APM-horizontal">
+						<NcCheckboxRadioSwitch :disabled="loading"
+							label="Featured"
+							:checked.sync="publication.featured">
+							Featured
+						</NcCheckboxRadioSwitch>
+					</span>
 					<NcTextField :disabled="loading"
 						label="Image"
 						:value.sync="publication.image" />
@@ -79,7 +88,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			</div>
 			<NcButton
 				v-if="!succes"
-				:disabled="(!title && !catalogi?.value?.id && !metaData?.value?.id) || loading"
+				:disabled="(!publication.title && !catalogi?.value?.id && !metaData?.value?.id) || loading"
 				type="primary"
 				@click="addPublication()">
 				<template #icon>
@@ -102,6 +111,7 @@ import {
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
 	NcNoteCard,
+	NcDateTimePicker,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
@@ -116,6 +126,7 @@ export default {
 		NcLoadingIcon,
 		NcCheckboxRadioSwitch,
 		NcNoteCard,
+		NcDateTimePicker,
 		// Icons
 		ContentSaveOutline,
 	},
@@ -125,22 +136,22 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
-				catalogi: {},
-				metaData: {},
 				reference: '',
 				license: '',
-				modified: '',
-				published: '',
+				modified: new Date(),
 				status: '',
-				featured: '',
+				featured: false,
 				portal: '',
 				category: '',
-				publicationDate: '',
+				publicationDate: new Date(),
 				organization: '',
+				attachments: '',
 				schema: '',
 				image: '',
 				themes: '',
 			},
+			catalogi: {},
+			metaData: {},
 			errorCode: '',
 			catalogiLoading: false,
 			metaDataLoading: false,
@@ -185,8 +196,8 @@ export default {
 
 						this.catalogi = {
 							options: Object.entries(data.results).map((catalog) => ({
-								id: catalog[1]._id,
-								label: catalog[1].name,
+								id: catalog[1].id,
+								label: catalog[1].title,
 							})),
 
 						}
@@ -239,19 +250,9 @@ export default {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						title: this.title,
-						description: this.description,
+						...this.publication,
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
-						license: this.license,
-						modified: this.modified,
-						published: this.published,
-						status: this.status,
-						featured: this.featured,
-						publication: this.publication,
-						portal: this.portal,
-						category: this.category,
-						image: this.image,
 					}),
 				},
 			)
@@ -300,5 +301,12 @@ export default {
 
 .success {
 	color: green;
+}
+
+.APM-horizontal {
+    display: flex;
+    gap: 4px;
+    flex-direction: row;
+    align-items: center;
 }
 </style>

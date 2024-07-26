@@ -34,17 +34,17 @@ import { navigationStore, searchStore, metadataStore } from '../../store/store.j
 				<NcListItem v-for="(metaData, i) in metadataStore.metaDataList.results"
 					:key="`${metaData}${i}`"
 					:name="metaData.title ?? metaData.name"
-					:active="metadataStore.metaDataItem?._id === metaData?._id"
+					:active="metadataStore.metaDataItem?.id === metaData?.id"
 					:details="metaData.version ?? 'Onbekend'"
 					:force-display-actions="true"
 					@click="metadataStore.setMetaDataItem(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="metadataStore.metaDataItem?._id === metaData?.id && 'selectedIcon'"
+						<FileTreeOutline :class="metadataStore.metaDataItem?.id === metaData?.id && 'selectedIcon'"
 							disable-menu
 							:size="44" />
 					</template>
 					<template #subname>
-						{{ metaData.summery }}
+						{{ metaData.description }}
 					</template>
 					<template #actions>
 						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setModal('editMetaData')">

@@ -37,7 +37,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			</div>
 			<NcButton
 				v-if="!succes"
-				:disabled="!name || loading"
+				:disabled="!catalogi.title || loading"
 				type="primary"
 				@click="addCatalog">
 				<template #icon>

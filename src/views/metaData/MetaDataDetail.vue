@@ -5,10 +5,12 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 <template>
 	<div class="detailContainer">
 		<div class="head">
-			<h1 class="h1">
-				{{ metadata.title }}
-			</h1>
-			<span>{{ metadata.description }}</span>
+			<div>
+				<h1 class="h1">
+					{{ metadata.title }}
+				</h1>
+				<span>{{ metadata.description }}</span>
+			</div>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
@@ -147,14 +149,14 @@ export default {
 		metaDataItem: {
 			handler(metaDataItem) {
 				this.metadata = metaDataItem
-				this.fetchData(metaDataItem?._id)
+				this.fetchData(metaDataItem?.id)
 			},
 			deep: true,
 		},
 	},
 	mounted() {
 		this.metadata = metadataStore.metaDataItem
-		this.fetchData(metadataStore.metaDataItem?._id)
+		this.fetchData(metadataStore.metaDataItem?.id)
 	},
 	methods: {
 		fetchData(metadataId) {
