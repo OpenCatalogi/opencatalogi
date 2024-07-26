@@ -33,8 +33,8 @@ Volg deze eenvoudige stappen om de applicatie te starten:
    * Klik op de groene knop “Code” en selecteer “Download ZIP”.
    * Pak het gedownloade ZIP-bestand uit naar een map op jouw computer.
 4. **Navigeer naar de Uitgepakte Map**
-   * klik op het `docker-setup.exe`-bestand. Dit start Docker op.&#x20;
-   * (mocht de bovenste stap niet werken, open dan een terminal en voer het commando `docker compose up` uit in de map van de uitgepakte bestanden)
+   * klik op het `docker-setup.bat`-bestand. Dit start Docker op.&#x20;
+   * (Het kan zijn dat de bovenste stap niet werkt door de configuraite van systeembeher. Open dan een terminal en voer het commando `docker compose up` uit in de map van de uitgepakte bestanden)
    *   Wacht tot de applicatie is opgestart. Dit kan een 5-10 minuten duren. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
 
        ```css
