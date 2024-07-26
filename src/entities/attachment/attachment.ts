@@ -1,4 +1,5 @@
 import { TAttachment } from './attachment.types'
+import { z } from 'zod'
 
 export class Attachment implements TAttachment {
 
@@ -57,27 +58,47 @@ export class Attachment implements TAttachment {
 
 	/* istanbul ignore next */
 	public validate(): boolean {
-		// these have to exist
-		if (!this.id || typeof this.id !== 'string') return false
-		if (!this.title || typeof this.title !== 'string') return false
-		if (!this.summary || typeof this.summary !== 'string') return false
-		// these can be optional but if they exist, they must be of the right type
-		if (this.description !== undefined && typeof this.description !== 'string') return false
-		if (this.reference !== undefined && typeof this.reference !== 'string') return false
-		if (this.labels !== undefined && !Array.isArray(this.labels)) return false
-		if (this.accessURL !== undefined && typeof this.accessURL !== 'string') return false
-		if (this.downloadURL !== undefined && typeof this.downloadURL !== 'string') return false
-		if (this.type !== undefined && typeof this.type !== 'string') return false
-		if (this.extension !== undefined && typeof this.extension !== 'string') return false
-		if (this.size !== undefined && typeof this.size !== 'number') return false
-		if (this.anonymization !== undefined && typeof this.anonymization !== 'object') return false
-		if (this.language !== undefined && typeof this.language !== 'object') return false
-		if (this.versionOf !== undefined && typeof this.versionOf !== 'string') return false
-		if (this.hash !== undefined && typeof this.hash !== 'string') return false
-		if (this.published !== undefined && typeof this.published !== 'string') return false
-		if (this.modified !== undefined && typeof this.modified !== 'string') return false
-		if (this.license !== undefined && typeof this.license !== 'string') return false
-		return true
+		// https://conduction.stoplight.io/docs/open-catalogi/9zm7p6fnazuod-attachment
+		const schema = z.object({
+			title: z.string().min(1), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
+			summary: z.string().min(1),
+			description: z.string().optional(),
+			reference: z.string().optional(),
+			required: z.string().array().optional(),
+			properties: z.object({
+				id: z.string().min(1),
+				title: z.string().min(1),
+				description: z.string().optional(),
+				type: z.string().optional(),
+				format: z.string().optional(),
+				pattern: z.number().optional(),
+				default: z.string().optional(),
+				behavior: z.string().optional(),
+				required: z.boolean().optional(),
+				deprecated: z.boolean().optional(),
+				minLength: z.number().optional(),
+				maxLength: z.number().optional(),
+				example: z.string().optional(),
+				minimum: z.number().optional(),
+				maximum: z.number().optional(),
+				multipleOf: z.number().optional(),
+				exclusiveMin: z.boolean().optional(),
+				exclusiveMax: z.boolean().optional(),
+				minItems: z.number().optional(),
+				maxItems: z.number().optional(),
+			}).array().optional(),
+		})
+
+		const result = schema.safeParse({
+			id: this.id,
+			title: this.title,
+			description: this.description,
+			// version: this.version,
+			// required: this.required,
+			// properties: this.properties,
+		})
+
+		return result.success
 	}
 
 }
