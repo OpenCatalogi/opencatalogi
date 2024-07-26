@@ -2,6 +2,7 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
+use OCA\OpenCatalogi\Db\CatalogMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -14,7 +15,8 @@ class CatalogiController extends Controller
     public function __construct(
         $appName,
         IRequest $request,
-        private readonly IAppConfig $config
+        private readonly IAppConfig $config,
+		private readonly CatalogMapper $catalogMapper
     )
     {
         parent::__construct($appName, $request);
@@ -35,6 +37,11 @@ class CatalogiController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse(['results' => $this->catalogMapper->findAll()]);
+		}
         try {
             $dbConfig = [
                 'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
@@ -66,6 +73,12 @@ class CatalogiController extends Controller
      */
     public function show(string $id, ObjectService $objectService): JSONResponse
     {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->catalogMapper->find(id: $id));
+		}
+
         try {
             $dbConfig = [
                 'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
@@ -89,20 +102,25 @@ class CatalogiController extends Controller
      */
     public function create(ObjectService $objectService): JSONResponse
     {
+		$data = $this->request->getParams();
+
+		foreach ($data as $key => $value) {
+			if (str_starts_with($key, '_')) {
+				unset($data[$key]);
+			}
+		}
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->catalogMapper->createFromArray(object: $data));
+		}
+
         try {
             $dbConfig = [
                 'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
                 'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
                 'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
             ];
-
-            $data = $this->request->getParams();
-
-            foreach ($data as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($data[$key]);
-                }
-            }
 
             $data['_schema'] = 'catalog';
 
@@ -120,23 +138,29 @@ class CatalogiController extends Controller
      */
     public function update(string $id, ObjectService $objectService): JSONResponse
     {
+		$data = $this->request->getParams();
+
+		foreach ($data as $key => $value) {
+			if (str_starts_with($key, '_')) {
+				unset($data[$key]);
+			}
+		}
+		if (isset($data['id'])) {
+			unset($data['id']);
+		}
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->catalogMapper->updateFromArray(id: $id, object: $data));
+		}
+
         try {
             $dbConfig = [
                 'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
                 'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
                 'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
             ];
-
-            $data = $this->request->getParams();
-
-            foreach ($data as $key => $value) {
-                if (str_starts_with($key, '_')) {
-                    unset($data[$key]);
-                }
-            }
-            if (isset($data['id'])) {
-                unset($data['id']);
-            }
 
             $filters['_id'] = $id;
             $returnData = $objectService->updateObject($filters, $data, $dbConfig);
@@ -153,6 +177,14 @@ class CatalogiController extends Controller
      */
     public function destroy(string $id, ObjectService $objectService): JSONResponse
     {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$this->catalogMapper->delete($this->catalogMapper->find($id));
+
+			return new JSONResponse([]);
+		}
+
         try {
             $dbConfig = [
                 'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),

@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store.js'
+import { publicationStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'copyAttachment'"
+		v-if="navigationStore.dialog === 'copyAttachment'"
 		name="Bijlage kopieren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.attachmentItem.name ?? store.attachmentItem.title }}</b> kopieren?
+			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> kopieren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Bijlage succesvol gekopierd</p>
@@ -20,7 +20,7 @@ import { store } from '../../store.js'
 			<NcButton
 				:disabled="loading"
 				icon=""
-				@click="store.setDialog(false)">
+				@click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -60,6 +60,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -68,10 +69,10 @@ export default {
 	methods: {
 		CopyAttachment() {
 			this.loading = true
-			store.attachmentItem.title = 'KOPIE: ' + store.attachmentItem.title
-			store.attachmentItem.status = 'concept'
-			delete store.attachmentItem.id
-			delete store.attachmentItem._id
+			publicationStore.attachmentItem.title = 'KOPIE: ' + publicationStore.attachmentItem.title
+			publicationStore.attachmentItem.status = 'concept'
+			delete publicationStore.attachmentItem.id
+			delete publicationStore.attachmentItem._id
 			fetch(
 				'/index.php/apps/opencatalogi/api/attachments',
 				{
@@ -79,7 +80,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.attachmentItem),
+					body: JSON.stringify(publicationStore.attachmentItem),
 				},
 			)
 				.then((response) => {
@@ -87,18 +88,18 @@ export default {
 					this.succes = true
 					// Lets refresh the attachment list
 					response.json().then((data) => {
-						store.setAttachmentItem(data)
+						publicationStore.setAttachmentItem(data)
 					})
-					if (store.publicationItem?.id) {
-						store.getPublicationAttachments(store.publicationItem.id)
+					if (publicationStore.publicationItem?.id) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
 						// @todo update the publication item
 					}
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setAttachmentItem(false)
-						store.setDialog(false)
+						publicationStore.setAttachmentItem(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

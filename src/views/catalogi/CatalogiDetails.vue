@@ -1,12 +1,12 @@
 <script setup>
-import { store } from '../../store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ catalogi.name }}
+				{{ catalogi.title }}
 			</h1>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
@@ -17,7 +17,7 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('editCatalog')">
+				<NcActionButton @click="navigationStore.setModal('editCatalog')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
@@ -31,16 +31,16 @@ import { store } from '../../store.js'
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<span>{{ catalogi.description }}</span>
+		<span>{{ catalogi.summary }}</span>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
 					adsa
 				</BTab>
-				<BTab title="Toegang" active>
+				<BTab title="Toegang">
 					Publiek of alleen bepaalde rollen
 				</BTab>
-				<BTab title="Metadata" active>
+				<BTab title="Metadata">
 					adsa
 				</BTab>
 			</BTabs>
@@ -77,20 +77,26 @@ export default {
 		return {
 			catalogi: false,
 			loading: false,
+			upToDate: false,
 		}
 	},
 	watch: {
 		catalogiItem: {
-			handler(catalogiItem) {
-				this.catalogi = catalogiItem
-				this.fetchData(catalogiItem._id)
+			handler(newCatalogiItem, oldCatalogiItem) {
+				// why this? because when you fetch a new item it changes the reference to said item, which in return causes it to fetch again (a.k.a. infinite loop)
+				// run the fetch only once to update the item
+				if (!this.upToDate || JSON.stringify(newCatalogiItem) !== JSON.stringify(oldCatalogiItem)) {
+					this.catalogi = newCatalogiItem
+					this.fetchData(newCatalogiItem.id)
+					this.upToDate = true
+				}
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.catalogi = store.catalogiItem
-		this.fetchData(store.catalogiItem._id)
+		this.catalogi = catalogiStore.catalogiItem
+		this.fetchData(catalogiStore.catalogiItem.id)
 	},
 	methods: {
 		fetchData(catalogId) {
@@ -103,7 +109,8 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.catalogi = data
+						catalogiStore.setCatalogiItem(data)
+						this.catalogi = catalogiStore.catalogiItem
 					})
 					this.loading = false
 				})

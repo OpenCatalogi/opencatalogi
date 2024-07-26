@@ -1,15 +1,15 @@
 <script setup>
-import { store } from '../../store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deleteCatalog'"
+		v-if="navigationStore.dialog === 'deleteCatalog'"
 		name="Catalogus verwijderen"
 		message="'"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.catalogiItem.name ?? store.catalogiItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ catalogiItem.name ?? catalogiItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Catalogus succesvol verwijderd</p>
@@ -18,7 +18,7 @@ import { store } from '../../store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -59,6 +59,7 @@ export default {
 	},
 	data() {
 		return {
+			catalogiItem: catalogiStore.catalogiItem,
 			loading: false,
 			succes: false,
 			error: false,
@@ -68,7 +69,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogiItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -80,13 +81,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshCatalogiList()
+					catalogiStore.refreshCatalogiList()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setCatalogiItem(false)
-						store.setDialog(false)
+						catalogiStore.setCatalogiItem(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

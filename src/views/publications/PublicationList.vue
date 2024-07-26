@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,11 +7,11 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="store.search"
+					:value.sync="searchStore.search"
 					label="Zoeken"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="store.setSearch('')">
+					@trailing-button-click="searchStore.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -21,7 +21,7 @@ import { store } from '../../store.js'
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('publicationAdd')">
+					<NcActionButton @click="navigationStore.setModal('publicationAdd')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -32,13 +32,13 @@ import { store } from '../../store.js'
 			<div v-if="!loading">
 				<NcListItem v-for="(publication, i) in filteredPublications"
 					:key="`${publication}${i}`"
-					:name="publication.name ?? publication.title"
+					:name="publication.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="store.publicationItem.id === publication.id"
+					:active="publicationStore.publicationItem.id === publication.id"
 					:details="publication?.status"
 					:counter-number="1"
-					@click="store.setPublicationItem(publication)">
+					@click="publicationStore.setPublicationItem(publication)">
 					<template #icon>
 						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
 						<ArchiveOutline v-if="publication.status === 'archived'" :size="44" />
@@ -49,49 +49,49 @@ import { store } from '../../store.js'
 						{{ publication?.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('editPublication')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('editPublication')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="store.setPublicationItem(publication); store.setDialog('copyPublication')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('copyPublication')">
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
 							Kopieren
 						</NcActionButton>
-						<NcActionButton v-if="publication.status !== 'published'" @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
+						<NcActionButton v-if="publication.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 							<template #icon>
 								<Publish :size="20" />
 							</template>
 							Publiseren
 						</NcActionButton>
-						<NcActionButton v-if="publication.status === 'published'" @click="store.setPublicationItem(publication); store.setDialog('depublishPublication')">
+						<NcActionButton v-if="publication.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 							<template #icon>
 								<PublishOff :size="20" />
 							</template>
 							Depubliseren
 						</NcActionButton>
-						<NcActionButton @click="store.setPublicationItem(publication); store.setDialog('archivePublication')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('archivePublication')">
 							<template #icon>
 								<ArchivePlusOutline :size="20" />
 							</template>
 							Archiveren
 						</NcActionButton>
-						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('addPublicationData')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('addPublicationData')">
 							<template #icon>
 								<FileTreeOutline :size="20" />
 							</template>
 							Eigenschap toevoegen
 						</NcActionButton>
-						<NcActionButton @click="store.setPublicationItem(publication); store.setModal('AddAttachment')">
+						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('AddAttachment')">
 							<template #icon>
 								<FilePlusOutline :size="20" />
 							</template>
 							Bijlage toevoegen
 						</NcActionButton>
-						<NcActionButton class="publicationsList-actionsDelete" @click="store.setPublicationItem(publication); store.setDialog('deletePublication')">
+						<NcActionButton class="publicationsList-actionsDelete" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('deletePublication')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -157,14 +157,15 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 		}
 	},
 	computed: {
 		filteredPublications() {
-			if (!store?.publicationList?.results) return []
-			return store.publicationList.results.filter((publication) => {
-				return publication.catalogi === store.selectedCatalogus
+			if (!publicationStore?.publicationList) return []
+			return publicationStore.publicationList.filter((publication) => {
+				return parseInt(publication.catalogi) === navigationStore.selectedCatalogus
 			})
 		},
 	},
@@ -181,7 +182,7 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			store.refreshPublicationList()
+			publicationStore.refreshPublicationList()
 			this.loading = false
 		},
 	},

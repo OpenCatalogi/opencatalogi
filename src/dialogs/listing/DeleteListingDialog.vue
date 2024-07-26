@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store.js'
+import { directoryStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deleteListing'"
+		v-if="navigationStore.dialog === 'deleteListing'"
 		name="Listing verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.listingItem.name ?? store.listingItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ directoryStore.listingItem.name ?? directoryStore.listingItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Listing succesvol verwijderd</p>
@@ -17,7 +17,7 @@ import { store } from '../../store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -58,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -67,7 +68,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${store.listingItem.id}`,
+				`/index.php/apps/opencatalogi/api/directory/${directoryStore.listingItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -79,13 +80,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshListingList()
+					directoryStore.refreshListingList()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setListingItem(false)
-						store.setDialog(false)
+						directoryStore.setListingItem(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, searchStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcAppContent>
 		<template #list>
-			<MetaDataList :search="store.search" />
+			<MetaDataList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.metaDataItem || store.selected != 'metaData'"
+			<NcEmptyContent v-if="!metadataStore.metaDataItem || navigationStore.selected != 'metaData'"
 				class="detailContainer"
 				name="Geen Metadata"
 				description="Nog geen metadata beschrijving geselecteerd">
@@ -16,12 +16,12 @@ import { store } from '../../store.js'
 					<FileTreeOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="store.setModal('addMetaData')">
+					<NcButton type="primary" @click="navigationStore.setModal('addMetaData')">
 						Metadata beschrijving toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<MetaDataDetails v-if="store.metaDataItem && store.selected === 'metaData'" :meta-data-item="store.metaDataItem" />
+			<MetaDataDetails v-if="metadataStore.metaDataItem && navigationStore.selected === 'metaData'" :meta-data-item="metadataStore.metaDataItem" />
 		</template>
 	</NcAppContent>
 </template>
@@ -42,6 +42,11 @@ export default {
 		MetaDataList,
 		MetaDataDetails,
 		FileTreeOutline,
+	},
+	data() {
+		return {
+
+		}
 	},
 }
 </script>

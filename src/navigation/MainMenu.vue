@@ -1,30 +1,30 @@
 <script setup>
-import { store } from '../store.js'
+import { navigationStore, catalogiStore, publicationStore } from '../store/store.js'
 </script>
 
 <template>
 	<NcAppNavigation>
 		<NcAppNavigationList>
-			<NcAppNavigationNew text="Publicatie Aanmaken" @click="store.setModal('publicationAdd')">
+			<NcAppNavigationNew text="Publicatie Aanmaken" @click="navigationStore.setModal('publicationAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNew>
-			<NcAppNavigationItem :active="store.selected === 'dashboard'" name="Dashboard" @click="store.setSelected('dashboard')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'dashboard'" name="Dashboard" @click="navigationStore.setSelected('dashboard')">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
 			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
 				:key="`${catalogus}${i}`"
-				:name="catalogus?.name"
-				:active="catalogus._id === store.selectedCatalogus && store.selected === 'publication'"
+				:name="catalogus?.title"
+				:active="catalogus.id === navigationStore.selectedCatalogus && navigationStore.selected === 'publication'"
 				@click="switchCatalogus(catalogus)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'search'" name="Search" @click="store.setSelected('search')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'search'" name="Search" @click="navigationStore.setSelected('search')">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -32,17 +32,17 @@ import { store } from '../store.js'
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="store.selected === 'catalogi'" name="Catalogi" @click="store.setSelected('catalogi')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'catalogi'" name="Catalogi" @click="navigationStore.setSelected('catalogi')">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'directory'" name="Directory" @click="store.setSelected('directory')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'directory'" name="Directory" @click="navigationStore.setSelected('directory')">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'metaData'" name="MetaData" @click="store.setSelected('metaData')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'metaData'" name="MetaData" @click="navigationStore.setSelected('metaData')">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
@@ -63,8 +63,11 @@ import { store } from '../store.js'
 					<p>
 						Here you can set the details for varius Connections
 					</p>
-					<NcCheckboxRadioSwitch :checked.sync="configuration.external" type="switch">
-						{{ t('forms', 'Enable sharing') }}
+					<NcCheckboxRadioSwitch :checked.sync="configuration.mongoStorage" type="switch">
+						{{ t('forms', 'Use external storage (e.g. MongoDb) instead of Next Cloud internal storage') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch :checked.sync="configuration.cloudStorage" type="switch">
+						{{ t('forms', 'Use VNG APIs instead of MongoDB') }}
 					</NcCheckboxRadioSwitch>
 					<p>
 						<table>
@@ -277,6 +280,7 @@ export default {
 	},
 	data() {
 		return {
+
 			// all of this is settings and should be moved
 			settingsOpen: false,
 			orc_location: '',
@@ -386,10 +390,10 @@ export default {
 				})
 		},
 		switchCatalogus(catalogus) {
-			if (catalogus._id !== store.selectedCatalogus) store.setPublicationItem(false) // for when you switch catalogus
-			store.setSelected('publication')
-			store.setSelectedCatalogus(catalogus._id)
-			store.setCatalogiItem(catalogus)
+			if (catalogus.id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
+			navigationStore.setSelected('publication')
+			navigationStore.setSelectedCatalogus(catalogus.id)
+			catalogiStore.setCatalogiItem(catalogus)
 		},
 	},
 }

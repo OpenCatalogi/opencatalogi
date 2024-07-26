@@ -1,11 +1,11 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'editPublicationData'"
+		v-if="navigationStore.modal === 'editPublicationData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bewerk publicatie eigenschappen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -16,16 +16,16 @@ import { store } from '../../store.js'
 			</NcNoteCard>
 			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
-					:label="store.publicationDataKey"
-					:value.sync="store.publicationItem[store.publicationDataKey]" />
+					:label="publicationStore.publicationDataKey"
+					:value.sync="publicationStore.publicationItem.data[publicationStore.publicationDataKey]" />
 			</div>
 
-			<NcButton :disabled="!publication.title || loading" type="primary" @click="updatePublication(publication.id)">
+			<NcButton :disabled="!publicationStore.publicationItem.data[publicationStore.publicationDataKey] || loading" type="primary" @click="updatePublication(publicationStore.publicationItem.id)">
 				<NcLoadingIcon v-if="loading" :size="20" />
 				<ContentSaveOutline v-if="!loading" :size="20" />
 			</NcButton>
 			<NcButton
-				@click="store.setModal(false)">
+				@click="navigationStore.setModal(false)">
 				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
@@ -53,6 +53,7 @@ export default {
 	},
 	data() {
 		return {
+
 			publication: {
 				title: '',
 				description: '',
@@ -75,10 +76,10 @@ export default {
 		}
 	},
 	updated() {
-		if (store.modal === 'editPublicationDataModal' && !this.hasUpdated) {
+		if (navigationStore.modal === 'editPublicationDataModal' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(store.publicationId)
+			this.fetchData(publicationStore.publicationItem.id)
 			this.hasUpdated = true
 		}
 	},
@@ -117,7 +118,7 @@ export default {
 							value: this.catalogi.value,
 							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
-								id: catalog[1]._id,
+								id: catalog[1].id,
 								label: catalog[1].name,
 							})),
 
@@ -141,7 +142,7 @@ export default {
 						this.metaData = {
 							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1]._id,
+								id: metaData[1].id,
 								label: metaData[1].name,
 							})),
 
@@ -154,9 +155,6 @@ export default {
 					this.metaDataLoading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
 		updatePublication(id) {
 			this.loading = true
 			fetch(
@@ -166,11 +164,14 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publication),
+					body: JSON.stringify({
+						...publicationStore.publicationItem,
+						id: publicationStore.publicationItem.id.toString(),
+					}),
 				},
 			)
-				.then((response) => {
-					this.closeModal()
+				.then(() => {
+					navigationStore.setModal(false)
 				})
 				.catch((err) => {
 					this.loading = false

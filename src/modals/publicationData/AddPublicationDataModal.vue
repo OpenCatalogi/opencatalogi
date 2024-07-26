@@ -1,11 +1,11 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'addPublicationData'"
+		v-if="navigationStore.modal === 'addPublicationData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie eigenschap toevoegen</h2>
 			<NcNoteCard v-if="succes" type="success">
@@ -41,7 +41,7 @@ import { store } from '../../store.js'
 			</NcButton>
 
 			<NcButton
-				@click="store.setModal(false)">
+				@click="navigationStore.setModal(false)">
 				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
@@ -71,6 +71,7 @@ export default {
 	},
 	data() {
 		return {
+
 			key: '',
 			value: '',
 			loading: false,
@@ -80,16 +81,16 @@ export default {
 	},
 	methods: {
 		AddPublicatieEigenschap() {
-			store.publicationItem.data[this.key] = this.value
+			publicationStore.publicationItem.data[this.key] = this.value
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationItem),
+					body: JSON.stringify(publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
@@ -97,13 +98,13 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					response.json().then((data) => {
-						store.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setModal(false)
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {
