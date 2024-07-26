@@ -70,9 +70,16 @@ class DirectoryController extends Controller
         );
     }
 
+	public function add(?string $url, DirectoryService $directoryService): JSONResponse
+	{
+
+
+		return new JSONResponse($listing);
+	}
+
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
 	public function index(ObjectService $objectService): JSONResponse
@@ -80,7 +87,7 @@ class DirectoryController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->listingMapper->findAll());
+			return new JSONResponse(['results' => $this->listingMapper->findAll()]);
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
