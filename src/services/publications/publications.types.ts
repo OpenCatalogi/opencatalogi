@@ -9,5 +9,5 @@ export interface IPublicationsService {
 export interface IPublicationsServiceMock {
   getAll: jest.Mock <TPublication[]>
   getOneById: jest.Mock<TPublication | undefined>
-  createComment: jest.Mock <TPublication>
+  create: jest.Mock <TPublication>
 }

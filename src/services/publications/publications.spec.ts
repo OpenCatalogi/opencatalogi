@@ -31,7 +31,7 @@ describe('>>> Publications Service', () => {
       const newPublication = service.create(data)
       expect(newPublication.id).toEqual(publication.id)
     })
-    
+
     it('should throw an error if publication is not valid', () => {
       const data = {
         ...mockPublications()[0],

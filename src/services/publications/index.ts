@@ -1,3 +1,3 @@
 export * from './publications'
 export * from './publications.types'
-export * from './publications.spec'
+export * from './publications.mock'
