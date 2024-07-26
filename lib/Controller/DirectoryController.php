@@ -70,11 +70,17 @@ class DirectoryController extends Controller
         );
     }
 
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 */
 	public function add(?string $url, DirectoryService $directoryService): JSONResponse
 	{
+		$directories = [];
+		$directoryService->registerToExternalDirectory(url: $url, externalDirectories: $directories);
 
-
-		return new JSONResponse($listing);
+		return new JSONResponse(['listings added' => $directories]);
 	}
 
 
