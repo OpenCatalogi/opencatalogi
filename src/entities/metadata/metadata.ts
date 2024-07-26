@@ -48,36 +48,45 @@ export class Metadata implements TMetadata {
 
 	/* istanbul ignore next */
 	public validate(): boolean {
+		// https://conduction.stoplight.io/docs/open-catalogi/92e81a078982b-metadata
 		const schema = z.object({
-			id: z.string(),
-			title: z.string(),
+			title: z.string().min(1), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
 			description: z.string().optional(),
 			version: z.string().optional(),
 			required: z.string().array().optional(),
 			properties: z.object({
-				id: z.string(),
-				title: z.string(),
+				title: z.string().min(1),
 				description: z.string().optional(),
 				type: z.string().optional(),
 				format: z.string().optional(),
 				pattern: z.number().optional(),
 				default: z.string().optional(),
 				behavior: z.string().optional(),
-				required: z.string().optional(),
-				required: z.string().optional(),
+				required: z.boolean().optional(),
+				deprecated: z.boolean().optional(),
+				minLength: z.number().optional(),
+				maxLength: z.number().optional(),
+				example: z.string().optional(),
+				minimum: z.number().optional(),
+				maximum: z.number().optional(),
+				multipleOf: z.number().optional(),
+				exclusiveMin: z.boolean().optional(),
+				exclusiveMax: z.boolean().optional(),
+				minItems: z.number().optional(),
+				maxItems: z.number().optional(),
 			}).array().optional(),
 		})
 
-		// these have to exist
-		if (!this.id || typeof this.id !== 'string') return false
-		if (!this.title || typeof this.title !== 'string') return false
-		// these can be optional
-		if (typeof this.description !== 'string') return false
-		if (typeof this.version !== 'string') return false
-		if (!Array.isArray(this.required)) return false
-		if (!Array.isArray(this.properties)) return false
-		if (this.properties.length > 0 && this.properties.some((item) => Array.isArray(item) || typeof item !== 'object')) return false
-		return true
+		const result = schema.safeParse({
+			id: this.id,
+			title: this.title,
+			description: this.description,
+			version: this.version,
+			required: this.required,
+			properties: this.properties,
+		})
+
+		return result.success
 	}
 
 }

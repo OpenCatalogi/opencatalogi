@@ -2,7 +2,7 @@
 import { Metadata } from './metadata'
 import { TMetadata } from './metadata.types'
 
-describe('Catalogi Store', () => {
+describe('Metadata entity', () => {
 	it('create Metadata entity with full data', () => {
 		const metadata = new Metadata(testData[0])
 
