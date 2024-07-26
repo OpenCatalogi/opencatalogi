@@ -33,13 +33,12 @@ Volg deze eenvoudige stappen om de applicatie te starten:
    * Klik op de groene knop “Code” en selecteer “Download ZIP”.
    * Pak het gedownloade ZIP-bestand uit naar een map op jouw computer.
 4. **Navigeer naar de Uitgepakte Map**
-   * klik op het `docker-setup.bat`-bestand. Dit start Docker op.&#x20;
-   * (Het kan zijn dat de bovenste stap niet werkt door de configuraite van systeembeher. Open dan een terminal en voer het commando `docker compose up` uit in de map van de uitgepakte bestanden)
-   *   Wacht tot de applicatie is opgestart. Dit kan een 5-10 minuten duren. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
-
-       ```css
-       [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
-       ```
+   * open het "command -prompt" programma door te zoeken naar command in de startbalk. Dit opent een scherm waar commando's uit te voeren zijn
+   * voor het commando `docker compose up` uit
+   * Wacht tot de applicatie is opgestart. Dit kan een 5-10 minuten duren. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
+   * ```css
+     [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+     ```
 5. **Ga naar de Webpagina**
    * Open je webbrowser en ga naar [http://localhost:8080](http://localhost:8080).
    * Maak een account aan en log in (dit werkt met admin als log **en** admin wachtwoord).
