@@ -10,17 +10,16 @@ use Symfony\Component\Uid\Uuid;
 
 class ElasticSearchService
 {
+
 	private function getClient(array $config): Client
 	{
 		$uri    = $config['location'];
 		$apiKey = explode(separator: ':', string: base64_decode(string: $config['key']));
 
-		$client = ClientBuilder::create()
+		return ClientBuilder::create()
 			->setHosts([$uri])
 			->setApiKey(apiKey: $apiKey[1],id: $apiKey[0])
 			->build();
-
-		return $client;
 	}
 
 
@@ -34,7 +33,7 @@ class ElasticSearchService
 	 */
 	public function addObject(array $object, array $config): array
 	{
-		$client = $this->getClient(config: $config);
+        $client = $this->getClient(config: $config);
 
 		if(isset($object['_id']) === true) {
 			unset($object['_id']);
@@ -59,7 +58,7 @@ class ElasticSearchService
 
 	public function removeObject(string $id, array $config): array
 	{
-		$client = $this->getClient(config: $config);
+        $client = $this->getClient(config: $config);
 
 		try {
 			$client->delete(params: [
@@ -74,14 +73,14 @@ class ElasticSearchService
 
 	public function updateObject(string $id, array $object, array $config): array
 	{
-		$client = $this->getClient(config: $config);
+        $client = $this->getClient(config: $config);
 
 		if(isset($object['_id']) === true) {
 			unset($object['_id']);
 		}
 
 		try {
-			$client->update(params: [
+			$client->index(params: [
 				'index' => $config['index'],
 				'id'    => $id,
 				'body'  => ['doc' => $object],
@@ -92,7 +91,7 @@ class ElasticSearchService
 		}
 	}
 
-	private function parseFilters (array $filters): array
+	public function parseFilters (array $filters): array
 	{
 		$body = [
 			'query' => [
@@ -134,7 +133,7 @@ class ElasticSearchService
 		return $body;
 	}
 
-	private function formatResults(array $hit): array
+	public function formatResults(array $hit): array
 	{
 		$source = $hit['_source'];
 
@@ -152,7 +151,7 @@ class ElasticSearchService
 	 *
 	 * @return array The rewritten array.
 	 */
-	private function renameBucketItems(array $bucketItem): array
+	public function renameBucketItems(array $bucketItem): array
 	{
 		return [
 			'_id'   => $bucketItem['key'],
@@ -168,7 +167,7 @@ class ElasticSearchService
 	 *
 	 * @return array The mapped result.
 	 */
-	private function mapAggregationResults(array $result): array
+	public function mapAggregationResults(array $result): array
 	{
 		$buckets = $result['buckets'];
 

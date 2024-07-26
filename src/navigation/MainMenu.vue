@@ -63,6 +63,12 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<p>
 						Here you can set the details for varius Connections
 					</p>
+					<NcCheckboxRadioSwitch :checked.sync="configuration.mongoStorage" type="switch">
+						{{ t('forms', 'Use external storage (e.g. MongoDb) instead of Next Cloud internal storage') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch :checked.sync="configuration.cloudStorage" type="switch">
+						{{ t('forms', 'Use VNG APIs instead of MongoDB') }}
+					</NcCheckboxRadioSwitch>
 					<p>
 						<table>
 							<tbody>
@@ -230,6 +236,7 @@ import {
 	NcTextField,
 	NcTextArea,
 	NcNoteCard,
+	NcCheckboxRadioSwitch,
 } from '@nextcloud/vue'
 
 import Connection from 'vue-material-design-icons/Connection.vue'
@@ -258,7 +265,7 @@ export default {
 		NcTextArea,
 		NcButton,
 		NcNoteCard,
-
+		NcCheckboxRadioSwitch,
 		// icons
 		Plus,
 		Connection,
@@ -288,6 +295,7 @@ export default {
 			organisation_pki: '',
 			catalogi: [],
 			configuration: {
+				external: false,
 				drcLocation: '',
 				drcKey: '',
 				orcLocation: '',

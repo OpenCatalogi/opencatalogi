@@ -39,9 +39,9 @@ class DirectoryService
 
 	public function registerToExternalDirectory (array $newDirectory): int
 	{
-		$dbConfig['base_uri'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: 'opencatalogi', key: 'mongodbCluster');
+		$dbConfig['base_uri'] = $this->config->getValueString('opencatalogi', 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString('opencatalogi', 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString('opencatalogi', 'mongodbCluster');
 
 		$catalogi = $this->objectService->findObjects(filters: ['_schema' => 'catalog'], config: $dbConfig)['documents'];
 
@@ -84,7 +84,9 @@ class DirectoryService
 	{
 		$result = $this->client->get($directory['directory']);
 
-		$results = json_decode($result->getBody()->getContents());
+		$results = json_decode($result->getBody()->getContents(), true);
+
+		var_dump($results);
 
 		foreach($results['results'] as $record) {
 			$this->createDirectoryFromResult($record);

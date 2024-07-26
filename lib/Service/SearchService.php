@@ -8,18 +8,21 @@ use Symfony\Component\Uid\Uuid;
 
 class SearchService
 {
+    public $client;
+
 	public const BASE_OBJECT = [
 		'database'   => 'objects',
 		'collection' => 'json',
 	];
 
 	public function __construct(
-		private readonly ObjectService $objectService
+		private readonly ObjectService $objectService,
+		private readonly ElasticSearchService $elasticService
 	) {
-		$this->client = new Client;
+		$this->client = new Client();
 	}
 
-	private function mergeFacets(array $existingAggregation, array $newAggregation): array
+	public function mergeFacets(array $existingAggregation, array $newAggregation): array
 	{
 		$results = [];
 		$existingAggregationMapped = [];
@@ -74,10 +77,9 @@ class SearchService
 	 */
 	public function search(array $parameters, array $elasticConfig, array $dbConfig, array $catalogi = []): array
 	{
-		$elasticService = new ElasticSearchService();
-		$localResults = $elasticService->searchObject($parameters, $elasticConfig);
 
-		$client    = new Client();
+		$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
+
 		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
 
 		if(count($directory['documents']) === 0) {
@@ -131,6 +133,84 @@ class SearchService
 		}
 
 		return ['results' => $results, 'facets' => $aggregations];
+	}
+
+	/**
+	 * This function adds a single query param to the given $vars array. ?$name=$value
+	 * Will check if request query $name has [...] inside the parameter, like this: ?queryParam[$nameKey]=$value.
+	 * Works recursive, so in case we have ?queryParam[$nameKey][$anotherNameKey][etc][etc]=$value.
+	 * Also checks for queryParams ending on [] like: ?queryParam[$nameKey][] (or just ?queryParam[]), if this is the case
+	 * this function will add given value to an array of [queryParam][$nameKey][] = $value or [queryParam][] = $value.
+	 * If none of the above this function will just add [queryParam] = $value to $vars.
+	 *
+	 * @param array  $vars    The vars array we are going to store the query parameter in
+	 * @param string $name    The full $name of the query param, like this: ?$name=$value
+	 * @param string $nameKey The full $name of the query param, unless it contains [] like: ?queryParam[$nameKey]=$value
+	 * @param string $value   The full $value of the query param, like this: ?$name=$value
+	 *
+	 * @return void
+	 */
+	private function recursiveRequestQueryKey(array &$vars, string $name, string $nameKey, string $value): void
+	{
+		$matchesCount = preg_match(pattern: '/(\[[^[\]]*])/', subject: $name, matches:$matches);
+		if ($matchesCount > 0) {
+			$key  = $matches[0];
+			$name = str_replace(search: $key,  replace:'', subject: $name);
+			$key  = trim(string: $key, characters: '[]');
+			if (empty($key) === false) {
+				$vars[$nameKey] = ($vars[$nameKey] ?? []);
+				$this->recursiveRequestQueryKey(
+					vars: $vars[$nameKey],
+					name: $name,
+					nameKey: $key,
+					value: $value
+				);
+			} else {
+				$vars[$nameKey][] = $value;
+			}
+		} else {
+			$vars[$nameKey] = $value;
+		}
+
+	}//end recursiveRequestQueryKey()
+
+	/**
+	 * Parses the request query string and returns it as an array of queries.
+	 *
+	 * @param string $queryString The input query string from the request.
+	 *
+	 * @return array The resulting array of query parameters.
+	 */
+	public function parseQueryString (string $queryString = ''): array
+	{
+		$pairs = explode(separator: '&', string: $queryString);
+
+		foreach($pairs as $pair) {
+			$kvpair = explode(separator: '=', string: $pair);
+
+			$key = urldecode(string: $kvpair[0]);
+			$value = '';
+			if(count(value: $kvpair) === 2) {
+				$value = urldecode(string: $kvpair[1]);
+			}
+
+			$this->recursiveRequestQueryKey(
+				vars: $vars,
+				name: $key,
+				nameKey: substr(
+					string: $key,
+					offset: 0,
+					length: strpos(
+						haystack: $key,
+						needle: '['
+					)
+				),
+				value: $value
+			);
+		}
+
+
+		return $vars;
 	}
 
 }

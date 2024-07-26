@@ -2,6 +2,7 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
+use OCA\OpenCatalogi\Db\MetaDataMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -11,145 +12,12 @@ use OCP\IRequest;
 
 class MetaDataController extends Controller
 {
-    const TEST_ARRAY = [
-        "6892aeb1-d92d-4da5-ad41-f1c3278f40c2" => [
-            "id" => "6892aeb1-d92d-4da5-ad41-f1c3278f40c2",
-            "title" => "Woo verzoek en -besluit",
-            "description" => "Woo verzoek",
-            "version" => "0.0.1",
-            "properties" =>  '{
-        "id": {
-            "type": "string"
-        },
-        "titel": {
-            "type": "string"
-        },
-        "beschrijving": {
-            "type": "string"
-        },
-        "samenvatting": {
-            "type": "string"
-        },
-        "categorie": {
-            "type": "string",
-            "required": true
-        },
-        "gepubliceerd": {
-            "type": "boolean",
-            "default": true
-        },
-        "portalUrl": {
-            "type": "string",
-            "format": "url"
-        },
-        "publicatiedatum": {
-            "description": "Publicatiedatum van een Woo object is nooit in de toekomst.",
-            "type": "string",
-            "maxDate": "now",
-            "required": true
-        },
-        "organisatie": {
-            "type": "object",
-            "$ref": "https://commongateway.nl/woo.organisatie.schema.json",
-            "format": "json",
-            "cascadeDelete": true
-        },
-        "bijlagen": {
-            "type": "array",
-            "items": {
-                "$ref": "https://commongateway.nl/woo.bijlage.schema.json"
-            },
-            "format": "json",
-            "cascadeDelete": true
-        },
-        "metadata": {
-            "type": "object",
-            "$ref": "https://commongateway.nl/woo.metadata.schema.json",
-            "format": "json",
-            "cascadeDelete": true
-        },
-        "themas": {
-            "type": "array",
-            "items": {
-                "$ref": "https://commongateway.nl/woo.thema.schema.json"
-            },
-            "format": "json",
-            "cascadeDelete": true
-        }
-    }'
-        ],
-        "a375d626-ffe8-4a26-a024-1ad452d1b931" => [
-            "id" => "a375d626-ffe8-4a26-a024-1ad452d1b931",
-            "title" => "Convenant",
-            "descriptiont" => "Woo Convenant",
-            "version" => "0.0.1",
-			"properties" => '{
-        "id": {
-            "type": "string"
-        },
-        "titel": {
-            "type": "string"
-        },
-        "beschrijving": {
-            "type": "string"
-        },
-        "samenvatting": {
-            "type": "string"
-        },
-        "categorie": {
-            "type": "string",
-            "required": true
-        },
-        "gepubliceerd": {
-            "type": "boolean",
-            "default": true
-        },
-        "portalUrl": {
-            "type": "string",
-            "format": "url"
-        },
-        "publicatiedatum": {
-            "description": "Publicatiedatum van een Woo object is nooit in de toekomst.",
-            "type": "string",
-            "maxDate": "now",
-            "required": true
-        },
-        "organisatie": {
-            "type": "object",
-            "$ref": "https://commongateway.nl/woo.organisatie.schema.json",
-            "format": "json",
-            "cascadeDelete": true
-        },
-        "bijlagen": {
-            "type": "array",
-            "items": {
-                "$ref": "https://commongateway.nl/woo.bijlage.schema.json"
-            },
-            "format": "json",
-            "cascadeDelete": true
-        },
-        "metadata": {
-            "type": "object",
-            "$ref": "https://commongateway.nl/woo.metadata.schema.json",
-            "format": "json",
-            "cascadeDelete": true
-        },
-        "themas": {
-            "type": "array",
-            "items": {
-                "$ref": "https://commongateway.nl/woo.thema.schema.json"
-            },
-            "format": "json",
-            "cascadeDelete": true
-        }
-    }'
-        ]
-    ];
 
     public function __construct(
 		$appName,
 		IRequest $request,
-		private readonly IAppConfig $config
+		private readonly IAppConfig $config,
+		private readonly MetaDataMapper $metaDataMapper
 	)
     {
         parent::__construct($appName, $request);
@@ -178,6 +46,12 @@ class MetaDataController extends Controller
      */
 	public function index(ObjectService $objectService): JSONResponse
 	{
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->metaDataMapper->findAll());
+		}
+
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -206,6 +80,11 @@ class MetaDataController extends Controller
 	 */
 	public function show(string $id, ObjectService $objectService): JSONResponse
 	{
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->metaDataMapper->find(id: $id));
+		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -224,9 +103,6 @@ class MetaDataController extends Controller
 	 */
 	public function create(ObjectService $objectService): JSONResponse
 	{
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$data = $this->request->getParams();
 
@@ -235,6 +111,15 @@ class MetaDataController extends Controller
 				unset($data[$key]);
 			}
 		}
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->metaDataMapper->createFromArray(object: $data));
+		}
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$data['_schema'] = 'metadata';
 
@@ -253,10 +138,6 @@ class MetaDataController extends Controller
 	 */
 	public function update(string $id, ObjectService $objectService): JSONResponse
 	{
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
 		$data = $this->request->getParams();
 
 		foreach($data as $key => $value) {
@@ -267,6 +148,17 @@ class MetaDataController extends Controller
 		if (isset($data['id'])) {
 			unset( $data['id']);
 		}
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->metaDataMapper->updateFromArray(id: $id, object: $data));
+		}
+
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$filters['_id'] = $id;
 		$returnData = $objectService->updateObject(
@@ -285,6 +177,13 @@ class MetaDataController extends Controller
 	 */
 	public function destroy(string $id, ObjectService $objectService): JSONResponse
 	{
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$this->metaDataMapper->delete($this->metaDataMapper->find($id));
+
+			return new JSONResponse([]);
+		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
