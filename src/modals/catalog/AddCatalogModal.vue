@@ -14,9 +14,9 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			</NcNoteCard>
 			<div v-if="!succes" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Naam"
+					label="Titel"
 					maxlength="255"
-					:value.sync="catalogi.name"
+					:value.sync="catalogi.title"
 					required />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
