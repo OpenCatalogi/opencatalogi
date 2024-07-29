@@ -9,7 +9,7 @@
 * [Publicaties](docs/gebruikers/publicaties.md)
 * [Zoeken](docs/gebruikers/zoeken-in-de-beheerinterface.md)
 
-## BEHEERDERS
+## Beheerders
 
 * [Catalogi](docs/beheerders/catalogi.md)
 * [Metadata](docs/beheerders/metadata.md)
@@ -23,11 +23,11 @@
 * [De OpenCatalogi-app toevoegen aan Nextcloud](docs/developers/de-opencatalogi-app-toevoegen-aan-nextcloud.md)
 * [Aan de slag met development](docs/developers/aan-de-slag-met-development.md)
 
-## Installatie
+## Naar productie
 
 * [Systeemeisen voor Nextcloud](docs/installatie/systeemeisen-voor-nextcloud.md)
-* [Installatie-instructies Nextcloud](docs/installatie/instructies.md)
 * [On-Prem server](docs/installatie/on-prem-server.md)
+* Implementatie checklist
 
 ## Community
 
@@ -35,3 +35,4 @@
 * [Github](https://github.com/OpenCatalogi)
 * [Roadmap](https://github.com/orgs/OpenCatalogi/projects/1)
 * [F.A.Q.](docs/installatie/f.a.q..md)
+* [Licentie](license.md)
