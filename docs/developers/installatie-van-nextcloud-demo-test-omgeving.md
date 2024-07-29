@@ -21,6 +21,7 @@ Volg deze eenvoudige stappen om de applicatie te starten:
       * Acodeer een eveneuteele veiligheids waarschuwing
       * Plaats het bestand in dezelfde folder als de code
       * Klik met de rechtermuisknop op het bestand en selecteer uitvoeren
+
    **(Optie 2, via comand line inerface)**
       *   Typ het volgende commando in de command prompt en druk op Enter:
 
@@ -30,18 +31,14 @@ Volg deze eenvoudige stappen om de applicatie te starten:
 
          Vervang “pad/naar/uitgepakte/map” door de locatie waar je de bestanden hebt uitgepakt. Bijvoorbeeld:
 
-         ```cli
-         cd C:\Users\{{jouwgebruikersnaam}}\Downloads\opencatalogi-main
+         ```
+         cd C:\Users\{{jouwgebruikersnaam}}\Downloads\opencatalogi-main ```
       *   Typ het volgende commando in de command prompt en druk op Enter:
 
-         ```cli
-         docker compose up
-         ```
+         ``` docker compose up ```
       *   Wacht tot de applicatie is opgestart. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
 
-         ```cli
-         [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
-         ```
+         ``` [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND' ```
 5. **Open de applicatie**: Open je webbrowser en ga naar [http://localhost:8080](http://localhost:8080)
 6. **Login**: Voor de standaard installatie werkt dit met admin als log **en** admin wachtwoord
 
