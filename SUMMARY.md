@@ -2,13 +2,6 @@
 
 * [Welkom](README.md)
 
-## Installatie
-
-* [Systeemeisen voor Nextcloud](installatie/systeemeisen-voor-nextcloud.md)
-* [Installatie-instructies Nextcloud](installatie/instructies.md)
-* [On-Prem server](installatie/on-prem-server.md)
-* [F.A.Q.](installatie/f.a.q..md)
-
 ## Gebruikers
 
 * [Publicaties](gebruikers/gebruikershandleiding.md)
@@ -28,4 +21,15 @@
 * [De OpenCatalogi-app toevoegen aan Nextcloud](developers/de-opencatalogi-app-toevoegen-aan-nextcloud.md)
 * [Aan de slag met development](developers/aan-de-slag-met-development.md)
 
+## Installatie
+
+* [Systeemeisen voor Nextcloud](installatie/systeemeisen-voor-nextcloud.md)
+* [Installatie-instructies Nextcloud](installatie/instructies.md)
+* [On-Prem server](installatie/on-prem-server.md)
+* [F.A.Q.](installatie/f.a.q..md)
+
 ## Community
+
+* [Slack](https://samenorganiseren.slack.com/archives/C049GJ0QNHW)
+* [Github](https://github.com/OpenCatalogi)
+* [Roadmap](https://github.com/orgs/OpenCatalogi/projects/1)
