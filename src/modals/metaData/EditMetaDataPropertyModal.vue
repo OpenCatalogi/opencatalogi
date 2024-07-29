@@ -16,21 +16,34 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 			</NcNoteCard>
 
 			<div v-if="success === -1" class="form-group">
-				<NcSelect v-bind="typeOptions"
-					:value.sync="metadataStore.metadataDataKey"
-					required />
+				<NcTextField :disabled="loading"
+					label="Titel"
+					required
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].title" />
 
 				<NcTextField :disabled="loading"
 					label="description"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].description" />
 
-				<NcTextField :disabled="loading"
-					label="format"
-					:value.sync="metadata.properties[metadataStore.metadataDataKey].format" />
+				<NcSelect v-bind="typeOptions"
+					v-model="metadata.properties[metadataStore.metadataDataKey].type"
+					required />
+
+				<NcSelect v-bind="formatOptions"
+					v-model="metadata.properties[metadataStore.metadataDataKey].format" />
 
 				<NcTextField :disabled="loading"
-					label="max date"
-					:value.sync="metadata.properties[metadataStore.metadataDataKey].maxDate" />
+					type="number"
+					label="patroon"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].pattern" />
+
+				<NcTextField :disabled="loading"
+					label="default"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].default" />
+
+				<NcTextField :disabled="loading"
+					label="behavior"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].behavior" />
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
@@ -40,24 +53,71 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
-					:checked.sync="metadata.properties[metadataStore.metadataDataKey].default">
-					Default
-				</NcCheckboxRadioSwitch>
-
-				<NcCheckboxRadioSwitch
-					:disabled="loading"
-					:checked.sync="metadata.properties[metadataStore.metadataDataKey].cascadeDelete">
-					Cascade delete
+					:checked.sync="metadata.properties[metadataStore.metadataDataKey].deprecated">
+					Deprecated
 				</NcCheckboxRadioSwitch>
 
 				<NcTextField :disabled="loading"
-					type="number"
-					label="Exclusive minimum"
-					:value.sync="metadata.properties[metadataStore.metadataDataKey].exclusiveMinimum" />
+					label="minimum lengte"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].minLength" />
+
+				<NcTextField :disabled="loading"
+					label="maximum lengte"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].maxLength" />
+
+				<NcTextField :disabled="loading"
+					label="exemplaar"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].example" />
+
+				<!-- type integer and number only -->
+				<div v-if="metadata.properties[metadataStore.metadataDataKey].type === 'integer' || metadata.properties[metadataStore.metadataDataKey].type === 'number'">
+					<h5 class="weightNormal">
+						type: nummer
+					</h5>
+
+					<NcTextField :disabled="loading"
+						label="minimum waarde"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].minimum" />
+
+					<NcTextField :disabled="loading"
+						label="maximum waarde"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].maximum" />
+
+					<NcTextField :disabled="loading"
+						label="multipleOf"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].multipleOf" />
+
+					<NcCheckboxRadioSwitch
+						:disabled="loading"
+						:checked.sync="metadata.properties[metadataStore.metadataDataKey].exclusiveMin">
+						exclusief minimum
+					</NcCheckboxRadioSwitch>
+
+					<NcCheckboxRadioSwitch
+						:disabled="loading"
+						:checked.sync="metadata.properties[metadataStore.metadataDataKey].exclusiveMax">
+						exclusief maximum
+					</NcCheckboxRadioSwitch>
+				</div>
+
+				<!-- type array only -->
+				<div v-if="metadata.properties[metadataStore.metadataDataKey].type === 'array'">
+					<h5 class="weightNormal">
+						type: array
+					</h5>
+
+					<NcTextField :disabled="loading"
+						label="minimale items"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].minItems" />
+
+					<NcTextField :disabled="loading"
+						label="minimale items"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].maxItems" />
+				</div>
 			</div>
 
-			<NcButton v-if="!success"
-				:disabled="!propertyName || !properties.type || loading"
+			<NcButton v-if="success === -1"
+				:disabled="loading"
 				type="primary"
 				@click="updateMetadata(metadata.id)">
 				<template #icon>
@@ -99,26 +159,39 @@ export default {
 	},
 	data() {
 		return {
-
 			metadata: {
-				title: '',
-				description: '',
-				version: '',
-				properties: {},
-				_schema: '',
-				_id: '',
-				id: '',
+				properties: {
+					title: '',
+					description: '',
+					type: '',
+					format: '',
+					pattern: 0,
+					default: '',
+					behavior: '',
+					required: false,
+					deprecated: false,
+					minLength: 0,
+					maxLength: 0,
+					example: '',
+					minimum: 0,
+					maximum: 0,
+					multipleOf: 0,
+					exclusiveMin: false,
+					exclusiveMax: false,
+					minItems: 0,
+					maxItems: 0,
+				},
 			},
 			dataKey: '',
 			typeOptions: {
 				inputLabel: 'Type',
 				multiple: false,
-				options: [
-					'string',
-					'boolean',
-					'object',
-					'array',
-				],
+				options: ['string', 'number', 'integer', 'object', 'array', 'boolean', 'dictionary'],
+			},
+			formatOptions: {
+				inputLabel: 'Format',
+				multiple: false,
+				options: ['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'],
 			},
 			loading: false,
 			success: -1,
@@ -131,11 +204,7 @@ export default {
 			if (this.dataKey !== metadataStore.metadataDataKey) this.hasUpdated = false
 		}
 		if (navigationStore.modal === 'editMetadataDataModal' && !this.hasUpdated) {
-			this.metadata = {
-				...metadataStore.metaDataItem,
-				properties: JSON.parse(metadataStore.metaDataItem.properties),
-			}
-			this.metadata.properties[metadataStore.metadataDataKey] = metadataStore.getMetadataPropertyKeys(metadataStore.metadataDataKey)
+			this.metadata = metadataStore.metaDataItem
 			this.fetchData(metadataStore.metaDataItem.id)
 
 			this.dataKey = metadataStore.metadataDataKey
@@ -177,7 +246,23 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(metadataStore.metaDataItem),
+					body: JSON.stringify({
+						...this.metadata,
+						properties: { // due to bad (no) support for number fields inside nextcloud/vue, parse the text to a number
+							...this.metadata.properties,
+							[metadataStore.metadataDataKey]: {
+								...this.metadata.properties[metadataStore.metadataDataKey],
+								pattern: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].pattern),
+								minLength: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].minLength),
+								maxLength: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].maxLength),
+								minimum: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].minimum),
+								maximum: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].maximum),
+								multipleOf: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].multipleOf),
+								minItems: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].minItems),
+								maxItems: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].maxItems),
+							},
+						},
+					}),
 				},
 			)
 				.then((response) => {

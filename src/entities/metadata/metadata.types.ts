@@ -4,8 +4,7 @@ export type TMetadata = {
     description?: string
     version?: string
     required?: string[]
-    properties: {
-        id: string
+    properties: Record<string, {
         title: string
         description?: string
         type?: 'string' | 'number' | 'integer' | 'object' | 'array' | 'boolean' | 'dictionary'
@@ -25,5 +24,5 @@ export type TMetadata = {
         exclusiveMax?: boolean
         minItems?: number
         maxItems?: number
-    }[]
+    }>
 }
