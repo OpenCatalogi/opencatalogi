@@ -8,14 +8,14 @@ export class Attachment implements TAttachment {
 	public title: string
 	public summary: string
 	public description?: string
-	public labels?: object[]
+	public labels?: string[]
 	public accessURL?: string
 	public downloadURL?: string
 	public type?: string
 	public extension?: string
 	public size?: number
 	public anonymization?: {
-        anonymized?: string
+        anonymized?: boolean
         results?: string
     }
 

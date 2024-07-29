@@ -1,4 +1,5 @@
 import { TCatalogi } from './catalogi.types'
+import { z } from 'zod'
 
 export class Catalogi implements TCatalogi {
 
@@ -26,15 +27,22 @@ export class Catalogi implements TCatalogi {
 
 	/* istanbul ignore next */
 	public validate(): boolean {
-		// these have to exist
-		if (!this.id || typeof this.id !== 'string') return false
-		if (!this.title || typeof this.title !== 'string') return false
-		if (!this.summary || typeof this.summary !== 'string') return false
-		// these can be optional
-		if (typeof this.description !== 'string') return false
-		if (typeof this.image !== 'string') return false
-		if (typeof this.search !== 'string') return false
-		return true
+		// https://conduction.stoplight.io/docs/open-catalogi/pk8bsjw0539dv-catalogue
+		const schema = z.object({
+			title: z.string().min(25).max(255),
+			summary: z.string().min(50).max(255),
+			description: z.string().max(2500).optional(),
+			image: z.union([
+				z.string().url(),
+				// check if string is base64 image
+				z.string().regex(/^(data:image\/[a-z+.-]{1,};base64,){1}([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/g, 'image property is not base64 image string'),
+			]).optional(),
+			search: z.string().optional(),
+		})
+
+		const result = schema.safeParse({ ...this })
+
+		return result.success
 	}
 
 }

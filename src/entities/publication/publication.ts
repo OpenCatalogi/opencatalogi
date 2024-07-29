@@ -1,4 +1,5 @@
 import { TPublication } from './publication.types'
+import { z } from 'zod'
 
 export class Publication implements TPublication {
 
@@ -65,31 +66,58 @@ export class Publication implements TPublication {
 
 	/* istanbul ignore next */
 	public validate(): boolean {
-		// these have to exist
-		if (!this.id || typeof this.id !== 'string') return false
-		if (!this.title || typeof this.title !== 'string') return false
-		if (!this.summary || typeof this.summary !== 'string') return false
-		// these can be optional but if they exist, they must be of the right type
-		if (!this.reference && typeof this.reference !== 'string') return false
-		if (!this.description && typeof this.description !== 'string') return false
-		if (!this.image && typeof this.image !== 'string') return false
-		if (!this.category && typeof this.category !== 'string') return false
-		if (!this.portal && typeof this.portal !== 'string') return false
-		if (!this.catalogi && typeof this.catalogi !== 'string') return false
-		if (!this.metaData && typeof this.metaData !== 'string') return false
-		if (!this.publicationDate && typeof this.publicationDate !== 'string') return false
-		if (!this.modified && typeof this.modified !== 'string') return false
-		if (!this.featured && typeof this.featured !== 'boolean') return false
-		if (!this.organization && !Array.isArray(this.organization)) return false
-		if (!this.data && !Array.isArray(this.data)) return false
-		if (!this.attachments && !Array.isArray(this.attachments)) return false
-		if (!this.attachmentCount && typeof this.attachmentCount !== 'number') return false
-		if (!this.schema && typeof this.schema !== 'string') return false
-		if (!this.status && typeof this.status !== 'string') return false
-		if (!this.license && typeof this.license !== 'string') return false
-		if (!this.themes && typeof this.themes !== 'string') return false
-		if (!this.anonymization && typeof this.anonymization !== 'object') return false
-		return true
+		// https://conduction.stoplight.io/docs/open-catalogi/9bebd6bf4fe35-publication
+		const schema = z.object({
+			title: z.string().min(1), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
+			summary: z.string().min(1),
+			description: z.string().optional(),
+			reference: z.string().optional(),
+			image: z.string().optional(),
+			category: z.string().min(1),
+			portal: z.string().optional(),
+			featured: z.boolean().optional(),
+			organization: z.object({
+				type: z.string().optional(),
+				$ref: z.string().optional(),
+				format: z.string().optional(),
+				description: z.string().optional(),
+			}).optional(),
+			schema: z.string().url().min(1),
+			status: z.string().optional(),
+			attachments: z.object({
+				type: z.string().optional(),
+				items: z.object({
+					$ref: z.string().optional(),
+				}).optional(),
+				format: z.string().optional(),
+			}).optional(),
+			themes: z.string().array().optional(),
+			data: z.object({
+				type: z.string().optional(),
+				required: z.boolean().optional(),
+			}),
+			anonymization: z.object({
+				type: z.string().optional(),
+				format: z.string().optional(),
+				description: z.string().optional(),
+				$ref: z.string().optional(),
+			}).optional(),
+			languageObject: z.object({
+				type: z.string().optional(),
+				format: z.string().optional(),
+				description: z.string().optional(),
+				$ref: z.string().optional(),
+			}).optional(),
+			published: z.string().datetime().optional(),
+			modified: z.string().datetime().optional(),
+			license: z.object({
+				type: z.string().optional(),
+			}).optional(),
+		})
+
+		const result = schema.safeParse({ ...this })
+
+		return result.success
 	}
 
 }

@@ -1,17 +1,17 @@
 export type TAttachment = {
     id: string
-	reference?: string
 	title: string
 	summary: string
 	description?: string
-	labels?: object[]
+	reference?: string
+	labels?: string[]
 	accessURL?: string
 	downloadURL?: string
 	type?: string
 	extension?: string
 	size?: number
 	anonymization?: {
-        anonymized?: string
+        anonymized?: boolean
         results?: string
     }
 	language?: {

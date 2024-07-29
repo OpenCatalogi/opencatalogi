@@ -17,9 +17,9 @@ describe('Metadata entity', () => {
 
 		expect(metadata).toBeInstanceOf(Metadata)
 		expect(metadata.id).toBe(testData[1].id)
-		expect(metadata.title).toBe('')
+		expect(metadata.title).toBe(testData[1].title)
 		expect(metadata.description).toBe(testData[1].description)
-		expect(metadata.required).toEqual(testData[1].required)
+		expect(metadata.required).toEqual([])
 		expect(metadata.version).toBe(testData[1].version)
 		expect(metadata.properties).toEqual(testData[1].properties)
 
@@ -89,7 +89,7 @@ const testData: TMetadata[] = [
 		},
 	},
 	{ // partial data
-		id: '1',
+		id: '2',
 		title: 'Test metadata',
 		description: 'this is a very long description for test metadata',
 		version: '0.0.1',
@@ -108,7 +108,7 @@ const testData: TMetadata[] = [
 		},
 	},
 	{ // invalid data
-		id: '1',
+		id: '3',
 		title: '', // cannot be empty
 		description: 'this is a very long description for test metadata',
 		version: '0.0.1',

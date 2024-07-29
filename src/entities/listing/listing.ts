@@ -1,4 +1,5 @@
 import { TListing } from './listing.types'
+import { z } from 'zod'
 
 export class Listing implements TListing {
 
@@ -35,20 +36,23 @@ export class Listing implements TListing {
 
 	/* istanbul ignore next */
 	public validate(): boolean {
-		// these have to exist
-		if (!this.id || typeof this.id !== 'string') return false
-		if (!this.title || typeof this.title !== 'string') return false
-		if (!this.summary || typeof this.summary !== 'string') return false
-		// these can be optional
-		if (typeof this.description !== 'string') return false
-		if (typeof this.search !== 'string') return false
-		if (typeof this.directory !== 'string') return false
-		if (typeof this.metadata !== 'string') return false
-		if (typeof this.status !== 'string') return false
-		if (typeof this.lastSync !== 'string') return false
-		if (typeof this.default !== 'string') return false
-		if (typeof this.available !== 'string') return false
-		return true
+		// https://conduction.stoplight.io/docs/open-catalogi/etf6dier69xua-listing
+		const schema = z.object({
+			title: z.string().min(1),
+			summary: z.string().optional(),
+			description: z.string().optional(),
+			search: z.string().url().optional(),
+			directory: z.string().url().optional(),
+			metadata: z.string().optional(),
+			status: z.string().optional(),
+			lastSync: z.string().optional(),
+			default: z.string().optional(),
+			available: z.string().optional(),
+		})
+
+		const result = schema.safeParse({ ...this })
+
+		return result.success
 	}
 
 }
