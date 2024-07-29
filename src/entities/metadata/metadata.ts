@@ -51,10 +51,11 @@ export class Metadata implements TMetadata {
 	public validate(): boolean {
 		// https://conduction.stoplight.io/docs/open-catalogi/92e81a078982b-metadata
 		const propertiesDataSchema = z.object({
-			title: z.string().min(1),
+			title: z.string().min(1).max(255),
 			description: z.string().optional(),
-			type: z.string().min(1),
-			format: z.string().optional(),
+			type: z.enum(['string', 'number', 'integer', 'object', 'array', 'boolean', 'dictionary']),
+			format: z.enum(['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'])
+				.optional(),
 			pattern: z.number().optional(),
 			default: z.string().optional(),
 			behavior: z.string().optional(),
@@ -77,28 +78,6 @@ export class Metadata implements TMetadata {
 			description: z.string().optional(),
 			version: z.string().optional(),
 			required: z.string().array().optional(),
-			properties: z.object({
-				title: z.string().min(1).max(255),
-				description: z.string().optional(),
-				type: z.enum(['string', 'number', 'integer', 'object', 'array', 'boolean', 'dictionary']),
-				format: z.enum(['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'])
-					.optional(),
-				pattern: z.number().optional(),
-				default: z.string().optional(),
-				behavior: z.string().optional(),
-				required: z.boolean().optional(),
-				deprecated: z.boolean().optional(),
-				minLength: z.number().optional(),
-				maxLength: z.number().optional(),
-				example: z.string().optional(),
-				minimum: z.number().optional(),
-				maximum: z.number().optional(),
-				multipleOf: z.number().optional(),
-				exclusiveMin: z.boolean().optional(),
-				exclusiveMax: z.boolean().optional(),
-				minItems: z.number().optional(),
-				maxItems: z.number().optional(),
-			}).array().optional(),
 			properties: z.record(propertiesDataSchema).optional(), // z.record allows for any amount of any keys, with specific type for value validation
 		})
 
