@@ -83,6 +83,8 @@ export default {
 		AddPublicatieEigenschap() {
 			publicationStore.publicationItem.data[this.key] = this.value
 			this.loading = true
+            let bodyData = publicationStore.publicationItem
+            delete bodyData.publicationDate
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
@@ -90,7 +92,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.publicationItem),
+					body: JSON.stringify(bodyData),
 				},
 			)
 				.then((response) => {
