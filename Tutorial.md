@@ -1,15 +1,15 @@
 # Tutorial
 
-1. Zorg gat je nextcloud hebt geinstaleerd (link naar installatie handleiding)
-2. Zorg dat je de app geactifeerd hebt (link naar configuratie)
+1. Zorg dat je Nextcloud hebt geinstalleerd (installatiehandleiding van Nextcloud)[https://cloud.nextcloud.com/s/iyNGp8ryWxc7Efa?path=%2F1%20Setting%20up%20a%20development%20environment]
+2. Zorg dat je de app geactiveerd hebt (zie onze GitBook)[https://conduction.gitbook.io/opencatalogi-nextcloud/developers/installatie-via-nextcloud-lokaal-deel-2-een-app-toevoegen]
 
-Nadat de app succesvol is geconfigureerd vind u deze terug in het app menu van next cloud, klik op het open catalogi icoon om de app te openen
+Nadat de app succesvol is geconfigureerd vind u deze terug in het app menu van Nextcloud, klik op het OpenCatalogi-icoon om de app te openen
 
 ![alt text](.gitbook/assets/nc_app_menu.png)
 
 1. Directory (should)
 
-Een Open Catalogi installatie is bedoeld om onderdeel te zijn van een federatief netwerk van catalogusen, deze kunt u terugvinden onder Instellingen -> directory. In de directory staan alle bij deze installatie bekende catalogi die zich in andere installaties bevinden. Open Catalogi installaties wisselen onderling hun directory uit,dus om onderdeel te worden van het federatieve netwerk moet er minimaal één andere catalogus bekend zijn.
+Een OpenCatalogi-installatie is bedoeld om onderdeel te zijn van een federatief netwerk van catalogi, deze kunt u terugvinden onder Instellingen -> directory. In de directory staan alle, bij deze installatie bekende, catalogi die zich in andere installaties bevinden. OpenCatalogi installaties wisselen onderling hun directories uit, dus om onderdeel te worden van het federatieve netwerk moet er minimaal één andere catalogus bekend zijn.
 
 ![alt text](image.png)
 
@@ -23,7 +23,7 @@ Catalogi worden gedefineerd aan de hand van de plek waar ze leven op het interne
 
 2. Zoeken (should)
 
-Nadat je de app geinstaleerd heb kan je het zoek scherm gebruiken om te zoeken naar gegevens bij andere organisaties. Ga hervoor naar het menu item zoeken. 
+Nadat je de app geinstalleerd heb kan je het zoek scherm gebruiken om te zoeken naar gegevens bij andere organisaties. Ga hervoor naar het menu item zoeken. 
 
 3. Catalogus (must)
 
