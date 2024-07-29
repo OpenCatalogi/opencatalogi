@@ -42,19 +42,19 @@ class CatalogMapper extends QBMapper
 
 	public function createFromArray(array $object): Catalog
 	{
-		$publication = new Catalog();
-		$publication->hydrate(object: $object);
+		$catalog = new Catalog();
+		$catalog->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
+//		var_dump($catalog->getTitle());
 
-		return $this->insert(entity: $publication);
+		return $this->insert(entity: $catalog);
 	}
 
 	public function updateFromArray(int $id, array $object): Catalog
 	{
-		$publication = $this->find($id);
-		$publication->hydrate($object);
+		$catalog = $this->find($id);
+		$catalog->hydrate($object);
 
-		return $this->update($publication);
+		return $this->update($catalog);
 	}
 }
