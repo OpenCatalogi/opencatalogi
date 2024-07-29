@@ -1,4 +1,4 @@
-# Verder documentatie
+# Aan de slag met development
 
 ## Bijdragen
 Als nextcloud app volgen we zowiezo de [next cloud publishing guide lines](https://docs.nextcloud.com/server/19/developer_manual/app/publishing.html#app-guidelines).

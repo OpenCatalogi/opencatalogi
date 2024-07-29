@@ -1,6 +1,15 @@
-# De OpenCatalogi-app toevoegen aan Nextcloud
+---
+description: >-
+  Dit document biedt een stapsgewijze handleiding voor het opzetten van een
+  Nextcloud-instance met de OpenCatalogi-app. We geven je een overzicht van de
+  benodigde kennis, systeemeisen, etc.
+---
 
-### De code voor de OpenCatalogi-app
+# Installatie van Nextcloud Development-omgeving
+
+Als je aan de slag wilt met het ontwikklen voor Open Catalogi kan je beter een development omgeving neerzetten, de instructies daarvoor vind je als [tutorial op nextcloud](https://cloud.nextcloud.com/s/iyNGp8ryWxc7Efa?path=%2F1%20Setting%20up%20a%20development%20environment). 
+
+## De code voor de OpenCatalogi-app
 
 Het toevoegen van een Nextcloud app is niet moeilijk, maar het helpt wel als je basiskennis hebt van git en hoe applicatiestructuren ingedeeld zijn. Deze handleiding gaat uit van een succesvolle installatie van Nextcloud. Er is [hiervoor](https://cloud.nextcloud.com/s/iyNGp8ryWxc7Efa?path=%2F1%20Setting%20up%20a%20development%20environment) een goede tutorial te vinden van Nextcloud zelf.\
 \
@@ -22,17 +31,6 @@ en daar het volgende commando's uit te voeren.
 
 2\) in plaats van de git clone, kan er gekozen worden voor de code te downloaden in een .ZIP-bestand en daarna uit te pakken in de "apps-extra"-directory. Dit vervangt het git clone commando. De rest van de stappen zijn hetzelfde.
 
-### De app activeren
+Hou er rekening mee dat er afspraken zijn over het terugleveren van ontwikkelinde code die vind je [hier]().
 
-De code voor de app staat er nu, maar in Nextcloud moeten apps geactiveerd worden voor gebruik. Hiervoor kan er geklikt worden op het profiel icoontje rechts bovenin. Kies voor "Apps".
-
-<figure><img src="../.gitbook/assets/image (5).png" alt="" width="138"><figcaption></figcaption></figure>
-
-In het volgende scherm, zie je aan de linkerzijde een navigatie menu. Klik op "Disabled apps". Je ziet een overzicht met de apps die in de "apps-extra"-directory zitten. . \
-
-
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption><p>Het enablen van de applicatie</p></figcaption></figure>
-
-Zodra je klikt op "enable" verschijnt deze links bovenin, naast het Nextcloud logo. Dit zijn de shortcut-icoontjes voor de geactiveerde applicaties. Klik op het icoontje van OpenCatalogi en je zit in de app!
-
-<figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt=""><figcaption></figcaption></figure>
+Nadat je de code locaal hebt gekopierd moet je de app toevoegen en actieveren, kijk daarvoor onder [app toevoegen]().

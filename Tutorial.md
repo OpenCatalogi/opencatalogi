@@ -40,8 +40,8 @@ Stukje tekst met screenshots over het aanmaken van metadata
 Stukje tekst met screenshots over het aanmaken van publicaties
 Stukje tekst met screenshots over het toevoegen van gegevens aan publicaites
 Stukje tekst met screenshots over het toevoegen van bestanden aan publicaites
-Stukje tekst met screenshots over het publiceren aan publicaties
 
 6. Delen (must)
 
+Stukje tekst met screenshots over het publiceren van publicaties
 Publicaties 

@@ -5,7 +5,7 @@ description: >-
   benodigde kennis, systeemeisen, etc.
 ---
 
-# Installatie via Demo/Test-omgeving via Docker
+# Installatie van Nextcloud Demo/Test-omgeving
 
 #### Wat Je Nodig Hebt
 
