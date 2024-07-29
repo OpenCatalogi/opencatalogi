@@ -23,15 +23,30 @@ class Catalog extends Entity implements JsonSerializable
 
 	}
 
+	public function getJsonFields(): array
+	{
+		return array_keys(
+			array_filter($this->getFieldTypes(), function ($field) {
+				return $field === 'json';
+			})
+		);
+	}
+
 	public function hydrate(array $object): self
 	{
+		$jsonFields = $this->getJsonFields();
+
 		foreach($object as $key => $value) {
+			if (in_array($key, $jsonFields) === true && $value === []) {
+				$value = null;
+			}
+
 			$method = 'set'.ucfirst($key);
 
 			try {
 				$this->$method($value);
 			} catch (\Exception $exception) {
-
+//				var_dump("Error writing $key");
 			}
 		}
 
@@ -40,7 +55,7 @@ class Catalog extends Entity implements JsonSerializable
 
 	public function jsonSerialize(): array
 	{
-		return [
+		$array = [
 			'id' => $this->id,
 			'title' => $this->title,
 			'summary' => $this->summary,
@@ -48,5 +63,15 @@ class Catalog extends Entity implements JsonSerializable
 			'image' => $this->image,
 			'search' => $this->search,
 		];
+
+		$jsonFields = $this->getJsonFields();
+
+		foreach ($array as $key => $value) {
+			if (in_array($key, $jsonFields) === true && $value === null) {
+				$array[$key] = [];
+			}
+		}
+
+		return $array;
 	}
 }

@@ -42,19 +42,19 @@ class MetaDataMapper extends QBMapper
 
 	public function createFromArray(array $object): MetaData
 	{
-		$publication = new MetaData();
-		$publication->hydrate(object: $object);
+		$metadata = new MetaData();
+		$metadata->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
+//		var_dump($metadata->getTitle());
 
-		return $this->insert(entity: $publication);
+		return $this->insert(entity: $metadata);
 	}
 
 	public function updateFromArray(int $id, array $object): MetaData
 	{
-		$publication = $this->find($id);
-		$publication->hydrate($object);
+		$metadata = $this->find($id);
+		$metadata->hydrate($object);
 
-		return $this->update($publication);
+		return $this->update($metadata);
 	}
 }
