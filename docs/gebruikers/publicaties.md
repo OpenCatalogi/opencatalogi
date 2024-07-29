@@ -15,11 +15,11 @@ Hieronder is een voorbeeld van een ingevulde modal voor het aanmaken van een Woo
 
 <div align="left">
 
-<figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt="" width="371"><figcaption><p>Het eerste gedeelte - gegevens over de publicatie</p></figcaption></figure>
+<figure><img src="../assets/oc_publicatie_toevoegen_form.png" alt="" width="371"><figcaption><p>Het eerste gedeelte - gegevens over de publicatie</p></figcaption></figure>
 
  
 
-<figure><img src="../.gitbook/assets/Open-Catalogi-Nextcloud.png" alt="" width="374"><figcaption><p>het tweede gedeelte - het aanwijzen van de catalogi</p></figcaption></figure>
+<figure><img src="../assets/Open-Catalogi-Nextcloud.png" alt="" width="374"><figcaption><p>het tweede gedeelte - het aanwijzen van de catalogi</p></figcaption></figure>
 
 </div>
 
@@ -28,11 +28,11 @@ Na het opslaan van de publicatie, is deze zichtbaar onder de catalogi "Woo". Om 
 
 Onder is een voorbeeld van een publicatie en de Actie-mogelijkheden.
 
-<figure><img src="../.gitbook/assets/image (17).png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.assets/oc_publicatie_acties.png" alt="" width="375"><figcaption></figcaption></figure>
 
 ### Web - en Gebruikersstatistieken
 
 todo: toevoegen metrics aan het dashboard, voorbeeld:\
 
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1).png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../.assets/oc_dashboard.png" alt="" width="375"><figcaption></figcaption></figure>

@@ -5,15 +5,16 @@
 ## Gebruikers
 
 * [Tutorial](docs/gebruikers/tutorial.md)
+* [Dashboard](docs/gebruikers/dashboard.md)
 * [Publicaties](docs/gebruikers/publicaties.md)
-* [Catalogi](docs/gebruikers/catalogi.md)
-* [Metadata](docs/gebruikers/metadata.md)
 * [Zoeken](docs/gebruikers/zoeken-in-de-beheerinterface.md)
-* [Directory](docs/gebruikers/directory.md)
 
 ## BEHEERDERS
 
-* [Gebruikershandleiding](docs/beheerders/page-3.md)
+* [Catalogi](docs/beheerders/catalogi.md)
+* [Metadata](docs/beheerders/metadata.md)
+* [Directory](docs/beheerders/directory.md)
+* [Configuratie](docs/beheerders/configuratie.md)
 
 ## Developers
 
