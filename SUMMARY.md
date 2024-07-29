@@ -19,9 +19,9 @@
 
 ## Developers
 
-* [Instructies voor de Nextcloud setup](developers/development-setup.md)
-* [Installatie via Demo/Test-omgeving via Docker](developers/installatie-via-docker.md)
-* [De OpenCatalogi-app toevoegen aan Nextcloud](developers/installatie-via-nextcloud-lokaal-deel-2-een-app-toevoegen.md)
-* [Verdere documentatie](developers/verder-documentatie.md)
+* [Installatie van Nextcloud Demo/Test-omgeving](developers/installatie-van-nextcloud-demo-test-omgeving.md)
+* [Installatie van Nextcloud Development-omgeving](developers/installatie-van-nextcloud-development-omgeving.md)
+* [De OpenCatalogi-app toevoegen aan Nextcloud](developers/de-opencatalogi-app-toevoegen-aan-nextcloud.md)
+* [Aan de slag met development](developers/aan-de-slag-met-development.md)
 
 ## Community
