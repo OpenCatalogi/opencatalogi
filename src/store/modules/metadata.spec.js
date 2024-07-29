@@ -121,46 +121,106 @@ describe('Metadata Store', () => {
 
 	it('get metadata property from key', () => {
 		const store = useMetadataStore()
-		const metadataItem = {
-			id: '1',
-			name: 'Test metadata name',
-			title: 'Test metadata',
-			summary: 'This is a test metadata',
-			description: 'this is a very long description for test metadata',
-			version: '0.0.1',
-			properties: {
-				sasds: {
-					type: 'string',
-					description: 'property description',
-					format: 'a format',
-					maxDate: '2025-07-13',
-					$ref: '',
-					required: false,
-					default: false,
-					cascadeDelete: false,
-					exclusiveMinimum: '2',
-				},
-				gfdgds: {
-					type: 'string',
-					description: 'property description',
-					format: 'a format',
-					maxDate: '2025-07-13',
-					required: false,
-					default: false,
-					cascadeDelete: false,
-					exclusiveMinimum: '2',
-				},
-			},
-		}
 
-		store.setMetaDataItem(metadataItem)
+		store.setMetaDataItem(testData[0])
 		store.setMetadataDataKey('sasds')
 
-		expect(store.metaDataItem).toEqual(metadataItem)
+		expect(store.metaDataItem).toEqual(testData[0])
 		expect(store.metadataDataKey).toBe('sasds')
 
 		const properties = store.getMetadataPropertyKeys('sasds')
 
-		expect(properties).toEqual(metadataItem.properties.sasds)
+		expect(properties).toEqual(testData[0].properties.sasds)
 	})
 })
+
+const testData = [
+	{ // full data
+		id: '1',
+		title: 'Decat',
+		description: 'A detailed description about this catalog.',
+		version: '1.0.0',
+		required: ['summary', 'image'],
+		properties: [
+			{
+				id: 'summary',
+				title: 'Summary',
+				description: 'A short form summary',
+				type: 'string',
+				format: 'date',
+				pattern: 1,
+				default: 'njiofdsf',
+				behavior: 'fitness',
+				required: true,
+				deprecated: false,
+				minLength: 10,
+				maxLength: 100,
+				example: 'This is a summary example.',
+				minimum: 1,
+				maximum: 5,
+				multipleOf: 1,
+				exclusiveMin: false,
+				exclusiveMax: false,
+				minItems: 0,
+				maxItems: 5,
+			},
+			{
+				id: 'image',
+				title: 'Image URL',
+				description: 'URL of the catalog image',
+				type: 'string',
+				format: 'url',
+				pattern: 1,
+				default: 'http://example.com/image.jpg',
+				behavior: 'hawk tuah',
+				required: true,
+				deprecated: true,
+				minLength: 10,
+				maxLength: 100,
+				example: 'This is a summary example.',
+				minimum: 1,
+				maximum: 5,
+				multipleOf: 1,
+				exclusiveMin: false,
+				exclusiveMax: false,
+				minItems: 0,
+				maxItems: 5,
+			},
+		],
+	},
+	{ // partial data
+		id: '2',
+		title: 'Woo',
+		description: 'A detailed description about this catalog.',
+		version: '1.0.1',
+		properties: [
+			{
+				id: 'summary',
+				title: 'Summary',
+				description: 'A short form summary',
+				type: 'string',
+				minLength: 10,
+				maxLength: 100,
+				example: 'This is a summary example.',
+			},
+		],
+	},
+	{ // invalid data
+		id: '3',
+		title: '',
+		description: 'A detailed description about this catalog.',
+		version: '1.0.2',
+		required: [],
+		properties: [
+			{
+				id: 'summary',
+				title: 'Summary',
+				description: 'A short form summary',
+				type: 'string',
+				minLength: 10,
+				maxLength: 100,
+				example: 'This is a summary example.',
+			},
+		],
+	},
+]

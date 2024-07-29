@@ -55,10 +55,11 @@ export class Metadata implements TMetadata {
 			version: z.string().optional(),
 			required: z.string().array().optional(),
 			properties: z.object({
-				title: z.string().min(1),
+				title: z.string().min(1).max(255),
 				description: z.string().optional(),
-				type: z.string().optional(),
-				format: z.string().optional(),
+				type: z.enum(['string', 'number', 'integer', 'object', 'array', 'boolean', 'dictionary']),
+				format: z.enum(['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'])
+					.optional(),
 				pattern: z.number().optional(),
 				default: z.string().optional(),
 				behavior: z.string().optional(),
@@ -77,14 +78,7 @@ export class Metadata implements TMetadata {
 			}).array().optional(),
 		})
 
-		const result = schema.safeParse({
-			id: this.id,
-			title: this.title,
-			description: this.description,
-			version: this.version,
-			required: this.required,
-			properties: this.properties,
-		})
+		const result = schema.safeParse({ ...this })
 
 		return result.success
 	}

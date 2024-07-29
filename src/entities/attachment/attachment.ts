@@ -82,16 +82,14 @@ export class Attachment implements TAttachment {
 					.optional(),
 				title: z.string().min(1),
 			}).optional(),
+			versionOf: z.string().uuid().optional(),
+			hash: z.string().max(255).optional(),
+			published: z.string().optional(),
+			modified: z.string().optional(),
+			license: z.string().optional(),
 		})
 
-		const result = schema.safeParse({
-			id: this.id,
-			title: this.title,
-			description: this.description,
-			// version: this.version,
-			// required: this.required,
-			// properties: this.properties,
-		})
+		const result = schema.safeParse({ ...this })
 
 		return result.success
 	}
