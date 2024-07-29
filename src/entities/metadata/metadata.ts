@@ -9,8 +9,7 @@ export class Metadata implements TMetadata {
 	public version?: string
 	public required?: string[]
 
-	public properties: {
-        id: string
+	public properties: Record<string, {
         title: string
         description?: string
         type?: 'string' | 'number' | 'integer' | 'object' | 'array' | 'boolean' | 'dictionary'
@@ -30,7 +29,7 @@ export class Metadata implements TMetadata {
         exclusiveMax?: boolean
         minItems?: number
         maxItems?: number
-    }[]
+    }>
 
 	constructor(data: TMetadata) {
 		this.hydrate(data)
@@ -43,12 +42,36 @@ export class Metadata implements TMetadata {
 		this.description = data?.description || ''
 		this.version = data?.version || ''
 		this.required = data?.required || []
-		this.properties = data?.properties || []
+		// backend (PHP) doesnt know objects so it will return an array if empty
+		// FIXME: remove this isArray check once fixed
+		this.properties = (Array.isArray(data?.properties) && {}) || data?.properties || {}
 	}
 
 	/* istanbul ignore next */
 	public validate(): boolean {
 		// https://conduction.stoplight.io/docs/open-catalogi/92e81a078982b-metadata
+		const propertiesDataSchema = z.object({
+			title: z.string().min(1),
+			description: z.string().optional(),
+			type: z.string().min(1),
+			format: z.string().optional(),
+			pattern: z.number().optional(),
+			default: z.string().optional(),
+			behavior: z.string().optional(),
+			required: z.boolean().optional(),
+			deprecated: z.boolean().optional(),
+			minLength: z.number().optional(),
+			maxLength: z.number().optional(),
+			example: z.string().optional(),
+			minimum: z.number().optional(),
+			maximum: z.number().optional(),
+			multipleOf: z.number().optional(),
+			exclusiveMin: z.boolean().optional(),
+			exclusiveMax: z.boolean().optional(),
+			minItems: z.number().optional(),
+			maxItems: z.number().optional(),
+		})
+
 		const schema = z.object({
 			title: z.string().min(1), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
 			description: z.string().optional(),
@@ -76,6 +99,7 @@ export class Metadata implements TMetadata {
 				minItems: z.number().optional(),
 				maxItems: z.number().optional(),
 			}).array().optional(),
+			properties: z.record(propertiesDataSchema).optional(), // z.record allows for any amount of any keys, with specific type for value validation
 		})
 
 		const result = schema.safeParse({ ...this })
