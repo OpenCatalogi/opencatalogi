@@ -13,21 +13,21 @@ Een OpenCatalogi-installatie is bedoeld om onderdeel te zijn van een federatief 
 
 ![alt text](image.png)
 
-Is uw directory leeg? Druk dan op 'listing toevoegen aan directory' achter de zoek balk 
+Is uw directory leeg? Druk dan op 'listing toevoegen aan directory' achter de zoekbalk.
 
 ![alt text](image-1.png)
 
-Catalogi worden gedefineerd aan de hand van de plek waar ze leven op het internet (URI) geef in het formulier de volgende URI op 'url van oc eigen installatie'
+Catalogi worden gedefinieerd aan de hand van de plek waar ze leven op het internet (URI) geef in het formulier de volgende URI op 'url van oc eigen installatie'
 
 ![alt text](image-2.png)
 
 2. Zoeken (should)
 
-Nadat je de app geinstalleerd heb kan je het zoek scherm gebruiken om te zoeken naar gegevens bij andere organisaties. Ga hervoor naar het menu item zoeken. 
+Nadat je de app geïnstalleerd hebt kan je het zoek scherm gebruiken om te zoeken naar gegevens bij andere organisaties. Ga hiervoor het menu item zoeken. 
 
 3. Catalogus (must)
 
-Publicaties worden in Open Catalogi verderdeel catalogi
+Publicaties worden in OpenCatalogi verderdeel catalogi
 
 Stukje tekst met screenshots over het aanmaken van catalogi
 
