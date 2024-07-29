@@ -1,18 +1,20 @@
 # Aan de slag met development
 
+We gaan er voor deze stap vanuit dat je reeds een werkende lokale Nextcloud-omgeving hebt met daarin de code voor de app, heb je die nog niet kijk dan eerst onder Installatie van [Nextcloud Demo/Test-omgeving](installatie-van-nextcloud-demo-test-omgeving.md) of[ Installatie van Nextcloud Development](../installatie/instructies.md)-omgeving
+
 ## Bijdragen
 
-Als nextcloud app volgen we zowiezo de [next cloud publishing guide lines](https://docs.nextcloud.com/server/19/developer\_manual/app/publishing.html#app-guidelines).
+Als Nextcloud-app volgen we sowieso de [Nextcloud publishing guidelines](https://docs.nextcloud.com/server/19/developer\_manual/app/publishing.html#app-guidelines).
 
-Daarbovenop hanteren we een aantal extra spelregeles
+Daarbovenop hanteren we een aantal extra spelregeles:
 
-* **Features moeten zijn voorzien van gebruikers documentatie**
-* **Backend code moet zijn voorzien van automatische tests**: Code de covaragde van het porject verlaagd word niet geacpeteerd, zie ook [php unit testing](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html).
-* **Backend code moet zuiver zijv**: Code mag _géén_ linting errors bevaten
+* **Features moeten zijn voorzien van gebruikersdocumentatie**
+* **Backend code moet zijn voorzien van automatische tests**: Code de coverage van het project verlaagd word niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html).
+* **Backend code moet zuiver zijn**: Code mag _géén_ linting errors bevaten
 * **Frontend code moet zijn voorzien van automatische tests**:
 * **Frontend code moet zuiver zijn**: Code mag _géén_ linting errors bevaten
-* **Seperation of concern**: Voor zowel backend als frontend moet busnes logic zijn opgenomen in services. Controllers, Templates, Views, Components en Store mogen _géén_ busnes logic bevatten
-* **Vier ogen princiepe**: Pull requests moeten zijn beoordeeld door een andere developer dan de maker voordat ze worden geacepteerd
+* **Seperation of concerns**: Voor zowel backend als frontend moet business logic zijn opgenomen in services. Controllers, Templates, Views, Components en Store mogen _géén_ business logic bevatten.
+* **Vier ogen principe**: Pull requests moeten zijn beoordeeld door een andere developer dan de maker voordat ze worden geaccepteerd
 
 ## Application development
 
@@ -20,7 +22,7 @@ Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te
 
 ### Gebruikers documentatie
 
-We gebruiken gitbook voor de gebruikers documentatie, features binnen de app zouden zo veel mogenlijk direct moeten doorverwijzen naar deze documentatie.
+We gebruiken Gitbook voor de gebruikers documentatie, features binnen de app zouden zo veel mogelijk direct moeten doorverwijzen naar deze documentatie.
 
 ## API Development
 
@@ -30,9 +32,9 @@ De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.
 
 ### Storage en Typing
 
-Om gegevens deelbaar te maken tussen de verschillende vue comopenten maken we gebruik van [statemanagment](https://vuejs.org/guide/scaling-up/state-management) waarbij we het Action, State, View patroon van vue zelf volgen. Omdat de applicatie ingewikkelder begint te worden stappen we daarbij over van [simple state managment](https://vuejs.org/guide/scaling-up/state-management#simple-state-management-with-reactivity-api) naar [Pinia](https://pinia.vuejs.org/), de door vue zelf geadviseerde opvolger van [vuex](https://vuejs.org/guide/scaling-up/state-management#pinia).
+Om gegevens deelbaar te maken tussen de verschillende Vue-componenten maken we gebruik van [statemanagement](https://vuejs.org/guide/scaling-up/state-management) waarbij we het Action, State, View patroon van Vue zelf volgen. Omdat de applicatie ingewikkelder begint te worden stappen we daarbij over van [simple state management](https://vuejs.org/guide/scaling-up/state-management#simple-state-management-with-reactivity-api) naar [Pinia](https://pinia.vuejs.org/), de door Vue zelf geadviseerde opvolger van [Vuex](https://vuejs.org/guide/scaling-up/state-management#pinia).
 
-Omdat Pinia vanuit zichzelf al typing ondersteund en daarop testbaar is vervalt daarmee ook de noodzaak om in de voorkant te werken met typescript, de ontwikkeling daarvan is dan ook gestopt.
+Omdat Pinia vanuit zichzelf al typing ondersteund en daarop testbaar is vervalt daarmee ook de noodzaak om in de voorkant te werken met Typescript, de ontwikkeling daarvan is dan ook gestopt.
 
 ### Modals
 

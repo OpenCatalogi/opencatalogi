@@ -11,7 +11,7 @@
 
 ## Gebruikers
 
-* [Publicaties](gebruikers/publicaties.md)
+* [Publicaties](gebruikers/gebruikershandleiding.md)
 * [Catalogi](gebruikers/catalogi.md)
 * [Metadata](gebruikers/metadata.md)
 * [Zoeken in de beheerinterface](gebruikers/zoeken-in-de-beheerinterface.md)
