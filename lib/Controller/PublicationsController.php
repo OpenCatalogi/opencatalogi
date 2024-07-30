@@ -149,7 +149,7 @@ class PublicationsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->publicationMapper->find($id));
+			return new JSONResponse($this->publicationMapper->find(id: (int) $id));
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
@@ -238,7 +238,7 @@ class PublicationsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$returnData = $this->publicationMapper->updateFromArray(id: $id, object: $data);
+			$returnData = $this->publicationMapper->updateFromArray(id: (int) $id, object: $data);
 			$returnData = $returnData->jsonSerialize();
 
 			$dbConfig = [];
@@ -287,7 +287,7 @@ class PublicationsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$this->publicationMapper->delete($this->publicationMapper->find($id));
+			$this->publicationMapper->delete($this->publicationMapper->find(id: (int) $id));
 
 			$returnData = [];
 		} else {
