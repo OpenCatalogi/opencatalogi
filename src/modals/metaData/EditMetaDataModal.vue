@@ -23,8 +23,8 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 			<div v-if="success == null" class="form-group">
 				<NcTextField label="Titel" :disabled="loading" :value.sync="metadataStore.metaDataItem.title" />
 				<NcTextField label="Versie" :disabled="loading" :value.sync="metadataStore.metaDataItem.version" />
-				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="metadataStore.metaDataItem.summery" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metadataStore.metaDataItem.description" />
+				<NcTextField label="vereisten (splits op ,)" :value.sync="metadataStore.metaDataItem.required" />
 			</div>
 			<NcButton
 				v-if="success == null"
@@ -94,7 +94,10 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(metadataStore.metaDataItem),
+					body: JSON.stringify({
+						...metadataStore.metaDataItem,
+						required: metadataStore.metaDataItem.required.split(/, */g),
+					}),
 				},
 			).then((response) => {
 				this.loading = false
