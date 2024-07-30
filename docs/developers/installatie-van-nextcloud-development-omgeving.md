@@ -1,6 +1,6 @@
 # Installatie van Nextcloud Development-omgeving
 
-Als je aan de slag wilt met het ontwikklen voor Open Catalogi kan je beter een development omgeving neerzetten, de instructies daarvoor vind je als [tutorial op nextcloud](https://cloud.nextcloud.com/s/iyNGp8ryWxc7Efa?path=%2F1%20Setting%20up%20a%20development%20environment).
+Als je aan de slag wilt met het ontwikkelen voor Open Catalogi kan je beter een development-omgeving neerzetten, de instructies daarvoor vind je als [tutorial op nextcloud](https://cloud.nextcloud.com/s/iyNGp8ryWxc7Efa?path=%2F1%20Setting%20up%20a%20development%20environment).
 
 ## De code voor de OpenCatalogi-app
 
