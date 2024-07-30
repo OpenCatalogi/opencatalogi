@@ -15,7 +15,7 @@ import { catalogiStore, navigationStore, searchStore } from '../../store/store.j
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
-					<NcActionButton @click="fetchData">
+					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
@@ -127,7 +127,9 @@ export default {
 		fetchData() {
 			this.loading = true
 			catalogiStore.refreshCatalogiList()
-			this.loading = false
+				.then(() => {
+					this.loading = false
+				})
 		},
 	},
 }
@@ -139,6 +141,9 @@ export default {
     z-index: 1000;
     background-color: var(--color-main-background);
     border-bottom: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .searchField {

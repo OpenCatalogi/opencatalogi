@@ -18,9 +18,9 @@ export const useCatalogiStore = defineStore('catalogi', {
 			)
 			console.log('Catalogi list set to ' + catalogiList.length + ' item')
 		},
-		refreshCatalogiList() {
+		async refreshCatalogiList() {
 			// @todo this might belong in a service?
-			fetch('/index.php/apps/opencatalogi/api/catalogi', {
+			return fetch('/index.php/apps/opencatalogi/api/catalogi', {
 				method: 'GET',
 			})
 				.then((response) => {
