@@ -12,10 +12,10 @@ Nadat een metadata type is geactiveerd, kan je deze activeren voor jouw eigen ca
 
 Nadat de metadata voor de catalogi is geactiveerd, kan je via [publicaties](../gebruikers/publicaties.md) aanmaken, een publicatie aanmaken voor dit metadatatype.
 
-## Metadata creeren
+## Metadata creëren
 
 JJe kunt ook zelf metadatadefinities toevoegen, bijvoorbeeld omdat er nog geen metadatabeschrijving beschikbaar is voor de publicatie die je wilt doen. In dat geval kun je bovenaan het metadata-overzicht op `+ Metadata toevoegen` klikken (rechts van de zoekbalk) om een metadatadefinitie aan te maken.
 
 Nadat de metadatatype is aangemaakt kan je deze voorzien van eigenschappen.
 
-Als laaste moet je de metadatatype activeren via het [catalogi overzicht](catalogi.md) onder het tabblad `Metadata`.
+Als laatste moet je de metadatatype activeren via het [catalogi overzicht](catalogi.md) onder het tabblad `Metadata`.
