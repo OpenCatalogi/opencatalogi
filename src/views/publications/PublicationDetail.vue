@@ -424,7 +424,7 @@ export default {
 					this.publication = publicationStore.publicationItem
 					this.fetchCatalogi(publicationStore.publicationItem.catalogi)
 					this.fetchMetaData(publicationStore.publicationItem.metaData)
-					this.fetchData(publicationStore.publicationItem.id)
+					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
 			deep: true,
@@ -437,7 +437,7 @@ export default {
 
 		this.fetchCatalogi(publicationStore.publicationItem.catalogi, true)
 		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
-		this.fetchData(publicationStore.publicationItem.id)
+		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
 	methods: {
