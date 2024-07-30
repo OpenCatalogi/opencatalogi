@@ -25,7 +25,7 @@ describe('Directory Store', () => {
 		expect(publication.category).toBe(testData[1].category)
 		expect(publication.portal).toBe(testData[1].portal)
 		expect(publication.catalogi).toBe(testData[1].catalogi)
-		expect(publication.metaData).toBe(testData[1].metaData)
+		expect(publication.metadata).toBe(testData[1].metadata)
 		expect(publication.publicationDate).toBe(testData[1].publicationDate)
 		expect(publication.modified).toBe(testData[1].modified)
 		expect(publication.featured).toBe(testData[1].featured)
@@ -63,19 +63,23 @@ const testData: TPublication[] = [
 		category: 'category1',
 		portal: 'portal1',
 		catalogi: 'catalogi1',
-		metaData: 'meta1',
+		metadata: 'meta1',
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
-		data: [{ key: 'value1' }],
-		attachments: ['attachment1'],
+		organization: {
+			type: 'string',
+		},
+		data: {},
+		attachments: {},
 		attachmentCount: 1,
 		schema: 'schema1',
 		status: 'status1',
-		license: 'MIT',
-		themes: 'theme1',
-		anonymization: { anonymized: 'yes', results: 'success' },
+		license: {
+			type: 'MIT',
+		},
+		themes: ['theme1'],
+		anonymization: {},
 	},
 	{ // partial data
 		id: '2',
@@ -87,17 +91,16 @@ const testData: TPublication[] = [
 		category: 'category2',
 		portal: 'portal2',
 		catalogi: 'catalogi2',
-		metaData: 'meta2',
+		metadata: 'meta2',
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
-		data: [{ key: 'value1' }],
-		attachments: ['attachment1'],
+		organization: {},
+		data: {},
+		attachments: {},
 		attachmentCount: 1,
-
-		themes: 'theme1',
-		anonymization: { anonymized: 'yes', results: 'success' },
+		themes: ['theme1'],
+		anonymization: {},
 	},
 	{ // invalid data
 		id: '3',
@@ -109,18 +112,20 @@ const testData: TPublication[] = [
 		category: 'category3',
 		portal: 'portal3',
 		catalogi: 'catalogi3',
-		metaData: 'meta3',
+		metadata: 'meta3',
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
-		data: [{ key: 'value1' }],
-		attachments: ['attachment1'],
+		organization: {},
+		data: {},
+		attachments: {},
 		attachmentCount: 1,
 		schema: 'schema1',
 		status: 'status1',
-		license: 'MIT',
-		themes: 'theme1',
-		anonymization: { anonymized: 'yes', results: 'success' },
+		license: {
+			type: 'MIT',
+		},
+		themes: ['theme1'],
+		anonymization: {},
 	},
 ]

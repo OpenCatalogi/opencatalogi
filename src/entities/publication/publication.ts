@@ -5,32 +5,56 @@ export class Publication implements TPublication {
 	public id: string
 	public title: string
 	public summary: string
-	public reference?: string
 	public description?: string
+	public reference?: string
 	public image?: string
-	public category?: string
+	public category: string
+	public catalogi: string
+	public metadata: string
 	public portal?: string
-	public catalogi?: string
-	public metaData?: string
-	public publicationDate?: string
-	public modified?: string
 	public featured?: boolean
-	public organization?: object[]
-	public data?: object[]
-	public attachments?: string[]
-	public attachmentCount?: number
-	public schema?: string
-	public status?: string
-	public license?: string
-	public themes?: string
-	public anonymization?: {
-        anonymized?: string
-        results?: string
+	public organization?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
     }
 
-	public language?: {
-        code?: string
-        level?: string
+	public schema?: string
+	public status?: string
+	public attachments?: {
+        type?: string
+        items?: {
+            $ref?: string
+        }
+        format?: string
+    }
+
+	public attachmentCount?: number
+	public themes?: string[]
+	public data?: {
+        type?: string
+        required?: boolean
+    }
+
+	public anonymization?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
+
+	public languageObject?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
+
+	public publicationDate?: string
+	public modified?: string
+	public license?: {
+        type?: string
     }
 
 	constructor(data: TPublication) {
@@ -46,25 +70,27 @@ export class Publication implements TPublication {
 		this.description = data.description || ''
 		this.image = data.image || ''
 		this.category = data.category || ''
-		this.portal = data.portal || ''
 		this.catalogi = data.catalogi || ''
-		this.metaData = data.metaData || ''
-		this.publicationDate = data.publicationDate || ''
-		this.modified = data.modified || ''
+		this.metadata = data.metadata || ''
+		this.portal = data.portal || ''
 		this.featured = data.featured || false
-		this.organization = data.organization || []
-		this.data = data.data || []
-		this.attachments = data.attachments || []
-		this.attachmentCount = data.attachmentCount || 0
+		this.organization = (!Array.isArray(data.organization) && data.organization) || {}
 		this.schema = data.schema || ''
 		this.status = data.status || ''
-		this.license = data.license || ''
-		this.themes = data.themes || ''
-		this.anonymization = data.anonymization || {}
+		this.attachments = (!Array.isArray(data.attachments) && data.attachments) || {}
+		this.attachmentCount = data.attachmentCount || 0
+		this.themes = (!Array.isArray(data.themes) && data.themes) || {}
+		this.data = (!Array.isArray(data.data) && data.data) || {}
+		this.anonymization = (!Array.isArray(data.anonymization) && data.anonymization) || {}
+		this.languageObject = (!Array.isArray(data.languageObject) && data.languageObject) || {}
+		this.publicationDate = data.publicationDate || ''
+		this.modified = data.modified || ''
+		this.license = (!Array.isArray(data.license) && data.license) || {}
 	}
 
 	/* istanbul ignore next */
 	public validate(): boolean {
+		// TODO: change this over to Zod schema, already exists on 'feature/DIMOC-101/entities' (requires slight modification)
 		// these have to exist
 		if (!this.id || typeof this.id !== 'string') return false
 		if (!this.title || typeof this.title !== 'string') return false
@@ -76,7 +102,7 @@ export class Publication implements TPublication {
 		if (!this.category && typeof this.category !== 'string') return false
 		if (!this.portal && typeof this.portal !== 'string') return false
 		if (!this.catalogi && typeof this.catalogi !== 'string') return false
-		if (!this.metaData && typeof this.metaData !== 'string') return false
+		if (!this.metadata && typeof this.metadata !== 'string') return false
 		if (!this.publicationDate && typeof this.publicationDate !== 'string') return false
 		if (!this.modified && typeof this.modified !== 'string') return false
 		if (!this.featured && typeof this.featured !== 'boolean') return false

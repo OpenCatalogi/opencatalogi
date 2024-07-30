@@ -42,9 +42,8 @@ export class Metadata implements TMetadata {
 		this.description = data?.description || ''
 		this.version = data?.version || ''
 		this.required = data?.required || []
-		// backend (PHP) doesnt know objects so it will return an array if empty
-		// FIXME: remove this isArray check once fixed
-		this.properties = (Array.isArray(data?.properties) && {}) || data?.properties || {}
+		// backend (PHP) doesn't know objects so it will return an array if empty
+		this.properties = (!Array.isArray(data?.properties) && data?.properties) || {}
 	}
 
 	/* istanbul ignore next */
