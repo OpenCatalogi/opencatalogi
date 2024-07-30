@@ -81,11 +81,11 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					directoryStore.refreshListingList()
+					directoryStore.setListingItem(false)
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						directoryStore.setListingItem(false)
 						navigationStore.setDialog(false)
 					}, 2000)
 				})
