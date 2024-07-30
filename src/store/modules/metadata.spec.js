@@ -2,6 +2,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 
 import { useMetadataStore } from './metadata.js'
+import { Metadata } from '../../entities/index.js'
 
 describe('Metadata Store', () => {
 	beforeEach(() => {
@@ -10,217 +11,181 @@ describe('Metadata Store', () => {
 
 	it('sets metadata item correctly', () => {
 		const store = useMetadataStore()
-		const metadataItem = {
-			id: '1',
-			name: 'Test metadata name',
-			title: 'Test metadata',
-			summary: 'This is a test listing',
-			description: 'this is a very long description for test listing',
-			version: '0.0.1',
-			properties: {
-				sasds: {
-					type: 'string',
-					description: 'property description',
-					format: 'a format',
-					maxDate: '2025-07-13',
-					required: false,
-					default: false,
-					cascadeDelete: false,
-					exclusiveMinimum: '2',
-				},
-			},
-		}
 
-		store.setMetaDataItem(metadataItem)
+		store.setMetaDataItem(testData[0])
 
-		expect(store.metaDataItem).toEqual(metadataItem)
-	})
+		expect(store.metaDataItem).toBeInstanceOf(Metadata)
+		expect(store.metaDataItem).toEqual(testData[0])
+		expect(store.metaDataItem.validate()).toBe(true)
 
-	it('sets metadata item with string "properties" property', () => {
-		const store = useMetadataStore()
-		const metadataItem = {
-			id: '1',
-			name: 'Test metadata name',
-			title: 'Test metadata',
-			summary: 'This is a test listing',
-			description: 'this is a very long description for test listing',
-			version: '0.0.1',
-			properties: '{"sasds":{"type":"string","description":"property description","format":"a format","maxDate":"2025-07-13","required":false,"default":false,"cascadeDelete":false,"exclusiveMinimum":"2"}}',
-		}
+		store.setMetaDataItem(testData[1])
 
-		store.setMetaDataItem(metadataItem)
+		expect(store.metaDataItem).toBeInstanceOf(Metadata)
+		expect(store.metaDataItem).not.toEqual(testData[1])
+		expect(store.metaDataItem.validate()).toBe(true)
 
-		expect(store.metaDataItem.id).toBe('1')
-		expect(store.metaDataItem.name).toBe('Test metadata name')
-		expect(store.metaDataItem.title).toBe('Test metadata')
-		expect(store.metaDataItem.summary).toBe('This is a test listing')
-		expect(store.metaDataItem.description).toBe('this is a very long description for test listing')
-		expect(store.metaDataItem.version).toBe('0.0.1')
-		// properties
-		expect(store.metaDataItem.properties.sasds.type).toBe('string')
-		expect(store.metaDataItem.properties.sasds.description).toBe('property description')
-		expect(store.metaDataItem.properties.sasds.format).toBe('a format')
-		expect(store.metaDataItem.properties.sasds.maxDate).toBe('2025-07-13')
-		expect(store.metaDataItem.properties.sasds.required).toBe(false)
-		expect(store.metaDataItem.properties.sasds.default).toBe(false)
-		expect(store.metaDataItem.properties.sasds.cascadeDelete).toBe(false)
-		expect(store.metaDataItem.properties.sasds.exclusiveMinimum).toBe('2')
+		store.setMetaDataItem(testData[2])
+
+		expect(store.metaDataItem).toBeInstanceOf(Metadata)
+		expect(store.metaDataItem).toEqual(testData[2])
+		expect(store.metaDataItem.validate()).toBe(false)
 	})
 
 	it('sets metadata list correctly', () => {
 		const store = useMetadataStore()
-		const metadataList = [
-			{
-				id: '1',
-				name: 'Test metadata name',
-				title: 'Test metadata',
-				summary: 'This is a test metadata',
-				description: 'this is a very long description for test metadata',
-				version: '0.0.1',
-				properties: {
-					sasds: {
-						type: 'string',
-						description: 'property description',
-						format: 'a format',
-						maxDate: '2025-07-13',
-						required: false,
-						default: false,
-						cascadeDelete: false,
-						exclusiveMinimum: '2',
-					},
-					gfdgds: {
-						type: 'string',
-						description: 'property description',
-						format: 'a format',
-						maxDate: '2025-07-13',
-						required: false,
-						default: false,
-						cascadeDelete: false,
-						exclusiveMinimum: '2',
-					},
-				},
-			},
-			{
-				id: '2',
-				name: 'Test metadata naming',
-				title: 'Test metadata aaaa',
-				summary: 'This is a test metadata baaa da daaa',
-				description: 'this is a very long descriptio-',
-				version: '0.0.1',
-				properties: {},
-			},
-		]
 
-		store.setMetaDataList(metadataList)
+		store.setMetaDataList(testData)
 
-		expect(store.metaDataList).toHaveLength(metadataList.length)
-		store.metaDataList.forEach((item, index) => {
-			expect(item).toEqual(metadataList[index])
-		})
+		expect(store.metaDataList).toHaveLength(testData.length)
+
+		expect(store.metaDataList[0]).toBeInstanceOf(Metadata)
+		expect(store.metaDataList[0]).toEqual(testData[0])
+		expect(store.metaDataList[0].validate()).toBe(true)
+
+		expect(store.metaDataList[1]).toBeInstanceOf(Metadata)
+		expect(store.metaDataList[1]).not.toEqual(testData[1])
+		expect(store.metaDataList[1].validate()).toBe(true)
+
+		expect(store.metaDataList[2]).toBeInstanceOf(Metadata)
+		expect(store.metaDataList[2]).toEqual(testData[2])
+		expect(store.metaDataList[2].validate()).toBe(false)
 	})
 
 	it('get metadata property from key', () => {
 		const store = useMetadataStore()
 
 		store.setMetaDataItem(testData[0])
-		store.setMetadataDataKey('sasds')
+		store.setMetadataDataKey('test')
 
 		expect(store.metaDataItem).toEqual(testData[0])
-		expect(store.metadataDataKey).toBe('sasds')
+		expect(store.metadataDataKey).toBe('test')
 
-		const properties = store.getMetadataPropertyKeys('sasds')
+		const properties = store.getMetadataPropertyKeys('test')
 
-		expect(properties).toEqual(testData[0].properties.sasds)
+		expect(properties).toEqual(testData[0].properties.test)
 	})
 })
 
 const testData = [
 	{ // full data
 		id: '1',
-		title: 'Decat',
-		description: 'A detailed description about this catalog.',
-		version: '1.0.0',
-		required: ['summary', 'image'],
-		properties: [
-			{
-				id: 'summary',
-				title: 'Summary',
-				description: 'A short form summary',
+		title: 'Test metadata',
+		description: 'this is a very long description for test metadata',
+		version: '0.0.1',
+		required: ['test'],
+		properties: {
+			test: {
+				title: 'test prop',
+				description: 'a long description',
 				type: 'string',
 				format: 'date',
 				pattern: 1,
-				default: 'njiofdsf',
-				behavior: 'fitness',
-				required: true,
+				default: 'true',
+				behavior: 'silly',
+				required: false,
 				deprecated: false,
-				minLength: 10,
-				maxLength: 100,
-				example: 'This is a summary example.',
+				minLength: 5,
+				maxLength: 6,
+				example: 'gooby example',
 				minimum: 1,
-				maximum: 5,
+				maximum: 3,
 				multipleOf: 1,
 				exclusiveMin: false,
 				exclusiveMax: false,
 				minItems: 0,
-				maxItems: 5,
+				maxItems: 6,
 			},
-			{
-				id: 'image',
-				title: 'Image URL',
-				description: 'URL of the catalog image',
+			gfdgds: {
+				title: 'gfdgds prop',
+				description: 'property description',
 				type: 'string',
-				format: 'url',
-				pattern: 1,
-				default: 'http://example.com/image.jpg',
-				behavior: 'hawk tuah',
-				required: true,
-				deprecated: true,
-				minLength: 10,
-				maxLength: 100,
-				example: 'This is a summary example.',
+				format: 'uuid',
+				pattern: 2,
+				default: 'false',
+				behavior: 'goofy perchance',
+				required: false,
+				deprecated: false,
+				minLength: 5.5,
+				maxLength: 5.11,
+				example: 'bazinga',
 				minimum: 1,
-				maximum: 5,
+				maximum: 2,
 				multipleOf: 1,
-				exclusiveMin: false,
+				exclusiveMin: true,
 				exclusiveMax: false,
-				minItems: 0,
-				maxItems: 5,
+				minItems: 1,
+				maxItems: 7,
 			},
-		],
+		},
 	},
 	{ // partial data
 		id: '2',
-		title: 'Woo',
-		description: 'A detailed description about this catalog.',
-		version: '1.0.1',
-		properties: [
-			{
-				id: 'summary',
-				title: 'Summary',
-				description: 'A short form summary',
+		title: 'Test metadata',
+		description: 'this is a very long description for test metadata',
+		version: '0.0.1',
+		properties: {
+			test: {
+				title: 'test prop',
+				description: 'a long description',
 				type: 'string',
-				minLength: 10,
-				maxLength: 100,
-				example: 'This is a summary example.',
+				behavior: 'silly',
+				required: false,
+				exclusiveMin: false,
+				exclusiveMax: false,
+				minItems: 0,
+				maxItems: 6,
 			},
-		],
+		},
 	},
 	{ // invalid data
 		id: '3',
-		title: '',
-		description: 'A detailed description about this catalog.',
-		version: '1.0.2',
-		required: [],
-		properties: [
-			{
-				id: 'summary',
-				title: 'Summary',
-				description: 'A short form summary',
+		title: '', // cannot be empty
+		description: 'this is a very long description for test metadata',
+		version: '0.0.1',
+		required: ['test'],
+		properties: {
+			test: {
+				title: 'test prop',
+				description: 'a long description',
 				type: 'string',
-				minLength: 10,
-				maxLength: 100,
-				example: 'This is a summary example.',
+				format: 'date',
+				pattern: 1,
+				default: 'true',
+				behavior: 'silly',
+				required: false,
+				deprecated: false,
+				minLength: 5,
+				maxLength: 6,
+				example: 'gooby example',
+				minimum: 1,
+				maximum: 3,
+				multipleOf: 1,
+				exclusiveMin: false,
+				exclusiveMax: false,
+				minItems: 0,
+				maxItems: 6,
 			},
-		],
+			gfdgds: {
+				title: 'gfdgds prop',
+				description: 'property description',
+				type: 'string',
+				format: 'uuid',
+				pattern: 2,
+				default: 'false',
+				behavior: 'goofy perchance',
+				required: false,
+				deprecated: false,
+				minLength: 5.5,
+				maxLength: 5.11,
+				example: 'bazinga',
+				minimum: 1,
+				maximum: 2,
+				multipleOf: 1,
+				exclusiveMin: true,
+				exclusiveMax: false,
+				minItems: 1,
+				maxItems: 7,
+			},
+		},
 	},
 ]

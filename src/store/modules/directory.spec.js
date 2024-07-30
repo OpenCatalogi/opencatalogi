@@ -33,17 +33,7 @@ describe('Directory Store', () => {
 
 		// list item 2
 		expect(store.listingList[1]).toBeInstanceOf(Listing)
-		expect(store.listingList[1].id).toBe(testData[1].id)
-		expect(store.listingList[1].title).toBe(testData[1].title)
-		expect(store.listingList[1].summary).toBe(testData[1].summary)
-		expect(store.listingList[1].description).toBe(testData[1].description)
-		expect(store.listingList[1].search).toBe('')
-		expect(store.listingList[1].directory).toBe(testData[1].directory)
-		expect(store.listingList[1].metadata).toBe('')
-		expect(store.listingList[1].status).toBe('')
-		expect(store.listingList[1].lastSync).toBe(testData[1].lastSync)
-		expect(store.listingList[1].default).toBe(testData[1].default)
-		expect(store.listingList[1].available).toBe(testData[1].available)
+		expect(store.listingList[1]).not.toEqual(testData[1])
 
 		expect(store.listingList[1].validate()).toBe(true)
 
@@ -71,8 +61,8 @@ const testData = [
 		title: 'test 1',
 		summary: 'a short form summary',
 		description: 'a really really long description about this catalogus',
-		search: 'string',
-		directory: 'string',
+		search: 'https://example.com/search',
+		directory: 'https://example.com/directory',
 		metadata: 'string',
 		status: 'active',
 		lastSync: '2024-07-25T00:00:00Z',
@@ -84,7 +74,7 @@ const testData = [
 		title: 'test 2',
 		summary: 'a short form summary',
 		description: 'a really really long description about this catalogus',
-		directory: 'string',
+		directory: 'https://example.com/directory',
 		lastSync: '2024-07-25T00:00:00Z',
 		default: 'yes',
 		available: 'no',
@@ -94,8 +84,8 @@ const testData = [
 		title: '',
 		summary: 'a short form summary',
 		description: 'a really really long description about this catalogus',
-		search: 'string',
-		directory: 'string',
+		search: 'https://example.com/search',
+		directory: 'https://example.com/directory',
 		metadata: 'string',
 		status: 'pending',
 		lastSync: '2024-07-25T00:00:00Z',

@@ -80,7 +80,7 @@ export class Attachment implements TAttachment {
 					.max(7)
 					.regex(/([a-z]{2,3})(-[a-z]{2,3})?/g, 'language code is not a valid ISO 639-1 code (e.g. en-us)')
 					.optional(),
-				title: z.string().min(1),
+				level: z.string().max(2).regex(/([a-zA-Z][0-9])/g, 'language level is not a valid level (e.g. A1)'),
 			}).optional(),
 			versionOf: z.string().uuid().optional(),
 			hash: z.string().max(255).optional(),

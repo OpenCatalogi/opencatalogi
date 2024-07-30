@@ -9,24 +9,53 @@ export class Publication implements TPublication {
 	public reference?: string
 	public description?: string
 	public image?: string
-	public category?: string
+	public category: string
 	public portal?: string
 	public catalogi?: string
 	public metaData?: string
 	public publicationDate?: string
 	public modified?: string
 	public featured?: boolean
-	public organization?: object[]
-	public data?: object[]
-	public attachments?: string[]
+	public organization?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
+
+	public data: {
+        type?: string
+        required?: boolean
+    }
+
+	public attachments?: {
+        type?: string
+        items?: {
+            $ref?: string
+        }
+        format?: string
+    }
+
 	public attachmentCount?: number
-	public schema?: string
+	public schema: string
 	public status?: string
-	public license?: string
-	public themes?: string
+	public license?: {
+        type?: string
+    }
+
+	public themes?: string[]
 	public anonymization?: {
-        anonymized?: string
-        results?: string
+        type?: string
+        format?: string
+        description?: string
+        $ref?: string
+    }
+
+	public languageObject?: {
+        type?: string
+        format?: string
+        description?: string
+        $ref?: string
     }
 
 	public language?: {
@@ -53,14 +82,15 @@ export class Publication implements TPublication {
 		this.publicationDate = data.publicationDate || ''
 		this.modified = data.modified || ''
 		this.featured = data.featured || false
-		this.organization = data.organization || []
-		this.data = data.data || []
-		this.attachments = data.attachments || []
+		this.organization = data.organization || {}
+		this.data = data.data || {}
+		this.attachments = data.attachments || {}
 		this.attachmentCount = data.attachmentCount || 0
 		this.schema = data.schema || ''
 		this.status = data.status || ''
-		this.license = data.license || ''
-		this.themes = data.themes || ''
+		this.license = data.license || {}
+		this.themes = data.themes || []
+		this.languageObject = data.languageObject || {}
 		this.anonymization = data.anonymization || {}
 	}
 
