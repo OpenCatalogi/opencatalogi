@@ -132,7 +132,6 @@ export default {
 	},
 	data() {
 		return {
-
 			catalogi: {
 				value: [],
 				options: [],
