@@ -79,7 +79,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<b>Juridisch</b>
 				<NcTextField :disabled="loading"
 					label="Licentie"
-					:value.sync="publicationStore.publicationItem.license" />
+					:value.sync="publicationStore.publicationItem.license.type" />
 				<NcSelect v-bind="catalogi"
 					v-model="publicationStore.publicationItem.catalogi"
 					input-label="Catalogi"
