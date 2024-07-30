@@ -83,7 +83,7 @@ export default {
 					},
 					body: JSON.stringify({
 						...this.metaData,
-						required: this.required.split(/, */g), // split on , to make an array of strings
+						required: this.metaData.required.split(/, */g), // split on , to make an array of strings
 					}),
 				},
 			)

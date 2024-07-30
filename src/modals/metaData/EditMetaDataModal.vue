@@ -94,7 +94,10 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(metadataStore.metaDataItem),
+					body: JSON.stringify({
+						...metadataStore.metaDataItem,
+						required: metadataStore.metaDataItem.required.split(/, */g),
+					}),
 				},
 			).then((response) => {
 				this.loading = false
