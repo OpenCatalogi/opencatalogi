@@ -3,7 +3,7 @@
 1. Zorg dat je Nextcloud hebt geïnstalleerd (link naar installatie handleiding)
 2. Zorg dat je de app geactifeerd hebt (link naar configuratie)
 
-Nadat de app succesvol is geconfigureerd vind u deze terug in het app menu van next cloud, klik op het open catalogi icoon om de app te openen
+Nadat de app succesvol is geconfigureerd vind u deze terug in het app menu van next cloud, klik op het open catalogi icoon om de app te openen. De tutorial gaat uit ven een lege installatie. 
 
 ![app menu](../assets/nc_app_menu.png)
 
