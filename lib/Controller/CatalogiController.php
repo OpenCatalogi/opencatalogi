@@ -76,7 +76,7 @@ class CatalogiController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->catalogMapper->find(id: $id));
+			return new JSONResponse($this->catalogMapper->find(id: (int) $id));
 		}
 
         try {
@@ -152,7 +152,7 @@ class CatalogiController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->catalogMapper->updateFromArray(id: $id, object: $data));
+			return new JSONResponse($this->catalogMapper->updateFromArray(id: (int) $id, object: $data));
 		}
 
         try {
@@ -180,7 +180,7 @@ class CatalogiController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$this->catalogMapper->delete($this->catalogMapper->find($id));
+			$this->catalogMapper->delete($this->catalogMapper->find((int) $id));
 
 			return new JSONResponse([]);
 		}

@@ -83,7 +83,7 @@ class MetaDataController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->metaDataMapper->find(id: $id));
+			return new JSONResponse($this->metaDataMapper->find(id: (int) $id));
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -152,7 +152,7 @@ class MetaDataController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->metaDataMapper->updateFromArray(id: $id, object: $data));
+			return new JSONResponse($this->metaDataMapper->updateFromArray(id: (int) $id, object: $data));
 		}
 
 
@@ -180,7 +180,7 @@ class MetaDataController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$this->metaDataMapper->delete($this->metaDataMapper->find($id));
+			$this->metaDataMapper->delete($this->metaDataMapper->find(id: (int) $id));
 
 			return new JSONResponse([]);
 		}
