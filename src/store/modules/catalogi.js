@@ -26,8 +26,7 @@ export const useCatalogiStore = defineStore('catalogi', {
 				.then((response) => {
 					response.json().then((data) => {
 						this.catalogiList = data.results.map(
-							(catalogiItem) =>
-								new Catalogi(catalogiItem),
+							(catalogiItem) => new Catalogi(catalogiItem),
 						)
 					})
 				})
