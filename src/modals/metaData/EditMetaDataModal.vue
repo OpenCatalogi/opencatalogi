@@ -9,20 +9,25 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData bewerken</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Meta data succesvol gewijzigd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Metadata succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van metadata</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success == null" class="form-group">
 				<NcTextField label="Titel" :disabled="loading" :value.sync="metadataStore.metaDataItem.title" />
 				<NcTextField label="Versie" :disabled="loading" :value.sync="metadataStore.metaDataItem.version" />
 				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="metadataStore.metaDataItem.summery" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metadataStore.metaDataItem.description" />
 			</div>
 			<NcButton
-				v-if="!succes"
+				v-if="success == null"
 				:disabled="!metadataStore.metaDataItem.title || loading"
 				type="primary"
 				@click="editMetaData">
@@ -56,7 +61,7 @@ export default {
 		return {
 
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -93,7 +98,7 @@ export default {
 				},
 			).then((response) => {
 				this.loading = false
-				this.succes = true
+				this.success = response.ok
 				// Lets refresh the catalogiList
 				metadataStore.refreshMetaDataList()
 				response.json().then((data) => {
@@ -103,7 +108,7 @@ export default {
 				// Wait for the user to read the feedback then close the model
 				const self = this
 				setTimeout(function() {
-					self.succes = false
+					self.success = null
 					navigationStore.setModal(false)
 				}, 2000)
 			}).catch((err) => {
