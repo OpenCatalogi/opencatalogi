@@ -247,6 +247,7 @@ export default {
 		},
 		addPublication() {
 			this.loading = true
+			this.error = false
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -270,11 +271,33 @@ export default {
 						publicationStore.setPublicationItem(data)
 					})
 					navigationStore.setSelected('publication')
-					// Clean it all up
-					setTimeout(() => {
+					// Wait for the user to read the feedback then close the model
+					const self = this
+					setTimeout(function() {
+						self.success = null
 						navigationStore.setModal(false)
-						this.success = null
-					}, 2500)
+						self.publication = {
+							title: '',
+							summary: '',
+							description: '',
+							reference: '',
+							license: '',
+							modified: new Date(),
+							status: '',
+							featured: false,
+							portal: '',
+							category: '',
+							published: new Date(),
+							organization: '',
+							attachments: '[""]',
+							schema: '',
+							image: '',
+							themes: '',
+							data: {},
+						}
+						self.catalogi = {}
+						self.metaData = {}
+					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err

@@ -43,7 +43,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
-					<NcListItem v-for="(value, key, i) in metadata?.properties"
+					<NcListItem v-for="(value, key, i) in metadataStore.metaDataItem.properties"
 						:key="`${key}${i}`"
 						:name="key"
 						:bold="false"
