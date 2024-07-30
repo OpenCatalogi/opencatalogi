@@ -10,14 +10,14 @@ export const useMetadataStore = defineStore('metadata', {
 	}),
 	actions: {
 		setMetaDataItem(metaDataItem) {
+			this.metaDataItem = metaDataItem && new Metadata(metaDataItem)
+
 			// for backward compatibility
-			if (typeof this.metaDataItem.properties === 'string') {
+			if (typeof this.metaDataItem?.properties === 'string') {
 				this.metaDataItem.properties = JSON.parse(this.metaDataItem.properties)
 			}
 
-			this.metaDataItem = new Metadata(metaDataItem)
-
-			console.log('Active metadata object set to ' + metaDataItem.id)
+			console.log('Active metadata object set to ' + metaDataItem && metaDataItem.id)
 		},
 		setMetaDataList(metaDataList) {
 			this.metaDataList = metaDataList.map(
