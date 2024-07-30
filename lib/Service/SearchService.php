@@ -109,7 +109,7 @@ class SearchService
 			$parameters['_catalogi'] = $catalogi;
 
 
-			$promises[] = $client->getAsync($searchEndpoint, ['query' => $parameters]);
+			$promises[] = $this->client->getAsync($searchEndpoint, ['query' => $parameters]);
 		}
 
 		$responses = Utils::settle($promises)->wait();
