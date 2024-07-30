@@ -71,6 +71,8 @@ class Publication extends Entity implements JsonSerializable
 	{
 		$jsonFields = $this->getJsonFields();
 
+        $this->setStatus('concept');
+
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
 				$value = null;
