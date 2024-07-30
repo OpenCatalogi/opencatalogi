@@ -5,14 +5,19 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 	<NcModal v-if="navigationStore.modal === 'publicationAdd'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie toevoegen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie succesvol toegevoegd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van Publicatie</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
 			<div class="formContainer">
-				<div v-if="!succes" class="form-group">
+				<div v-if="success === null" class="form-group">
 					<NcTextField :disabled="loading"
 						label="Titel"
 						:value.sync="publication.title" />
@@ -86,8 +91,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						required />
 				</div>
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="(!publication.title && !catalogi?.value?.id && !metaData?.value?.id) || loading"
 				type="primary"
 				@click="addPublication()">
@@ -159,7 +163,7 @@ export default {
 			publicationLoading: false,
 			hasUpdated: false,
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 			dataIsValidJson: false,
 			attachmentsIsValidJson: false,
@@ -259,7 +263,7 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
@@ -269,7 +273,7 @@ export default {
 					// Clean it all up
 					setTimeout(() => {
 						navigationStore.setModal(false)
-						this.succes = false
+						this.success = null
 					}, 2500)
 				})
 				.catch((err) => {

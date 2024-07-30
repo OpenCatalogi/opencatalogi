@@ -8,13 +8,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bewerk publicatie eigenschappen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie eigenschap succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie eigenschap succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Publicatie eigenschap</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					:label="publicationStore.publicationDataKey"
 					:value.sync="publicationStore.publicationItem.data[publicationStore.publicationDataKey]" />
@@ -26,7 +31,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			</NcButton>
 			<NcButton
 				@click="navigationStore.setModal(false)">
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
+				{{ success ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
 	</NcModal>
@@ -53,7 +58,6 @@ export default {
 	},
 	data() {
 		return {
-
 			publication: {
 				title: '',
 				description: '',
@@ -71,7 +75,7 @@ export default {
 				options: [],
 			},
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -170,8 +174,15 @@ export default {
 					}),
 				},
 			)
-				.then(() => {
-					navigationStore.setModal(false)
+				.then((response) => {
+					this.loading = false
+					this.success = response.ok
+
+					const self = this
+					setTimeout(() => {
+						self.success = null
+						navigationStore.setModal(false)
+					}, 2000)
 				})
 				.catch((err) => {
 					this.loading = false
