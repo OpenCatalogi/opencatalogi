@@ -9,6 +9,7 @@ Om alles soepel te laten draaien, heb je het volgende nodig:
 * **Systeemeisen:** Minimaal 4 GB RAM en 2 CPU's
 
 ## Aan de slag
+
 Deze repository heeft een snelle start met een Docker Compose-bestand. Hiermee kun je de applicatie in één keer opstarten.
 
 Volg deze eenvoudige stappen om de applicatie te starten:
@@ -23,20 +24,41 @@ Volg deze eenvoudige stappen om de applicatie te starten:
    **(Optie 2, via comand line inerface)**
       *   Typ het volgende commando in de command prompt en druk op Enter:
 
-         ```cli
-         cd pad/naar/uitgepakte/map
-         ```
+    ````
+      ```cli
+    ````
 
-         Vervang “pad/naar/uitgepakte/map” door de locatie waar je de bestanden hebt uitgepakt. Bijvoorbeeld:
+    ````
+      cd pad/naar/uitgepakte/map
+      ```
 
-         ```
-         cd C:\Users\{{jouwgebruikersnaam}}\Downloads\opencatalogi-main ```
-      *   Typ het volgende commando in de command prompt en druk op Enter:
+      Vervang “pad/naar/uitgepakte/map” door de locatie waar je de bestanden hebt uitgepakt. Bijvoorbeeld:
 
-         ``` docker compose up ```
-      *   Wacht tot de applicatie is opgestart. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
+      ```cli
+      cd C:\Users\{{jouwgebruikersnaam}}\Downloads\opencatalogi-main
+    ````
 
-         ``` [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND' ```
+    * Typ het volgende commando in de command prompt en druk op Enter:
+
+    ````
+      ```cli
+    ````
+
+    ````
+      docker compose up
+      ```
+    ````
+
+    * Wacht tot de applicatie is opgestart. Je ziet veel tekst voorbij komen, wacht tot je deze melding ziet:
+
+    ````
+      ```cli
+    ````
+
+    ````
+      [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+      ```
+    ````
 5. **Open de applicatie**: Open je webbrowser en ga naar [http://localhost:8080](http://localhost:8080)
 6. **Login**: Voor de standaard installatie werkt dit met admin als log **en** admin wachtwoord
 
