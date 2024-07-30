@@ -12,3 +12,6 @@
 /js/
 /custom_apps/
 /config/
+
+/coverage/
+/coverage-frontend/

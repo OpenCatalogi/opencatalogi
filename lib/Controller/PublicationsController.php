@@ -4,6 +4,8 @@ namespace OCA\OpenCatalogi\Controller;
 
 use Elastic\Elasticsearch\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use OCA\opencatalogi\lib\Db\Publication;
+use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
@@ -32,6 +34,7 @@ class PublicationsController extends Controller
 	(
 		$appName,
 		IRequest $request,
+		private readonly PublicationMapper $publicationMapper,
 		private readonly IAppConfig $config
 	)
     {
@@ -109,17 +112,24 @@ class PublicationsController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
+        $filters = $this->request->getParams();
+
+        foreach($filters as $key => $value) {
+            if(str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            }
+        }
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters)]);
+		}
+
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters = $this->request->getParams();
-
-		foreach($filters as $key => $value) {
-			if(str_starts_with($key, '_')) {
-				unset($filters[$key]);
-			}
-		}
 
 
 
@@ -137,6 +147,12 @@ class PublicationsController extends Controller
      */
     public function show(string $id, ObjectService $objectService): JSONResponse
     {
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->publicationMapper->find(id: (int) $id));
+		}
+
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -155,10 +171,6 @@ class PublicationsController extends Controller
      */
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
 		$data = $this->request->getParams();
 
 		foreach($data as $key => $value) {
@@ -167,18 +179,31 @@ class PublicationsController extends Controller
 			}
 		}
 
-		$data['_schema'] = 'publication';
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$returnData = $this->publicationMapper->createFromArray($data);
+			$returnData = $returnData->jsonSerialize();
+			$dbConfig = [];
+		} else {
+			$data['_schema'] = 'publication';
 
-		$returnData = $objectService->saveObject(
-			data: $data,
-			config: $dbConfig
-		);
-
-
+			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+			$returnData = $objectService->saveObject(
+				data: $data,
+				config: $dbConfig
+			);
+		}
 		if(
 			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticLocation') !== ''
 			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticKey') !== ''
 			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticIndex') !== ''
+			&& $returnData['status'] === 'published'
 		) {
 			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
 			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
@@ -199,9 +224,6 @@ class PublicationsController extends Controller
      */
     public function update(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$data = $this->request->getParams();
 
@@ -214,17 +236,34 @@ class PublicationsController extends Controller
 			unset( $data['id']);
 		}
 
-		$filters['_id'] = $id;
-		$returnData = $objectService->updateObject(
-			filters: $filters,
-			update: $data,
-			config: $dbConfig
-		);
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$returnData = $this->publicationMapper->updateFromArray(id: (int) $id, object: $data);
+			$returnData = $returnData->jsonSerialize();
+
+			$dbConfig = [];
+		} else {
+			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+			$filters['_id'] = $id;
+			$returnData = $objectService->updateObject(
+				filters: $filters,
+				update: $data,
+				config: $dbConfig
+			);
+		}
 
 		if(
 			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticLocation') !== ''
 			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticKey') !== ''
 			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticIndex') !== ''
+			&& $returnData['status'] === 'published'
 		) {
 			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
 			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
@@ -246,20 +285,32 @@ class PublicationsController extends Controller
      */
     public function destroy(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$this->publicationMapper->delete($this->publicationMapper->find(id: (int) $id));
 
-		$filters['_id'] = $id;
-		$returnData = $objectService->deleteObject(
-			filters: $filters,
-			config: $dbConfig
-		);
+			$returnData = [];
+		} else {
+			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+			$filters['_id'] = $id;
+			$returnData = $objectService->deleteObject(
+				filters: $filters,
+				config: $dbConfig
+			);
+		}
 
 		if(
 			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticLocation') !== ''
 			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticKey') !== ''
 			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
+			&& $this->config->getValueString(app: $this->appName, key: 'elasticIndex') !== ''
+			&& $returnData['status'] === 'published'
 		) {
 			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
 			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');

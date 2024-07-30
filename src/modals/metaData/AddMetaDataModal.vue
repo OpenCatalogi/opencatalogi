@@ -1,28 +1,32 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcModal
-		v-if="store.modal === 'addMetaData'"
+		v-if="navigationStore.modal === 'addMetaData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData toevoegen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Meta data succesvol toegevoegd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Metadata succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van metadata</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
 				<NcTextField label="Versie" :value.sync="metaData.version" />
 				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="metaData.summery" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metaData.description" />
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="!metaData.title || loading"
 				type="primary"
 				@click="addMetaData">
@@ -54,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+
 			metaData: {
 				title: '',
 				version: '',
@@ -62,7 +67,7 @@ export default {
 			},
 			metaDataList: [],
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -82,19 +87,19 @@ export default {
 				.then((response) => {
 					// Set the form
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
-					store.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
-					store.setSelected('metaData')
+					navigationStore.setSelected('metaData')
 					// Update the list
 					const self = this
 					setTimeout(function() {
-						self.succes = false
+						self.success = null
 						this.metaData = { title: '', version: '', summery: '', description: '' }
-						store.setModal(false)
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

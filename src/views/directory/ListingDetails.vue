@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -17,13 +17,13 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setListingItem(listing); store.setModal('editListing')">
+				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="store.setListingItem(listing); store.setDialog('deleteListing')">
+				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -88,21 +88,26 @@ export default {
 	},
 	data() {
 		return {
+
 			listing: [],
 			loading: false,
+			upToDate: false,
 		}
 	},
 	watch: {
 		listingItem: {
-			handler(listingItem) {
-				this.listing = listingItem
-				this.fetchData(listingItem?.id)
+			handler(newListingItem, oldListingItem) {
+				if (!this.upToDate || JSON.stringify(newListingItem) !== JSON.stringify(oldListingItem)) {
+					this.listing = newListingItem
+					newListingItem && this.fetchData(newListingItem?.id)
+					this.upToDate = true
+				}
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.fetchData(store.listingItem?.id)
+		directoryStore.listingItem && this.fetchData(directoryStore.listingItem?.id)
 	},
 	methods: {
 		fetchData(listingId) {

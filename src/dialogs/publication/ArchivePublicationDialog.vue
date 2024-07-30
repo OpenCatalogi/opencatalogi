@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'archivePublication'"
+		v-if="navigationStore.dialog === 'archivePublication'"
 		name="Publicatie archiveren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.publicationItem.name ?? store.publicationItem.title }}</b> archiveren? Dit betekend dat de publicatie wordt de gepubliseerd en niet langer vindbaar is. Bij de eerste volgende gelegendheid wordt de publicatie <b>automatisch</b> over gebracht naar het digitaal archief.
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> archiveren? Dit betekend dat de publicatie wordt de gepubliseerd en niet langer vindbaar is. Bij de eerste volgende gelegendheid wordt de publicatie <b>automatisch</b> over gebracht naar het digitaal archief.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Publicatie succesvol gearchiveerd</p>
@@ -17,7 +17,7 @@ import { store } from '../../store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -58,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -66,29 +67,29 @@ export default {
 	methods: {
 		ArchivePublication() {
 			this.loading = true
-			store.publicationItem.status = 'archived'
+			publicationStore.publicationItem.status = 'archived'
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationItem),
+					body: JSON.stringify(publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshPublicationList()
-					store.getConceptPublications()
+					publicationStore.refreshPublicationList()
+					publicationStore.getConceptPublications()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setPublicationItem(false)
-						store.setDialog(false)
+						publicationStore.setPublicationItem(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

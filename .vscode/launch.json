@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "chrome",
+            "name": "http://nextcloud.local/",
+            "request": "launch",
+            "url": "http://nextcloud.local/"
+        }
+    ]
+}

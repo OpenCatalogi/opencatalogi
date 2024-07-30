@@ -2,6 +2,7 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
+use OCA\OpenCatalogi\Db\ListingMapper;
 use OCA\OpenCatalogi\Service\DirectoryService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
@@ -41,7 +42,12 @@ class DirectoryController extends Controller
         ]
     ];
 
-    public function __construct($appName, IRequest $request, private readonly IAppConfig $config)
+    public function __construct(
+		$appName,
+		IRequest $request,
+		private readonly IAppConfig $config,
+		private readonly ListingMapper $listingMapper
+	)
     {
         parent::__construct($appName, $request);
     }
@@ -64,13 +70,25 @@ class DirectoryController extends Controller
         );
     }
 
+	public function add(?string $url, DirectoryService $directoryService): JSONResponse
+	{
+
+
+		return new JSONResponse($listing);
+	}
+
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
 	public function index(ObjectService $objectService): JSONResponse
 	{
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse(['results' => $this->listingMapper->findAll()]);
+		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -99,6 +117,11 @@ class DirectoryController extends Controller
 	 */
 	public function show(string $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
 	{
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->listingMapper->find(id: (int) $id));
+		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -117,9 +140,6 @@ class DirectoryController extends Controller
 	 */
 	public function create(ObjectService $objectService, DirectoryService $directoryService): JSONResponse
 	{
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$data = $this->request->getParams();
 
@@ -128,6 +148,16 @@ class DirectoryController extends Controller
 				unset($data[$key]);
 			}
 		}
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->listingMapper->createFromArray(object: $data));
+		}
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$data['_schema'] = 'directory';
 
@@ -148,9 +178,6 @@ class DirectoryController extends Controller
 	 */
 	public function update(string $id, ObjectService $objectService): JSONResponse
 	{
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$data = $this->request->getParams();
 
@@ -162,6 +189,18 @@ class DirectoryController extends Controller
 		if (isset($data['id'])) {
 			unset( $data['id']);
 		}
+
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->listingMapper->updateFromArray(id: (int) $id, object: $data));
+		}
+
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$filters['_id'] = $id;
 		$returnData = $objectService->updateObject(
@@ -180,6 +219,14 @@ class DirectoryController extends Controller
 	 */
 	public function destroy(string $id, ObjectService $objectService): JSONResponse
 	{
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$this->listingMapper->delete($this->listingMapper->find((int) $id));
+
+			return new JSONResponse([]);
+		}
+
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
