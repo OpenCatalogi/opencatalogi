@@ -8,13 +8,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Edit publication</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Titel"
 					:value.sync="publicationStore.publicationItem.title" />
@@ -86,8 +91,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:loading="metaDataLoading"
 					required />
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="!publicationStore.publicationItem.title"
 				type="primary"
 				@click="updatePublication()">
@@ -138,7 +142,7 @@ export default {
 				options: [],
 			},
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
@@ -254,14 +258,19 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
 					})
 					navigationStore.setSelected('publication')
-					setTimeout(() => navigationStore.setModal(false), 2500)
+
+					const self = this
+					setTimeout(() => {
+						self.success = null
+						navigationStore.setModal(false)
+					}, 2500)
 				})
 				.catch((err) => {
 					this.error = err
