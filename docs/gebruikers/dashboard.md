@@ -5,22 +5,22 @@ description: >-
 ---
 
 # Dashboard
-Op het dashboard van Open Catalogi vind u handige informatie die u meteen verder helpt en in staat steld de juiste keuzes te maken, aan de linker kant treft u een aantal overzichts statestieken en aan de rechterkant een sidebar met daarin de mogenlijkheid om direct actie te ondernemen
+Op het dashboard van OpenCatalogi vindt u handige informatie die u meteen verder helpt en in staat stelt de juiste keuzes te maken. Aan de linkerkant treft u een aantal overzichtsstatistieken en aan de rechterkant een sidebar met daarin de mogelijkheid om direct actie te ondernemen.
 
-## Statestieken
+## Statistieken
 
-1. **Zoekverkeer** Het aantal zoekvragen dat er afgelopen maand aan uw index (geheel van catalogi) is gesteld
-2. **Matadata** De verdeling over metedata types van uw publicaties
-2. **Status** De verdeling over status types van uw publicaties
+1. **Zoekverkeer** Het aantal zoekvragen dat er afgelopen maand aan uw index (geheel van catalogi) is gesteld.
+2. **Metadata** De verdeling over metadata-types van uw publicaties
+2. **Status** De verdeling over statustypes van uw publicaties
 
 
 ![app menu](../assets/oc_dashboard.png)
 
 ## Sidebar
-Vanuit de side heeft u toegang tot 3 tabbladen
+Vanuit de sidebar heeft u toegang tot 3 tabbladen
 
-1. **Zoeken** Voor het direct en snel uitvoeren van een zoekopdracht
+1. **Zoeken** Voor het direct en snel uitvoeren van een zoekopdracht.
 2. **Publicaties** Met daarin alle publicaties van de status `concept`
-2. **Bijlagen** Met daarin alle blijagen van de status `concept`
+2. **Bijlagen** Met daarin alle bijlagen van de status `concept`
 
-Zo kunt u snel zien waar uw aandacht benodigd is en actie ondernmen
+Zo kunt u snel zien waar uw aandacht benodigd is en actie ondernemen.

@@ -5,7 +5,7 @@ We gaan er voor deze stap vanuit dat je reeds een werkende lokale Nextcloud-omge
 ## De app activeren
 De code voor de app staat er nu, maar in Nextcloud moeten apps geactiveerd worden voor gebruik. Hiervoor kan er geklikt worden op het profiel icoontje rechts bovenin. Kies voor "Apps".
 
-![next cloud app menu](../assets/image.png)
+![next cloud app menu](../assets/activate-app-menu.png)
 
 In het volgende scherm, zie je aan de linkerzijde een navigatie menu. Klik op "Disabled apps". Je ziet een overzicht met de apps die in de "apps-extra"-directory zitten.&#x20;
 
