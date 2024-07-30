@@ -38,13 +38,15 @@ Omdat Pinia vanuit zichzelf al typing ondersteund en daarop testbaar is vervalt 
 
 ### Modals
 
-* only one modal may be active at all times
-* modals should be abstract and reachable form anywhere
-* modals should be places in te src/modals folder
-* modals should be triggerd through the state
-* modals schould be importerd through /src/modals/Modals.vue
+* Er mag altijd slechts één modal actief zijn.
+* Modals moeten abstract en overal bereikbaar zijn.
+* Modals moeten geplaatst worden in de map src/modals.
+* Modals moeten getriggerd worden via de state.
+* Modals moeten geïmporteerd worden via `/src/modals/Modals.vue`.
+
 
 ### Views
 
-* Views must have the same file name as the exported name and is a correlation to the map the file is in.
-* For example, if the file is a detail page, and it is in the directory `publications` the file must be named `PublicationDetail.vue`.
+* Views moeten dezelfde bestandsnaam hebben als de geëxporteerde naam en een correlatie hebben met de map waarin het bestand zich bevindt.
+* Bijvoorbeeld, als het bestand een detailpagina is en het zich in de map `publications` bevindt, moet het bestand de naam `PublicationDetail.vue` hebben.
+

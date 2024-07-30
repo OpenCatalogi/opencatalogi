@@ -16,7 +16,7 @@ Zodra je klikt op "enable" verschijnt deze links bovenin, naast het Nextcloud-lo
 
 Klik op het icoontje van OpenCatalogi en je zit in de app!
 
-![nexcloud app menu](<../assets/nc\_app\_menu (1).png>)
+![Nexcloud app menu](<../assets/nc\_app\_menu (1).png>)
 
 ## De app configuren
 
