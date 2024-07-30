@@ -9,8 +9,8 @@ export const useDirectoryStore = defineStore('directory', {
 	}),
 	actions: {
 		setListingItem(listingItem) {
-			this.listingItem = new Listing(listingItem)
-			console.log('Active directory item set to ' + listingItem.id)
+			this.listingItem = listingItem && new Listing(listingItem)
+			console.log('Active directory item set to ' + listingItem && listingItem.id)
 		},
 		setListingList(listingList) {
 			this.listingList = listingList.map(

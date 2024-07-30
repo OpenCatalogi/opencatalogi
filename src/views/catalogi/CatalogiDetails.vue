@@ -87,7 +87,8 @@ export default {
 				// run the fetch only once to update the item
 				if (!this.upToDate || JSON.stringify(newCatalogiItem) !== JSON.stringify(oldCatalogiItem)) {
 					this.catalogi = newCatalogiItem
-					this.fetchData(newCatalogiItem.id)
+					// check if newCatalogiItem is not false
+					newCatalogiItem && this.fetchData(newCatalogiItem?.id)
 					this.upToDate = true
 				}
 			},
@@ -96,7 +97,8 @@ export default {
 	},
 	mounted() {
 		this.catalogi = catalogiStore.catalogiItem
-		this.fetchData(catalogiStore.catalogiItem.id)
+		// check if catalogiItem is not false
+		catalogiStore.catalogiItem && this.fetchData(catalogiStore.catalogiItem?.id)
 	},
 	methods: {
 		fetchData(catalogId) {

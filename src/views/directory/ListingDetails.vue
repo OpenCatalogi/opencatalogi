@@ -91,19 +91,23 @@ export default {
 
 			listing: [],
 			loading: false,
+			upToDate: false,
 		}
 	},
 	watch: {
 		listingItem: {
-			handler(listingItem) {
-				this.listing = listingItem
-				this.fetchData(listingItem?.id)
+			handler(newListingItem, oldListingItem) {
+				if (!this.upToDate || JSON.stringify(newListingItem) !== JSON.stringify(oldListingItem)) {
+					this.listing = newListingItem
+					newListingItem && this.fetchData(newListingItem?.id)
+					this.upToDate = true
+				}
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.fetchData(directoryStore.listingItem?.id)
+		directoryStore.listingItem && this.fetchData(directoryStore.listingItem?.id)
 	},
 	methods: {
 		fetchData(listingId) {
