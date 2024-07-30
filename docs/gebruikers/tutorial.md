@@ -9,7 +9,7 @@ Nadat de app succesvol is geconfigureerd vind u deze terug in het app menu van n
 
 ## Directory (should)
 
-Een Open Catalogi installatie is bedoeld om onderdeel te zijn van een federatief netwerk van catalogusen, deze kunt u terugvinden onder Instellingen -> directory. In de directory staan alle bij deze installatie bekende catalogi die zich in andere installaties bevinden. Open Catalogi installaties wisselen onderling hun directory uit,dus om onderdeel te worden van het federatieve netwerk moet er minimaal één andere catalogus bekend zijn.
+Een OpenCatalogi installatie is bedoeld om onderdeel te zijn van een federatief netwerk van catalogi. Deze kunt u terugvinden onder Instellingen -> directory. In de directory staan alle bij deze installatie bekende catalogi die zich in andere installaties bevinden. OpenCatalogi-installaties wisselen onderling hun directory uit,dus om onderdeel te worden van het federatieve netwerk moet er minimaal één andere catalogus bekend zijn.
 
 ![instellingen](../assets/oc_instellingen.png)
 
@@ -23,11 +23,11 @@ Catalogi worden gedefinieerd aan de hand van de plek waar ze leven op het intern
 
 ## Zoeken (should)
 
-Nadat je de app geinstaleerd heb kan je het zoek scherm gebruiken om te zoeken naar gegevens bij andere organisaties. Ga hervoor naar het menu item zoeken. 
+Nadat je de app geinstalleerd hebt kan je het zoekscherm gebruiken om te zoeken naar gegevens bij andere organisaties. Ga hiervoor naar het menu item zoeken. 
 
 ### Catalogus (must)
 
-Publicaties worden in Open Catalogi verderdeel catalogi
+Publicaties worden in OpenCatalogi onderverdeeld in catalogi.
 
 Stukje tekst met screenshots over het aanmaken van catalogi
 
