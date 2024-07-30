@@ -143,20 +143,24 @@ export default {
 
 			metadata: [],
 			loading: false,
+			upToDate: false,
 		}
 	},
 	watch: {
 		metaDataItem: {
-			handler(metaDataItem) {
-				this.metadata = metaDataItem
-				this.fetchData(metaDataItem?.id)
+			handler(newMetaDataItem, oldMetaDataItem) {
+				if (!this.upToDate || JSON.stringify(newMetaDataItem) !== JSON.stringify(oldMetaDataItem)) {
+					this.metadata = newMetaDataItem
+					newMetaDataItem && this.fetchData(newMetaDataItem?.id)
+					this.upToDate = true
+				}
 			},
 			deep: true,
 		},
 	},
 	mounted() {
 		this.metadata = metadataStore.metaDataItem
-		this.fetchData(metadataStore.metaDataItem?.id)
+		metadataStore.metaDataItem && this.fetchData(metadataStore.metaDataItem?.id)
 	},
 	methods: {
 		fetchData(metadataId) {

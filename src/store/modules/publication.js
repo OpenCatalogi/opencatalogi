@@ -15,8 +15,8 @@ export const usePublicationStore = defineStore('publication', {
 	actions: {
 		setPublicationItem(publicationItem) {
 		// To prevent forms etc from braking we alway use a default/skeleton object
-			this.publicationItem = new Publication(publicationItem)
-			console.log('Active publication item set to ' + publicationItem.id)
+			this.publicationItem = publicationItem && new Publication(publicationItem)
+			console.log('Active publication item set to ' + publicationItem && publicationItem.id)
 		},
 		setPublicationList(publicationList) {
 			this.publicationList = publicationList.map((publicationItem) => new Publication(publicationItem))
@@ -102,9 +102,8 @@ export const usePublicationStore = defineStore('publication', {
 			console.log('Active publication data key set to ' + publicationDataKey)
 		},
 		setAttachmentItem(attachmentItem) {
-			this.attachmentItem = new Attachment(attachmentItem)
+			this.attachmentItem = attachmentItem && new Attachment(attachmentItem)
 			console.log('Active attachment item set to ' + attachmentItem)
-			console.log(attachmentItem)
 		},
 	},
 })

@@ -9,8 +9,8 @@ export const useCatalogiStore = defineStore('catalogi', {
 	}),
 	actions: {
 		setCatalogiItem(catalogiItem) {
-			this.catalogiItem = new Catalogi(catalogiItem)
-			console.log('Active catalog item set to ' + catalogiItem.id)
+			this.catalogiItem = catalogiItem && new Catalogi(catalogiItem)
+			console.log('Active catalog item set to ' + catalogiItem && catalogiItem?.id)
 		},
 		setCatalogiList(catalogiList) {
 			this.catalogiList = catalogiList.map(
