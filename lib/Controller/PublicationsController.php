@@ -112,23 +112,24 @@ class PublicationsController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
+        $filters = $this->request->getParams();
+
+        foreach($filters as $key => $value) {
+            if(str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            }
+        }
+
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll()]);
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters)]);
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters = $this->request->getParams();
-
-		foreach($filters as $key => $value) {
-			if(str_starts_with($key, '_')) {
-				unset($filters[$key]);
-			}
-		}
 
 
 
