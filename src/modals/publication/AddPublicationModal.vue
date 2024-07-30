@@ -276,7 +276,7 @@ export default {
 					setTimeout(function() {
 						self.success = null
 						navigationStore.setModal(false)
-						this.publication = {
+						self.publication = {
 							title: '',
 							summary: '',
 							description: '',
@@ -295,8 +295,8 @@ export default {
 							themes: '',
 							data: {},
 						}
-						this.catalogi = {}
-						this.metadata = {}
+						self.catalogi = {}
+						self.metadata = {}
 					}, 2000)
 				})
 				.catch((err) => {
