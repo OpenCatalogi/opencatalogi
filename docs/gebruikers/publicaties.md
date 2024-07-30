@@ -1,10 +1,7 @@
----
-description: >-
-  Deze handleiding gaat ervan uit dat de gebruiker beschikt tot een werkende
-  OpenCatalogi-Nextcloud app.
----
-
 # Publicaties
+
+
+> Publicaties zijn onderdeel van de (Open Catalogi Standaard)[] en gebaseerd op het [publication object](https://conduction.stoplight.io/docs/open-catalogi/9bebd6bf4fe35-publication). Publicaties kunnen gelinkt worden aan bijlagen, bijlagen zijn gedefineerd in het [attachment object](https://conduction.stoplight.io/docs/open-catalogi/9zm7p6fnazuod-attachment).
 
 ### Publicaties beheren
 

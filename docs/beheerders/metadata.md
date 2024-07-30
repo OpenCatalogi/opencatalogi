@@ -1,5 +1,8 @@
 # Metadata
-Iedere publicatie op open catalogi hoort bij een bepaald metadata type, dit metadata type kan door u zelf gedefineerd zijn over overgenomen van een andere catalogussen.
+Iedere publicatie op open catalogi hoort bij een bepaald metadata type, dit metadata type kan door u zelf gedefineerd zijn over overgenomen van een andere catalogussen. Een metadata beschrijft een publicatie in doel, archivering en inhoudenlijk gegevens. Het maakt publicaties leesbaar en interpeteerdbaar maar vormd in de praktijk ook de meest basale zoek mogenlijkheid "doe mij alle publicaite van het type woo verzoek"
+
+>  Metadata zijn onderdeel van de (Open Catalogi Standaard)[] en gebaseerd op het [metadata object](https://conduction.stoplight.io/docs/open-catalogi/92e81a078982b-metadata). Zij beschrijven de data in publicaites aan de hand van het voor defineren van properties, die zijn gedefineerd in het [property object](https://conduction.stoplight.io/docs/open-catalogi/d0ci97hdxnctp-property)
+
 
 ## Metadata overnemen
 Er zijn verschillende landelijk gedefineerde metadata typen, voorbeelden hiervan zijn publiccode (vanuit de software catalogus), DCAT (vanuit open overheid) en Woo categorien (Vanuit Koop). Als je wilt publiceren voor een elders vastgesteld metadata type moet je die eerst activeren. Dit gaat via de [directory](directory.md) en dan onder de listing van de betreffende catalogus.
