@@ -132,10 +132,12 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData(newPage) {
+		fetchData() {
 			this.loading = true
 			metadataStore.refreshMetaDataList()
-			this.loading = false
+				.then(() => {
+					this.loading = false
+				})
 		},
 	},
 }

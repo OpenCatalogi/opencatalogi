@@ -25,8 +25,8 @@ export const useMetadataStore = defineStore('metadata', {
 			)
 			console.log('Active metadata lest set')
 		},
-		refreshMetaDataList() { // @todo this might belong in a service?
-			fetch(
+		async refreshMetaDataList() { // @todo this might belong in a service?
+			return fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
 				{
 					method: 'GET',
