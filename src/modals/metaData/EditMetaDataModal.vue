@@ -23,7 +23,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 			<div v-if="success == null" class="form-group">
 				<NcTextField label="Titel" :disabled="loading" :value.sync="metadataStore.metaDataItem.title" />
 				<NcTextField label="Versie" :disabled="loading" :value.sync="metadataStore.metaDataItem.version" />
-				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="metadataStore.metaDataItem.summery" />
+				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="metadataStore.metaDataItem.summary" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metadataStore.metaDataItem.description" />
 			</div>
 			<NcButton
