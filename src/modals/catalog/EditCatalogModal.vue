@@ -6,13 +6,18 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 	<NcModal v-if="navigationStore.modal === 'editCatalog'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Catalogus succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Catalogus succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van de catalogus</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Titel"
 					maxlength="255"
@@ -35,8 +40,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					maxlength="255"
 					:value.sync="catalogiStore.catalogiItem.search" />
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="loading"
 				type="primary"
 				@click="editCatalog()">
@@ -69,7 +73,7 @@ export default {
 		return {
 
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -92,7 +96,7 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					catalogiStore.refreshCatalogiList()
 					response.json().then((data) => {
@@ -101,7 +105,7 @@ export default {
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
+						self.success = null
 						navigationStore.setModal(false)
 					}, 2000)
 				})
