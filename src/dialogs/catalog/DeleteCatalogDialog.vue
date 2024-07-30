@@ -69,7 +69,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {

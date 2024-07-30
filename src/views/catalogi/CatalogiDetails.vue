@@ -23,7 +23,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton disabled class="catalogiDetails-actionsDelete">
+				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -185,12 +185,5 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
-}
-
-.active.catalogiDetails-actionsDelete {
-    background-color: var(--color-error) !important;
-}
-.active.catalogiDetails-actionsDelete button {
-    color: #EBEBEB !important;
 }
 </style>
