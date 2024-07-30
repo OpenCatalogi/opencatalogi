@@ -25,6 +25,12 @@ Catalogi worden gedefinieerd aan de hand van de plek waar ze leven op het intern
 
 Nadat je de app geinstaleerd heb kan je het zoek scherm gebruiken om te zoeken naar gegevens bij andere organisaties. Ga hervoor naar het menu item zoeken. 
 
+Aan link kant worden gevonden publicaties weergegeven, aan de rechterkant treft u in tabbladen zoek middellen met daarin
+
+- **Zoeken**: Het algemeene zoek venld en de zoekknap
+- **Catalogi**: Hierin kunt u aangeven in welke voor uw organisatie actieve catalogusen u wilt zoeken
+- **Metadata**: Hierin kun a aangeven naar welke voor uw organisatie actieve metadata types u wilt zoeken
+
 ### Catalogus (must)
 
 Publicaties worden in Open Catalogi verderdeel catalogi
@@ -33,10 +39,15 @@ Stukje tekst met screenshots over het aanmaken van catalogi
 
 Het aanmaken van een Catalogus wordt gedaan in de `instellingen`
 
+- Maak een catalogus aan
+
 
 4. Metadata (must)
 
 Stukje tekst met screenshots over het aanmaken van metadata
+
+- Maak een metadata beschrijving aan
+- Voeg aan de metadata beschrijving een aantal eigenschappen toe
 
 5. Publicatie (must)
 
@@ -47,4 +58,4 @@ Stukje tekst met screenshots over het toevoegen van bestanden aan publicaites
 6. Delen (must)
 
 Stukje tekst met screenshots over het publiceren van publicaties
-Publicaties 
+Stukje tekst over het terugtrekken van een publicaite 
