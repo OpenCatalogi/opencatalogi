@@ -296,7 +296,7 @@ export default {
 							data: {},
 						}
 						self.catalogi = {}
-						self.metadata = {}
+						self.metaData = {}
 					}, 2000)
 				})
 				.catch((err) => {
