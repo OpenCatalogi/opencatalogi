@@ -46,7 +46,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 						<AlertOutline v-if="publication.status === 'retracted'" :size="44" />
 					</template>
 					<template #subname>
-						{{ publication?.description }}
+						{{ publication?.summary }}
 					</template>
 					<template #actions>
 						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('editPublication')">
@@ -165,7 +165,7 @@ export default {
 		filteredPublications() {
 			if (!publicationStore?.publicationList) return []
 			return publicationStore.publicationList.filter((publication) => {
-				return parseInt(publication.catalogi) === navigationStore.selectedCatalogus
+				return publication.catalogi.toString() === navigationStore.selectedCatalogus.toString()
 			})
 		},
 	},

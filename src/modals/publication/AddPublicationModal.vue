@@ -297,11 +297,13 @@ export default {
 						}
 						self.catalogi = {}
 						self.metaData = {}
+						self.hasUpdated = false
 					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
+					self.hasUpdated = false
 				})
 		},
 	},
