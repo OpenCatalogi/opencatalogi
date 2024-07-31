@@ -259,7 +259,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 							Geen bijlagen gevonden
 						</div>
 					</BTab>
-					<BTab title="Loggen">
+					<BTab title="Logging">
 						<table width="100%">
 							<tr>
 								<th><b>Tijdstip</b></th>
