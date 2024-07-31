@@ -33,8 +33,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					v-model="metadata.properties[metadataStore.metadataDataKey].format" />
 
 				<NcTextField :disabled="loading"
-					type="number"
-					label="patroon"
+					label="patroon (regex)"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].pattern" />
 
 				<NcTextField :disabled="loading"
@@ -165,7 +164,7 @@ export default {
 					description: '',
 					type: '',
 					format: '',
-					pattern: 0,
+					pattern: '',
 					default: '',
 					behavior: '',
 					required: false,
