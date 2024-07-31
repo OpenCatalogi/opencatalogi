@@ -3,7 +3,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'addListing'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'addListing'" ref="modalRef" @close="closeModal">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -18,10 +18,24 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField label="Url" :value.sync="directory.url" />
+				<NcTextField label="Title" :value.sync="listing.title" required />
+				<NcTextField label="Summary" :value.sync="listing.summary" required />
+
+				<NcSelect v-bind="metaData"
+					v-model="metaData.value"
+					input-label="MetaData"
+					:loading="metaDataLoading"
+					:disabled="publicationLoading"
+					required />
+
+				<NcTextField label="Description" :value.sync="listing.description" />
+				<NcTextField label="Search (url)" :value.sync="listing.search" />
+				<NcTextField label="Directory (url)" :value.sync="listing.directory" />
+				<NcTextField label="Default" :value.sync="listing.default" />
+				<NcTextField label="Available" :value.sync="listing.available" />
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="!directory.url"
+				:disabled="!listing.title || !listing.summary"
 				type="primary"
 				@click="addDirectory">
 				<template #icon>
@@ -35,7 +49,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcSelect, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
@@ -43,6 +57,7 @@ export default {
 	components: {
 		NcModal,
 		NcTextField,
+		NcSelect,
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
@@ -51,16 +66,52 @@ export default {
 	},
 	data() {
 		return {
-
-			directory: {
-				url: '',
+			listing: {
+				title: '',
+				summary: '',
+				description: '',
+				search: '',
+				directory: '',
+				default: '',
+				available: '',
 			},
+			metaData: {},
+			metaDataLoading: false,
 			loading: false,
 			success: null,
 			error: false,
 		}
 	},
+	updated() {
+		if (navigationStore.modal === 'addListing' && !this.hasUpdated) {
+			this.fetchMetaData()
+			this.hasUpdated = true
+		}
+	},
 	methods: {
+		fetchMetaData() {
+			this.metaDataLoading = true
+			fetch('/index.php/apps/opencatalogi/api/metadata', {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+
+						this.metaData = {
+							options: Object.entries(data.results).map((metaData) => ({
+								id: metaData[1].id ?? metaData[1]._id,
+								label: metaData[1].title ?? metaData[1].name,
+							})),
+
+						}
+					})
+					this.metaDataLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.metaDataLoading = false
+				})
+		},
 		addDirectory() {
 			this.loading = true
 			this.$emit('metadata', this.title)
@@ -72,14 +123,8 @@ export default {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						title: this.title,
-						summary: this.summary,
-						description: this.description,
-						search: this.search,
-						metadata: this.metadata,
-						status: this.status,
-						lastSync: this.lastSync,
-						default: this.defaultValue,
+						...this.listing,
+						metaData: this.metaData.value.id,
 					}),
 				},
 			)
@@ -98,12 +143,24 @@ export default {
 					setTimeout(() => {
 						self.success = null
 						self.closeModal()
-					}, 2500)
+					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
 				})
+		},
+		closeModal() {
+			this.listing = {
+				title: '',
+				summary: '',
+				description: '',
+				search: '',
+				directory: '',
+				default: '',
+				available: '',
+			}
+			navigationStore.setModal(false)
 		},
 	},
 }
