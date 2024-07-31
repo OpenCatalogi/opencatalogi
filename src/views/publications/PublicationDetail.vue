@@ -27,19 +27,19 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
-					Kopieren
+					Kopiëren
 				</NcActionButton>
 				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 					<template #icon>
 						<Publish :size="20" />
 					</template>
-					Publiseren
+					Publiceren
 				</NcActionButton>
 				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
-					Depubliseren
+					Depubliceren
 				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('archivePublication')">
 					<template #icon>
@@ -94,7 +94,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					<span>{{ publication.image }}</span>
 				</div>
 				<div>
-					<b>Themas:</b>
+					<b>Thema's:</b>
 					<ul>
 						<li v-for="(theme, index) in publication?.data?.themes" :key="index">
 							{{ theme }}
@@ -118,7 +118,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					<span>{{ publication.published }}</span>
 				</div>
 				<div>
-					<b>Gemodificeerd:</b>
+					<b>Gewijzigd:</b>
 					<span>{{ publication.modified }}</span>
 				</div>
 				<div>
@@ -232,19 +232,19 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 										<template #icon>
 											<Publish :size="20" />
 										</template>
-										Publiseren
+										Publiceren
 									</NcActionButton>
 									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
-										Depubliseren
+										Depubliceren
 									</NcActionButton>
 									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>
-										Kopieren
+										Kopiëren
 									</NcActionButton>
 									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 										<template #icon>
@@ -259,10 +259,10 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 							Geen bijlagen gevonden
 						</div>
 					</BTab>
-					<BTab title="Loging">
+					<BTab title="Loggen">
 						<table width="100%">
 							<tr>
-								<th><b>Tijstip</b></th>
+								<th><b>Tijdstip</b></th>
 								<th><b>Gebruiker</b></th>
 								<th><b>Actie</b></th>
 								<th><b>Details</b></th>
@@ -286,7 +286,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					<BTab title="Rechten">
 						<table width="100%">
 							<tr>
-								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankenlijk</td>
+								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankelijk</td>
 								<td>
 									<NcButton @click="prive = !prive">
 										<template #icon>
@@ -295,7 +295,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 											<LockOutline v-if="prive"
 												:size="20" />
 										</template>
-										<span v-if="!prive">Prive maken</span>
+										<span v-if="!prive">Privé maken</span>
 										<span v-if="prive">Openbaar maken</span>
 									</NcButton>
 								</td>
@@ -306,14 +306,14 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 							</tr>
 						</table>
 					</BTab>
-					<BTab title="Statestieken">
+					<BTab title="Statistieken">
 						<apexchart v-if="publication.status === 'published'"
 							width="100%"
 							type="line"
 							:options="chart.options"
 							:series="chart.series" />
 						<NcNoteCard type="info">
-							<p>Er zijn nog geen statestieken over deze publicatie bekend</p>
+							<p>Er zijn nog geen statistieken over deze publicatie bekend</p>
 						</NcNoteCard>
 					</BTab>
 				</BTabs>
