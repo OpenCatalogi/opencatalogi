@@ -80,7 +80,7 @@ class DirectoryController extends Controller
 		$directories = [];
 		$directoryService->registerToExternalDirectory(url: $url, externalDirectories: $directories);
 
-		return new JSONResponse(['listings added' => $directories]);
+		return new JSONResponse(['listingsAdded' => $directories]);
 	}
 
 
@@ -171,8 +171,6 @@ class DirectoryController extends Controller
 			data: $data,
 			config: $dbConfig
 		);
-
-		$directoryService->registerToExternalDirectory(newDirectory: $data);
 
 		// get post from requests
 		return new JSONResponse($returnData);

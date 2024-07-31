@@ -70,15 +70,24 @@ class DirectoryService
 
 		$externalDirectories = $this->fetchFromExternalDirectory(url: $url);
 
-		return $result->getStatusCode();
+		if($result !== null) {
+			return $result->getStatusCode();
+		}
+		return 200;
 
 	}
 
 	private function createDirectoryFromResult(array $result): ?array
 	{
+		unset($result['id']);
+
 		$myDirectory = $this->getDirectoryEntry('');
 
-		if(isset($result['directory']) === false || $result['directory'] === $myDirectory['directory']) {
+		if(
+			isset($result['directory']) === false
+			|| $result['directory'] === $myDirectory['directory']
+			|| count($this->listDirectory(filters: ['catalogus' => $result['catalogus'], 'directory' => $result['directory']])) > 0
+		) {
 			return null;
 		}
 
@@ -111,11 +120,13 @@ class DirectoryService
 
 		$results = json_decode($result->getBody()->getContents(), true);
 
+		$addedDirectories = [];
+
 		foreach($results['results'] as $record) {
-			$this->createDirectoryFromResult($record);
+			$addedDirectories[] = $this->createDirectoryFromResult($record);
 		}
 
-		return $results['results'];
+		return $addedDirectories;
 	}
 
 	public function updateToExternalDirectory(): array
@@ -136,6 +147,6 @@ class DirectoryService
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		return $this->objectService->findObjects(filters: $filters, config: $dbConfig);
+		return $this->objectService->findObjects(filters: $filters, config: $dbConfig)['documents'];
 	}
 }
