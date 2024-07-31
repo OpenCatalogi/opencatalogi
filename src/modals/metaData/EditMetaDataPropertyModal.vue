@@ -8,14 +8,19 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap "{{ metadataStore.metadataDataKey }}" bewerken</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Eigenschap succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Eigenschap succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Eigenschap</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
 
-			<div v-if="success === -1" class="form-group">
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Titel"
 					required
@@ -116,7 +121,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				</div>
 			</div>
 
-			<NcButton v-if="success === -1"
+			<NcButton v-if="success === null"
 				:disabled="loading"
 				type="primary"
 				@click="updateMetadata(metadata.id)">
@@ -194,7 +199,7 @@ export default {
 				options: ['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'],
 			},
 			loading: false,
-			success: -1,
+			success: null,
 			successMessage: '',
 			hasUpdated: false,
 		}
@@ -267,7 +272,7 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.success = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
@@ -275,12 +280,12 @@ export default {
 					})
 					setTimeout(() => {
 						navigationStore.setModal(false)
-					    this.success = false
-					}, 3000)
+					    this.success = null
+					}, 2000)
 				})
 				.catch((err) => {
 					this.loading = false
-					this.success = false
+					this.success = null
 					this.error = err
 				})
 		},
