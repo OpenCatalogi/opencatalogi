@@ -125,6 +125,7 @@ import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import { debounce } from 'lodash';
 
 export default {
 	name: 'PublicationList',
@@ -172,7 +173,7 @@ export default {
 	watch: {
 		search: {
 			handler(search) {
-				this.fetchData()
+                this.debouncedFetchData(search);
 			},
 		},
 	},
@@ -180,11 +181,14 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData() {
+		fetchData(search = null) {
 			this.loading = true
-			publicationStore.refreshPublicationList()
+			publicationStore.refreshPublicationList(search)
 			this.loading = false
 		},
+        debouncedFetchData: debounce(function(search) {
+            this.fetchData(search);
+        }, 400), 
 	},
 }
 </script>

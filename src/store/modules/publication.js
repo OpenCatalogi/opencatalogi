@@ -22,9 +22,13 @@ export const usePublicationStore = defineStore('publication', {
 			this.publicationList = publicationList.map((publicationItem) => new Publication(publicationItem))
 			console.log('Active publication item set to ' + publicationList.length)
 		},
-		refreshPublicationList() { // @todo this might belong in a service?
+		refreshPublicationList(search = null) { // @todo this might belong in a service?
+            let endpoint = '/index.php/apps/opencatalogi/api/publications'
+            if (search !== null && search !== '') {
+                endpoint = endpoint + '?_search=' + search
+            }
 			fetch(
-				'/index.php/apps/opencatalogi/api/publications',
+				endpoint,
 				{
 					method: 'GET',
 				},

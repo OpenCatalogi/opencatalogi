@@ -114,24 +114,39 @@ class PublicationsController extends Controller
     {
         $filters = $this->request->getParams();
 
-        foreach($filters as $key => $value) {
-            if(str_starts_with($key, '_')) {
-                unset($filters[$key]);
-            }
-        }
+        $searchConditions = [];
+        $searchParams = [];
+        foreach ($filters as $key => $value) {
+            if ($key === '_search') {
+                // MongoDB
+                $searchRegex = ['$regex' => $value, '$options' => 'i'];
+                $filters['$or'] = [
+                    ['title' => $searchRegex],
+                    // ['author' => $searchRegex],
+                    // ['content' => $searchRegex]
+                ];
 
+                // SQL
+                $searchConditions[] = 'LOWER(title) LIKE :search';
+                $searchParams['search'] = '%' . strtolower($value) . '%';
+                
+            }
+            if (str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            }  
+        }
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters)]);
+            // Unset mongodb filter
+            unset($filters['$or']);
+            
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-
-
 
 		$filters['_schema'] = 'publication';
 
