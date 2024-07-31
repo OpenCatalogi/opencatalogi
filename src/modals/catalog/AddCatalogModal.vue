@@ -81,8 +81,6 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
-				image: '',
-				search: '',
 			}
 		},
 		addCatalog() {
