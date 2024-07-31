@@ -122,4 +122,20 @@ class DirectoryService
 	{
 		return [];
 	}
+
+	public function listDirectory(array $filters = [], int $limit = 30, int $offset = 0): array
+	{
+		if ($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return $this->listingMapper->findAll(limit: $limit, offset: $offset, filters: $filters);
+		}
+		$filters['_schema'] = 'directory';
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		return $this->objectService->findObjects(filters: $filters, config: $dbConfig);
+	}
 }

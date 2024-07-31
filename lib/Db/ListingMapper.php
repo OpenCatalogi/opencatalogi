@@ -28,7 +28,7 @@ class ListingMapper extends QBMapper
 		return $this->findEntity(query: $qb);
 	}
 
-	public function findAll($limit = null, $offset = null): array
+	public function findAll($limit = null, $offset = null, $filters = []): array
 	{
 		$qb = $this->db->getQueryBuilder();
 
@@ -36,6 +36,10 @@ class ListingMapper extends QBMapper
 			->from('listings')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
+
+		foreach($filters as $filter => $value) {
+			$qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
+		}
 
 		return $this->findEntities(query: $qb);
 	}
