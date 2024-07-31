@@ -86,7 +86,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:loading="catalogiLoading"
 					required />
 				<NcSelect v-bind="metaData"
-					v-model="publicationStore.publicationItem.metaData"
+					v-model="publicationStore.publicationItem.metadata"
 					input-label="MetaData"
 					:loading="metaDataLoading"
 					required />

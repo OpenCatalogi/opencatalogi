@@ -71,7 +71,8 @@ export class Publication implements TPublication {
 		this.image = data.image || ''
 		this.category = data.category || ''
 		this.catalogi = data.catalogi || ''
-		this.metadata = data.metadata || ''
+		// @ts-expect-error -- for backwards compatibility metaData will be used if metadata cannot be found
+		this.metadata = (data.metadata ?? data.metaData) || ''
 		this.portal = data.portal || ''
 		this.featured = data.featured || false
 		this.organization = (!Array.isArray(data.organization) && data.organization) || {}
