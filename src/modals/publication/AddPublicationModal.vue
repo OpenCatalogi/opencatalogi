@@ -254,7 +254,7 @@ export default {
 					body: JSON.stringify({
 						...this.publication,
 						catalogi: this.catalogi.value.id,
-						metaData: this.metaData.value.id,
+						metadata: this.metaData.value.id,
 					}),
 				},
 			)
