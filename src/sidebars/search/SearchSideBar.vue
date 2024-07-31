@@ -6,7 +6,7 @@ import { searchStore } from '../../store/store.js'
 	<NcAppSidebar
 		name="Zoek opdracht"
 		subtitle="baldie"
-		subname="Via deze pagina kunt u zoeken binnen het bij u bekende federatieve netwerk">
+		subname="Binnen het federatieve netwerk">
 		<NcAppSidebarTab id="search-tab" name="Zoeken" :order="1">
 			<template #icon>
 				<Magnify :size="20" />
