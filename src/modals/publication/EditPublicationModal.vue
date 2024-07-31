@@ -60,9 +60,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Schema"
 					:value.sync="publicationStore.publicationItem.schema" />
 				<NcTextField :disabled="loading"
-					label="Status"
-					:value.sync="publicationStore.publicationItem.status" />
-				<NcTextField :disabled="loading"
 					label="Thema's"
 					:value.sync="publicationStore.publicationItem.themes" />
 				<p>Featured</p>

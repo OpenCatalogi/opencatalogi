@@ -37,9 +37,8 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcSelect v-bind="formatOptions"
 					v-model="properties.format" />
 
-				<NcInputField :disabled="loading"
-					type="number"
-					label="patroon"
+				<NcTextField :disabled="loading"
+					label="patroon (regex)"
 					:value.sync="properties.pattern" />
 
 				<NcTextField :disabled="loading"
@@ -187,7 +186,7 @@ export default {
 				description: '',
 				type: '',
 				format: '',
-				pattern: 0,
+				pattern: '',
 				default: '',
 				behavior: '',
 				required: false,
@@ -250,7 +249,7 @@ export default {
 							description: '',
 							type: '',
 							format: '',
-							pattern: 0,
+							pattern: '',
 							default: '',
 							behavior: '',
 							required: false,

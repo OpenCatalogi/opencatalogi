@@ -10,7 +10,7 @@ export class Publication implements TPublication {
 	public image?: string
 	public category: string
 	public catalogi: string
-	public metadata: string
+	public metaData: string
 	public portal?: string
 	public featured?: boolean
 	public organization?: {
@@ -71,7 +71,8 @@ export class Publication implements TPublication {
 		this.image = data.image || ''
 		this.category = data.category || ''
 		this.catalogi = data.catalogi || ''
-		this.metadata = data.metadata || ''
+		// @ts-expect-error -- for backwards compatibility metaData will be used if metadata cannot be found
+		this.metaData = (data.metadata ?? data.metaData) || ''
 		this.portal = data.portal || ''
 		this.featured = data.featured || false
 		this.organization = (!Array.isArray(data.organization) && data.organization) || {}
@@ -102,7 +103,7 @@ export class Publication implements TPublication {
 		if (!this.category && typeof this.category !== 'string') return false
 		if (!this.portal && typeof this.portal !== 'string') return false
 		if (!this.catalogi && typeof this.catalogi !== 'string') return false
-		if (!this.metadata && typeof this.metadata !== 'string') return false
+		if (!this.metaData && typeof this.metaData !== 'string') return false
 		if (!this.publicationDate && typeof this.publicationDate !== 'string') return false
 		if (!this.modified && typeof this.modified !== 'string') return false
 		if (!this.featured && typeof this.featured !== 'boolean') return false

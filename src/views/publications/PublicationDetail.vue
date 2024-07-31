@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, publicationStore } from '../../store/store.js'
+import { catalogiStore, metadataStore, navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -27,19 +27,19 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
-					Kopieren
+					Kopiëren
 				</NcActionButton>
 				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 					<template #icon>
 						<Publish :size="20" />
 					</template>
-					Publiseren
+					Publiceren
 				</NcActionButton>
 				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
-					Depubliseren
+					Depubliceren
 				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('archivePublication')">
 					<template #icon>
@@ -94,7 +94,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<span>{{ publication.image }}</span>
 				</div>
 				<div>
-					<b>Themas:</b>
+					<b>Thema's:</b>
 					<ul>
 						<li v-for="(theme, index) in publication?.data?.themes" :key="index">
 							{{ theme }}
@@ -118,22 +118,22 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<span>{{ publication.published }}</span>
 				</div>
 				<div>
-					<b>Gemodificeerd:</b>
+					<b>Gewijzigd:</b>
 					<span>{{ publication.modified }}</span>
 				</div>
 				<div>
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
-						<span>{{ catalogi.name }}</span>
+						<span>{{ catalogi.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${catalogi.name}`"
-								:name="catalogi.name"
-								@click="goToCatalogi(catalogi._id)">
+							<NcActionLink :aria-label="`got to ${catalogi.title}`"
+								:name="catalogi.title"
+								@click="goToCatalogi()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ catalogi.name }}
+								{{ catalogi.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -146,7 +146,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<NcActions>
 							<NcActionLink :aria-label="`got to ${metadata.title}`"
 								:name="metadata.title"
-								@click="goToMetadata(metadata)">
+								@click="goToMetadata()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
@@ -232,19 +232,19 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 										<template #icon>
 											<Publish :size="20" />
 										</template>
-										Publiseren
+										Publiceren
 									</NcActionButton>
 									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
-										Depubliseren
+										Depubliceren
 									</NcActionButton>
 									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>
-										Kopieren
+										Kopiëren
 									</NcActionButton>
 									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 										<template #icon>
@@ -259,10 +259,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							Geen bijlagen gevonden
 						</div>
 					</BTab>
-					<BTab title="Loging">
+					<BTab title="Loggen">
 						<table width="100%">
 							<tr>
-								<th><b>Tijstip</b></th>
+								<th><b>Tijdstip</b></th>
 								<th><b>Gebruiker</b></th>
 								<th><b>Actie</b></th>
 								<th><b>Details</b></th>
@@ -286,7 +286,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<BTab title="Rechten">
 						<table width="100%">
 							<tr>
-								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankenlijk</td>
+								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankelijk</td>
 								<td>
 									<NcButton @click="prive = !prive">
 										<template #icon>
@@ -295,7 +295,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 											<LockOutline v-if="prive"
 												:size="20" />
 										</template>
-										<span v-if="!prive">Prive maken</span>
+										<span v-if="!prive">Privé maken</span>
 										<span v-if="prive">Openbaar maken</span>
 									</NcButton>
 								</td>
@@ -306,14 +306,14 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							</tr>
 						</table>
 					</BTab>
-					<BTab title="Statestieken">
+					<BTab title="Statistieken">
 						<apexchart v-if="publication.status === 'published'"
 							width="100%"
 							type="line"
 							:options="chart.options"
 							:series="chart.series" />
 						<NcNoteCard type="info">
-							<p>Er zijn nog geen statestieken over deze publicatie bekend</p>
+							<p>Er zijn nog geen statistieken over deze publicatie bekend</p>
 						</NcNoteCard>
 					</BTab>
 				</BTabs>
@@ -513,12 +513,12 @@ export default {
 			publicationStore.setPublicationDataKey(key)
 			navigationStore.setModal('editPublicationDataModal')
 		},
-		goToMetadata(metadata) {
-			publicationStore.setMetaDataItem(metadata)
+		goToMetadata() {
+			metadataStore.setMetaDataItem(this.metadata)
 			navigationStore.setSelected('metaData')
 		},
-		goToCatalogi(id) {
-			publicationStore.setCatalogiId(id)
+		goToCatalogi() {
+			catalogiStore.setCatalogiItem(this.catalogi)
 			navigationStore.setSelected('catalogi')
 		},
 	},

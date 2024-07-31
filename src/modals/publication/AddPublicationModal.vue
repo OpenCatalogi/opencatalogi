@@ -58,9 +58,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						label="Schema"
 						:value.sync="publication.schema" />
 					<NcTextField :disabled="loading"
-						label="Status"
-						:value.sync="publication.status" />
-					<NcTextField :disabled="loading"
 						label="Thema's"
 						:value.sync="publication.themes" />
 					<span class="APM-horizontal">
@@ -143,7 +140,6 @@ export default {
 				reference: '',
 				license: '',
 				modified: new Date(),
-				status: '',
 				featured: false,
 				portal: '',
 				category: '',
@@ -297,11 +293,13 @@ export default {
 						}
 						self.catalogi = {}
 						self.metaData = {}
+						self.hasUpdated = false
 					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
+					self.hasUpdated = false
 				})
 		},
 	},
