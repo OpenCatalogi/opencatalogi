@@ -31,14 +31,6 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					label="Beschrijving"
 					maxlength="255"
 					:value.sync="catalogiStore.catalogiItem.description" />
-				<NcTextField :disabled="loading"
-					label="Image"
-					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.image" />
-				<NcTextField :disabled="loading"
-					label="Search"
-					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.search" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="loading"
