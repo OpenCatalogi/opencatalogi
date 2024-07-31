@@ -261,7 +261,7 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the catalogiList
+					// Lets refresh the publicationList
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)

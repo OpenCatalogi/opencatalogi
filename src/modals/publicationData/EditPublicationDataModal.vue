@@ -25,14 +25,24 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:value.sync="publicationStore.publicationItem.data[publicationStore.publicationDataKey]" />
 			</div>
 
-			<NcButton :disabled="!publicationStore.publicationItem.data[publicationStore.publicationDataKey] || loading" type="primary" @click="updatePublication(publicationStore.publicationItem.id)">
-				<NcLoadingIcon v-if="loading" :size="20" />
-				<ContentSaveOutline v-if="!loading" :size="20" />
-			</NcButton>
-			<NcButton
-				@click="navigationStore.setModal(false)">
-				{{ success ? 'Sluiten' : 'Annuleer' }}
-			</NcButton>
+			<span class="flex-horizontal">
+				<NcButton v-if="success === null"
+					:disabled="!publicationStore.publicationItem.data[publicationStore.publicationDataKey] || loading"
+					type="primary"
+					@click="updatePublication(publicationStore.publicationItem.id)">
+					<template #icon>
+						<span>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<ContentSaveOutline v-if="!loading" :size="20" />
+						</span>
+					</template>
+					Opslaan
+				</NcButton>
+				<NcButton
+					@click="navigationStore.setModal(false)">
+					{{ success ? 'Sluiten' : 'Annuleer' }}
+				</NcButton>
+			</span>
 		</div>
 	</NcModal>
 </template>
@@ -43,6 +53,7 @@ import {
 	NcModal,
 	NcTextField,
 	NcLoadingIcon,
+	NcNoteCard,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
@@ -53,6 +64,7 @@ export default {
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
 		// icons
 		ContentSaveOutline,
 	},
@@ -178,6 +190,11 @@ export default {
 					this.loading = false
 					this.success = response.ok
 
+					publicationStore.refreshPublicationList()
+					response.json().then((data) => {
+						publicationStore.setPublicationItem(data)
+					})
+
 					const self = this
 					setTimeout(() => {
 						self.success = null
@@ -207,5 +224,10 @@ export default {
 
 .success {
   color: green;
+}
+
+.flex-horizontal {
+    display: flex;
+    gap: 4px;
 }
 </style>
