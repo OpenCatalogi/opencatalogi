@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, publicationStore } from '../../store/store.js'
+import { catalogiStore, metadataStore, navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -125,15 +125,15 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
-						<span>{{ catalogi.name }}</span>
+						<span>{{ catalogi.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${catalogi.name}`"
-								:name="catalogi.name"
-								@click="goToCatalogi(catalogi._id)">
+							<NcActionLink :aria-label="`got to ${catalogi.title}`"
+								:name="catalogi.title"
+								@click="goToCatalogi()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ catalogi.name }}
+								{{ catalogi.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -146,7 +146,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<NcActions>
 							<NcActionLink :aria-label="`got to ${metadata.title}`"
 								:name="metadata.title"
-								@click="goToMetadata(metadata)">
+								@click="goToMetadata()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
@@ -513,12 +513,12 @@ export default {
 			publicationStore.setPublicationDataKey(key)
 			navigationStore.setModal('editPublicationDataModal')
 		},
-		goToMetadata(metadata) {
-			publicationStore.setMetaDataItem(metadata)
+		goToMetadata() {
+			metadataStore.setMetaDataItem(this.metadata)
 			navigationStore.setSelected('metaData')
 		},
-		goToCatalogi(id) {
-			publicationStore.setCatalogiId(id)
+		goToCatalogi() {
+			catalogiStore.setCatalogiItem(this.catalogi)
 			navigationStore.setSelected('catalogi')
 		},
 	},
