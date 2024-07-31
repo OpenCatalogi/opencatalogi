@@ -110,7 +110,7 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.success = null
-						this.closeModal()
+						self.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {
