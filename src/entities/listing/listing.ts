@@ -20,7 +20,7 @@ export class Listing implements TListing {
 
 	/* istanbul ignore next */ // Jest does not recognize the code coverage of these 2 methods
 	private hydrate(data: TListing) {
-		this.id = data?.id || ''
+		this.id = data?.id?.toString() || ''
 		this.title = data?.title || ''
 		this.summary = data?.summary || ''
 		this.description = data?.description || ''

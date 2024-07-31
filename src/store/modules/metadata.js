@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { defineStore } from 'pinia'
+import { Metadata } from '../../entities/index.js'
 
 export const useMetadataStore = defineStore('metadata', {
 	state: () => ({
@@ -9,29 +10,23 @@ export const useMetadataStore = defineStore('metadata', {
 	}),
 	actions: {
 		setMetaDataItem(metaDataItem) {
-		// To prevent forms etc from braking we alway use a default/skeleton object
-			const metaDataDefault = {
-				name: '',
-				version: '',
-				summary: '',
-				description: '',
-				properties: {},
-			}
-			this.metaDataItem = { ...metaDataDefault, ...metaDataItem }
+			this.metaDataItem = metaDataItem && new Metadata(metaDataItem)
 
 			// for backward compatibility
-			if (typeof this.metaDataItem.properties === 'string') {
+			if (typeof this.metaDataItem?.properties === 'string') {
 				this.metaDataItem.properties = JSON.parse(this.metaDataItem.properties)
 			}
 
-			console.log('Active metadata object set to ' + metaDataItem.id)
+			console.log('Active metadata object set to ' + metaDataItem && metaDataItem.id)
 		},
 		setMetaDataList(metaDataList) {
-			this.metaDataList = metaDataList
+			this.metaDataList = metaDataList.map(
+				(metadataItem) => new Metadata(metadataItem),
+			)
 			console.log('Active metadata lest set')
 		},
-		refreshMetaDataList() { // @todo this might belong in a service?
-			fetch(
+		async refreshMetaDataList() { // @todo this might belong in a service?
+			return fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
 				{
 					method: 'GET',
@@ -39,7 +34,9 @@ export const useMetadataStore = defineStore('metadata', {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.metaDataList = data
+						this.metaDataList = data.results.map(
+							(metadataItem) => new Metadata(metadataItem),
+						)
 						return data
 					})
 				})

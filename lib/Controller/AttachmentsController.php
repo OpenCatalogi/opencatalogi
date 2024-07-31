@@ -127,7 +127,7 @@ class AttachmentsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->attachmentMapper->find(id: $id));
+			return new JSONResponse($this->attachmentMapper->find(id: (int) $id));
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -197,7 +197,7 @@ class AttachmentsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->attachmentMapper->updateFromArray(id: $id, object: $data));
+			return new JSONResponse($this->attachmentMapper->updateFromArray(id: (int) $id, object: $data));
 		}
 
 
@@ -226,7 +226,7 @@ class AttachmentsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$this->attachmentMapper->delete($this->attachmentMapper->find($id));
+			$this->attachmentMapper->delete($this->attachmentMapper->find((int) $id));
 
 			return new JSONResponse([]);
 		}

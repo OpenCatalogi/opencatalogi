@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, publicationStore } from '../../store/store.js'
+import { catalogiStore, metadataStore, navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -125,15 +125,15 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
-						<span>{{ catalogi.name }}</span>
+						<span>{{ catalogi.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${catalogi.name}`"
-								:name="catalogi.name"
-								@click="goToCatalogi(catalogi._id)">
+							<NcActionLink :aria-label="`got to ${catalogi.title}`"
+								:name="catalogi.title"
+								@click="goToCatalogi()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ catalogi.name }}
+								{{ catalogi.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -146,7 +146,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<NcActions>
 							<NcActionLink :aria-label="`got to ${metadata.title}`"
 								:name="metadata.title"
-								@click="goToMetadata(metadata)">
+								@click="goToMetadata()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
@@ -164,7 +164,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							:name="key"
 							:bold="false"
 							:force-display-actions="true"
-							@click=" publicationStore.setPublicationDataKey(key)
+							@click="publicationStore.setPublicationDataKey(key)
 							">
 							<template #icon>
 								<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
@@ -379,14 +379,13 @@ export default {
 		ArchivePlusOutline,
 	},
 	props: {
-		publicationId: {
+		publicationItem: {
 			type: String,
 			required: true,
 		},
 	},
 	data() {
 		return {
-
 			publication: [],
 			catalogi: [],
 			metadata: [],
@@ -415,15 +414,18 @@ export default {
 					data: [0, 0, 0, 0, 0, 0, 15],
 				}],
 			},
+			upToDate: false,
 		}
 	},
 	watch: {
-		publicationId: {
-			handler(publicationId) {
-				this.publication = publicationStore.publicationItem
-				this.fetchCatalogi(publicationStore.publicationItem.catalogi)
-				this.fetchMetaData(publicationStore.publicationItem.metaData)
-				this.fetchData(publicationStore.publicationItem.id)
+		publicationItem: {
+			handler(newPublicationItem, oldPublicationItem) {
+				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
+					this.publication = publicationStore.publicationItem
+					this.fetchCatalogi(publicationStore.publicationItem.catalogi)
+					this.fetchMetaData(publicationStore.publicationItem.metaData)
+					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
+				}
 			},
 			deep: true,
 		},
@@ -435,7 +437,7 @@ export default {
 
 		this.fetchCatalogi(publicationStore.publicationItem.catalogi, true)
 		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
-		this.fetchData(publicationStore.publicationItem.id)
+		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
 	methods: {
@@ -501,7 +503,7 @@ export default {
 		},
 		editPublicationDataItem(key) {
 			publicationStore.setPublicationDataKey(key)
-			navigationStore.setModal('editPublicationDataModal')
+			navigationStore.setModal('editPublicationData')
 		},
 		deletePublicationDataItem(key) {
 			publicationStore.setPublicationDataKey(key)
@@ -511,12 +513,12 @@ export default {
 			publicationStore.setPublicationDataKey(key)
 			navigationStore.setModal('editPublicationDataModal')
 		},
-		goToMetadata(metadata) {
-			publicationStore.setMetaDataItem(metadata)
+		goToMetadata() {
+			metadataStore.setMetaDataItem(this.metadata)
 			navigationStore.setSelected('metaData')
 		},
-		goToCatalogi(id) {
-			publicationStore.setCatalogiId(id)
+		goToCatalogi() {
+			catalogiStore.setCatalogiItem(this.catalogi)
 			navigationStore.setSelected('catalogi')
 		},
 	},

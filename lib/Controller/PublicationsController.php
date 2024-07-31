@@ -112,23 +112,24 @@ class PublicationsController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
+        $filters = $this->request->getParams();
+
+        foreach($filters as $key => $value) {
+            if(str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            }
+        }
+
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll()]);
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters)]);
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters = $this->request->getParams();
-
-		foreach($filters as $key => $value) {
-			if(str_starts_with($key, '_')) {
-				unset($filters[$key]);
-			}
-		}
 
 
 
@@ -149,7 +150,7 @@ class PublicationsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->publicationMapper->find($id));
+			return new JSONResponse($this->publicationMapper->find(id: (int) $id));
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
@@ -238,7 +239,7 @@ class PublicationsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$returnData = $this->publicationMapper->updateFromArray(id: $id, object: $data);
+			$returnData = $this->publicationMapper->updateFromArray(id: (int) $id, object: $data);
 			$returnData = $returnData->jsonSerialize();
 
 			$dbConfig = [];
@@ -287,7 +288,7 @@ class PublicationsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$this->publicationMapper->delete($this->publicationMapper->find($id));
+			$this->publicationMapper->delete($this->publicationMapper->find(id: (int) $id));
 
 			$returnData = [];
 		} else {

@@ -126,7 +126,7 @@ class DirectoryController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->listingMapper->find(id: $id));
+			return new JSONResponse($this->listingMapper->find(id: (int) $id));
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -200,7 +200,7 @@ class DirectoryController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->listingMapper->updateFromArray(id: $id, object: $data));
+			return new JSONResponse($this->listingMapper->updateFromArray(id: (int) $id, object: $data));
 		}
 
 
@@ -228,7 +228,7 @@ class DirectoryController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$this->listingMapper->delete($this->listingMapper->find($id));
+			$this->listingMapper->delete($this->listingMapper->find((int) $id));
 
 			return new JSONResponse([]);
 		}

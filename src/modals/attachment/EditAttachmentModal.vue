@@ -6,13 +6,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 	<NcModal v-if="navigationStore.modal === 'EditAttachment'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bijlage bewerken</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Bijlage succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Bijlage succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van bijlage</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Titel"
 					maxlength="255"
@@ -36,7 +41,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:value.sync="publicationStore.attachmentItem.downloadURL" />
 			</div>
 			<NcButton
-				v-if="!succes"
+				v-if="success === null"
 				:disabled="!publicationStore.attachmentItem.title || loading"
 				type="primary"
 				@click="editAttachment()">
@@ -70,7 +75,7 @@ export default {
 		return {
 
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -90,7 +95,7 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					if (publicationStore.publicationItem?.id) {
 						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
@@ -102,7 +107,7 @@ export default {
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
+						self.success = null
 						navigationStore.setModal(false)
 					}, 2000)
 				})

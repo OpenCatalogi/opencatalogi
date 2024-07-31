@@ -48,16 +48,31 @@ class Attachment extends Entity implements JsonSerializable
 
 	}
 
+	public function getJsonFields(): array
+	{
+		return array_keys(
+			array_filter($this->getFieldTypes(), function ($field) {
+				return $field === 'json';
+			})
+		);
+	}
+
 	public function hydrate(array $object): self
 	{
+		$jsonFields = $this->getJsonFields();
+
 		foreach($object as $key => $value) {
+			if (in_array($key, $jsonFields) === true && $value === []) {
+				$value = null;
+			}
+
 			$method = 'set'.ucfirst($key);
 
-			var_dump($method);
-//			if(method_exists(object_or_class: $this, method: $method) === false) {
-//				continue;
-//			}
-			$this->$method($value);
+			try {
+				$this->$method($value);
+			} catch (\Exception $exception) {
+//				var_dump("Error writing $key");
+			}
 		}
 
 		return $this;
@@ -65,7 +80,7 @@ class Attachment extends Entity implements JsonSerializable
 
 	public function jsonSerialize(): array
 	{
-		return [
+		$array = [
 			'id' => $this->id,
 			'title' => $this->title,
 			'reference' => $this->reference,
@@ -85,6 +100,16 @@ class Attachment extends Entity implements JsonSerializable
 			'published' => $this->published->format('c'),
 			'license' => $this->license,
 		];
+
+		$jsonFields = $this->getJsonFields();
+
+		foreach ($array as $key => $value) {
+			if (in_array($key, $jsonFields) === true && $value === null) {
+				$array[$key] = [];
+			}
+		}
+
+		return $array;
 	}
 
 }

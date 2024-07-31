@@ -5,10 +5,12 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 <template>
 	<div class="detailContainer">
 		<div class="head">
-			<h1 class="h1">
-				{{ metadata.title }}
-			</h1>
-			<span>{{ metadata.description }}</span>
+			<div>
+				<h1 class="h1">
+					{{ metadata.title }}
+				</h1>
+				<span>{{ metadata.description }}</span>
+			</div>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
@@ -41,7 +43,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
-					<NcListItem v-for="(value, key, i) in metadata?.properties"
+					<NcListItem v-for="(value, key, i) in metadataStore.metaDataItem.properties"
 						:key="`${key}${i}`"
 						:name="key"
 						:bold="false"
@@ -141,20 +143,24 @@ export default {
 
 			metadata: [],
 			loading: false,
+			upToDate: false,
 		}
 	},
 	watch: {
 		metaDataItem: {
-			handler(metaDataItem) {
-				this.metadata = metaDataItem
-				this.fetchData(metaDataItem?._id)
+			handler(newMetaDataItem, oldMetaDataItem) {
+				if (!this.upToDate || JSON.stringify(newMetaDataItem) !== JSON.stringify(oldMetaDataItem)) {
+					this.metadata = newMetaDataItem
+					newMetaDataItem && this.fetchData(newMetaDataItem?.id)
+					this.upToDate = true
+				}
 			},
 			deep: true,
 		},
 	},
 	mounted() {
 		this.metadata = metadataStore.metaDataItem
-		this.fetchData(metadataStore.metaDataItem?._id)
+		metadataStore.metaDataItem && this.fetchData(metadataStore.metaDataItem?.id)
 	},
 	methods: {
 		fetchData(metadataId) {

@@ -7,27 +7,47 @@ export type TPublication = {
 	description?: string
 	reference?: string
 	image?: string
-	category?: string
+	category: string
+    catalogi: string
+    metaData: string
 	portal?: string
-	catalogi?: string
-	metaData?: string
-	publicationDate?: string
-	modified?: string
 	featured?: boolean
-	organization?: object[]
-	data?: object[]
-	attachments?: string[]
-	attachmentCount?: number
+	organization?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
 	schema?: string
 	status?: string
-	license?: string
-	themes?: string
-	anonymization?: {
-        anonymized?: string
-        results?: string
+	attachments?: {
+        type?: string
+        items?: {
+            $ref?: string
+        }
+        format?: string
     }
-	language?: {
-        code?: string
-        level?: string
+    attachmentCount?: number
+    themes?: string[]
+	data?: {
+        type?: string
+        required?: boolean
+    }
+	anonymization?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
+    languageObject?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
+    publicationDate?: string
+	modified?: string
+	license?: {
+        type?: string
     }
 }

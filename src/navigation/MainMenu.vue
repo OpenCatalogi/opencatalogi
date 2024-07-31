@@ -15,10 +15,10 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
+			<NcAppNavigationItem v-for="(catalogus, i) in catalogiStore.catalogiList"
 				:key="`${catalogus}${i}`"
-				:name="catalogus?.name"
-				:active="catalogus._id === navigationStore.selectedCatalogus && navigationStore.selected === 'publication'"
+				:name="catalogus?.title"
+				:active="catalogus.id === navigationStore.selectedCatalogus && navigationStore.selected === 'publication'"
 				@click="switchCatalogus(catalogus)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
@@ -293,7 +293,6 @@ export default {
 			organisation_name: '',
 			organisation_oin: '',
 			organisation_pki: '',
-			catalogi: [],
 			configuration: {
 				external: false,
 				drcLocation: '',
@@ -317,28 +316,12 @@ export default {
 	},
 	mounted() {
 		this.fetchData()
+		catalogiStore.refreshCatalogiList()
 	},
 	methods: {
 		// We use the catalogi in the menu so lets fetch those
 		fetchData(newPage) {
 			this.loading = true
-			// Catalogi details
-			fetch(
-				'/index.php/apps/opencatalogi/api/catalogi',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.catalogi = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
 
 			fetch(
 				'/index.php/apps/opencatalogi/configuration',
@@ -390,9 +373,9 @@ export default {
 				})
 		},
 		switchCatalogus(catalogus) {
-			if (catalogus._id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
+			if (catalogus.id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
 			navigationStore.setSelected('publication')
-			navigationStore.setSelectedCatalogus(catalogus._id)
+			navigationStore.setSelectedCatalogus(catalogus.id)
 			catalogiStore.setCatalogiItem(catalogus)
 		},
 	},

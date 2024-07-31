@@ -42,19 +42,19 @@ class ListingMapper extends QBMapper
 
 	public function createFromArray(array $object): Listing
 	{
-		$publication = new Listing();
-		$publication->hydrate(object: $object);
+		$listing = new Listing();
+		$listing->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
+//		var_dump($listing->getTitle());
 
-		return $this->insert(entity: $publication);
+		return $this->insert(entity: $listing);
 	}
 
 	public function updateFromArray(int $id, array $object): Listing
 	{
-		$publication = $this->find($id);
-		$publication->hydrate($object);
+		$listing = $this->find($id);
+		$listing->hydrate($object);
 
-		return $this->update($publication);
+		return $this->update($listing);
 	}
 }

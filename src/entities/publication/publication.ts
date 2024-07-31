@@ -5,32 +5,56 @@ export class Publication implements TPublication {
 	public id: string
 	public title: string
 	public summary: string
-	public reference?: string
 	public description?: string
+	public reference?: string
 	public image?: string
-	public category?: string
+	public category: string
+	public catalogi: string
+	public metaData: string
 	public portal?: string
-	public catalogi?: string
-	public metaData?: string
-	public publicationDate?: string
-	public modified?: string
 	public featured?: boolean
-	public organization?: object[]
-	public data?: object[]
-	public attachments?: string[]
-	public attachmentCount?: number
-	public schema?: string
-	public status?: string
-	public license?: string
-	public themes?: string
-	public anonymization?: {
-        anonymized?: string
-        results?: string
+	public organization?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
     }
 
-	public language?: {
-        code?: string
-        level?: string
+	public schema?: string
+	public status?: string
+	public attachments?: {
+        type?: string
+        items?: {
+            $ref?: string
+        }
+        format?: string
+    }
+
+	public attachmentCount?: number
+	public themes?: string[]
+	public data?: {
+        type?: string
+        required?: boolean
+    }
+
+	public anonymization?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
+
+	public languageObject?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
+
+	public publicationDate?: string
+	public modified?: string
+	public license?: {
+        type?: string
     }
 
 	constructor(data: TPublication) {
@@ -39,33 +63,35 @@ export class Publication implements TPublication {
 
 	/* istanbul ignore next */ // Jest does not recognize the code coverage of these 2 methods
 	private hydrate(data: TPublication) {
-		this.id = data.id || ''
+		this.id = data.id?.toString() || ''
 		this.title = data.title || ''
 		this.summary = data.summary || ''
 		this.reference = data.reference || ''
 		this.description = data.description || ''
 		this.image = data.image || ''
 		this.category = data.category || ''
-		this.portal = data.portal || ''
 		this.catalogi = data.catalogi || ''
-		this.metaData = data.metaData || ''
-		this.publicationDate = data.publicationDate || ''
-		this.modified = data.modified || ''
+		// @ts-expect-error -- for backwards compatibility metaData will be used if metadata cannot be found
+		this.metaData = (data.metadata ?? data.metaData) || ''
+		this.portal = data.portal || ''
 		this.featured = data.featured || false
-		this.organization = data.organization || []
-		this.data = data.data || []
-		this.attachments = data.attachments || []
-		this.attachmentCount = data.attachmentCount || 0
+		this.organization = (!Array.isArray(data.organization) && data.organization) || {}
 		this.schema = data.schema || ''
 		this.status = data.status || ''
-		this.license = data.license || ''
-		this.themes = data.themes || ''
-		this.anonymization = data.anonymization || {}
-		this.language = data.language || {}
+		this.attachments = (!Array.isArray(data.attachments) && data.attachments) || {}
+		this.attachmentCount = data.attachmentCount || 0
+		this.themes = (!Array.isArray(data.themes) && data.themes) || {}
+		this.data = (!Array.isArray(data.data) && data.data) || {}
+		this.anonymization = (!Array.isArray(data.anonymization) && data.anonymization) || {}
+		this.languageObject = (!Array.isArray(data.languageObject) && data.languageObject) || {}
+		this.publicationDate = data.publicationDate || ''
+		this.modified = data.modified || ''
+		this.license = (!Array.isArray(data.license) && data.license) || {}
 	}
 
 	/* istanbul ignore next */
 	public validate(): boolean {
+		// TODO: change this over to Zod schema, already exists on 'feature/DIMOC-101/entities' (requires slight modification)
 		// these have to exist
 		if (!this.id || typeof this.id !== 'string') return false
 		if (!this.title || typeof this.title !== 'string') return false
@@ -90,7 +116,6 @@ export class Publication implements TPublication {
 		if (!this.license && typeof this.license !== 'string') return false
 		if (!this.themes && typeof this.themes !== 'string') return false
 		if (!this.anonymization && typeof this.anonymization !== 'object') return false
-		if (!this.language && typeof this.language !== 'object') return false
 		return true
 	}
 

@@ -2,7 +2,7 @@
 	<!-- Placeholder Div -->
 	<div>
 		<AddAttachmentModal />
-		<EditAttachmentnModal />
+		<EditAttachmentModal />
 		<AddPublicationModal />
 		<EditPublicationModal />
 		<AddMetaDataModal />
@@ -21,7 +21,7 @@
 <script>
 
 import AddAttachmentModal from './attachment/AddAttachmentModal.vue'
-import EditAttachmentnModal from './attachment/EditAttachmentModal.vue'
+import EditAttachmentModal from './attachment/EditAttachmentModal.vue'
 import AddPublicationModal from './publication/AddPublicationModal.vue'
 import EditPublicationModal from './publication/EditPublicationModal.vue'
 import AddMetaDataModal from './metaData/AddMetaDataModal.vue'
@@ -41,7 +41,7 @@ export default {
 	name: 'Modals',
 	components: {
 		AddAttachmentModal,
-		EditAttachmentnModal,
+		EditAttachmentModal,
 		AddPublicationModal,
 		EditPublicationModal,
 		AddMetaDataModal,

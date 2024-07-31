@@ -23,7 +23,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton disabled class="catalogiDetails-actionsDelete">
+				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -31,7 +31,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<span>{{ catalogi.description }}</span>
+		<span>{{ catalogi.summary }}</span>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
@@ -87,7 +87,8 @@ export default {
 				// run the fetch only once to update the item
 				if (!this.upToDate || JSON.stringify(newCatalogiItem) !== JSON.stringify(oldCatalogiItem)) {
 					this.catalogi = newCatalogiItem
-					this.fetchData(newCatalogiItem.id)
+					// check if newCatalogiItem is not false
+					newCatalogiItem && this.fetchData(newCatalogiItem?.id)
 					this.upToDate = true
 				}
 			},
@@ -96,7 +97,8 @@ export default {
 	},
 	mounted() {
 		this.catalogi = catalogiStore.catalogiItem
-		this.fetchData(catalogiStore.catalogiItem.id)
+		// check if catalogiItem is not false
+		catalogiStore.catalogiItem && this.fetchData(catalogiStore.catalogiItem?.id)
 	},
 	methods: {
 		fetchData(catalogId) {
@@ -185,12 +187,5 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
-}
-
-.active.catalogiDetails-actionsDelete {
-    background-color: var(--color-error) !important;
-}
-.active.catalogiDetails-actionsDelete button {
-    color: #EBEBEB !important;
 }
 </style>

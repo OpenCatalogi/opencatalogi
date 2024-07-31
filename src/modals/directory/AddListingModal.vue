@@ -6,17 +6,21 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 	<NcModal v-if="navigationStore.modal === 'addListing'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Listing succesvol toegevoegd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Listing succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van Listing</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField label="Url" :value.sync="directory.url" />
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="!directory.url"
 				type="primary"
 				@click="addDirectory">
@@ -52,7 +56,7 @@ export default {
 				url: '',
 			},
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -82,7 +86,7 @@ export default {
 				.then((response) => {
 					// Set propper modal states
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					directoryStore.refreshListingList()
 					response.json().then((data) => {
@@ -90,7 +94,11 @@ export default {
 					})
 					navigationStore.setSelected('directory')
 					// Wait and then close the modal
-					setTimeout(() => (this.closeModal()), 2500)
+					const self = this
+					setTimeout(() => {
+						self.success = null
+						self.closeModal()
+					}, 2500)
 				})
 				.catch((err) => {
 					this.error = err

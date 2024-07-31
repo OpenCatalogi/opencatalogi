@@ -9,8 +9,8 @@ export const useCatalogiStore = defineStore('catalogi', {
 	}),
 	actions: {
 		setCatalogiItem(catalogiItem) {
-			this.catalogiItem = new Catalogi(catalogiItem)
-			console.log('Active catalog item set to ' + catalogiItem.id)
+			this.catalogiItem = catalogiItem && new Catalogi(catalogiItem)
+			console.log('Active catalog item set to ' + catalogiItem && catalogiItem?.id)
 		},
 		setCatalogiList(catalogiList) {
 			this.catalogiList = catalogiList.map(
@@ -18,16 +18,15 @@ export const useCatalogiStore = defineStore('catalogi', {
 			)
 			console.log('Catalogi list set to ' + catalogiList.length + ' item')
 		},
-		refreshCatalogiList() {
+		async refreshCatalogiList() {
 			// @todo this might belong in a service?
-			fetch('/index.php/apps/opencatalogi/api/catalogi', {
+			return fetch('/index.php/apps/opencatalogi/api/catalogi', {
 				method: 'GET',
 			})
 				.then((response) => {
 					response.json().then((data) => {
 						this.catalogiList = data.results.map(
-							(catalogiItem) =>
-								new Catalogi(catalogiItem),
+							(catalogiItem) => new Catalogi(catalogiItem),
 						)
 					})
 				})

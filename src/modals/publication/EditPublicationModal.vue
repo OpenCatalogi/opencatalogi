@@ -8,13 +8,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Edit publication</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Titel"
 					:value.sync="publicationStore.publicationItem.title" />
@@ -33,12 +38,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Portaal"
 					:value.sync="publicationStore.publicationItem.portal" />
-				<NcTextField :disabled="loading"
-					label="Publicatie date"
-					:value.sync="publicationStore.publicationItem.publicationDate" />
-				<NcTextField :disabled="loading"
-					label="Modified"
-					:value.sync="publicationStore.publicationItem.modified" />
+				<span>
+					<p>Published</p>
+					<NcDateTimePicker v-model="publicationStore.publicationItem.published"
+						:disabled="loading"
+						label="Publicatie datum" />
+				</span>
+				<span>
+					<p>Modified</p>
+					<NcDateTimePicker v-model="publicationStore.publicationItem.modified"
+						:disabled="loading"
+						label="Modified" />
+				</span>
 				<NcTextField :disabled="loading"
 					label="Organization"
 					:value.sync="publicationStore.publicationItem.organization" />
@@ -49,22 +60,23 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Schema"
 					:value.sync="publicationStore.publicationItem.schema" />
 				<NcTextField :disabled="loading"
-					label="Status"
-					:value.sync="publicationStore.publicationItem.status" />
-				<NcTextField :disabled="loading"
 					label="Thema's"
 					:value.sync="publicationStore.publicationItem.themes" />
 				<p>Featured</p>
-				<NcCheckboxRadioSwitch :disabled="loading"
-					label="Featured"
-					:value.sync="publicationStore.publicationItem.featured" />
+				<span class="EPM-horizontal">
+					<NcCheckboxRadioSwitch :disabled="loading"
+						label="Featured"
+						:checked.sync="publicationStore.publicationItem.featured">
+						Featured
+					</NcCheckboxRadioSwitch>
+				</span>
 				<NcTextField :disabled="loading"
 					label="Image"
 					:value.sync="publicationStore.publicationItem.image" />
 				<b>Juridisch</b>
 				<NcTextField :disabled="loading"
 					label="Licentie"
-					:value.sync="publicationStore.publicationItem.license" />
+					:value.sync="publicationStore.publicationItem.license.type" />
 				<NcSelect v-bind="catalogi"
 					v-model="publicationStore.publicationItem.catalogi"
 					input-label="Catalogi"
@@ -76,8 +88,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:loading="metaDataLoading"
 					required />
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="!publicationStore.publicationItem.title"
 				type="primary"
 				@click="updatePublication()">
@@ -118,7 +129,6 @@ export default {
 	},
 	data() {
 		return {
-
 			catalogi: {
 				value: [],
 				options: [],
@@ -128,7 +138,7 @@ export default {
 				options: [],
 			},
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
@@ -236,19 +246,27 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.publicationItem),
+					body: JSON.stringify({
+						...publicationStore.publicationItem,
+						id: publicationStore.publicationItem.id.toString(),
+					}),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
 					})
 					navigationStore.setSelected('publication')
-					setTimeout(() => navigationStore.setModal(false), 2500)
+
+					const self = this
+					setTimeout(() => {
+						self.success = null
+						navigationStore.setModal(false)
+					}, 2500)
 				})
 				.catch((err) => {
 					this.error = err
@@ -273,5 +291,12 @@ export default {
 
 .success {
   color: green;
+}
+
+.EPM-horizontal {
+    display: flex;
+    gap: 4px;
+    flex-direction: row;
+    align-items: center;
 }
 </style>

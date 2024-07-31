@@ -37,24 +37,24 @@ class AttachmentMapper extends QBMapper
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
-		return ['results' => $this->findEntities(query: $qb)];
+		return $this->findEntities(query: $qb);
 	}
 
 	public function createFromArray(array $object): Attachment
 	{
-		$publication = new Attachment();
-		$publication->hydrate(object: $object);
+		$attachment = new Attachment();
+		$attachment->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
+//		var_dump($attachment->getTitle());
 
-		return $this->insert(entity: $publication);
+		return $this->insert(entity: $attachment);
 	}
 
 	public function updateFromArray(int $id, array $object): Attachment
 	{
-		$publication = $this->find($id);
-		$publication->hydrate($object);
+		$attachment = $this->find($id);
+		$attachment->hydrate($object);
 
-		return $this->update($publication);
+		return $this->update($attachment);
 	}
 }

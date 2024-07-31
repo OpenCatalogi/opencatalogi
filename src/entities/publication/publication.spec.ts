@@ -38,7 +38,6 @@ describe('Directory Store', () => {
 		expect(publication.license).toBe('')
 		expect(publication.themes).toBe(testData[1].themes)
 		expect(publication.anonymization).toEqual(testData[1].anonymization)
-		expect(publication.language).toEqual(testData[1].language)
 
 		expect(publication.validate()).toBe(true)
 	})
@@ -68,16 +67,19 @@ const testData: TPublication[] = [
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
-		data: [{ key: 'value1' }],
-		attachments: ['attachment1'],
+		organization: {
+			type: 'string',
+		},
+		data: {},
+		attachments: {},
 		attachmentCount: 1,
 		schema: 'schema1',
 		status: 'status1',
-		license: 'MIT',
-		themes: 'theme1',
-		anonymization: { anonymized: 'yes', results: 'success' },
-		language: { code: 'en', level: 'native' },
+		license: {
+			type: 'MIT',
+		},
+		themes: ['theme1'],
+		anonymization: {},
 	},
 	{ // partial data
 		id: '2',
@@ -93,14 +95,12 @@ const testData: TPublication[] = [
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
-		data: [{ key: 'value1' }],
-		attachments: ['attachment1'],
+		organization: {},
+		data: {},
+		attachments: {},
 		attachmentCount: 1,
-
-		themes: 'theme1',
-		anonymization: { anonymized: 'yes', results: 'success' },
-		language: { code: 'en', level: 'native' },
+		themes: ['theme1'],
+		anonymization: {},
 	},
 	{ // invalid data
 		id: '3',
@@ -116,15 +116,16 @@ const testData: TPublication[] = [
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
-		data: [{ key: 'value1' }],
-		attachments: ['attachment1'],
+		organization: {},
+		data: {},
+		attachments: {},
 		attachmentCount: 1,
 		schema: 'schema1',
 		status: 'status1',
-		license: 'MIT',
-		themes: 'theme1',
-		anonymization: { anonymized: 'yes', results: 'success' },
-		language: { code: 'en', level: 'native' },
+		license: {
+			type: 'MIT',
+		},
+		themes: ['theme1'],
+		anonymization: {},
 	},
 ]
