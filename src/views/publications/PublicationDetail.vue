@@ -156,7 +156,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
-						<NcListItem v-for="(value, key, i) in publication?.data"
+						<NcListItem v-for="(value, key, i) in publicationStore.publicationItem?.data"
 							:key="`${key}${i}`"
 							:name="key"
 							:bold="false"

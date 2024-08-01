@@ -63,7 +63,7 @@ class Attachment extends Entity implements JsonSerializable
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
-				$value = null;
+				$value = [];
 			}
 
 			$method = 'set'.ucfirst($key);

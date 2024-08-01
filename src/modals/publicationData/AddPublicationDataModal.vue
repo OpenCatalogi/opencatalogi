@@ -32,23 +32,25 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:loading="loading" />
 			</div>
 
-			<NcButton v-if="success === null"
-				:disabled="loading || !key || !value"
-				type="primary"
-				@click="AddPublicatieEigenschap()">
-				<template #icon>
-					<span>
-						<NcLoadingIcon v-if="loading" :size="20" />
-						<Plus v-if="!loading" :size="20" />
-					</span>
-				</template>
-				Toevoegen
-			</NcButton>
+			<span class="flex-horizontal">
+				<NcButton v-if="success === null"
+					:disabled="loading || !key || !value"
+					type="primary"
+					@click="AddPublicatieEigenschap()">
+					<template #icon>
+						<span>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<Plus v-if="!loading" :size="20" />
+						</span>
+					</template>
+					Toevoegen
+				</NcButton>
 
-			<NcButton
-				@click="navigationStore.setModal(false)">
-				{{ success ? 'Sluiten' : 'Annuleer' }}
-			</NcButton>
+				<NcButton
+					@click="navigationStore.setModal(false)">
+					{{ success ? 'Sluiten' : 'Annuleer' }}
+				</NcButton>
+			</span>
 		</div>
 	</NcModal>
 </template>
@@ -102,16 +104,23 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the catalogiList
+
+					// Lets refresh the publicationList
+					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
 					})
+
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.success = null
 						navigationStore.setModal(false)
 					}, 2000)
+
+					// reset modal form
+					this.key = ''
+					this.value = ''
 				})
 				.catch((err) => {
 					this.loading = false
@@ -140,5 +149,10 @@ export default {
 
 .success {
   color: green;
+}
+
+.flex-horizontal {
+    display: flex;
+    gap: 4px;
 }
 </style>
