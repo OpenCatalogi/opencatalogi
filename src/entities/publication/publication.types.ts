@@ -45,9 +45,7 @@ export type TPublication = {
         format?: string
         description?: string
     }
-    publicationDate?: string
-	modified?: string
-	license?: {
-        type?: string
-    }
+    published?: string | Date
+	modified?: string | Date
+	license?: string
 }

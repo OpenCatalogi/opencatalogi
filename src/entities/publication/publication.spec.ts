@@ -26,7 +26,7 @@ describe('Directory Store', () => {
 		expect(publication.portal).toBe(testData[1].portal)
 		expect(publication.catalogi).toBe(testData[1].catalogi)
 		expect(publication.metaData).toBe(testData[1].metaData)
-		expect(publication.publicationDate).toBe(testData[1].publicationDate)
+		expect(publication.published).toBe(testData[1].published)
 		expect(publication.modified).toBe(testData[1].modified)
 		expect(publication.featured).toBe(testData[1].featured)
 		expect(publication.organization).toEqual(testData[1].organization)
@@ -64,7 +64,7 @@ const testData: TPublication[] = [
 		portal: 'portal1',
 		catalogi: 'catalogi1',
 		metaData: 'meta1',
-		publicationDate: '2024-01-01',
+		published: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
 		organization: {
@@ -75,9 +75,7 @@ const testData: TPublication[] = [
 		attachmentCount: 1,
 		schema: 'schema1',
 		status: 'status1',
-		license: {
-			type: 'MIT',
-		},
+		license: 'MIT',
 		themes: ['theme1'],
 		anonymization: {},
 	},
@@ -92,7 +90,7 @@ const testData: TPublication[] = [
 		portal: 'portal2',
 		catalogi: 'catalogi2',
 		metaData: 'meta2',
-		publicationDate: '2024-01-01',
+		published: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
 		organization: {},
@@ -113,7 +111,7 @@ const testData: TPublication[] = [
 		portal: 'portal3',
 		catalogi: 'catalogi3',
 		metaData: 'meta3',
-		publicationDate: '2024-01-01',
+		published: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
 		organization: {},
@@ -122,9 +120,7 @@ const testData: TPublication[] = [
 		attachmentCount: 1,
 		schema: 'schema1',
 		status: 'status1',
-		license: {
-			type: 'MIT',
-		},
+		license: 'MIT',
 		themes: ['theme1'],
 		anonymization: {},
 	},

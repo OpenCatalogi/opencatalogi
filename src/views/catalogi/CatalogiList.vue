@@ -54,6 +54,12 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 							</template>
 							Bewerken
 						</NcActionButton>
+						<NcActionButton @click="navigationStore.setSelected('publication'); navigationStore.setSelectedCatalogus(catalogus?.id)">
+							<template #icon>
+								<OpenInApp :size="20" />
+							</template>
+							Catalogus bekijken
+						</NcActionButton>
 						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setDialog('deleteCatalog')">
 							<template #icon>
 								<Delete :size="20" />
@@ -83,6 +89,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import { debounce } from 'lodash';
 
 export default {

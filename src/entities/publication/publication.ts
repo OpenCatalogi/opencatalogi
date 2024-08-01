@@ -51,11 +51,9 @@ export class Publication implements TPublication {
         description?: string
     }
 
-	public publicationDate?: string
-	public modified?: string
-	public license?: {
-        type?: string
-    }
+	public published?: string | Date
+	public modified?: string | Date
+	public license?: string
 
 	constructor(data: TPublication) {
 		this.hydrate(data)
@@ -74,19 +72,23 @@ export class Publication implements TPublication {
 		// @ts-expect-error -- for backwards compatibility metaData will be used if metadata cannot be found
 		this.metaData = (data.metadata ?? data.metaData) || ''
 		this.portal = data.portal || ''
-		this.featured = data.featured || false
+		this.featured = (typeof data.featured === 'boolean' && data.featured)
+            // backend can send true and false back as "1" and "" (yes. not "0")
+            // FIXME: remove once bug is fixed
+            || (typeof data.featured === 'string' && !!parseInt(data.featured))
+            || false
 		this.organization = (!Array.isArray(data.organization) && data.organization) || {}
 		this.schema = data.schema || ''
 		this.status = data.status || ''
 		this.attachments = (!Array.isArray(data.attachments) && data.attachments) || {}
 		this.attachmentCount = data.attachmentCount || 0
-		this.themes = (!Array.isArray(data.themes) && data.themes) || {}
+		this.themes = data.themes || []
 		this.data = (!Array.isArray(data.data) && data.data) || {}
 		this.anonymization = (!Array.isArray(data.anonymization) && data.anonymization) || {}
 		this.languageObject = (!Array.isArray(data.languageObject) && data.languageObject) || {}
-		this.publicationDate = data.publicationDate || ''
-		this.modified = data.modified || ''
-		this.license = (!Array.isArray(data.license) && data.license) || {}
+		this.published = new Date(data.published) || ''
+		this.modified = new Date(data.modified) || ''
+		this.license = data.license || ''
 	}
 
 	/* istanbul ignore next */
@@ -104,7 +106,7 @@ export class Publication implements TPublication {
 		if (!this.portal && typeof this.portal !== 'string') return false
 		if (!this.catalogi && typeof this.catalogi !== 'string') return false
 		if (!this.metaData && typeof this.metaData !== 'string') return false
-		if (!this.publicationDate && typeof this.publicationDate !== 'string') return false
+		if (!this.published && typeof this.published !== 'string') return false
 		if (!this.modified && typeof this.modified !== 'string') return false
 		if (!this.featured && typeof this.featured !== 'boolean') return false
 		if (!this.organization && !Array.isArray(this.organization)) return false

@@ -2,9 +2,9 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal
-		v-if="navigationStore.modal === 'editPublication'"
+	<NcModal v-if="navigationStore.modal === 'editPublication'"
 		ref="modalRef"
+		label-id="editPublicationModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Edit publication</h2>
@@ -23,13 +23,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Titel"
 					:value.sync="publicationStore.publicationItem.title" />
-				<NcTextArea :disabled="loading"
+				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					:value.sync="publicationStore.publicationItem.summary" />
 				<NcTextArea :disabled="loading"
 					label="Beschrijving"
 					:value.sync="publicationStore.publicationItem.description" />
-				<NcTextArea :disabled="loading"
+				<NcTextField :disabled="loading"
 					label="Reference"
 					:value.sync="publicationStore.publicationItem.reference" />
 				<NcTextField :disabled="loading"
@@ -60,7 +60,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Schema"
 					:value.sync="publicationStore.publicationItem.schema" />
 				<NcTextField :disabled="loading"
-					label="Thema's"
+					label="Thema's (splits op ,)"
 					:value.sync="publicationStore.publicationItem.themes" />
 				<p>Featured</p>
 				<span class="EPM-horizontal">
@@ -76,7 +76,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<b>Juridisch</b>
 				<NcTextField :disabled="loading"
 					label="Licentie"
-					:value.sync="publicationStore.publicationItem.license.type" />
+					:value.sync="publicationStore.publicationItem.license" />
 				<NcSelect v-bind="catalogi"
 					v-model="publicationStore.publicationItem.catalogi"
 					input-label="Catalogi"
@@ -110,6 +110,7 @@ import {
 	NcTextArea,
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
+	NcDateTimePicker,
 	NcNoteCard,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
@@ -121,6 +122,7 @@ export default {
 		NcTextField,
 		NcTextArea,
 		NcCheckboxRadioSwitch,
+		NcDateTimePicker,
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
@@ -237,7 +239,7 @@ export default {
 					this.metaDataLoading = false
 				})
 		},
-		updatePublication(id) {
+		updatePublication() {
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
@@ -249,6 +251,9 @@ export default {
 					body: JSON.stringify({
 						...publicationStore.publicationItem,
 						id: publicationStore.publicationItem.id.toString(),
+						themes: Array.isArray(publicationStore.publicationItem.themes)
+							? publicationStore.publicationItem.themes
+							: publicationStore.publicationItem.themes.split(/, */g),
 					}),
 				},
 			)
