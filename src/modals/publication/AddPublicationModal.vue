@@ -58,7 +58,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						label="Schema"
 						:value.sync="publication.schema" />
 					<NcTextField :disabled="loading"
-						label="Thema's"
+						label="Thema's (splits op ,)"
 						:value.sync="publication.themes" />
 					<span class="APM-horizontal">
 						<NcCheckboxRadioSwitch :disabled="loading"
@@ -253,6 +253,7 @@ export default {
 					},
 					body: JSON.stringify({
 						...this.publication,
+						themes: this.publication.themes.split(/, */g),
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
 					}),

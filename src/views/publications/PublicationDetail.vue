@@ -6,8 +6,9 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ publication.title }}
+				{{ publicationStore.publicationItem.title }}
 			</h1>
+
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
@@ -71,55 +72,51 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 			<div class="detailGrid">
 				<div>
 					<b>Referentie:</b>
-					<span>{{ publication?.data?.reference }}</span>
+					<span>{{ publicationStore.publicationItem.reference }}</span>
 				</div>
 				<div>
 					<b>Samenvatting:</b>
-					<span>{{ publication?.data?.summary }}</span>
+					<span>{{ publicationStore.publicationItem.summary }}</span>
 				</div>
 				<div>
 					<b>Beschrijving:</b>
-					<span>{{ publication.description }}</span>
+					<span>{{ publicationStore.publicationItem.description }}</span>
 				</div>
 				<div>
 					<b>Categorie:</b>
-					<span>{{ publication.category }}</span>
+					<span>{{ publicationStore.publicationItem.category }}</span>
 				</div>
 				<div>
 					<b>Portal:</b>
-					<span><a target="_blank" :href="publication.portal">{{ publication.portal }}</a></span>
+					<span><a target="_blank" :href="publicationStore.publicationItem.portal">{{ publicationStore.publicationItem.portal }}</a></span>
 				</div>
 				<div>
 					<b>Foto:</b>
-					<span>{{ publication.image }}</span>
+					<span>{{ publicationStore.publicationItem.image }}</span>
 				</div>
 				<div>
 					<b>Thema's:</b>
-					<ul>
-						<li v-for="(theme, index) in publication?.data?.themes" :key="index">
-							{{ theme }}
-						</li>
-					</ul>
+					<span>{{ publicationStore.publicationItem.themes.join(", ") }}</span>
 				</div>
 				<div>
 					<b>Featured:</b>
-					<span>{{ publication?.data?.featured }}</span>
+					<span>{{ publicationStore.publicationItem.featured ? "Yes" : "No" }}</span>
 				</div>
 				<div>
 					<b>Licentie:</b>
-					<span>{{ publication.license }}</span>
+					<span>{{ publicationStore.publicationItem.license }}</span>
 				</div>
 				<div>
 					<b>Status:</b>
-					<span>{{ publication.status }}</span>
+					<span>{{ publicationStore.publicationItem.status }}</span>
 				</div>
 				<div>
 					<b>Gepubliceerd:</b>
-					<span>{{ publication.published }}</span>
+					<span>{{ publicationStore.publicationItem.published?.toLocaleDateString('en-nl') }}</span>
 				</div>
 				<div>
 					<b>Gewijzigd:</b>
-					<span>{{ publication.modified }}</span>
+					<span>{{ publicationStore.publicationItem.modified?.toLocaleDateString('en-nl') }}</span>
 				</div>
 				<div>
 					<b>Catalogi:</b>
@@ -380,7 +377,7 @@ export default {
 	},
 	props: {
 		publicationItem: {
-			type: String,
+			type: Object,
 			required: true,
 		},
 	},
