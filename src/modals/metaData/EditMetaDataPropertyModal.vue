@@ -80,27 +80,27 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					</h5>
 
 					<NcTextField :disabled="loading"
-						label="minimum waarde"
+						label="Minimum waarde"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].minimum" />
 
 					<NcTextField :disabled="loading"
-						label="maximum waarde"
+						label="Maximum waarde"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].maximum" />
 
 					<NcTextField :disabled="loading"
-						label="multipleOf"
+						label="Deelbaar door"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].multipleOf" />
 
 					<NcCheckboxRadioSwitch
 						:disabled="loading"
 						:checked.sync="metadata.properties[metadataStore.metadataDataKey].exclusiveMin">
-						exclusief minimum
+						Exclusief minimum
 					</NcCheckboxRadioSwitch>
 
 					<NcCheckboxRadioSwitch
 						:disabled="loading"
 						:checked.sync="metadata.properties[metadataStore.metadataDataKey].exclusiveMax">
-						exclusief maximum
+						Exclusief maximum
 					</NcCheckboxRadioSwitch>
 				</div>
 
@@ -111,11 +111,11 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					</h5>
 
 					<NcTextField :disabled="loading"
-						label="minimale items"
+						label="Minimale hoeveelheid items"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].minItems" />
 
 					<NcTextField :disabled="loading"
-						label="minimale items"
+						label="Minimale hoeveelheid items"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].maxItems" />
 				</div>
 			</div>
