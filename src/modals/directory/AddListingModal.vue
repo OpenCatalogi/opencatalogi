@@ -18,10 +18,10 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField label="Url" :value.sync="directory.url" />
+				<NcTextField label="Url" :value.sync="directory.directory" />
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="!directory.url"
+				:disabled="!directory.directory"
 				type="primary"
 				@click="addDirectory">
 				<template #icon>
@@ -53,7 +53,7 @@ export default {
 		return {
 
 			directory: {
-				url: '',
+				directory: '',
 			},
 			loading: false,
 			success: null,
@@ -71,16 +71,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						title: this.title,
-						summary: this.summary,
-						description: this.description,
-						search: this.search,
-						metadata: this.metadata,
-						status: this.status,
-						lastSync: this.lastSync,
-						default: this.defaultValue,
-					}),
+					body: JSON.stringify(this.directory),
 				},
 			)
 				.then((response) => {
@@ -104,6 +95,12 @@ export default {
 					this.error = err
 					this.loading = false
 				})
+		},
+		closeModal() {
+			this.directory = {
+				directory: '',
+			}
+			navigationStore.setModal(false)
 		},
 	},
 }
