@@ -2,9 +2,9 @@
 import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal
-		v-if="navigationStore.modal === 'editMetadataDataModal'"
+	<NcModal v-if="navigationStore.modal === 'editMetadataDataModal'"
 		ref="modalRef"
+		label-id="editMetaDataPropertyModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap "{{ metadataStore.metadataDataKey }}" bewerken</h2>
