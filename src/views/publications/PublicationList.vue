@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,15 +7,15 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="searchStore.search"
+					:value.sync="search"
 					label="Zoeken"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="searchStore.setSearch('')">
+					@trailing-button-click="search = ''">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
-					<NcActionButton @click="fetchData">
+					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
@@ -105,7 +105,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 				:size="64"
 				class="loadingIcon"
 				appearance="dark"
-				name="Zaken aan het laden" />
+				name="Publicaties aan het laden" />
 		</ul>
 	</NcAppContentList>
 </template>
@@ -158,8 +158,8 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
+            search: '',
 		}
 	},
 	computed: {
@@ -184,12 +184,18 @@ export default {
 		fetchData(search = null) {
 			this.loading = true
 			publicationStore.refreshPublicationList(search)
-			this.loading = false
+				.then(() => {
+					this.loading = false
+				})
 		},
         debouncedFetchData: debounce(function(search) {
             this.fetchData(search);
-        }, 400), 
+        }, 500), 
 	},
+    beforeRouteLeave(to, from, next) {
+        search = '';
+        next();
+    },
 }
 </script>
 <style>
@@ -208,5 +214,9 @@ export default {
 }
 .active.publicationDetails-actionsDelete button {
     color: #EBEBEB !important;
+}
+
+.loadingIcon {
+    margin-block-start: var(--OC-margin-20);
 }
 </style>
