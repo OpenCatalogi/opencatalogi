@@ -5,6 +5,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 	<NcModal
 		v-if="navigationStore.modal === 'addMetadataDataModal'"
 		ref="modalRef"
+		label-id="addMetaDataPropertyModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap toevoegen</h2>
