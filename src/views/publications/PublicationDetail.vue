@@ -299,7 +299,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 							</tr>
 							<tr v-if="prive">
 								<td>Gebruikersgroepen</td>
-								<td><NcSelectTags v-model="userGroups" :multiple="true" /></td>
+								<td><NcSelectTags v-model="userGroups" input-label="gebruikers groepen" :multiple="true" /></td>
 							</tr>
 						</table>
 					</BTab>
