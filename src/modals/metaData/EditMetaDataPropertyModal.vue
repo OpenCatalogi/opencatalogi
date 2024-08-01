@@ -198,6 +198,7 @@ export default {
 				options: ['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'],
 			},
 			loading: false,
+			error: false,
 			success: null,
 			successMessage: '',
 			hasUpdated: false,
@@ -226,13 +227,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						metadataStore.metaDataItem = data
-
-						this.metadata = {
-							...metadataStore.metaDataItem,
-							properties: JSON.parse(metadataStore.metaDataItem.properties),
-						}
-						this.metadata.properties[metadataStore.metadataDataKey] = metadataStore.getMetadataPropertyKeys(metadataStore.metadataDataKey)
+						metadataStore.setMetaDataItem(data)
 					})
 					this.loading = false
 				})
