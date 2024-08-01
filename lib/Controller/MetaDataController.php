@@ -78,7 +78,7 @@ class MetaDataController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function show(string $id, ObjectService $objectService): JSONResponse
+	public function show(string|int $id, ObjectService $objectService): JSONResponse
 	{
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
@@ -89,7 +89,7 @@ class MetaDataController extends Controller
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters['_id'] = $id;
+		$filters['_id'] = (string) $id;
 
 		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
 
@@ -136,7 +136,7 @@ class MetaDataController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function update(string $id, ObjectService $objectService): JSONResponse
+	public function update(string|int $id, ObjectService $objectService): JSONResponse
 	{
 		$data = $this->request->getParams();
 
@@ -160,7 +160,7 @@ class MetaDataController extends Controller
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters['_id'] = $id;
+		$filters['_id'] = (string) $id;
 		$returnData = $objectService->updateObject(
 			filters: $filters,
 			update: $data,
@@ -175,7 +175,7 @@ class MetaDataController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function destroy(string $id, ObjectService $objectService): JSONResponse
+	public function destroy(string|int $id, ObjectService $objectService): JSONResponse
 	{
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
@@ -188,7 +188,7 @@ class MetaDataController extends Controller
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters['_id'] = $id;
+		$filters['_id'] = (string) $id;
 		$returnData = $objectService->deleteObject(
 			filters: $filters,
 			config: $dbConfig

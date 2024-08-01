@@ -71,7 +71,7 @@ class CatalogiController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function show(string $id, ObjectService $objectService): JSONResponse
+    public function show(string|int $id, ObjectService $objectService): JSONResponse
     {
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
@@ -86,7 +86,7 @@ class CatalogiController extends Controller
                 'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
             ];
 
-            $filters['_id'] = $id;
+            $filters['_id'] = (string) $id;
 
             $result = $objectService->findObject($filters, $dbConfig);
 
@@ -136,7 +136,7 @@ class CatalogiController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function update(string $id, ObjectService $objectService): JSONResponse
+    public function update(string|int $id, ObjectService $objectService): JSONResponse
     {
 		$data = $this->request->getParams();
 
@@ -162,7 +162,7 @@ class CatalogiController extends Controller
                 'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
             ];
 
-            $filters['_id'] = $id;
+            $filters['_id'] = (string) $id;
             $returnData = $objectService->updateObject($filters, $data, $dbConfig);
 
             return new JSONResponse($returnData);
@@ -175,7 +175,7 @@ class CatalogiController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function destroy(string $id, ObjectService $objectService): JSONResponse
+    public function destroy(string|int $id, ObjectService $objectService): JSONResponse
     {
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
@@ -192,7 +192,7 @@ class CatalogiController extends Controller
                 'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
             ];
 
-            $filters['_id'] = $id;
+            $filters['_id'] = (string) $id;
             $returnData = $objectService->deleteObject($filters, $dbConfig);
 
             return new JSONResponse($returnData);
