@@ -3,10 +3,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'EditAttachment'"
-		ref="modalRef"
-		label-id="EditAttachmentModal"
-		@close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'EditAttachment'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bijlage bewerken</h2>
 			<div v-if="success !== null || error">

@@ -2,9 +2,9 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="navigationStore.modal === 'editPublicationData'"
+	<NcModal
+		v-if="navigationStore.modal === 'editPublicationData'"
 		ref="modalRef"
-		label-id="editPublicationPropertyModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bewerk publicatie eigenschappen</h2>

@@ -2,10 +2,7 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="navigationStore.modal === 'publicationAdd'"
-		ref="modalRef"
-		label-id="addPublicationModal"
-		@close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'publicationAdd'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie toevoegen</h2>
 			<div v-if="success !== null || error">

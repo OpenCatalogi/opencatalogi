@@ -3,10 +3,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'addCatalog'"
-		ref="modalRef"
-		label-id="addCatalogModal"
-		@close="closeModal">
+	<NcModal v-if="navigationStore.modal === 'addCatalog'" ref="modalRef" @close="closeModal">
 		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
 			<div v-if="success !== null || error">

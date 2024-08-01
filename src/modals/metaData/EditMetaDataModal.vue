@@ -3,9 +3,9 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'editMetaData'"
+	<NcModal
+		v-if="navigationStore.modal === 'editMetaData'"
 		ref="modalRef"
-		label-id="editMetaDataModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData bewerken</h2>

@@ -3,10 +3,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'addListing'"
-		ref="modalRef"
-		label-id="addListingModal"
-		@close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'addListing'" ref="modalRef" @close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
 			<div v-if="success !== null || error">

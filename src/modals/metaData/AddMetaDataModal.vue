@@ -3,9 +3,9 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'addMetaData'"
+	<NcModal
+		v-if="navigationStore.modal === 'addMetaData'"
 		ref="modalRef"
-		label-id="addMetaDataModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData toevoegen</h2>
