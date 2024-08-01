@@ -24,7 +24,6 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
 				<NcTextField label="Versie" :value.sync="metaData.version" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metaData.description" />
-				<NcTextField label="vereisten (splits op ,)" :value.sync="metaData.required" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!metaData.title || loading"
@@ -83,7 +82,6 @@ export default {
 					},
 					body: JSON.stringify({
 						...this.metaData,
-						required: this.metaData.required.split(/, */g), // split on , to make an array of strings
 					}),
 				},
 			)

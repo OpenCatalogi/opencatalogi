@@ -22,12 +22,12 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 
 			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Titel"
+					label="Eigenschap naam"
 					required
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].title" />
 
 				<NcTextField :disabled="loading"
-					label="description"
+					label="Beschrijving"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].description" />
 
 				<NcSelect v-bind="typeOptions"
@@ -38,39 +38,39 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					v-model="metadata.properties[metadataStore.metadataDataKey].format" />
 
 				<NcTextField :disabled="loading"
-					label="patroon (regex)"
+					label="Patroon (regex)"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].pattern" />
 
 				<NcTextField :disabled="loading"
-					label="default"
+					label="Defaultwaarde"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].default" />
 
 				<NcTextField :disabled="loading"
-					label="behavior"
+					label="Gedrag"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].behavior" />
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
 					:checked.sync="metadata.properties[metadataStore.metadataDataKey].required">
-					Required
+					Verplicht
 				</NcCheckboxRadioSwitch>
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
 					:checked.sync="metadata.properties[metadataStore.metadataDataKey].deprecated">
-					Deprecated
+					Verouderd
 				</NcCheckboxRadioSwitch>
 
 				<NcTextField :disabled="loading"
-					label="minimum lengte"
+					label="Minimum lengte"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].minLength" />
 
 				<NcTextField :disabled="loading"
-					label="maximum lengte"
+					label="Maximum lengte"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].maxLength" />
 
 				<NcTextField :disabled="loading"
-					label="exemplaar"
+					label="Voorbeeld"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].example" />
 
 				<!-- type integer and number only -->
