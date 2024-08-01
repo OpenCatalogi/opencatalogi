@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store.js'
+import { searchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -9,7 +9,7 @@ import { store } from '../../store.js'
 		</div>
 		<ul>
 			<NcListItem
-				v-for="(result, i) in store.searchResults.results"
+				v-for="(result, i) in searchStore.searchResults.results"
 				:key="`${result}${i}`"
 				:name="result.title"
 				:subname="result.summary"
@@ -56,15 +56,20 @@ export default {
 			required: true,
 		},
 	},
+	data() {
+		return {
+
+		}
+	},
 	watch: {
 		search: {
 			handler(search) {
-				store.getSearchResults()
+				searchStore.getSearchResults()
 			},
 		},
 	},
 	mounted() {
-		store.getSearchResults()
+		searchStore.getSearchResults()
 	},
 	methods: {
 		goToLink(link) {

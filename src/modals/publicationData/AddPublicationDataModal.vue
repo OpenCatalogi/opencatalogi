@@ -1,20 +1,25 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'addPublicationData'"
+		v-if="navigationStore.modal === 'addPublicationData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie eigenschap toevoegen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie eigenschap bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie eigenschap succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van Publicatie eigenschap</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Naam"
 					required
@@ -27,7 +32,7 @@ import { store } from '../../store.js'
 					:loading="loading" />
 			</div>
 
-			<NcButton v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="loading || !key || !value"
 				type="primary"
 				@click="AddPublicatieEigenschap()">
@@ -41,8 +46,8 @@ import { store } from '../../store.js'
 			</NcButton>
 
 			<NcButton
-				@click="store.setModal(false)">
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
+				@click="navigationStore.setModal(false)">
+				{{ success ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 		</div>
 	</NcModal>
@@ -74,36 +79,38 @@ export default {
 			key: '',
 			value: '',
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
 	methods: {
 		AddPublicatieEigenschap() {
-			store.publicationItem.data[this.key] = this.value
+			publicationStore.publicationItem.data[this.key] = this.value
 			this.loading = true
+			const bodyData = publicationStore.publicationItem
+			delete bodyData.publicationDate
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationItem),
+					body: JSON.stringify(bodyData),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					response.json().then((data) => {
-						store.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
-						store.setModal(false)
+						self.success = null
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

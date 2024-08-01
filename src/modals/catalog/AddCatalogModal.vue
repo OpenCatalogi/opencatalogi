@@ -1,31 +1,39 @@
 <script setup>
-import { store } from '../../store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'addCatalog'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'addCatalog'" ref="modalRef" @close="closeModal">
 		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Catalogus succesvol toegevoegd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Catalogus succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van catalogus</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Naam"
+					label="Titel"
 					maxlength="255"
-					:value.sync="name"
+					:value.sync="catalogi.title"
 					required />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
-					:value.sync="summary" />
+					:value.sync="catalogi.summary" />
+				<NcTextField :disabled="loading"
+					label="Beschrijving"
+					maxlength="255"
+					:value.sync="catalogi.description" />
 			</div>
-			<NcButton
-				v-if="!succes"
-				:disabled="!name || loading"
+			<NcButton v-if="success === null"
+				:disabled="!catalogi.title || loading"
 				type="primary"
 				@click="addCatalog">
 				<template #icon>
@@ -55,17 +63,27 @@ export default {
 	},
 	data() {
 		return {
-			name: '',
-			summary: '',
+			catalogi: {
+				title: '',
+				summary: '',
+				description: '',
+			},
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 			errorCode: '',
 		}
 	},
 	methods: {
 		closeModal() {
-			store.modal = false
+			navigationStore.setModal(false)
+			this.catalogi = {
+				title: '',
+				summary: '',
+				description: '',
+				image: '',
+				search: '',
+			}
 		},
 		addCatalog() {
 			this.loading = true
@@ -77,25 +95,22 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						name: this.name,
-						summary: this.summary,
-					}),
+					body: JSON.stringify(this.catalogi),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
-					store.refreshCatalogiList()
+					catalogiStore.refreshCatalogiList()
 					response.json().then((data) => {
-						store.setCatalogiItem(data)
+						catalogiStore.setCatalogiItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
-						store.setModal(false)
+						self.success = null
+						this.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {

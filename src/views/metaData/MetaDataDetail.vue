@@ -1,14 +1,16 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<div class="detailContainer">
 		<div class="head">
-			<h1 class="h1">
-				{{ metadata.title }}
-			</h1>
-			<span>{{ metadata.description }}</span>
+			<div>
+				<h1 class="h1">
+					{{ metadata.title }}
+				</h1>
+				<span>{{ metadata.description }}</span>
+			</div>
 			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
@@ -18,19 +20,19 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('editMetaData')">
+				<NcActionButton @click="navigationStore.setModal('editMetaData')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="store.setModal('addMetadataDataModal')">
+				<NcActionButton @click="navigationStore.setModal('addMetadataDataModal')">
 					<template #icon>
 						<PlusCircleOutline :size="20" />
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
-				<NcActionButton @click="store.setDialog('deleteMetaData')">
+				<NcActionButton @click="navigationStore.setDialog('deleteMetaData')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -41,14 +43,14 @@ import { store } from '../../store.js'
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
-					<NcListItem v-for="(value, key, i) in metadata?.properties"
+					<NcListItem v-for="(value, key, i) in metadataStore.metaDataItem.properties"
 						:key="`${key}${i}`"
 						:name="key"
 						:bold="false"
 						:details="value.type ?? 'Onbekend'"
 						:force-display-actions="true">
 						<template #icon>
-							<CircleOutline :class="store.metadataDataKey === key && 'selectedZaakIcon'"
+							<CircleOutline :class="metadataStore.metadataDataKey === key && 'selectedZaakIcon'"
 								disable-menu
 								:size="44" />
 						</template>
@@ -56,19 +58,19 @@ import { store } from '../../store.js'
 							{{ value.description }}
 						</template>
 						<template #actions>
-							<NcActionButton @click="store.setMetadataDataKey(key); store.setModal('editMetadataDataModal')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setModal('editMetadataDataModal')">
 								<template #icon>
 									<Pencil :size="20" />
 								</template>
 								Bewerken
 							</NcActionButton>
-							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('copyMetaDataProperty')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('copyMetaDataProperty')">
 								<template #icon>
 									<ContentCopy :size="20" />
 								</template>
 								Kopieren
 							</NcActionButton>
-							<NcActionButton @click="store.setMetadataDataKey(key); store.setDialog('deleteMetaDataProperty')">
+							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('deleteMetaDataProperty')">
 								<template #icon>
 									<Delete :size="20" />
 								</template>
@@ -138,22 +140,27 @@ export default {
 	},
 	data() {
 		return {
+
 			metadata: [],
 			loading: false,
+			upToDate: false,
 		}
 	},
 	watch: {
 		metaDataItem: {
-			handler(metaDataItem) {
-				this.metadata = metaDataItem
-				this.fetchData(metaDataItem?._id)
+			handler(newMetaDataItem, oldMetaDataItem) {
+				if (!this.upToDate || JSON.stringify(newMetaDataItem) !== JSON.stringify(oldMetaDataItem)) {
+					this.metadata = newMetaDataItem
+					newMetaDataItem && this.fetchData(newMetaDataItem?.id)
+					this.upToDate = true
+				}
 			},
 			deep: true,
 		},
 	},
 	mounted() {
-		this.metadata = store.metaDataItem
-		this.fetchData(store.metaDataItem?._id)
+		this.metadata = metadataStore.metaDataItem
+		metadataStore.metaDataItem && this.fetchData(metadataStore.metaDataItem?.id)
 	},
 	methods: {
 		fetchData(metadataId) {

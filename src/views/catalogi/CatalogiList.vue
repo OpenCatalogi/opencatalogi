@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store.js'
+import { catalogiStore, navigationStore, searchStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,21 +7,21 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="store.search"
+					:value.sync="searchStore.search"
 					label="Search"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="store.setSearch('')">
+					@trailing-button-click="searchStore.setSearch('')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
-					<NcActionButton @click="fetchData">
+					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('addCatalog')">
+					<NcActionButton @click="navigationStore.setModal('addCatalog')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -29,17 +29,18 @@ import { store } from '../../store.js'
 					</NcActionButton>
 				</NcActions>
 			</div>
+
 			<div v-if="!loading">
-				<NcListItem v-for="(catalogus, i) in store.catalogiList.results"
+				<NcListItem v-for="(catalogus, i) in catalogiStore.catalogiList"
 					:key="`${catalogus}${i}`"
-					:name="catalogus.name ?? catalogus.title"
-					:active="store.catalogiItem?.id === catalogus?.id"
+					:name="catalogus.title"
+					:active="catalogiStore.catalogiItem?.id === catalogus?.id"
 					:details="'1h'"
 					:counter-number="44"
 					:force-display-actions="true"
-					@click="store.setCatalogiItem(catalogus)">
+					@click="catalogiStore.setCatalogiItem(catalogus)">
 					<template #icon>
-						<DatabaseOutline :class="store.catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
+						<DatabaseOutline :class="catalogiStore.catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
 							:size="44" />
 					</template>
@@ -47,13 +48,13 @@ import { store } from '../../store.js'
 						{{ catalogus?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="store.setCatalogiItem(catalogus); store.setModal('editCatalog')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setModal('editCatalog')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="store.setCatalogiItem(catalogus); store.setDialog('deleteCatalog')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setDialog('deleteCatalog')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -107,6 +108,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			catalogi: [],
 		}
@@ -124,8 +126,10 @@ export default {
 	methods: {
 		fetchData() {
 			this.loading = true
-			store.refreshCatalogiList()
-			this.loading = false
+			catalogiStore.refreshCatalogiList()
+				.then(() => {
+					this.loading = false
+				})
 		},
 	},
 }
@@ -137,6 +141,9 @@ export default {
     z-index: 1000;
     background-color: var(--color-main-background);
     border-bottom: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .searchField {

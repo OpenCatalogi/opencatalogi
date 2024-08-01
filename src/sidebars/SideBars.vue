@@ -1,12 +1,12 @@
 <script setup>
-import { store } from '../store.js'
+import { navigationStore } from '../store/store.js'
 </script>
 
 <template>
 	<div>
 		<!-- Placeholder div for all of the sidebars-->
-		<SearchSideBar v-if="store.selected === 'search'" />
-		<DashboardSideBar v-if="store.selected === 'dashboard'" />
+		<SearchSideBar v-if="navigationStore.selected === 'search'" />
+		<DashboardSideBar v-if="navigationStore.selected === 'dashboard'" />
 	</div>
 </template>
 
@@ -19,6 +19,11 @@ export default {
 	components: {
 		SearchSideBar,
 		DashboardSideBar,
+	},
+	data() {
+		return {
+
+		}
 	},
 }
 </script>

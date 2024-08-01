@@ -1,18 +1,18 @@
 <script setup>
-import { store } from '../../store.js'
+import { searchStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcAppSidebar
 		name="Zoek opdracht"
 		subtitle="baldie"
-		subname="Via deze pagina kunt u zoeken binnen het bij u bekende federatieve netwerk">
+		subname="Binnen het federatieve netwerk">
 		<NcAppSidebarTab id="search-tab" name="Zoeken" :order="1">
 			<template #icon>
 				<Magnify :size="20" />
 			</template>
 			<NcTextField class="searchField"
-				:value.sync="store.search"
+				:value.sync="searchStore.search"
 				label="Search" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="settings-tab" name="Catalogi" :order="2">
@@ -52,6 +52,7 @@ export default {
 	},
 	data() {
 		return {
+
 			starred: false,
 		}
 	},

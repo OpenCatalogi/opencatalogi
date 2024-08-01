@@ -4,7 +4,7 @@ use OCA\OpenCatalogi\Service\DirectoryService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\IAppConfig;
 use OCP\IURLGenerator;
-use Test\TestCase; 
+use Test\TestCase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 
@@ -80,6 +80,9 @@ class DirectoryServiceTest extends TestCase
         $this->clientMock->method('post')
             ->willReturn(new Response(200));
 
+		$this->client->method('get')
+			->willReturn(new Response(status: 200, body: '{"results": []}'));
+
         $statusCode = $this->directoryService->registerToExternalDirectory($newDirectory);
 
         $this->assertEquals(200, $statusCode);
@@ -89,11 +92,15 @@ class DirectoryServiceTest extends TestCase
     {
         $directory = ['directory' => 'https://example.com/directory'];
         $responseBody = json_encode(['results' => [['directory' => 'https://example.com/dir1'], ['directory' => 'https://example.com/dir2']]]);
-        $response = new Response(200, [], $responseBody);
+        $responseBody2 = json_encode(['results' => [['directory' => 'https://example.com/directory']]]);
+        $response = new Response(status: 200, body: $responseBody);
 
         $this->clientMock->method('get')
             ->with($directory['directory'])
             ->willReturn($response);
+
+		$this->objectService->method('findObjects')
+			->willReturn(['documents' => []]);
 
         $results = $this->directoryService->fetchFromExternalDirectory($directory);
 

@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store.js'
+import { catalogiStore, metadataStore, navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -17,49 +17,49 @@ import { store } from '../../store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton @click="store.setModal('editPublication')">
+				<NcActionButton @click="navigationStore.setModal('editPublication')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="store.setDialog('copyPublication')">
+				<NcActionButton @click="navigationStore.setDialog('copyPublication')">
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
-					Kopieren
+					Kopiëren
 				</NcActionButton>
-				<NcActionButton v-if="store.publicationItem.status !== 'published'" @click="store.setPublicationItem(publication); store.setDialog('publishPublication')">
+				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 					<template #icon>
 						<Publish :size="20" />
 					</template>
-					Publiseren
+					Publiceren
 				</NcActionButton>
-				<NcActionButton v-if="store.publicationItem.status === 'published'" @click="store.setPublicationItem(publication); store.setDialog('depublishPublication')">
+				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
-					Depubliseren
+					Depubliceren
 				</NcActionButton>
-				<NcActionButton @click="store.setDialog('archivePublication')">
+				<NcActionButton @click="navigationStore.setDialog('archivePublication')">
 					<template #icon>
 						<ArchivePlusOutline :size="20" />
 					</template>
 					Archiveren
 				</NcActionButton>
-				<NcActionButton @click="store.setModal('addPublicationData')">
+				<NcActionButton @click="navigationStore.setModal('addPublicationData')">
 					<template #icon>
 						<FileTreeOutline :size="20" />
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
-				<NcActionButton @click="store.setModal('AddAttachment')">
+				<NcActionButton @click="navigationStore.setModal('AddAttachment')">
 					<template #icon>
 						<FilePlusOutline :size="20" />
 					</template>
 					Bijlage toevoegen
 				</NcActionButton>
-				<NcActionButton @click="store.setDialog('deletePublication')">
+				<NcActionButton @click="navigationStore.setDialog('deletePublication')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -94,7 +94,7 @@ import { store } from '../../store.js'
 					<span>{{ publication.image }}</span>
 				</div>
 				<div>
-					<b>Themas:</b>
+					<b>Thema's:</b>
 					<ul>
 						<li v-for="(theme, index) in publication?.data?.themes" :key="index">
 							{{ theme }}
@@ -118,22 +118,22 @@ import { store } from '../../store.js'
 					<span>{{ publication.published }}</span>
 				</div>
 				<div>
-					<b>Gemodificeerd:</b>
+					<b>Gewijzigd:</b>
 					<span>{{ publication.modified }}</span>
 				</div>
 				<div>
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
-						<span>{{ catalogi.name }}</span>
+						<span>{{ catalogi.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${catalogi.name}`"
-								:name="catalogi.name"
-								@click="goToCatalogi(catalogi._id)">
+							<NcActionLink :aria-label="`got to ${catalogi.title}`"
+								:name="catalogi.title"
+								@click="goToCatalogi()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ catalogi.name }}
+								{{ catalogi.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -146,7 +146,7 @@ import { store } from '../../store.js'
 						<NcActions>
 							<NcActionLink :aria-label="`got to ${metadata.title}`"
 								:name="metadata.title"
-								@click="goToMetadata(metadata)">
+								@click="goToMetadata()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
@@ -164,10 +164,10 @@ import { store } from '../../store.js'
 							:name="key"
 							:bold="false"
 							:force-display-actions="true"
-							@click=" store.setPublicationDataKey(key)
+							@click="publicationStore.setPublicationDataKey(key)
 							">
 							<template #icon>
-								<CircleOutline :class="store.publicationDataKey === key && 'selectedZaakIcon'"
+								<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
 									disable-menu
 									:size="44" />
 							</template>
@@ -192,16 +192,16 @@ import { store } from '../../store.js'
 					</BTab>
 					<BTab title="Bijlagen">
 						<div
-							v-if="store.publicationAttachments.results?.length > 0"
+							v-if="publicationStore.publicationAttachments.results?.length > 0"
 							class="tabPanel">
-							<NcListItem v-for="(attachment, i) in store.publicationAttachments.results"
+							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments.results"
 								:key="`${attachment}${i}`"
 								:name="attachment.name ?? attachment.title"
 								:bold="false"
-								:active="store.attachmentId === attachment.id"
+								:active="publicationStore.attachmentId === attachment.id"
 								:force-display-actions="true"
 								:details="attachment?.status"
-								@click="store.setAttachmentId(attachment.id)">
+								@click="publicationStore.setAttachmentId(attachment.id)">
 								<template #icon>
 									<CheckCircle v-if="attachment?.status === 'published'"
 										:class="attachment?.published && 'publishedIcon'"
@@ -216,7 +216,7 @@ import { store } from '../../store.js'
 									{{ attachment?.description }}
 								</template>
 								<template #actions>
-									<NcActionButton @click="store.setAttachmentItem(attachment); store.setModal('EditAttachment')">
+									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
 										<template #icon>
 											<Pencil :size="20" />
 										</template>
@@ -228,25 +228,25 @@ import { store } from '../../store.js'
 										</template>
 										Download
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status !== 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('publishAttachment')">
+									<NcActionButton v-if="attachment.status !== 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
 										</template>
-										Publiseren
+										Publiceren
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status === 'published'" @click="store.setAttachmentItem(attachment); store.setDialog('depublishAttachment')">
+									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
-										Depubliseren
+										Depubliceren
 									</NcActionButton>
-									<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('copyAttachment')">
+									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>
-										Kopieren
+										Kopiëren
 									</NcActionButton>
-									<NcActionButton @click="store.setAttachmentItem(attachment); store.setDialog('deleteAttachment')">
+									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 										<template #icon>
 											<Delete :size="20" />
 										</template>
@@ -259,10 +259,10 @@ import { store } from '../../store.js'
 							Geen bijlagen gevonden
 						</div>
 					</BTab>
-					<BTab title="Loging">
+					<BTab title="Loggen">
 						<table width="100%">
 							<tr>
-								<th><b>Tijstip</b></th>
+								<th><b>Tijdstip</b></th>
 								<th><b>Gebruiker</b></th>
 								<th><b>Actie</b></th>
 								<th><b>Details</b></th>
@@ -272,7 +272,7 @@ import { store } from '../../store.js'
 								<td>Ruben van der Linde</td>
 								<td>Created</td>
 								<td>
-									<NcButton @click="store.setDialog('viewLog')">
+									<NcButton @click="navigationStore.setDialog('viewLog')">
 										<template #icon>
 											<TimelineQuestionOutline
 												:size="20" />
@@ -286,7 +286,7 @@ import { store } from '../../store.js'
 					<BTab title="Rechten">
 						<table width="100%">
 							<tr>
-								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankenlijk</td>
+								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankelijk</td>
 								<td>
 									<NcButton @click="prive = !prive">
 										<template #icon>
@@ -295,7 +295,7 @@ import { store } from '../../store.js'
 											<LockOutline v-if="prive"
 												:size="20" />
 										</template>
-										<span v-if="!prive">Prive maken</span>
+										<span v-if="!prive">Privé maken</span>
 										<span v-if="prive">Openbaar maken</span>
 									</NcButton>
 								</td>
@@ -306,14 +306,14 @@ import { store } from '../../store.js'
 							</tr>
 						</table>
 					</BTab>
-					<BTab title="Statestieken">
+					<BTab title="Statistieken">
 						<apexchart v-if="publication.status === 'published'"
 							width="100%"
 							type="line"
 							:options="chart.options"
 							:series="chart.series" />
 						<NcNoteCard type="info">
-							<p>Er zijn nog geen statestieken over deze publicatie bekend</p>
+							<p>Er zijn nog geen statistieken over deze publicatie bekend</p>
 						</NcNoteCard>
 					</BTab>
 				</BTabs>
@@ -379,7 +379,7 @@ export default {
 		ArchivePlusOutline,
 	},
 	props: {
-		publicationId: {
+		publicationItem: {
 			type: String,
 			required: true,
 		},
@@ -414,15 +414,18 @@ export default {
 					data: [0, 0, 0, 0, 0, 0, 15],
 				}],
 			},
+			upToDate: false,
 		}
 	},
 	watch: {
-		publicationId: {
-			handler(publicationId) {
-				this.publication = store.publicationItem
-				this.fetchCatalogi(store.publicationItem.catalogi)
-				this.fetchMetaData(store.publicationItem.metaData)
-				this.fetchData(store.publicationItem.id)
+		publicationItem: {
+			handler(newPublicationItem, oldPublicationItem) {
+				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
+					this.publication = publicationStore.publicationItem
+					this.fetchCatalogi(publicationStore.publicationItem.catalogi)
+					this.fetchMetaData(publicationStore.publicationItem.metaData)
+					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
+				}
 			},
 			deep: true,
 		},
@@ -430,11 +433,11 @@ export default {
 	},
 	mounted() {
 
-		this.publication = store.publicationItem
+		this.publication = publicationStore.publicationItem
 
-		this.fetchCatalogi(store.publicationItem.catalogi, true)
-		this.fetchMetaData(store.publicationItem.metaData, true)
-		this.fetchData(store.publicationItem.id)
+		this.fetchCatalogi(publicationStore.publicationItem.catalogi, true)
+		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
+		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
 	methods: {
@@ -449,7 +452,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
-						store.getPublicationAttachments()
+						publicationStore.getPublicationAttachments()
 						// this.loading = false
 					})
 				})
@@ -495,28 +498,28 @@ export default {
 				})
 		},
 		deletePublication() {
-			store.setPublicationItem(this.publication)
-			store.setModal('deletePublication')
+			publicationStore.setPublicationItem(this.publication)
+			navigationStore.setModal('deletePublication')
 		},
 		editPublicationDataItem(key) {
-			store.setPublicationDataKey(key)
-			store.setModal('editPublicationDataModal')
+			publicationStore.setPublicationDataKey(key)
+			navigationStore.setModal('editPublicationData')
 		},
 		deletePublicationDataItem(key) {
-			store.setPublicationDataKey(key)
-			store.setDialog('deletePublicationDataDialog')
+			publicationStore.setPublicationDataKey(key)
+			navigationStore.setDialog('deletePublicationDataDialog')
 		},
 		editPublicationAttachmentItem(key) {
-			store.setPublicationDataKey(key)
-			store.setModal('editPublicationDataModal')
+			publicationStore.setPublicationDataKey(key)
+			navigationStore.setModal('editPublicationDataModal')
 		},
-		goToMetadata(metadata) {
-			store.setMetaDataItem(metadata)
-			store.setSelected('metaData')
+		goToMetadata() {
+			metadataStore.setMetaDataItem(this.metadata)
+			navigationStore.setSelected('metaData')
 		},
-		goToCatalogi(id) {
-			store.setCatalogiId(id)
-			store.setSelected('catalogi')
+		goToCatalogi() {
+			catalogiStore.setCatalogiItem(this.catalogi)
+			navigationStore.setSelected('catalogi')
 		},
 	},
 }
