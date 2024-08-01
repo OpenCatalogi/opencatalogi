@@ -79,7 +79,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 						</template>
 					</NcListItem>
 				</BTab>
-				<BTab title="Loging">
+				<BTab title="Logging">
 					<table width="100%">
 						<tr>
 							<th><b>Tijstip</b></th>
