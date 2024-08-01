@@ -80,10 +80,6 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({
-						...this.metaData,
-						required: this.metaData.required.split(/, */g), // split on , to make an array of strings
-					}),
 				},
 			)
 				.then((response) => {
