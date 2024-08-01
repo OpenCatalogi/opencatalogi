@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, searchStore, metadataStore } from '../../store/store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,15 +7,15 @@ import { navigationStore, searchStore, metadataStore } from '../../store/store.j
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="searchStore.search"
-					label="Search"
+					:value.sync="search"
+					label="Zoeken"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="searchStore.setSearch('')">
+					@trailing-button-click="search = ''">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
-					<NcActionButton @click="fetchData">
+					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
@@ -89,6 +89,7 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
+import { debounce } from 'lodash';
 
 export default {
 	name: 'MetaDataList',
@@ -117,14 +118,14 @@ export default {
 	},
 	data() {
 		return {
-
-			loading: true,
+			loading: false,
+            search: '',
 		}
 	},
 	watch: {
 		search: {
 			handler(search) {
-				this.fetchData()
+                this.debouncedFetchData(search);
 			},
 		},
 	},
@@ -132,14 +133,21 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData() {
+		fetchData(search = null) {
 			this.loading = true
-			metadataStore.refreshMetaDataList()
+			metadataStore.refreshMetaDataList(search)
 				.then(() => {
 					this.loading = false
 				})
 		},
+        debouncedFetchData: debounce(function(search) {
+            this.fetchData(search);
+        }, 500), 
 	},
+    beforeRouteLeave(to, from, next) {
+        search = '';
+        next();
+    },
 }
 </script>
 <style>

@@ -46,25 +46,47 @@ class MetaDataController extends Controller
      */
 	public function index(ObjectService $objectService): JSONResponse
 	{
+        $filters = $this->request->getParams();
+
+        $searchConditions = [];
+        $searchParams = [];
+        $fieldsToSearch = ['title', 'description'];
+
+        foreach ($filters as $key => $value) {
+            if ($key === '_search') {
+                // MongoDB
+                $searchRegex = ['$regex' => $value, '$options' => 'i'];
+                $filters['$or'] = [];
+
+                // MySQL
+                $searchParams['search'] = '%' . strtolower($value) . '%';
+
+                foreach ($fieldsToSearch as $field) {
+                    // MongoDB
+                    $filters['$or'][] = [$field => $searchRegex];
+
+                    // MySQL
+                    $searchConditions[] = "LOWER($field) LIKE :search";
+                }
+            }
+
+            if (str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            } 
+        }
+
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results' =>$this->metaDataMapper->findAll()]);
+            // Unset mongodb filter
+            unset($filters['$or']);
+
+			return new JSONResponse(['results' =>$this->metaDataMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$filters = $this->request->getParams();
-
-		foreach($filters as $key => $value) {
-			if(str_starts_with($key, '_')) {
-				unset($filters[$key]);
-			}
-		}
-
-
 
 		$filters['_schema'] = 'metadata';
 
