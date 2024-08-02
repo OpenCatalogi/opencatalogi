@@ -11,7 +11,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> depubliceren? De publicatie is dan niet meer vindbaar via de zoek index. Bijlagen die alléén aan deze publicatie zijn gekoppeld zijn dan ook niet meer vindbaar
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Publicatie succesvol depubliceerd</p>
+			<p>Publicatie succesvol gedepubliceerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>

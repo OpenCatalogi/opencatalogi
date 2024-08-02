@@ -11,7 +11,7 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> depubliceren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Bijlage succesvol depubliceerd</p>
+			<p>Bijlage succesvol gedepubliceerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
