@@ -9,7 +9,7 @@ export type TPublication = {
 	image?: string
 	category: string
     catalogi: string
-    metadata: string
+    metaData: string
 	portal?: string
 	featured?: boolean
 	organization?: {
@@ -45,9 +45,7 @@ export type TPublication = {
         format?: string
         description?: string
     }
-    publicationDate?: string
-	modified?: string
-	license?: {
-        type?: string
-    }
+    published?: string | Date
+	modified?: string | Date
+	license?: string
 }

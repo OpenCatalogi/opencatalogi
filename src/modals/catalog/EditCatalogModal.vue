@@ -3,7 +3,10 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'editCatalog'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'editCatalog'"
+		ref="modalRef"
+		label-id="editCatalogModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
 			<div v-if="success !== null || error">
@@ -31,14 +34,6 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					label="Beschrijving"
 					maxlength="255"
 					:value.sync="catalogiStore.catalogiItem.description" />
-				<NcTextField :disabled="loading"
-					label="Image"
-					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.image" />
-				<NcTextField :disabled="loading"
-					label="Search"
-					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.search" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="loading"
@@ -71,7 +66,6 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
 			success: null,
 			error: false,

@@ -3,7 +3,10 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'addCatalog'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'addCatalog'"
+		ref="modalRef"
+		label-id="addCatalogModal"
+		@close="closeModal">
 		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -31,14 +34,6 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					label="Beschrijving"
 					maxlength="255"
 					:value.sync="catalogi.description" />
-				<NcTextField :disabled="loading"
-					label="Image"
-					maxlength="255"
-					:value.sync="catalogi.image" />
-				<NcTextField :disabled="loading"
-					label="Search"
-					maxlength="255"
-					:value.sync="catalogi.search" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!catalogi.title || loading"
@@ -75,8 +70,6 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
-				image: '',
-				search: '',
 			},
 			loading: false,
 			success: null,
@@ -86,7 +79,12 @@ export default {
 	},
 	methods: {
 		closeModal() {
-			navigationStore.modal = false
+			navigationStore.setModal(false)
+			this.catalogi = {
+				title: '',
+				summary: '',
+				description: '',
+			}
 		},
 		addCatalog() {
 			this.loading = true
@@ -113,14 +111,7 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.success = null
-						navigationStore.setModal(false)
-						this.catalogi = {
-							title: '',
-							summary: '',
-							description: '',
-							image: '',
-							search: '',
-						}
+						self.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {

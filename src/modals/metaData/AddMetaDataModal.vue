@@ -3,9 +3,9 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal
-		v-if="navigationStore.modal === 'addMetaData'"
+	<NcModal v-if="navigationStore.modal === 'addMetaData'"
 		ref="modalRef"
+		label-id="addMetaDataModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData toevoegen</h2>
@@ -23,7 +23,6 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 			<div v-if="success === null" class="form-group">
 				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
 				<NcTextField label="Versie" :value.sync="metaData.version" />
-				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="metaData.summery" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metaData.description" />
 			</div>
 			<NcButton v-if="success === null"
@@ -62,8 +61,8 @@ export default {
 			metaData: {
 				title: '',
 				version: '',
-				summery: '',
 				description: '',
+				required: '',
 			},
 			metaDataList: [],
 			loading: false,
@@ -81,7 +80,9 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.metaData),
+					body: JSON.stringify({
+						...this.metaData,
+					}),
 				},
 			)
 				.then((response) => {
@@ -98,7 +99,12 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.success = null
-						this.metaData = { title: '', version: '', summery: '', description: '' }
+						this.metaData = {
+							title: '',
+							version: '',
+							description: '',
+							required: '',
+						}
 						navigationStore.setModal(false)
 					}, 2000)
 				})

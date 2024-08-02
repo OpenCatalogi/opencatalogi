@@ -43,7 +43,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
-					<NcListItem v-for="(value, key, i) in metadata?.properties"
+					<NcListItem v-for="(value, key, i) in metadataStore.metaDataItem.properties"
 						:key="`${key}${i}`"
 						:name="key"
 						:bold="false"
@@ -79,7 +79,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 						</template>
 					</NcListItem>
 				</BTab>
-				<BTab title="Loging">
+				<BTab title="Logging">
 					<table width="100%">
 						<tr>
 							<th><b>Tijstip</b></th>
@@ -109,7 +109,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcButton } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
@@ -118,6 +118,7 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
 
 export default {
 	name: 'MetaDataDetail',
@@ -125,6 +126,7 @@ export default {
 		NcLoadingIcon,
 		NcActions,
 		NcActionButton,
+		NcButton,
 		// Icons
 		PlusCircleOutline,
 		ContentCopy,

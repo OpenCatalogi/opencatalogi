@@ -25,9 +25,14 @@ export const useMetadataStore = defineStore('metadata', {
 			)
 			console.log('Active metadata lest set')
 		},
-		refreshMetaDataList() { // @todo this might belong in a service?
-			fetch(
-				'/index.php/apps/opencatalogi/api/metadata',
+		async refreshMetaDataList(search = null) { 
+            // @todo this might belong in a service?
+            let endpoint = '/index.php/apps/opencatalogi/api/metadata'
+            if (search !== null && search !== '') {
+                endpoint = endpoint + '?_search=' + search
+            }
+			return fetch(
+				endpoint,
 				{
 					method: 'GET',
 				},
