@@ -5,13 +5,13 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 <template>
 	<NcDialog
 		v-if="navigationStore.dialog === 'depublishAttachment'"
-		name="Bijlage depubliseren"
+		name="Bijlage depubliceren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> depubliseren?
+			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> depubliceren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Bijlage succesvol gedepubliseerd</p>
+			<p>Bijlage succesvol depubliceerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -35,7 +35,7 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<PublishOff v-if="!loading" :size="20" />
 				</template>
-				Depubliseren
+				Depubliceren
 			</NcButton>
 		</template>
 	</NcDialog>

@@ -68,7 +68,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 								<template #icon>
 									<ContentCopy :size="20" />
 								</template>
-								Kopieren
+								Kopiëren
 							</NcActionButton>
 							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('deleteMetaDataProperty')">
 								<template #icon>
@@ -82,7 +82,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<BTab title="Logging">
 					<table width="100%">
 						<tr>
-							<th><b>Tijstip</b></th>
+							<th><b>Tijdstip</b></th>
 							<th><b>Gebruiker</b></th>
 							<th><b>Actie</b></th>
 							<th><b>Details</b></th>

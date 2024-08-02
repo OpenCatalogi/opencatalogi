@@ -283,7 +283,6 @@ export default {
 							reference: '',
 							license: '',
 							modified: new Date(),
-							status: '',
 							featured: false,
 							portal: '',
 							category: '',

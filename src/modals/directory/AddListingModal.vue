@@ -31,7 +31,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
-				Submit
+				Toevoegen
 			</NcButton>
 		</div>
 	</NcModal>

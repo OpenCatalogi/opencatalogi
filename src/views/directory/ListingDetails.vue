@@ -33,7 +33,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 		</div>
 		<div>
 			<div>
-				<h4>Sammenvatting:</h4>
+				<h4>Samenvatting:</h4>
 				<p>{{ listing.summary }}</p>
 			</div>
 			<div>
