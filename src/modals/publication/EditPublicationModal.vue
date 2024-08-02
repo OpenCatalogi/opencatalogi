@@ -50,16 +50,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						:disabled="loading"
 						label="Modified" />
 				</span>
-				<NcTextField :disabled="loading"
-					label="Organization"
-					:value.sync="publicationItem.organization" />
-				<NcTextField :disabled="loading"
-					label="Schema"
-					:value.sync="publicationItem.schema" />
-				<NcTextField :disabled="loading"
-					label="Thema's (splits op ,)"
-					:value.sync="publicationItem.themes" />
-				<p>Featured</p>
 				<span class="EPM-horizontal">
 					<NcCheckboxRadioSwitch :disabled="loading"
 						label="Featured"
@@ -128,9 +118,6 @@ export default {
 				category: '',
 				portal: '',
 				featured: false,
-				organization: '',
-				schema: '',
-				themes: [''],
 				published: '',
 				modified: '',
 				license: '',
@@ -262,9 +249,6 @@ export default {
 					body: JSON.stringify({
 						...this.publicationItem,
 						id: this.publicationItem.id.toString(),
-						themes: Array.isArray(this.publicationItem.themes)
-							? this.publicationItem.themes
-							: this.publicationItem.themes.split(/, */g),
 					}),
 				},
 			)
