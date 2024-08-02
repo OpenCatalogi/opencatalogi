@@ -1,5 +1,5 @@
 <script setup>
-import { catalogiStore, navigationStore, searchStore } from '../../store/store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,11 +7,11 @@ import { catalogiStore, navigationStore, searchStore } from '../../store/store.j
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="searchStore.search"
-					label="Search"
+					:value.sync="search"
+					label="Zoeken"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="searchStore.setSearch('')">
+					@trailing-button-click="search = ''">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -54,6 +54,12 @@ import { catalogiStore, navigationStore, searchStore } from '../../store/store.j
 							</template>
 							Bewerken
 						</NcActionButton>
+						<NcActionButton @click="navigationStore.setSelected('publication'); navigationStore.setSelectedCatalogus(catalogus?.id)">
+							<template #icon>
+								<OpenInApp :size="20" />
+							</template>
+							Catalogus bekijken
+						</NcActionButton>
 						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setDialog('deleteCatalog')">
 							<template #icon>
 								<Delete :size="20" />
@@ -83,6 +89,8 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import { debounce } from 'lodash';
 
 export default {
 	name: 'CatalogiList',
@@ -108,15 +116,15 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
 			catalogi: [],
+            search: '',
 		}
 	},
 	watch: {
 		search: {
 			handler(search) {
-				this.fetchData()
+                this.debouncedFetchData(search);
 			},
 		},
 	},
@@ -124,14 +132,21 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData() {
+		fetchData(search = null) {
 			this.loading = true
-			catalogiStore.refreshCatalogiList()
+			catalogiStore.refreshCatalogiList(search)
 				.then(() => {
 					this.loading = false
 				})
 		},
+        debouncedFetchData: debounce(function(search) {
+            this.fetchData(search);
+        }, 500), 
 	},
+    beforeRouteLeave(to, from, next) {
+        search = '';
+        next();
+    },
 }
 </script>
 <style>

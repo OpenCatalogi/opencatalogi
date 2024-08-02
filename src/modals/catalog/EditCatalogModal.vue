@@ -3,7 +3,10 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'editCatalog'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'editCatalog'"
+		ref="modalRef"
+		label-id="editCatalogModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
 			<div v-if="success !== null || error">
