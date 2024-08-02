@@ -72,6 +72,20 @@ class SearchController extends Controller
 
 		$filters = array_combine(keys: $keys, values: $values);
 
+        $requiredElasticConfig = ['location', 'key', 'index'];
+        $missingFields = null;
+        foreach ($requiredElasticConfig as $key) {
+            if (isset($elasticConfig[$key]) === false || empty($elasticConfig[$key])) {
+                $missingFields .= "$key, ";
+            }
+        }
+
+        if ($missingFields !== null) {
+            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+            $response = new JSONResponse(data: ['code' => 403, 'message' => $errorMessage], statusCode: 403);
+
+            return $response;
+        }
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 
@@ -93,6 +107,19 @@ class SearchController extends Controller
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$filters = ['_id' => (string) $id];
+
+        $requiredElasticConfig = ['location', 'key', 'index'];
+        $missingFields = null;
+        foreach ($requiredElasticConfig as $key) {
+            if (isset($elasticConfig[$key]) === false) {
+                $missingFields .= "$key ";
+            }
+        }
+
+        if ($missingFields !== null) {
+            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+            return new JSONResponse(['message' => $errorMessage], 403);
+        }
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 
