@@ -10,14 +10,14 @@ export const useMetadataStore = defineStore('metadata', {
 	}),
 	actions: {
 		setMetaDataItem(metaDataItem) {
+			this.metaDataItem = metaDataItem && new Metadata(metaDataItem)
+
 			// for backward compatibility
-			if (typeof this.metaDataItem.properties === 'string') {
+			if (typeof this.metaDataItem?.properties === 'string') {
 				this.metaDataItem.properties = JSON.parse(this.metaDataItem.properties)
 			}
 
-			this.metaDataItem = new Metadata(metaDataItem)
-
-			console.log('Active metadata object set to ' + metaDataItem.id)
+			console.log('Active metadata object set to ' + metaDataItem && metaDataItem.id)
 		},
 		setMetaDataList(metaDataList) {
 			this.metaDataList = metaDataList.map(
@@ -25,9 +25,14 @@ export const useMetadataStore = defineStore('metadata', {
 			)
 			console.log('Active metadata lest set')
 		},
-		refreshMetaDataList() { // @todo this might belong in a service?
-			fetch(
-				'/index.php/apps/opencatalogi/api/metadata',
+		async refreshMetaDataList(search = null) { 
+            // @todo this might belong in a service?
+            let endpoint = '/index.php/apps/opencatalogi/api/metadata'
+            if (search !== null && search !== '') {
+                endpoint = endpoint + '?_search=' + search
+            }
+			return fetch(
+				endpoint,
 				{
 					method: 'GET',
 				},

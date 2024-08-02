@@ -9,14 +9,16 @@ export type TPublication = {
 	reference?: string
 	image?: string
 	category: string
+    catalogi: string
+    metaData: string
 	portal?: string
-	catalogi?: string
-	metaData?: string
 	featured?: boolean
-	organization?: object[]
-	data?: object[]
-	attachments?: TAttachment[]
-	attachmentCount?: number
+	organization?: {
+        type?: string
+        $ref?: string
+        format?: string
+        description?: string
+    }
 	schema?: string
 	status?: string
 	attachments?: {
@@ -27,26 +29,24 @@ export type TPublication = {
         format?: string
     }
     attachmentCount?: number
-	themes?: string[]
-    data: {
+    themes?: string[]
+	data?: {
         type?: string
         required?: boolean
     }
 	anonymization?: {
         type?: string
+        $ref?: string
         format?: string
         description?: string
-        $ref?: string
     }
     languageObject?: {
         type?: string
+        $ref?: string
         format?: string
         description?: string
-        $ref?: string
     }
-    publicationDate?: string
-	modified?: string
-    license?: {
-        type?: string
-    }
+    published?: string | Date
+	modified?: string | Date
+	license?: string
 }

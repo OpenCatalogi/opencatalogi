@@ -3,16 +3,24 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'AddAttachment'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'AddAttachment'"
+		ref="modalRef"
+		label-id="AddAttachmentModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bijlage toevoegen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Bijlage succesvol toegevoegd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Bijlage succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van bijlage</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Titel"
 					maxlength="255"
@@ -35,8 +43,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.downloadURL" />
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="!publicationStore.attachmentItem.title || loading"
 				type="primary"
 				@click="addAttachment()">
@@ -68,9 +75,8 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -96,7 +102,7 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the attachment list
 					if (publicationStore.publicationItem?.id) {
 						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
@@ -109,7 +115,7 @@ export default {
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
+						self.success = null
 						navigationStore.setModal(false)
 					}, 2000)
 				})

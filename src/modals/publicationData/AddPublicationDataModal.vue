@@ -2,19 +2,24 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal
-		v-if="navigationStore.modal === 'addPublicationData'"
+	<NcModal v-if="navigationStore.modal === 'addPublicationData'"
 		ref="modalRef"
+		label-id="addPublicationPropertyModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie eigenschap toevoegen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie eigenschap bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie eigenschap succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van Publicatie eigenschap</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					label="Naam"
 					required
@@ -27,23 +32,25 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:loading="loading" />
 			</div>
 
-			<NcButton v-if="!succes"
-				:disabled="loading || !key || !value"
-				type="primary"
-				@click="AddPublicatieEigenschap()">
-				<template #icon>
-					<span>
-						<NcLoadingIcon v-if="loading" :size="20" />
-						<Plus v-if="!loading" :size="20" />
-					</span>
-				</template>
-				Toevoegen
-			</NcButton>
+			<span class="flex-horizontal">
+				<NcButton v-if="success === null"
+					:disabled="loading || !key || !value"
+					type="primary"
+					@click="AddPublicatieEigenschap()">
+					<template #icon>
+						<span>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<Plus v-if="!loading" :size="20" />
+						</span>
+					</template>
+					Toevoegen
+				</NcButton>
 
-			<NcButton
-				@click="navigationStore.setModal(false)">
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
-			</NcButton>
+				<NcButton
+					@click="navigationStore.setModal(false)">
+					{{ success ? 'Sluiten' : 'Annuleer' }}
+				</NcButton>
+			</span>
 		</div>
 	</NcModal>
 </template>
@@ -71,11 +78,10 @@ export default {
 	},
 	data() {
 		return {
-
 			key: '',
 			value: '',
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -83,6 +89,8 @@ export default {
 		AddPublicatieEigenschap() {
 			publicationStore.publicationItem.data[this.key] = this.value
 			this.loading = true
+			const bodyData = publicationStore.publicationItem
+			delete bodyData.publicationDate
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
@@ -90,22 +98,29 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.publicationItem),
+					body: JSON.stringify(bodyData),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
-					// Lets refresh the catalogiList
+					this.success = response.ok
+
+					// Lets refresh the publicationList
+					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
 					})
+
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
+						self.success = null
 						navigationStore.setModal(false)
 					}, 2000)
+
+					// reset modal form
+					this.key = ''
+					this.value = ''
 				})
 				.catch((err) => {
 					this.loading = false
@@ -134,5 +149,10 @@ export default {
 
 .success {
   color: green;
+}
+
+.flex-horizontal {
+    display: flex;
+    gap: 4px;
 }
 </style>

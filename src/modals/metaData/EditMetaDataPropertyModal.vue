@@ -2,27 +2,32 @@
 import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal
-		v-if="navigationStore.modal === 'editMetadataDataModal'"
+	<NcModal v-if="navigationStore.modal === 'editMetadataDataModal'"
 		ref="modalRef"
+		label-id="editMetaDataPropertyModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap "{{ metadataStore.metadataDataKey }}" bewerken</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Eigenschap succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Eigenschap succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Eigenschap</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
 
-			<div v-if="success === -1" class="form-group">
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Titel"
+					label="Eigenschap naam"
 					required
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].title" />
 
 				<NcTextField :disabled="loading"
-					label="description"
+					label="Beschrijving"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].description" />
 
 				<NcSelect v-bind="typeOptions"
@@ -33,40 +38,39 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					v-model="metadata.properties[metadataStore.metadataDataKey].format" />
 
 				<NcTextField :disabled="loading"
-					type="number"
-					label="patroon"
+					label="Patroon (regex)"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].pattern" />
 
 				<NcTextField :disabled="loading"
-					label="default"
+					label="Defaultwaarde"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].default" />
 
 				<NcTextField :disabled="loading"
-					label="behavior"
+					label="Gedrag"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].behavior" />
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
 					:checked.sync="metadata.properties[metadataStore.metadataDataKey].required">
-					Required
+					Verplicht
 				</NcCheckboxRadioSwitch>
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
 					:checked.sync="metadata.properties[metadataStore.metadataDataKey].deprecated">
-					Deprecated
+					Verouderd
 				</NcCheckboxRadioSwitch>
 
 				<NcTextField :disabled="loading"
-					label="minimum lengte"
+					label="Minimum lengte"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].minLength" />
 
 				<NcTextField :disabled="loading"
-					label="maximum lengte"
+					label="Maximum lengte"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].maxLength" />
 
 				<NcTextField :disabled="loading"
-					label="exemplaar"
+					label="Voorbeeld"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].example" />
 
 				<!-- type integer and number only -->
@@ -76,27 +80,27 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					</h5>
 
 					<NcTextField :disabled="loading"
-						label="minimum waarde"
+						label="Minimum waarde"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].minimum" />
 
 					<NcTextField :disabled="loading"
-						label="maximum waarde"
+						label="Maximum waarde"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].maximum" />
 
 					<NcTextField :disabled="loading"
-						label="multipleOf"
+						label="Deelbaar door"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].multipleOf" />
 
 					<NcCheckboxRadioSwitch
 						:disabled="loading"
 						:checked.sync="metadata.properties[metadataStore.metadataDataKey].exclusiveMin">
-						exclusief minimum
+						Exclusief minimum
 					</NcCheckboxRadioSwitch>
 
 					<NcCheckboxRadioSwitch
 						:disabled="loading"
 						:checked.sync="metadata.properties[metadataStore.metadataDataKey].exclusiveMax">
-						exclusief maximum
+						Exclusief maximum
 					</NcCheckboxRadioSwitch>
 				</div>
 
@@ -107,16 +111,16 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					</h5>
 
 					<NcTextField :disabled="loading"
-						label="minimale items"
+						label="Minimale hoeveelheid items"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].minItems" />
 
 					<NcTextField :disabled="loading"
-						label="minimale items"
+						label="Minimale hoeveelheid items"
 						:value.sync="metadata.properties[metadataStore.metadataDataKey].maxItems" />
 				</div>
 			</div>
 
-			<NcButton v-if="success === -1"
+			<NcButton v-if="success === null"
 				:disabled="loading"
 				type="primary"
 				@click="updateMetadata(metadata.id)">
@@ -165,7 +169,7 @@ export default {
 					description: '',
 					type: '',
 					format: '',
-					pattern: 0,
+					pattern: '',
 					default: '',
 					behavior: '',
 					required: false,
@@ -194,7 +198,8 @@ export default {
 				options: ['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'],
 			},
 			loading: false,
-			success: -1,
+			error: false,
+			success: null,
 			successMessage: '',
 			hasUpdated: false,
 		}
@@ -222,13 +227,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						metadataStore.metaDataItem = data
-
-						this.metadata = {
-							...metadataStore.metaDataItem,
-							properties: JSON.parse(metadataStore.metaDataItem.properties),
-						}
-						this.metadata.properties[metadataStore.metadataDataKey] = metadataStore.getMetadataPropertyKeys(metadataStore.metadataDataKey)
+						metadataStore.setMetaDataItem(data)
 					})
 					this.loading = false
 				})
@@ -267,7 +266,7 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.success = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
@@ -275,12 +274,12 @@ export default {
 					})
 					setTimeout(() => {
 						navigationStore.setModal(false)
-					    this.success = false
-					}, 3000)
+					    this.success = null
+					}, 2000)
 				})
 				.catch((err) => {
 					this.loading = false
-					this.success = false
+					this.success = null
 					this.error = err
 				})
 		},

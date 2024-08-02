@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,15 +7,15 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="searchStore.search"
+					:value.sync="search"
 					label="Zoeken"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="searchStore.setSearch('')">
+					@trailing-button-click="search = ''">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
-					<NcActionButton @click="fetchData">
+					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
@@ -37,7 +37,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					:force-display-actions="true"
 					:active="publicationStore.publicationItem.id === publication.id"
 					:details="publication?.status"
-					:counter-number="1"
+					:counter-number="publication?.attachmentCount.toString()"
 					@click="publicationStore.setPublicationItem(publication)">
 					<template #icon>
 						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
@@ -46,7 +46,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 						<AlertOutline v-if="publication.status === 'retracted'" :size="44" />
 					</template>
 					<template #subname>
-						{{ publication?.description }}
+						{{ publication?.summary }}
 					</template>
 					<template #actions>
 						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('editPublication')">
@@ -105,7 +105,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 				:size="64"
 				class="loadingIcon"
 				appearance="dark"
-				name="Zaken aan het laden" />
+				name="Publicaties aan het laden" />
 		</ul>
 	</NcAppContentList>
 </template>
@@ -125,6 +125,7 @@ import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import { debounce } from 'lodash';
 
 export default {
 	name: 'PublicationList',
@@ -157,22 +158,22 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
+            search: '',
 		}
 	},
 	computed: {
 		filteredPublications() {
 			if (!publicationStore?.publicationList) return []
 			return publicationStore.publicationList.filter((publication) => {
-				return parseInt(publication.catalogi) === navigationStore.selectedCatalogus
+				return publication.catalogi.toString() === navigationStore.selectedCatalogus.toString()
 			})
 		},
 	},
 	watch: {
 		search: {
 			handler(search) {
-				this.fetchData()
+                this.debouncedFetchData(search);
 			},
 		},
 	},
@@ -180,12 +181,21 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData() {
+		fetchData(search = null) {
 			this.loading = true
-			publicationStore.refreshPublicationList()
-			this.loading = false
+			publicationStore.refreshPublicationList(search)
+				.then(() => {
+					this.loading = false
+				})
 		},
+        debouncedFetchData: debounce(function(search) {
+            this.fetchData(search);
+        }, 500), 
 	},
+    beforeRouteLeave(to, from, next) {
+        search = '';
+        next();
+    },
 }
 </script>
 <style>
@@ -204,5 +214,9 @@ export default {
 }
 .active.publicationDetails-actionsDelete button {
     color: #EBEBEB !important;
+}
+
+.loadingIcon {
+    margin-block-start: var(--OC-margin-20);
 }
 </style>

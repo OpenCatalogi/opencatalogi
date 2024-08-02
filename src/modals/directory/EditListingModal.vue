@@ -3,21 +3,31 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'editListing'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'editListing'"
+		ref="modalRef"
+		label-id="editListingModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory bewerken</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Meta data succesvol toegevoegd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Listing succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Listing</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField label="Url" :value.sync="directoryStore.listingItem.url" />
 				<NcTextField label="Status" :value.sync="directoryStore.listingItem.status" />
 				<NcTextField label="Last synchronized" :value.sync="directoryStore.listingItem.lastSync" />
 			</div>
-			<NcButton v-if="!succes" type="primary" @click="editDirectory()">
+			<NcButton v-if="success === null"
+				type="primary"
+				@click="editDirectory()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
@@ -45,9 +55,8 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -85,7 +94,7 @@ export default {
 			).then((response) => {
 				// Set propper modal states
 				this.loading = false
-				this.succes = true
+				this.success = response.ok
 				// Lets refresh the catalogiList
 				metadataStore.refreshMetaDataList()
 				response.json().then((data) => {
@@ -93,7 +102,11 @@ export default {
 				})
 				navigationStore.setSelected('directory')
 				// Wait and then close the modal
-				setTimeout(() => (this.closeModal()), 2500)
+				const self = this
+				setTimeout(() => {
+					self.success = null
+					self.closeModal()
+				}, 2500)
 			}).catch((err) => {
 				this.error = err
 				this.loading = false

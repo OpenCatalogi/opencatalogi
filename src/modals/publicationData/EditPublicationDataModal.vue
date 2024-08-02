@@ -2,32 +2,47 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal
-		v-if="navigationStore.modal === 'editPublicationData'"
+	<NcModal v-if="navigationStore.modal === 'editPublicationData'"
 		ref="modalRef"
+		label-id="editPublicationPropertyModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bewerk publicatie eigenschappen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie eigenschap succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie eigenschap succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Publicatie eigenschap</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
 					:label="publicationStore.publicationDataKey"
 					:value.sync="publicationStore.publicationItem.data[publicationStore.publicationDataKey]" />
 			</div>
 
-			<NcButton :disabled="!publicationStore.publicationItem.data[publicationStore.publicationDataKey] || loading" type="primary" @click="updatePublication(publicationStore.publicationItem.id)">
-				<NcLoadingIcon v-if="loading" :size="20" />
-				<ContentSaveOutline v-if="!loading" :size="20" />
-			</NcButton>
-			<NcButton
-				@click="navigationStore.setModal(false)">
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
-			</NcButton>
+			<span class="flex-horizontal">
+				<NcButton v-if="success === null"
+					:disabled="!publicationStore.publicationItem.data[publicationStore.publicationDataKey] || loading"
+					type="primary"
+					@click="updatePublication(publicationStore.publicationItem.id)">
+					<template #icon>
+						<span>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<ContentSaveOutline v-if="!loading" :size="20" />
+						</span>
+					</template>
+					Opslaan
+				</NcButton>
+				<NcButton
+					@click="navigationStore.setModal(false)">
+					{{ success ? 'Sluiten' : 'Annuleer' }}
+				</NcButton>
+			</span>
 		</div>
 	</NcModal>
 </template>
@@ -38,6 +53,7 @@ import {
 	NcModal,
 	NcTextField,
 	NcLoadingIcon,
+	NcNoteCard,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
@@ -48,12 +64,12 @@ export default {
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
 		// icons
 		ContentSaveOutline,
 	},
 	data() {
 		return {
-
 			publication: {
 				title: '',
 				description: '',
@@ -71,7 +87,7 @@ export default {
 				options: [],
 			},
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -170,8 +186,20 @@ export default {
 					}),
 				},
 			)
-				.then(() => {
-					navigationStore.setModal(false)
+				.then((response) => {
+					this.loading = false
+					this.success = response.ok
+
+					publicationStore.refreshPublicationList()
+					response.json().then((data) => {
+						publicationStore.setPublicationItem(data)
+					})
+
+					const self = this
+					setTimeout(() => {
+						self.success = null
+						navigationStore.setModal(false)
+					}, 2000)
 				})
 				.catch((err) => {
 					this.loading = false
@@ -196,5 +224,10 @@ export default {
 
 .success {
   color: green;
+}
+
+.flex-horizontal {
+    display: flex;
+    gap: 4px;
 }
 </style>

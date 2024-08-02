@@ -42,19 +42,19 @@ class OrganizationMapper extends QBMapper
 
 	public function createFromArray(array $object): Organization
 	{
-		$publication = new Organization();
-		$publication->hydrate(object: $object);
+		$organization = new Organization();
+		$organization->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
+//		var_dump($organization->getTitle());
 
-		return $this->insert(entity: $publication);
+		return $this->insert(entity: $organization);
 	}
 
 	public function updateFromArray(int $id, array $object): Organization
 	{
-		$publication = $this->find($id);
-		$publication->hydrate($object);
+		$organization = $this->find($id);
+		$organization->hydrate($object);
 
-		return $this->update($publication);
+		return $this->update($organization);
 	}
 }

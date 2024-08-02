@@ -47,8 +47,8 @@ export class Attachment implements TAttachment {
 		this.type = data.type || ''
 		this.extension = data.extension || ''
 		this.size = data.size || 0
-		this.anonymization = data.anonymization || {}
-		this.language = data.language || {}
+		this.anonymization = (!Array.isArray(data.anonymization) && data.anonymization) || {}
+		this.language = (!Array.isArray(data.language) && data.language) || {}
 		this.versionOf = data.versionOf || ''
 		this.hash = data.hash || ''
 		this.published = data.published || ''

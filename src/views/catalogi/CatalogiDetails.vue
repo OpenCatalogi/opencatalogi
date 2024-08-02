@@ -23,7 +23,13 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton disabled class="catalogiDetails-actionsDelete">
+				<NcActionButton @click="navigationStore.setSelected('publication'); navigationStore.setSelectedCatalogus(catalogi?.id)">
+					<template #icon>
+						<OpenInApp :size="20" />
+					</template>
+					Catalogus bekijken
+				</NcActionButton>
+				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -59,6 +65,7 @@ import { BTabs, BTab } from 'bootstrap-vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 
 export default {
 	name: 'CatalogiDetails',
@@ -87,7 +94,8 @@ export default {
 				// run the fetch only once to update the item
 				if (!this.upToDate || JSON.stringify(newCatalogiItem) !== JSON.stringify(oldCatalogiItem)) {
 					this.catalogi = newCatalogiItem
-					this.fetchData(newCatalogiItem.id)
+					// check if newCatalogiItem is not false
+					newCatalogiItem && this.fetchData(newCatalogiItem?.id)
 					this.upToDate = true
 				}
 			},
@@ -96,7 +104,8 @@ export default {
 	},
 	mounted() {
 		this.catalogi = catalogiStore.catalogiItem
-		this.fetchData(catalogiStore.catalogiItem.id)
+		// check if catalogiItem is not false
+		catalogiStore.catalogiItem && this.fetchData(catalogiStore.catalogiItem?.id)
 	},
 	methods: {
 		fetchData(catalogId) {
@@ -185,12 +194,5 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
-}
-
-.active.catalogiDetails-actionsDelete {
-    background-color: var(--color-error) !important;
-}
-.active.catalogiDetails-actionsDelete button {
-    color: #EBEBEB !important;
 }
 </style>

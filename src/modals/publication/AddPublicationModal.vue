@@ -2,17 +2,25 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="navigationStore.modal === 'publicationAdd'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'publicationAdd'"
+		ref="modalRef"
+		label-id="addPublicationModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie toevoegen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie succesvol toegevoegd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van Publicatie</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
 			<div class="formContainer">
-				<div v-if="!succes" class="form-group">
+				<div v-if="success === null" class="form-group">
 					<NcTextField :disabled="loading"
 						label="Titel"
 						:value.sync="publication.title" />
@@ -53,10 +61,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						label="Schema"
 						:value.sync="publication.schema" />
 					<NcTextField :disabled="loading"
-						label="Status"
-						:value.sync="publication.status" />
-					<NcTextField :disabled="loading"
-						label="Thema's"
+						label="Thema's (splits op ,)"
 						:value.sync="publication.themes" />
 					<span class="APM-horizontal">
 						<NcCheckboxRadioSwitch :disabled="loading"
@@ -86,8 +91,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						required />
 				</div>
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="(!publication.title && !catalogi?.value?.id && !metaData?.value?.id) || loading"
 				type="primary"
 				@click="addPublication()">
@@ -139,7 +143,6 @@ export default {
 				reference: '',
 				license: '',
 				modified: new Date(),
-				status: '',
 				featured: false,
 				portal: '',
 				category: '',
@@ -159,7 +162,7 @@ export default {
 			publicationLoading: false,
 			hasUpdated: false,
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 			dataIsValidJson: false,
 			attachmentsIsValidJson: false,
@@ -243,6 +246,7 @@ export default {
 		},
 		addPublication() {
 			this.loading = true
+			this.error = false
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -252,6 +256,7 @@ export default {
 					},
 					body: JSON.stringify({
 						...this.publication,
+						themes: this.publication.themes.split(/, */g),
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
 					}),
@@ -259,22 +264,46 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
-					// Lets refresh the catalogiList
+					this.success = response.ok
+					// Lets refresh the publicationList
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
 					})
 					navigationStore.setSelected('publication')
-					// Clean it all up
-					setTimeout(() => {
+					// Wait for the user to read the feedback then close the model
+					const self = this
+					setTimeout(function() {
+						self.success = null
 						navigationStore.setModal(false)
-						this.succes = false
-					}, 2500)
+						self.publication = {
+							title: '',
+							summary: '',
+							description: '',
+							reference: '',
+							license: '',
+							modified: new Date(),
+							status: '',
+							featured: false,
+							portal: '',
+							category: '',
+							published: new Date(),
+							organization: '',
+							attachments: '[""]',
+							schema: '',
+							image: '',
+							themes: '',
+							data: {},
+						}
+						self.catalogi = {}
+						self.metaData = {}
+						self.hasUpdated = false
+					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
+					self.hasUpdated = false
 				})
 		},
 	},

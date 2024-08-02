@@ -8,24 +8,29 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 		name="Catalogus verwijderen"
 		message="'"
 		:can-close="false">
-		<p v-if="!succes">
-			Wil je <b>{{ catalogiItem.name ?? catalogiItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+		<div v-if="success !== null || error">
+			<NcNoteCard v-if="success" type="success">
+				<p>Catalogus succesvol verwijderd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="!success" type="error">
+				<p>Er is iets fout gegaan bij het verwijderen van catalogus</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+		</div>
+		<p v-if="success === null">
+			Wil je <b>{{ catalogiStore.catalogiItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
-		<NcNoteCard v-if="succes" type="success">
-			<p>Catalogus succesvol verwijderd</p>
-		</NcNoteCard>
-		<NcNoteCard v-if="error" type="error">
-			<p>{{ error }}</p>
-		</NcNoteCard>
 		<template #actions>
 			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
+				{{ success ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 			<NcButton
-				v-if="!succes"
+				v-if="success === null"
 				:disabled="loading"
 				icon="Delete"
 				type="error"
@@ -59,9 +64,8 @@ export default {
 	},
 	data() {
 		return {
-			catalogiItem: catalogiStore.catalogiItem,
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -69,7 +73,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -79,14 +83,14 @@ export default {
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
 					catalogiStore.refreshCatalogiList()
+					catalogiStore.setCatalogiItem(false)
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
-						catalogiStore.setCatalogiItem(false)
+						self.success = null
 						navigationStore.setDialog(false)
 					}, 2000)
 				})

@@ -28,7 +28,7 @@ class ListingMapper extends QBMapper
 		return $this->findEntity(query: $qb);
 	}
 
-	public function findAll($limit = null, $offset = null): array
+	public function findAll(?int $limit = null, ?int $offset = null, ?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): array
 	{
 		$qb = $this->db->getQueryBuilder();
 
@@ -37,24 +37,35 @@ class ListingMapper extends QBMapper
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
+        foreach($filters as $filter => $value) {
+            $qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
+        }
+
+        if (!empty($searchConditions)) {
+            $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
+            foreach ($searchParams as $param => $value) {
+                $qb->setParameter($param, $value);
+            }
+        }
+
 		return $this->findEntities(query: $qb);
 	}
 
 	public function createFromArray(array $object): Listing
 	{
-		$publication = new Listing();
-		$publication->hydrate(object: $object);
+		$listing = new Listing();
+		$listing->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
+//		var_dump($listing->getTitle());
 
-		return $this->insert(entity: $publication);
+		return $this->insert(entity: $listing);
 	}
 
 	public function updateFromArray(int $id, array $object): Listing
 	{
-		$publication = $this->find($id);
-		$publication->hydrate($object);
+		$listing = $this->find($id);
+		$listing->hydrate($object);
 
-		return $this->update($publication);
+		return $this->update($listing);
 	}
 }

@@ -7,15 +7,13 @@ export class Publication implements TPublication {
 	public id: string
 	public title: string
 	public summary: string
-	public reference?: string
 	public description?: string
+	public reference?: string
 	public image?: string
 	public category: string
+	public catalogi: string
+	public metaData: string
 	public portal?: string
-	public catalogi?: string
-	public metaData?: string
-	public publicationDate?: string
-	public modified?: string
 	public featured?: boolean
 	public organization?: object[]
 	public data?: object[]
@@ -47,6 +45,10 @@ export class Publication implements TPublication {
         level?: string
     }
 
+	public published?: string | Date
+	public modified?: string | Date
+	public license?: string
+
 	constructor(data: TPublication) {
 		this.hydrate(data)
 	}
@@ -60,22 +62,29 @@ export class Publication implements TPublication {
 		this.description = data.description || ''
 		this.image = data.image || ''
 		this.category = data.category || ''
+		this.catalogi = data.catalogi || ''
+		// @ts-expect-error -- for backwards compatibility metaData will be used if metadata cannot be found
+		this.metaData = (data.metadata ?? data.metaData) || ''
 		this.portal = data.portal || ''
 		this.catalogi = data.catalogi || ''
 		this.metaData = data.metaData || ''
-		this.publicationDate = data.publicationDate || ''
-		this.modified = data.modified || ''
-		this.featured = data.featured || false
-		this.organization = data.organization || {}
-		this.data = data.data || {}
-		this.attachments = data.attachments || {}
-		this.attachmentCount = data.attachmentCount || 0
+		this.featured = (typeof data.featured === 'boolean' && data.featured)
+            // backend can send true and false back as "1" and "" (yes. not "0")
+            // FIXME: remove once bug is fixed
+            || (typeof data.featured === 'string' && !!parseInt(data.featured))
+            || false
+		this.organization = (!Array.isArray(data.organization) && data.organization) || {}
 		this.schema = data.schema || ''
 		this.status = data.status || ''
-		this.license = data.license || {}
+		this.attachments = (!Array.isArray(data.attachments) && data.attachments) || {}
+		this.attachmentCount = data.attachmentCount || 0
 		this.themes = data.themes || []
-		this.languageObject = data.languageObject || {}
-		this.anonymization = data.anonymization || {}
+		this.data = (!Array.isArray(data.data) && data.data) || {}
+		this.anonymization = (!Array.isArray(data.anonymization) && data.anonymization) || {}
+		this.languageObject = (!Array.isArray(data.languageObject) && data.languageObject) || {}
+		this.published = new Date(data.published) || ''
+		this.modified = new Date(data.modified) || ''
+		this.license = data.license || ''
 	}
 
 	/* istanbul ignore next */
