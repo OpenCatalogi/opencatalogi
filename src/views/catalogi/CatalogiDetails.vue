@@ -23,6 +23,12 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					</template>
 					Bewerken
 				</NcActionButton>
+				<NcActionButton @click="navigationStore.setSelected('publication'); navigationStore.setSelectedCatalogus(catalogi?.id)">
+					<template #icon>
+						<OpenInApp :size="20" />
+					</template>
+					Catalogus bekijken
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
 						<Delete :size="20" />
@@ -59,6 +65,7 @@ import { BTabs, BTab } from 'bootstrap-vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 
 export default {
 	name: 'CatalogiDetails',

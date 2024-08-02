@@ -62,7 +62,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard v-if="!publicationStore.conceptPublications.results.length > 0" type="success">
+			<NcNoteCard v-if="!publicationStore.conceptPublications?.results?.length > 0" type="success">
 				<p>Er zijn op dit moment geen publicaties die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>
@@ -107,7 +107,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard v-if="!publicationStore.conceptAttachments.results.length > 0" type="success">
+			<NcNoteCard v-if="!publicationStore.conceptAttachments?.results?.length > 0" type="success">
 				<p>Er zijn op dit moment geen bijlagen die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>

@@ -2,7 +2,10 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="navigationStore.modal === 'publicationAdd'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'publicationAdd'"
+		ref="modalRef"
+		label-id="addPublicationModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Publicatie toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -58,7 +61,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						label="Schema"
 						:value.sync="publication.schema" />
 					<NcTextField :disabled="loading"
-						label="Thema's"
+						label="Thema's (splits op ,)"
 						:value.sync="publication.themes" />
 					<span class="APM-horizontal">
 						<NcCheckboxRadioSwitch :disabled="loading"
@@ -253,6 +256,7 @@ export default {
 					},
 					body: JSON.stringify({
 						...this.publication,
+						themes: this.publication.themes.split(/, */g),
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
 					}),
@@ -261,7 +265,7 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the catalogiList
+					// Lets refresh the publicationList
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)

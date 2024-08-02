@@ -21,4 +21,3 @@
   * [Installatie-instructies Nextcloud](installatie/instructies.md)
   * [On-Prem server](installatie/on-prem-server.md)
   * [Systeemeisen voor Nextcloud](installatie/systeemeisen-voor-nextcloud.md)
-* [test](test.md)

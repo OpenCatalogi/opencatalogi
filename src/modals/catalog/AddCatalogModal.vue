@@ -3,7 +3,10 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'addCatalog'" ref="modalRef" @close="closeModal">
+	<NcModal v-if="navigationStore.modal === 'addCatalog'"
+		ref="modalRef"
+		label-id="addCatalogModal"
+		@close="closeModal">
 		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -81,8 +84,6 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
-				image: '',
-				search: '',
 			}
 		},
 		addCatalog() {
@@ -110,7 +111,7 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.success = null
-						this.closeModal()
+						self.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {
