@@ -3,9 +3,13 @@
 "editor.defaultFormatter": "dbaeumer.vscode-eslint",
 "editor.formatOnSave": true,
 "cSpell.words": [
+    "gedepubliceerd",
+    "depubliceren",
     "Depubliceren",
+    "Matadata",
     "nextcloud",
     "opencatalogi",
-    "pinia"
+    "pinia",
+    "Toegangs"
 ]
 }
