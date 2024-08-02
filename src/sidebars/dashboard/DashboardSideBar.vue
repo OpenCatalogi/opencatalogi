@@ -9,11 +9,14 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 		<NcAppSidebarTab id="search-tab" name="Zoeken" :order="1">
 			<template #icon>
 				<Magnify :size="20" />
-			</template>
-			Zoek snel in het voor uw beschickbare federatieve netwerk
+			</template>test2
+			Zoek snel in het voor uw beschikbare federatieve netwerk<br>
 			<NcTextField class="searchField"
 				:value.sync="searchStore.search"
-				label="Search" />
+				label="Zoeken" />
+            <NcNoteCard v-if="searchStore.searchError" type="error">
+                <p>{{ searchStore.searchError }}</p>
+            </NcNoteCard>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="settings-tab" name="Publicaties" :order="2">
 			<template #icon>

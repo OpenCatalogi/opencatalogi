@@ -10,10 +10,14 @@ import { searchStore } from '../../store/store.js'
 		<NcAppSidebarTab id="search-tab" name="Zoeken" :order="1">
 			<template #icon>
 				<Magnify :size="20" />
-			</template>
+			</template>test1
+			Zoek snel in het voor uw beschikbare federatieve netwerk<br>
 			<NcTextField class="searchField"
 				:value.sync="searchStore.search"
-				label="Search" />
+				label="Zoeken" />
+            <NcNoteCard v-if="searchStore.searchError" type="error">
+                <p>{{ searchStore.searchError }}</p>
+            </NcNoteCard>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="settings-tab" name="Catalogi" :order="2">
 			<template #icon>
@@ -33,7 +37,7 @@ import { searchStore } from '../../store/store.js'
 </template>
 <script>
 
-import { NcAppSidebar, NcAppSidebarTab, NcTextField, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { NcAppSidebar, NcAppSidebarTab, NcTextField, NcNoteCard, NcCheckboxRadioSwitch } from '@nextcloud/vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
