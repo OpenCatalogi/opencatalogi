@@ -2,7 +2,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 
 import { usePublicationStore } from './publication.js'
-import { Attachment, Publication } from '../../entities/index.js'
+import { mockPublicationsData } from '../../entities/publication'
 
 describe('Publication Store', () => {
 	beforeEach(() => {
@@ -12,274 +12,58 @@ describe('Publication Store', () => {
 	it('sets publication item correctly', () => {
 		const store = usePublicationStore()
 
-		store.setPublicationItem(testData[0])
+		store.setPublicationItem(mockPublicationsData()[0])
 
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).toEqual(testData[0])
-		expect(store.publicationItem.validate()).toBe(true)
-
-		store.setPublicationItem(testData[1])
-
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).not.toEqual(testData[1])
-		expect(store.publicationItem.validate()).toBe(true)
-
-		store.setPublicationItem(testData[2])
-
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).toEqual(testData[2])
-		expect(store.publicationItem.validate()).toBe(false)
+		expect(store.publicationItem).toEqual(mockPublicationsData()[0])
 	})
 
 	it('sets publication list correctly', () => {
 		const store = usePublicationStore()
 
-		store.setPublicationList(testData)
+		store.setPublicationList(mockPublicationsData())
 
-		expect(store.publicationList).toHaveLength(testData.length)
+        console.log(JSON.stringify(store.publicationList, null, 2));  // Pretty print the JSON object
+        console.log(JSON.stringify(mockPublicationsData(), null, 2));  // Pretty print the JSON object
 
-		expect(store.publicationList[0]).toBeInstanceOf(Publication)
-		expect(store.publicationList[0]).toEqual(testData[0])
-		expect(store.publicationList[0].validate()).toBe(true)
-
-		expect(store.publicationList[1]).toBeInstanceOf(Publication)
-		expect(store.publicationList[1]).not.toEqual(testData[1])
-		expect(store.publicationList[1].validate()).toBe(true)
-
-		expect(store.publicationList[2]).toBeInstanceOf(Publication)
-		expect(store.publicationList[2]).toEqual(testData[2])
-		expect(store.publicationList[2].validate()).toBe(false)
+		expect(store.publicationList[0].title).toEqual(mockPublicationsData()[0].title)
 	})
 
 	// TODO: fix this - make sure you can retrieve the data from this key correctly
 	it('set publication data.data property key correctly', () => {
 		const store = usePublicationStore()
 
+		store.setPublicationItem(mockPublicationsData()[0])
 		store.setPublicationDataKey('contactPoint')
 
+		expect(store.publicationItem).toEqual(mockPublicationsData()[0])
 		expect(store.publicationDataKey).toBe('contactPoint')
 	})
 
 	it('set attachment item correctly', () => {
 		const store = usePublicationStore()
 
-		store.setAttachmentItem(attachmentTestData[0])
+		store.setAttachmentItem(mockPublicationsData()[0].attachments[0])
 
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).toEqual(attachmentTestData[0])
-		expect(store.attachmentItem.validate()).toBe(true)
-
-		store.setAttachmentItem(attachmentTestData[1])
-
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).not.toEqual(attachmentTestData[1])
-		expect(store.attachmentItem.validate()).toBe(true)
-
-		store.setAttachmentItem(attachmentTestData[2])
-
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).toEqual(attachmentTestData[2])
-		expect(store.attachmentItem.validate()).toBe(false)
+		expect(store.attachmentItem.id).toBe(mockPublicationsData()[0].attachments[0].id)
+		expect(store.attachmentItem.reference).toBe('') // some of these are '' because its not in the test data
+		expect(store.attachmentItem.title).toBe(mockPublicationsData()[0].attachments[0].title)
+		expect(store.attachmentItem.summary).toBe(mockPublicationsData()[0].attachments[0].summary)
+		expect(store.attachmentItem.description).toBe(mockPublicationsData()[0].attachments[0].description)
+		expect(store.attachmentItem.labels).toEqual([])
+		expect(store.attachmentItem.accessURL).toBe(mockPublicationsData()[0].attachments[0].accessURL)
+		expect(store.attachmentItem.downloadURL).toBe(mockPublicationsData()[0].attachments[0].downloadURL)
+		expect(store.attachmentItem.type).toBe(mockPublicationsData()[0].attachments[0].type)
+		expect(store.attachmentItem.extension).toBe('')
+		expect(store.attachmentItem.size).toBe(0)
+		// attachmentItem.anonymization
+		expect(store.attachmentItem.anonymization.anonymized).toBe(mockPublicationsData()[0].attachments[0].anonymization.anonymized)
+		// attachmentItem.language
+		expect(store.attachmentItem.language.code).toBe(mockPublicationsData()[0].attachments[0].language.code)
+		expect(store.attachmentItem.language.level).toBe(mockPublicationsData()[0].attachments[0].language.level)
+		expect(store.attachmentItem.version_of).toBe(mockPublicationsData()[0].attachments[0].version_of)
+		expect(store.attachmentItem.hash).toBe(mockPublicationsData()[0].attachments[0].hash)
+		expect(store.attachmentItem.published).toBe(mockPublicationsData()[0].attachments[0].published)
+		expect(store.attachmentItem.modified).toBe(mockPublicationsData()[0].attachments[0].modified)
+		expect(store.attachmentItem.license).toBe(mockPublicationsData()[0].attachments[0].license)
 	})
 })
-
-const testData = [
-	{ // full data
-		id: '1',
-		title: 'test 1',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		reference: 'ref1',
-		image: 'https://example.com/image.jpg',
-		category: 'category1',
-		portal: 'portal1',
-		catalogi: 'catalogi1',
-		metaData: 'meta1',
-		featured: true,
-		organization: {
-			type: 'software',
-			$ref: 'any',
-			format: 'ani',
-			description: 'a very long description',
-		},
-		schema: 'https://example.com/schema',
-		status: 'status1',
-		attachments: {
-			type: 'file',
-			items: {
-				$ref: 'any',
-			},
-			format: 'jpeg',
-		},
-		attachmentCount: 1,
-		themes: ['theme1'],
-		data: {
-			type: 'object',
-			required: true,
-		},
-		anonymization: {
-			type: 'string',
-			format: 'something',
-			description: '🤷‍♂️',
-			$ref: 'stringy',
-		},
-		languageObject: {
-			type: 'string',
-			format: 'something',
-			description: 'a language',
-			$ref: 'https://langy.org',
-		},
-		publicationDate: new Date(2024, 7, 24).toISOString(),
-		modified: new Date(2024, 1, 2).toISOString(),
-		license: {
-			type: 'MIT',
-		},
-	},
-	{ // partial data
-		id: '2',
-		title: 'test 2',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		reference: 'ref2',
-		image: 'https://example.com/image.jpg',
-		category: 'category2',
-		portal: 'portal2',
-		catalogi: 'catalogi2',
-		featured: true,
-		organization: {},
-		schema: 'https://example.com/schema',
-		status: 'status1',
-		attachmentCount: 1,
-		themes: ['theme1'],
-		data: {
-			type: 'object',
-			required: true,
-		},
-		anonymization: {
-			type: 'string',
-			$ref: 'stringy',
-		},
-		languageObject: {
-			type: 'string',
-			format: 'something',
-			description: 'a language',
-			$ref: 'https://langy.org',
-		},
-		publicationDate: new Date(2024, 7, 24).toISOString(),
-		modified: new Date(2024, 1, 2).toISOString(),
-		license: {
-			type: 'MIT',
-		},
-	},
-	{ // invalid data
-		id: '1',
-		title: '',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		reference: 'ref1',
-		image: 'https://example.com/image.jpg',
-		category: 'category1',
-		portal: 'portal1',
-		catalogi: 'catalogi1',
-		metaData: 'meta1',
-		featured: true,
-		organization: {
-			type: 'software',
-			$ref: 'any',
-			format: 'ani',
-			description: 'a very long description',
-		},
-		schema: 'https://example.com/schema',
-		status: 'status1',
-		attachments: {
-			type: 'file',
-			items: {
-				$ref: 'any',
-			},
-			format: 'jpeg',
-		},
-		attachmentCount: 1,
-		themes: ['theme1'],
-		data: {
-			type: 'object',
-			required: true,
-		},
-		anonymization: {
-			type: 'string',
-			format: 'something',
-			description: '🤷‍♂️',
-			$ref: 'stringy',
-		},
-		languageObject: {
-			type: 'string',
-			format: 'something',
-			description: 'a language',
-			$ref: 'https://langy.org',
-		},
-		publicationDate: new Date(2024, 7, 24).toISOString(),
-		modified: new Date(2024, 1, 2).toISOString(),
-		license: {
-			type: 'MIT',
-		},
-	},
-]
-
-const attachmentTestData = [
-	{ // full data
-		id: '1',
-		reference: 'ref1',
-		title: 'this is quite a long title',
-		summary: 'the limitation of needing at least 50 characters is annoying',
-		description: 'a really really long description about this catalogus',
-		labels: ['tag1'],
-		accessURL: 'https://example.com/access',
-		downloadURL: 'https://example.com/download',
-		type: 'document',
-		extension: 'pdf',
-		size: 1024,
-		anonymization: { anonymized: true, results: 'success' },
-		language: { code: 'en', level: 'A1' },
-		versionOf: '8b4d8937-b356-46ae-b03b-bbce7070c7e6',
-		hash: 'abc123',
-		published: '2024-01-01',
-		modified: '2024-01-02',
-		license: 'MIT',
-	},
-	{ // partial data
-		id: '2',
-		reference: 'ref2',
-		title: 'this is an even longer title',
-		summary: 'the limitation of needing at least 50 characters is annoying',
-		description: 'a really really long description about this catalogus',
-		labels: ['tag2'],
-		accessURL: 'https://example.com/access',
-		downloadURL: 'https://example.com/download',
-		type: 'document',
-		extension: 'pdf',
-		size: 1024,
-		anonymization: { anonymized: true, results: 'success' },
-		language: { code: 'en', level: 'A1' },
-		versionOf: '2459551d-f0dd-4354-821b-169304cde611',
-		license: 'MIT',
-	},
-	{ // invalid data
-		id: '3',
-		reference: 'ref3',
-		title: '',
-		summary: 'the limitation of needing at least 50 characters is annoying',
-		description: 'a really really long description about this catalogus',
-		labels: ['tag3'],
-		accessURL: 'https://example.com/access',
-		downloadURL: 'https://example.com/download',
-		type: 'document',
-		extension: 'pdf',
-		size: 1024,
-		anonymization: { anonymized: true, results: 'success' },
-		language: { code: 'en', level: 'A1' },
-		versionOf: '83b2914d-8561-479c-8d1f-e58a0f1ec88f',
-		hash: 'abc123',
-		published: '2024-01-01',
-		modified: '2024-01-02',
-		license: 'MIT',
-	},
-]

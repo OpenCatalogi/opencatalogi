@@ -1,4 +1,5 @@
 // TODO: double check this type for correct properties and optionals when stoplight updates - https://conduction.stoplight.io/docs/open-catalogi/fee989a9c8e3f-publication
+import { TAttachment } from "../attachment"
 
 export type TPublication = {
     id: string
@@ -12,13 +13,11 @@ export type TPublication = {
 	catalogi?: string
 	metaData?: string
 	featured?: boolean
-	organization?: {
-        type?: string
-        $ref?: string
-        format?: string
-        description?: string
-    }
-    schema: string
+	organization?: object[]
+	data?: object[]
+	attachments?: TAttachment[]
+	attachmentCount?: number
+	schema?: string
 	status?: string
 	attachments?: {
         type?: string

@@ -1,3 +1,4 @@
+import { TAttachment } from '../attachment'
 import { TPublication } from './publication.types'
 import { z } from 'zod'
 
@@ -16,26 +17,9 @@ export class Publication implements TPublication {
 	public publicationDate?: string
 	public modified?: string
 	public featured?: boolean
-	public organization?: {
-        type?: string
-        $ref?: string
-        format?: string
-        description?: string
-    }
-
-	public data: {
-        type?: string
-        required?: boolean
-    }
-
-	public attachments?: {
-        type?: string
-        items?: {
-            $ref?: string
-        }
-        format?: string
-    }
-
+	public organization?: object[]
+	public data?: object[]
+	public attachments?: TAttachment[]
 	public attachmentCount?: number
 	public schema: string
 	public status?: string

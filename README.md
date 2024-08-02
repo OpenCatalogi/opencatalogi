@@ -32,5 +32,8 @@ Wanneer de nextcloud container aangeeft ready te zijn (`[core:notice] [pid 1] AH
 
 Daarna kan de opencatalogi-app worden geopend via het hoofdmenu, en bij instellingen -> configuratie moeten dan worden ingevuld: een MongoDB API met sleutel en clusternaam, en voor het activeren van het zoekendpoint een elasticsearch met API key en index.
 
+### Testing code
 
-
+We gebruiken [jest](https://jestjs.io/docs/getting-started) om onze code te testen.
+Met commando `npm run test` worden alle bestanden getest die eindigen met .spec of .test. 
+Met `npm run test-coverage` wordt hier ook een visuele coverage rapport voor gegenereerd.
