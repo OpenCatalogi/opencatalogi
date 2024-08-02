@@ -76,16 +76,6 @@ export default {
                 '(\\#[-a-z\\d_]*)?$',
                 'i'
             ), // fragment locator
-            testUrls: [
-                'http://example.com',
-                'https://example.com',
-                'http://www.example.com',
-                'https://www.example.com/path?query=string#fragment',
-                'test',
-                'http://',
-                'http://test',
-                'http::'
-            ]
         };
     },
     computed: {
@@ -135,9 +125,6 @@ export default {
             navigationStore.setModal(false);
         },
         validateUrl(event) {
-            this.testUrls.forEach(url => {
-                console.log(`${url}: ${this.urlPattern.test(url)}`);
-            });
             this.directory.url = event.target.value;
             if (!this.isUrlValid) {
                 this.validateUrlError = 'Er is geen valide URL ingevoerd.';
