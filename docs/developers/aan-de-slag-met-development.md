@@ -9,12 +9,13 @@ Als Nextcloud-app volgen we sowieso de [Nextcloud publishing guidelines](https:/
 Daarbovenop hanteren we een aantal extra spelregeles:
 
 * **Features moeten zijn voorzien van gebruikersdocumentatie**
-* **Backend code moet zijn voorzien van automatische tests**: Code de coverage van het project verlaagd word niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html).
+* **Backend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html).
 * **Backend code moet zuiver zijn**: Code mag _géén_ linting errors bevaten
-* **Frontend code moet zijn voorzien van automatische tests**:
+* **Frontend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd
 * **Frontend code moet zuiver zijn**: Code mag _géén_ linting errors bevaten
-* **Seperation of concerns**: Voor zowel backend als frontend moet business logic zijn opgenomen in services. Controllers, Templates, Views, Components en Store mogen _géén_ business logic bevatten.
+* **Seperation of concerns**: Voor zowel backend als frontend moet business logic zijn opgenomen in Services. Dat betekend dat Controllers, Templates, Views, Components en Store _géén_ business logic mogen bevatten.
 * **Vier ogen principe**: Pull requests moeten zijn beoordeeld door een andere developer dan de maker voordat ze worden geaccepteerd
+* **Automatische test**: Code mag alleen naar master/main als alle automatische tests goed gaan
 
 ## Application development
 
