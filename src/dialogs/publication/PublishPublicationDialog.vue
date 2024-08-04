@@ -8,10 +8,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		name="Publicatie publiseren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> publiseren? Deze actie betekend dat de publicatie (en gepubliseerde bijlagen) worden opgenomen in de zoekindex en publiek toegankenlijk zijn.
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> publiceren? Deze actie betekend dat de publicatie (en gepubliceerde bijlagen) worden opgenomen in de zoekindex en publiek toegankelijk zijn.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Publicatie succesvol gepubliseerd</p>
+			<p>Publicatie succesvol gepubliceerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -33,7 +33,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<Publish v-if="!loading" :size="20" />
 				</template>
-				Publiseren
+				Publiceren
 			</NcButton>
 		</template>
 	</NcDialog>

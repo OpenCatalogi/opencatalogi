@@ -8,10 +8,10 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		name="Metadata eigenschap verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ metadataStore.metadataDataKey }}</b> kopieren?
+			Wil je <b>{{ metadataStore.metadataDataKey }}</b> kopiëren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Metadata eigenschap succesvol gekpierd</p>
+			<p>Metadata eigenschap succesvol gekopieerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -33,7 +33,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					<Cancel v-if="loading" :size="20" />
 					<ContentCopy v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Kopiëren
 			</NcButton>
 		</template>
 	</NcDialog>

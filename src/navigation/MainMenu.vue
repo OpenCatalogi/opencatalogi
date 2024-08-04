@@ -54,20 +54,20 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Application settings">
-				<NcAppSettingsSection id="sharing" name="Connections" doc-url="zaakafhandel.app">
+			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Applicatie instellingen">
+				<NcAppSettingsSection id="sharing" name="Connecties" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
 					</template>
 
 					<p>
-						Here you can set the details for varius Connections
+						Hier kunt u de details instellen voor verschillende verbindingen.
 					</p>
 					<NcCheckboxRadioSwitch :checked.sync="configuration.mongoStorage" type="switch">
-						{{ t('forms', 'Use external storage (e.g. MongoDb) instead of Next Cloud internal storage') }}
+						{{ t('forms', 'Gebruik externe opslag (bijv. MongoDb) in plaats van de interne opslag van Next Cloud.') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch :checked.sync="configuration.cloudStorage" type="switch">
-						{{ t('forms', 'Use VNG APIs instead of MongoDB') }}
+						{{ t('forms', 'Gebruik VNG API\'s in plaats van MongoDB.') }}
 					</NcCheckboxRadioSwitch>
 					<p>
 						<table>
@@ -165,54 +165,54 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 							</tbody>
 						</table>
 					</p>
-					<NcButton aria-label="Save"
+					<NcButton aria-label="Opslaan"
 						type="primary"
 						wide
 						@click="saveConfig(); feedbackPosition = 'top'">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
-						Save
+						Opslaan
 					</NcButton>
 					<div v-if="feedbackPosition === 'top' && configurationSuccess !== -1">
 						<NcNoteCard :type="configurationSuccess ? 'success' : 'error'">
 							<p>
 								{{ configurationSuccess ?
-									'Success saving configuration' :
-									'Failed saving configuration'
+									'Configuratie succesvol opgeslagen.' :
+									'Opslaan van configuratie mislukt.'
 								}}
 							</p>
 						</NcNoteCard>
 					</div>
 				</NcAppSettingsSection>
-				<NcAppSettingsSection id="organisation" name="Organisation" doc-url="zaakafhandel.app">
+				<NcAppSettingsSection id="organisation" name="Organisatie" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
 					</template>
 
 					<p>
-						Here you can set the details for your organisation
+						Hier kunt u de details voor uw organisatie instellen.
 					</p>
 
 					<NcTextField id="organisationName" :value.sync="configuration.organisationName" />
 					<NcTextField id="organisationOin" :value.sync="configuration.organisationOin" />
 					<NcTextArea id="organisationPki" :value.sync="configuration.organisationPki" />
 
-					<NcButton aria-label="Save"
+					<NcButton aria-label="Opslaan"
 						type="primary"
 						wide
 						@click="saveConfig(); feedbackPosition = 'bottom'">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
-						Save
+						Opslaan
 					</NcButton>
 					<div v-if="feedbackPosition === 'bottom' && configurationSuccess !== -1">
 						<NcNoteCard :type="configurationSuccess ? 'success' : 'error'">
 							<p>
 								{{ configurationSuccess ?
-									'Success saving configuration' :
-									'Failed saving configuration'
+									'Configuratie succesvol opgeslagen.' :
+									'Opslaan van configuratie mislukt.'
 								}}
 							</p>
 						</NcNoteCard>
