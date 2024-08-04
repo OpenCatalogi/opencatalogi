@@ -29,7 +29,7 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<LayersSearchOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="navigationStore.selected === 'documentatie'" name="Documentatie" @click="navigationStore.setSelected('documentatie')">
+			<NcAppNavigationItem name="Documentatie" @click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers')">
 				<template #icon>
 					<BookOpenVariantOutline :size="20" />
 				</template>
@@ -87,7 +87,6 @@ import DatabaseCogOutline from 'vue-material-design-icons/DatabaseCogOutline.vue
 import LayersSearchOutline from 'vue-material-design-icons/LayersSearchOutline.vue'
 import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
-import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import Finance from 'vue-material-design-icons/Finance.vue'
 import BookOpenVariantOutline from 'vue-material-design-icons/BookOpenVariantOutline.vue'
 import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
@@ -110,7 +109,6 @@ export default {
 		LayersSearchOutline,
 		LayersOutline,
 		FileTreeOutline,
-		CogOutline,
 		Finance,
 		BookOpenVariantOutline,
 		OfficeBuildingOutline,
@@ -161,6 +159,9 @@ export default {
 			navigationStore.setSelected('publication')
 			navigationStore.setSelectedCatalogus(catalogus.id)
 			catalogiStore.setCatalogiItem(catalogus)
+		},
+		linkToOtherWindow(url) {
+			window.open(url, '_blank')
 		},
 	},
 }

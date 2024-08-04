@@ -9,7 +9,12 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 				{{ publicationStore.publicationItem.title }}
 			</h1>
 
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+			<NcActions
+				:disabled="loading"
+				:primary="true"
+				:menu-name="loading ? 'Laden...' : 'Acties'"
+				:inline="1"
+				title="Acties die je kan uitvoeren op deze publicatie">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
@@ -18,6 +23,14 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over publicaties"
+					@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Help
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setModal('editPublication')">
 					<template #icon>
 						<Pencil :size="20" />
@@ -343,6 +356,7 @@ import LockOutline from 'vue-material-design-icons/LockOutline.vue'
 import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
 import Download from 'vue-material-design-icons/Download.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -374,6 +388,7 @@ export default {
 		LockOpenVariantOutline,
 		Download,
 		ArchivePlusOutline,
+		HelpCircleOutline,
 	},
 	props: {
 		publicationItem: {
@@ -517,6 +532,9 @@ export default {
 		goToCatalogi() {
 			catalogiStore.setCatalogiItem(this.catalogi)
 			navigationStore.setSelected('catalogi')
+		},
+		linkToOtherWindow(url) {
+			window.open(url, '_blank')
 		},
 	},
 }

@@ -6,9 +6,9 @@
 			</template>
 		</NcAppNavigationItem>
 		<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Applicatie instellingen">
-			<NcAppSettingsSection id="sharing" name="Connecties" doc-url="zaakafhandel.app">
+			<NcAppSettingsSection id="sharing" name="Opslag" doc-url="zaakafhandel.app">
 				<template #icon>
-					<Connection :size="20" />
+					<Database :size="20" />
 				</template>
 
 				<p>
@@ -136,9 +136,9 @@
 					</NcNoteCard>
 				</div>
 			</NcAppSettingsSection>
-			<NcAppSettingsSection id="organisation" name="Organisatie" doc-url="zaakafhandel.app">
+			<NcAppSettingsSection id="organisation" name="Rolen en Rechten" doc-url="zaakafhandel.app">
 				<template #icon>
-					<Connection :size="20" />
+					<AccountLockOpenOutline :size="20" />
 				</template>
 
 				<p>
@@ -181,15 +181,11 @@ import {
 	NcTextField,
 	NcTextArea,
 	NcButton,
-	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 import Database from 'vue-material-design-icons/Database.vue'
-import Connection from 'vue-material-design-icons/Connection.vue'
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
-import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
-import Lock from 'vue-material-design-icons/Lock.vue'
-import Web from 'vue-material-design-icons/Web.vue'
+import AccountLockOpenOutline from 'vue-material-design-icons/AccountLockOpenOutline.vue'
 import ContentSave from 'vue-material-design-icons/ContentSave.vue'
 
 export default {
@@ -198,17 +194,14 @@ export default {
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcAppNavigationItem,
-		NcLoadingIcon,
 		NcTextField,
 		NcTextArea,
 		NcButton,
+		// icons
 		CogOutline,
-		Connection,
 		Database,
-		Lock,
-		Web,
-		OfficeBuildingOutline,
 		ContentSave,
+		AccountLockOpenOutline,
 	},
 	data() {
 		return {
