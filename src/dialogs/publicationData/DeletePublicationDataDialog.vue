@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deletePublicationDataDialog'"
+		v-if="navigationStore.dialog === 'deletePublicationDataDialog'"
 		name="Publicatie eigenschap verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.publicationDataKey }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ publicationStore.publicationDataKey }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Publicatie eigenschap succesvol verwijderd</p>
@@ -17,7 +17,7 @@ import { store } from '../../store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -58,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -65,12 +66,12 @@ export default {
 	},
 	methods: {
 		DeleteProperty() {
-			const publication = store.publicationItem
-			delete publication?.data[store.publicationDataKey]
+			const publication = publicationStore.publicationItem
+			delete publication?.data[publicationStore.publicationDataKey]
 
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
@@ -84,13 +85,13 @@ export default {
 					this.succes = true
 					// Lets refresh the catalogiList
 					response.json().then((data) => {
-						store.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

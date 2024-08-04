@@ -1,5 +1,5 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,21 +7,21 @@ import { store } from '../../store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="store.search"
-					label="Search"
+					:value.sync="search"
+					label="Zoeken"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="store.setSearch('')">
+					@trailing-button-click="search = ''">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
-					<NcActionButton @click="fetchData">
+					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('addMetaData')">
+					<NcActionButton @click="navigationStore.setModal('addMetaData')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -31,35 +31,35 @@ import { store } from '../../store.js'
 			</div>
 
 			<div v-if="!loading">
-				<NcListItem v-for="(metaData, i) in store.metaDataList.results"
+				<NcListItem v-for="(metaData, i) in metadataStore.metaDataList"
 					:key="`${metaData}${i}`"
 					:name="metaData.title ?? metaData.name"
-					:active="store.metaDataItem?._id === metaData?._id"
+					:active="metadataStore.metaDataItem?.id === metaData?.id"
 					:details="metaData.version ?? 'Onbekend'"
 					:force-display-actions="true"
-					@click="store.setMetaDataItem(metaData)">
+					@click="metadataStore.setMetaDataItem(metaData)">
 					<template #icon>
-						<FileTreeOutline :class="store.metaDataItem?._id === metaData?.id && 'selectedIcon'"
+						<FileTreeOutline :class="metadataStore.metaDataItem?.id === metaData?.id && 'selectedIcon'"
 							disable-menu
 							:size="44" />
 					</template>
 					<template #subname>
-						{{ metaData.summery }}
+						{{ metaData.description }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="store.setMetaDataItem(metaData); store.setModal('editMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setModal('editMetaData')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="store.setMetaDataItem(metaData); store.setDialog('copyMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setDialog('copyMetaData')">
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
-							Kopieren
+							Kopiëren
 						</NcActionButton>
-						<NcActionButton @click="store.setMetaDataItem(metaData); store.setDialog('deleteMetaData')">
+						<NcActionButton @click="metadataStore.setMetaDataItem(metaData); navigationStore.setDialog('deleteMetaData')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -89,6 +89,7 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
+import { debounce } from 'lodash'
 
 export default {
 	name: 'MetaDataList',
@@ -117,13 +118,14 @@ export default {
 	},
 	data() {
 		return {
-			loading: true,
+			loading: false,
+			search: '',
 		}
 	},
 	watch: {
 		search: {
 			handler(search) {
-				this.fetchData()
+				this.debouncedFetchData(search)
 			},
 		},
 	},
@@ -131,11 +133,20 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData(newPage) {
+		fetchData(search = null) {
 			this.loading = true
-			store.refreshMetaDataList()
-			this.loading = false
+			metadataStore.refreshMetaDataList(search)
+				.then(() => {
+					this.loading = false
+				})
 		},
+		debouncedFetchData: debounce(function(search) {
+			this.fetchData(search)
+		}, 500),
+	},
+	beforeRouteLeave(to, from, next) {
+		search = ''
+		next()
 	},
 }
 </script>

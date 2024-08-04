@@ -1,62 +1,82 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal
-		v-if="store.modal === 'editPublication'"
+	<NcModal v-if="navigationStore.modal === 'editPublication'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		label-id="editPublicationModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Edit publication</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Naam"
-					:value.sync="store.publicationItem.title" />
-				<NcTextArea :disabled="loading" label="Beschrijving" :value.sync="store.publicationItem.description" />
+					label="Titel"
+					:value.sync="publicationItem.title" />
+				<NcTextField :disabled="loading"
+					label="Samenvatting"
+					:value.sync="publicationItem.summary" />
+				<NcTextArea :disabled="loading"
+					label="Beschrijving"
+					:value.sync="publicationItem.description" />
+				<NcTextField :disabled="loading"
+					label="Reference"
+					:value.sync="publicationItem.reference" />
 				<NcTextField :disabled="loading"
 					label="Categorie"
-					:value.sync="store.publicationItem.category" />
-				<NcTextField :disabled="loading"
-					label="Publicatie"
-					:value.sync="store.publicationItem.publication" />
+					:value.sync="publicationItem.category" />
 				<NcTextField :disabled="loading"
 					label="Portaal"
-					:value.sync="store.publicationItem.portal" />
+					:value.sync="publicationItem.portal" />
+				<span>
+					<p>Published</p>
+					<NcDateTimePicker v-model="publicationItem.published"
+						:disabled="loading"
+						label="Publicatie datum" />
+				</span>
+				<span>
+					<p>Modified</p>
+					<NcDateTimePicker v-model="publicationItem.modified"
+						:disabled="loading"
+						label="Modified" />
+				</span>
 				<NcTextField :disabled="loading"
-					label="Status"
-					:value.sync="store.publicationItem.status" />
+					label="Organization"
+					:value.sync="publicationItem.organization" />
 				<NcTextField :disabled="loading"
-					label="Gepubliceerd"
-					:value.sync="store.publicationItem.published" />
+					label="Schema"
+					:value.sync="publicationItem.schema" />
+				<NcTextField :disabled="loading"
+					label="Thema's (splits op ,)"
+					:value.sync="publicationItem.themes" />
 				<p>Featured</p>
-				<NcCheckboxRadioSwitch :disabled="loading"
-					label="Featured"
-					:value.sync="store.publicationItem.featured" />
+				<span class="EPM-horizontal">
+					<NcCheckboxRadioSwitch :disabled="loading"
+						label="Featured"
+						:checked.sync="publicationItem.featured">
+						Featured
+					</NcCheckboxRadioSwitch>
+				</span>
 				<NcTextField :disabled="loading"
 					label="Image"
-					:value.sync="store.publicationItem.image" />
-				<NcTextField :disabled="loading"
-					label="Modified"
-					:value.sync="store.publicationItem.modified" />
+					:value.sync="publicationItem.image" />
 				<b>Juridisch</b>
 				<NcTextField :disabled="loading"
 					label="Licentie"
-					:value.sync="store.publicationItem.license" />
-				<b>Toegang</b>
-				<NcSelectTags
-					:value.sync="store.publicationItem.userGroups"
-					input-label="Gebruikers groepen"
-					:multiple="true" />
+					:value.sync="publicationItem.license" />
 			</div>
-			<NcButton
-				v-if="!succes"
-				:disabled="!store.publicationItem.title"
+			<NcButton v-if="success === null"
+				:disabled="!publicationItem.title"
 				type="primary"
 				@click="updatePublication()">
 				<template #icon>
@@ -75,9 +95,9 @@ import {
 	NcModal,
 	NcTextField,
 	NcTextArea,
-	NcSelectTags,
 	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
+	NcDateTimePicker,
 	NcNoteCard,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
@@ -88,8 +108,8 @@ export default {
 		NcModal,
 		NcTextField,
 		NcTextArea,
-		NcSelectTags,
 		NcCheckboxRadioSwitch,
+		NcDateTimePicker,
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
@@ -98,6 +118,25 @@ export default {
 	},
 	data() {
 		return {
+			publicationItem: {
+				id: '',
+				title: '',
+				summary: '',
+				description: '',
+				reference: '',
+				image: '',
+				category: '',
+				portal: '',
+				featured: false,
+				organization: '',
+				schema: '',
+				themes: [''],
+				published: '',
+				modified: '',
+				license: '',
+				catalogi: '',
+				metaData: '',
+			},
 			catalogi: {
 				value: [],
 				options: [],
@@ -107,24 +146,28 @@ export default {
 				options: [],
 			},
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 			catalogiLoading: false,
 			metaDataLoading: false,
+			hasUpdated: false,
 		}
 	},
 	mounted() {
-		this.publication = store.publicationItem
+		// publicationStore.publicationItem can be false, so only assign publicationStore.publicationItem to publicationItem if its NOT false
+		publicationStore.publicationItem && (this.publicationItem = publicationStore.publicationItem)
 	},
 	updated() {
-		if (store.modal === 'publicationEdit' && this.hasUpdated) {
-			if (this.publication.id === store.publicationItem.id) return
+		if (navigationStore.modal === 'editPublication' && this.hasUpdated) {
+			if (this.publicationItem.id === publicationStore.publicationItem.id) return
 			this.hasUpdated = false
 		}
-		if (store.modal === 'publicationEdit' && !this.hasUpdated) {
-			this.fetchCatalogi()
-			this.fetchMetaData()
-			this.fetchData(store.publicationItem.id)
+		if (navigationStore.modal === 'editPublication' && !this.hasUpdated) {
+			publicationStore.publicationItem && (this.publicationItem = publicationStore.publicationItem)
+			this.fetchData(publicationStore.publicationItem.id)
+			// just incase we decide we want to be able to change catalogi and metadata
+			// this.fetchCatalogi()
+			// this.fetchMetaData()
 			this.hasUpdated = true
 		}
 	},
@@ -139,7 +182,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						this.setSetPublictionsetPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
 					this.loading = false
 				})
@@ -156,19 +199,19 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 
-						const selectedCatalogi = Object.entries(data.results).find((catalogi) => catalogi[1]._id === this.publication.catalogi)
+						const selectedCatalogi = data.results.find((catalogi) => catalogi.id.toString() === this.publicationItem.catalogi.toString())
 
 						this.catalogi = {
 							inputLabel: 'Catalogi',
-							options: Object.entries(data.results).map((catalog) => ({
-								id: catalog[1]._id,
-								label: catalog[1].name,
+							options: data.results.map((catalog) => ({
+								id: catalog.id,
+								label: catalog.title,
 							})),
-							value: {
-								id: selectedCatalogi[1]._id ?? '',
-								label: selectedCatalogi[1].name ?? '',
-							},
-
+							// FIXME: for some reason the NcSelect uses the id instead of the label when displaying
+							value: [{
+								id: selectedCatalogi.id ?? '',
+								label: selectedCatalogi.title ?? '',
+							}],
 						}
 					})
 					this.catalogiLoading = false
@@ -185,17 +228,18 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						const selectedMetaData = Object.entries(data.results).find((metadata) => metadata[1]._id === this.publication.metaData)
+						const selectedMetaData = data.results.find((metadata) => metadata.id.toString() === this.publicationItem.metaData.toString())
 
 						this.metaData = {
 							inputLabel: 'MetaData',
-							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1].id ?? metaData[1]._id,
-								label: metaData[1].title ?? metaData[1].name,
+							options: data.results.map((metaData) => ({
+								id: metaData.id,
+								label: metaData.title,
 							})),
+							// FIXME: for some reason the NcSelect uses the id instead of the label when displaying
 							value: {
-								id: selectedMetaData[1]._id ?? '',
-								label: selectedMetaData[1].name ?? selectedMetaData[1].title ?? '',
+								id: selectedMetaData.id,
+								label: selectedMetaData.title,
 							},
 						}
 					})
@@ -206,31 +250,39 @@ export default {
 					this.metaDataLoading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
-		updatePublication(id) {
+		updatePublication() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationItem),
+					body: JSON.stringify({
+						...this.publicationItem,
+						id: this.publicationItem.id.toString(),
+						themes: Array.isArray(this.publicationItem.themes)
+							? this.publicationItem.themes
+							: this.publicationItem.themes.split(/, */g),
+					}),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
-					store.refreshPublicationList()
+					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
-						store.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
-					store.setSelected('publication')
-					setTimeout(() => (this.closeModal()), 2500)
+					navigationStore.setSelected('publication')
+
+					const self = this
+					setTimeout(() => {
+						self.success = null
+						navigationStore.setModal(false)
+					}, 2500)
 				})
 				.catch((err) => {
 					this.error = err
@@ -255,5 +307,12 @@ export default {
 
 .success {
   color: green;
+}
+
+.EPM-horizontal {
+    display: flex;
+    gap: 4px;
+    flex-direction: row;
+    align-items: center;
 }
 </style>

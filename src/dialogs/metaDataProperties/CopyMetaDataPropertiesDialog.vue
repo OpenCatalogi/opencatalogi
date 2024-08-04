@@ -1,23 +1,23 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'copyMetaDataProperty'"
+		v-if="navigationStore.dialog === 'copyMetaDataProperty'"
 		name="Metadata eigenschap verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.metadataDataKey }}</b> kopieren?
+			Wil je <b>{{ metadataStore.metadataDataKey }}</b> kopiëren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Metadata eigenschap succesvol gekpierd</p>
+			<p>Metadata eigenschap succesvol gekopieerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -33,7 +33,7 @@ import { store } from '../../store.js'
 					<Cancel v-if="loading" :size="20" />
 					<ContentCopy v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Kopiëren
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -57,6 +57,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -64,34 +65,34 @@ export default {
 	},
 	methods: {
 		CopyProperty() {
-			const name = 'kopie_' + store.metadataDataKey
-			store.metaDataItem.properties[name] = store.metaDataItem.properties[store.metadataDataKey]
+			const name = 'kopie_' + metadataStore.metadataDataKey
+			metadataStore.metaDataItem.properties[name] = metadataStore.metaDataItem.properties[metadataStore.metadataDataKey]
 
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.metaDataItem),
+					body: JSON.stringify(metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
-					store.setSelected('metaData')
+					navigationStore.setSelected('metaData')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

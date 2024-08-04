@@ -1,27 +1,27 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcAppContentList>
-		<ul v-if="!loading">
+		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="store.search"
-					label="Search"
+					:value.sync="search"
+					label="Zoeken"
 					trailing-button-icon="close"
 					:show-trailing-button="search !== ''"
-					@trailing-button-click="store.setSearch('')">
+					@trailing-button-click="search = ''">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
-					<NcActionButton @click="fetchData">
+					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="store.setModal('addListing')">
+					<NcActionButton @click="navigationStore.setModal('addListing')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -30,42 +30,45 @@ import { store } from '../../store.js'
 				</NcActions>
 			</div>
 
-			<NcListItem v-for="(listing, i) in store.listingList.results"
-				:key="`${listing}${i}`"
-				:name="listing.name ?? listing.title"
-				:active="store.listingItem?.id === listing?.id"
-				:details="'1h'"
-				:counter-number="45"
-				@click="store.setListingItem(listing)">
-				<template #icon>
-					<LayersOutline :class="store.listingItem?.id === listing?.id && 'selectedIcon'"
-						disable-menu
-						:size="44" />
-				</template>
-				<template #subname>
-					{{ listing?.title }}
-				</template>
-				<template #actions>
-					<NcActionButton @click="store.setListingItem(listing); store.setModal('editListing')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton @click="store.setListingItem(listing); store.setDialog('deleteListing')">
-						<template #icon>
-							<Delete :size="20" />
-						</template>
-						Verwijderen
-					</NcActionButton>
-				</template>
-			</NcListItem>
+			<div v-if="!loading">
+				<NcListItem v-for="(listing, i) in directoryStore.listingList"
+					:key="`${listing}${i}`"
+					:name="listing.name ?? listing.title"
+					:active="directoryStore.listingItem?.id === listing?.id"
+					:details="'1h'"
+					:counter-number="45"
+					@click="directoryStore.setListingItem(listing)">
+					<template #icon>
+						<LayersOutline :class="directoryStore.listingItem?.id === listing?.id && 'selectedIcon'"
+							disable-menu
+							:size="44" />
+					</template>
+					<template #subname>
+						{{ listing?.title }}
+					</template>
+					<template #actions>
+						<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
+							<template #icon>
+								<Pencil :size="20" />
+							</template>
+							Bewerken
+						</NcActionButton>
+						<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
+							<template #icon>
+								<Delete :size="20" />
+							</template>
+							Verwijderen
+						</NcActionButton>
+					</template>
+				</NcListItem>
+			</div>
+
+			<NcLoadingIcon v-if="loading"
+				class="loadingIcon"
+				:size="64"
+				appearance="dark"
+				name="Listings aan het laden" />
 		</ul>
-		<NcLoadingIcon v-if="loading"
-			class="loadingIcon"
-			:size="64"
-			appearance="dark"
-			name="Directories aan het laden" />
 	</NcAppContentList>
 </template>
 <script>
@@ -78,6 +81,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
+import { debounce } from 'lodash'
 
 export default {
 	name: 'DirectoryList',
@@ -104,12 +108,13 @@ export default {
 	data() {
 		return {
 			loading: false,
+			search: '',
 		}
 	},
 	watch: {
 		search: {
 			handler(search) {
-				this.fetchData()
+				this.debouncedFetchData(search)
 			},
 		},
 	},
@@ -117,11 +122,20 @@ export default {
 		this.fetchData()
 	},
 	methods: {
-		fetchData(newPage) {
+		fetchData(search = null) {
 			this.loading = true
-			store.refreshListingList()
-			this.loading = false
+			directoryStore.refreshListingList(search)
+				.then(() => {
+					this.loading = false
+				})
 		},
+		debouncedFetchData: debounce(function(search) {
+			this.fetchData(search)
+		}, 500),
+	},
+	beforeRouteLeave(to, from, next) {
+		search = ''
+		next()
 	},
 }
 </script>

@@ -1,30 +1,30 @@
 <script setup>
-import { store } from '../store.js'
+import { navigationStore, catalogiStore, publicationStore } from '../store/store.js'
 </script>
 
 <template>
 	<NcAppNavigation>
 		<NcAppNavigationList>
-			<NcAppNavigationNew text="Publicatie Aanmaken" @click="store.setModal('publicationAdd')">
+			<NcAppNavigationNew text="Publicatie Aanmaken" @click="navigationStore.setModal('publicationAdd')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
 			</NcAppNavigationNew>
-			<NcAppNavigationItem :active="store.selected === 'dashboard'" name="Dashboard" @click="store.setSelected('dashboard')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'dashboard'" name="Dashboard" @click="navigationStore.setSelected('dashboard')">
 				<template #icon>
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem v-for="(catalogus, i) in catalogi.results"
+			<NcAppNavigationItem v-for="(catalogus, i) in catalogiStore.catalogiList"
 				:key="`${catalogus}${i}`"
-				:name="catalogus?.name"
-				:active="catalogus._id === store.selectedCatalogus && store.selected === 'publication'"
+				:name="catalogus?.title"
+				:active="catalogus.id === navigationStore.selectedCatalogus && navigationStore.selected === 'publication'"
 				@click="switchCatalogus(catalogus)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'search'" name="Search" @click="store.setSelected('search')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'search'" name="Search" @click="navigationStore.setSelected('search')">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
 				</template>
@@ -32,17 +32,17 @@ import { store } from '../store.js'
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
-			<NcAppNavigationItem :active="store.selected === 'catalogi'" name="Catalogi" @click="store.setSelected('catalogi')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'catalogi'" name="Catalogi" @click="navigationStore.setSelected('catalogi')">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'directory'" name="Directory" @click="store.setSelected('directory')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'directory'" name="Directory" @click="navigationStore.setSelected('directory')">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="store.selected === 'metaData'" name="MetaData" @click="store.setSelected('metaData')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'metaData'" name="MetaData" @click="navigationStore.setSelected('metaData')">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>
@@ -54,17 +54,20 @@ import { store } from '../store.js'
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Application settings">
-				<NcAppSettingsSection id="sharing" name="Connections" doc-url="zaakafhandel.app">
+			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Applicatie instellingen">
+				<NcAppSettingsSection id="sharing" name="Connecties" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
 					</template>
 
 					<p>
-						Here you can set the details for varius Connections
+						Hier kunt u de details instellen voor verschillende verbindingen.
 					</p>
-					<NcCheckboxRadioSwitch :checked.sync="configuration.external" type="switch">
-						{{ t('forms', 'Enable sharing') }}
+					<NcCheckboxRadioSwitch :checked.sync="configuration.mongoStorage" type="switch">
+						{{ t('forms', 'Gebruik externe opslag (bijv. MongoDb) in plaats van de interne opslag van Next Cloud.') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch :checked.sync="configuration.cloudStorage" type="switch">
+						{{ t('forms', 'Gebruik VNG API\'s in plaats van MongoDB.') }}
 					</NcCheckboxRadioSwitch>
 					<p>
 						<table>
@@ -162,54 +165,54 @@ import { store } from '../store.js'
 							</tbody>
 						</table>
 					</p>
-					<NcButton aria-label="Save"
+					<NcButton aria-label="Opslaan"
 						type="primary"
 						wide
 						@click="saveConfig(); feedbackPosition = 'top'">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
-						Save
+						Opslaan
 					</NcButton>
 					<div v-if="feedbackPosition === 'top' && configurationSuccess !== -1">
 						<NcNoteCard :type="configurationSuccess ? 'success' : 'error'">
 							<p>
 								{{ configurationSuccess ?
-									'Success saving configuration' :
-									'Failed saving configuration'
+									'Configuratie succesvol opgeslagen.' :
+									'Opslaan van configuratie mislukt.'
 								}}
 							</p>
 						</NcNoteCard>
 					</div>
 				</NcAppSettingsSection>
-				<NcAppSettingsSection id="organisation" name="Organisation" doc-url="zaakafhandel.app">
+				<NcAppSettingsSection id="organisation" name="Organisatie" doc-url="zaakafhandel.app">
 					<template #icon>
 						<Connection :size="20" />
 					</template>
 
 					<p>
-						Here you can set the details for your organisation
+						Hier kunt u de details voor uw organisatie instellen.
 					</p>
 
 					<NcTextField id="organisationName" :value.sync="configuration.organisationName" />
 					<NcTextField id="organisationOin" :value.sync="configuration.organisationOin" />
 					<NcTextArea id="organisationPki" :value.sync="configuration.organisationPki" />
 
-					<NcButton aria-label="Save"
+					<NcButton aria-label="Opslaan"
 						type="primary"
 						wide
 						@click="saveConfig(); feedbackPosition = 'bottom'">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
-						Save
+						Opslaan
 					</NcButton>
 					<div v-if="feedbackPosition === 'bottom' && configurationSuccess !== -1">
 						<NcNoteCard :type="configurationSuccess ? 'success' : 'error'">
 							<p>
 								{{ configurationSuccess ?
-									'Success saving configuration' :
-									'Failed saving configuration'
+									'Configuratie succesvol opgeslagen.' :
+									'Opslaan van configuratie mislukt.'
 								}}
 							</p>
 						</NcNoteCard>
@@ -277,6 +280,7 @@ export default {
 	},
 	data() {
 		return {
+
 			// all of this is settings and should be moved
 			settingsOpen: false,
 			orc_location: '',
@@ -289,7 +293,6 @@ export default {
 			organisation_name: '',
 			organisation_oin: '',
 			organisation_pki: '',
-			catalogi: [],
 			configuration: {
 				external: false,
 				drcLocation: '',
@@ -313,28 +316,12 @@ export default {
 	},
 	mounted() {
 		this.fetchData()
+		catalogiStore.refreshCatalogiList()
 	},
 	methods: {
 		// We use the catalogi in the menu so lets fetch those
 		fetchData(newPage) {
 			this.loading = true
-			// Catalogi details
-			fetch(
-				'/index.php/apps/opencatalogi/api/catalogi',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.catalogi = data
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
 
 			fetch(
 				'/index.php/apps/opencatalogi/configuration',
@@ -386,10 +373,10 @@ export default {
 				})
 		},
 		switchCatalogus(catalogus) {
-			if (catalogus._id !== store.selectedCatalogus) store.setPublicationItem(false) // for when you switch catalogus
-			store.setSelected('publication')
-			store.setSelectedCatalogus(catalogus._id)
-			store.setCatalogiItem(catalogus)
+			if (catalogus.id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
+			navigationStore.setSelected('publication')
+			navigationStore.setSelectedCatalogus(catalogus.id)
+			catalogiStore.setCatalogiItem(catalogus)
 		},
 	},
 }

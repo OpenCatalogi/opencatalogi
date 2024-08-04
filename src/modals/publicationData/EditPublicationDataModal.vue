@@ -1,33 +1,48 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal
-		v-if="store.modal === 'editPublicationData'"
+	<NcModal v-if="navigationStore.modal === 'editPublicationData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		label-id="editPublicationPropertyModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bewerk publicatie eigenschappen</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Publicatie eigenschap succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie eigenschap succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van Publicatie eigenschap</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					:label="store.publicationDataKey"
-					:value.sync="store.publicationItem[store.publicationDataKey]" />
+					:label="publicationStore.publicationDataKey"
+					:value.sync="publicationStore.publicationItem.data[publicationStore.publicationDataKey]" />
 			</div>
 
-			<NcButton :disabled="!publication.title || loading" type="primary" @click="updatePublication(publication.id)">
-				<NcLoadingIcon v-if="loading" :size="20" />
-				<ContentSaveOutline v-if="!loading" :size="20" />
-			</NcButton>
-			<NcButton
-				@click="store.setModal(false)">
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
-			</NcButton>
+			<span class="flex-horizontal">
+				<NcButton v-if="success === null"
+					:disabled="!publicationStore.publicationItem.data[publicationStore.publicationDataKey] || loading"
+					type="primary"
+					@click="updatePublication(publicationStore.publicationItem.id)">
+					<template #icon>
+						<span>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<ContentSaveOutline v-if="!loading" :size="20" />
+						</span>
+					</template>
+					Opslaan
+				</NcButton>
+				<NcButton
+					@click="navigationStore.setModal(false)">
+					{{ success ? 'Sluiten' : 'Annuleer' }}
+				</NcButton>
+			</span>
 		</div>
 	</NcModal>
 </template>
@@ -38,6 +53,7 @@ import {
 	NcModal,
 	NcTextField,
 	NcLoadingIcon,
+	NcNoteCard,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
@@ -48,6 +64,7 @@ export default {
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
+		NcNoteCard,
 		// icons
 		ContentSaveOutline,
 	},
@@ -70,15 +87,15 @@ export default {
 				options: [],
 			},
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
 	updated() {
-		if (store.modal === 'editPublicationDataModal' && !this.hasUpdated) {
+		if (navigationStore.modal === 'editPublicationDataModal' && !this.hasUpdated) {
 			this.fetchCatalogi()
 			this.fetchMetaData()
-			this.fetchData(store.publicationId)
+			this.fetchData(publicationStore.publicationItem.id)
 			this.hasUpdated = true
 		}
 	},
@@ -117,7 +134,7 @@ export default {
 							value: this.catalogi.value,
 							inputLabel: 'Catalogi',
 							options: Object.entries(data.results).map((catalog) => ({
-								id: catalog[1]._id,
+								id: catalog[1].id,
 								label: catalog[1].name,
 							})),
 
@@ -141,7 +158,7 @@ export default {
 						this.metaData = {
 							inputLabel: 'MetaData',
 							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1]._id,
+								id: metaData[1].id,
 								label: metaData[1].name,
 							})),
 
@@ -154,9 +171,6 @@ export default {
 					this.metaDataLoading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
 		updatePublication(id) {
 			this.loading = true
 			fetch(
@@ -166,11 +180,26 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.publication),
+					body: JSON.stringify({
+						...publicationStore.publicationItem,
+						id: publicationStore.publicationItem.id.toString(),
+					}),
 				},
 			)
 				.then((response) => {
-					this.closeModal()
+					this.loading = false
+					this.success = response.ok
+
+					publicationStore.refreshPublicationList()
+					response.json().then((data) => {
+						publicationStore.setPublicationItem(data)
+					})
+
+					const self = this
+					setTimeout(() => {
+						self.success = null
+						navigationStore.setModal(false)
+					}, 2000)
 				})
 				.catch((err) => {
 					this.loading = false
@@ -195,5 +224,10 @@ export default {
 
 .success {
   color: green;
+}
+
+.flex-horizontal {
+    display: flex;
+    gap: 4px;
 }
 </style>

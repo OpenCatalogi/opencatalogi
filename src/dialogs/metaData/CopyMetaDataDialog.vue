@@ -1,23 +1,23 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'copyMetaData'"
+		v-if="navigationStore.dialog === 'copyMetaData'"
 		name="Metadata kopieren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.metaDataItem.title ?? store.metaDataItem.name }}</b> kopieren?
+			Wil je <b>{{ metadataStore.metaDataItem.title ?? metadataStore.metaDataItem.name }}</b> kopiëren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Metadata succesvol gekopierd</p>
+			<p>Metadata succesvol gekopieerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -32,7 +32,7 @@ import { store } from '../../store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentCopy v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Kopiëren
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -57,6 +57,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -65,12 +66,12 @@ export default {
 	methods: {
 		CopyMetadata() {
 			this.loading = true
-			store.metaDataItem.title = 'KOPIE: ' + store.metaDataItem.title
-			if (Object.keys(store.metaDataItem.properties).length === 0) {
-				delete store.metaDataItem.properties
+			metadataStore.metaDataItem.title = 'KOPIE: ' + metadataStore.metaDataItem.title
+			if (Object.keys(metadataStore.metaDataItem.properties).length === 0) {
+				delete metadataStore.metaDataItem.properties
 			}
-			delete store.metaDataItem.id
-			delete store.metaDataItem._id
+			delete metadataStore.metaDataItem.id
+			delete metadataStore.metaDataItem._id
 			fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
 				{
@@ -78,23 +79,23 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.metaDataItem),
+					body: JSON.stringify(metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
-					store.setSelected('metaData')
+					navigationStore.setSelected('metaData')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

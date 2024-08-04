@@ -17,7 +17,6 @@ class DirectoryService
 		private readonly ObjectService $objectService,
 	)
 	{
-        $this->config = $config;
 		$this->client = new Client([]);
 	}
 
@@ -40,6 +39,8 @@ class DirectoryService
 
 	public function registerToExternalDirectory (array $newDirectory): int
 	{
+
+		if($this->config->getValueString())
 		$dbConfig['base_uri'] = $this->config->getValueString('opencatalogi', 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString('opencatalogi', 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString('opencatalogi', 'mongodbCluster');
@@ -85,7 +86,7 @@ class DirectoryService
 	{
 		$result = $this->client->get($directory['directory']);
 
-		$results = json_decode($result->getBody()->getContents());
+		$results = json_decode($result->getBody()->getContents(), true);
 
 		foreach($results['results'] as $record) {
 			$this->createDirectoryFromResult($record);

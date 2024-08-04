@@ -1,23 +1,23 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'depublishPublication'"
+		v-if="navigationStore.dialog === 'depublishPublication'"
 		name="Publicatie de-publiseren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.publicationItem.name ?? store.publicationItem.title }}</b> depubliseren? De publicatie is dan niet meer vindbaar via de zoek index. Bijlagen die alléén aan deze publicatie zijn gekoppeld zijn dan ook niet meer vindbaar
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> depubliceren? De publicatie is dan niet meer vindbaar via de zoek index. Bijlagen die alléén aan deze publicatie zijn gekoppeld zijn dan ook niet meer vindbaar
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Publicatie succesvol gedepubliseerd</p>
+			<p>Publicatie succesvol gedepubliceerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -33,7 +33,7 @@ import { store } from '../../store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<PublishOff v-if="!loading" :size="20" />
 				</template>
-				Depubliseren
+				Depubliceren
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -58,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -66,30 +67,30 @@ export default {
 	methods: {
 		DepublishPublication() {
 			this.loading = true
-			store.publicationItem.status = 'retracted'
-			store.publicationItem.published = ''
+			publicationStore.publicationItem.status = 'retracted'
+			publicationStore.publicationItem.published = ''
 			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${store.publicationItem.id}`,
+				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationItem),
+					body: JSON.stringify(publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshPublicationList()
-					store.getConceptPublications()
+					publicationStore.refreshPublicationList()
+					publicationStore.getConceptPublications()
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setPublicationItem(false)
-						store.setDialog(false)
+						publicationStore.setPublicationItem(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

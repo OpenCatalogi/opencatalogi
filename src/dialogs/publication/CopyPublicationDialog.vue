@@ -1,23 +1,23 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'copyPublication'"
+		v-if="navigationStore.dialog === 'copyPublication'"
 		name="Publicatie kopieren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.publicationItem.name ?? store.publicationItem.title }}</b> kopieren?
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> kopiëren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Publicatie succesvol gekopierd</p>
+			<p>Publicatie succesvol gekopieerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -32,7 +32,7 @@ import { store } from '../../store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentCopy v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Kopiëren
 			</NcButton>
 		</template>
 	</NcDialog>
@@ -57,6 +57,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -65,13 +66,13 @@ export default {
 	methods: {
 		CopyPublication() {
 			this.loading = true
-			store.publicationItem.title = 'KOPIE: ' + store.publicationItem.title
-			if (Object.keys(store.publicationItem.data).length === 0) {
-				delete store.publicationItem.data
+			publicationStore.publicationItem.title = 'KOPIE: ' + publicationStore.publicationItem.title
+			if (Object.keys(publicationStore.publicationItem.data).length === 0) {
+				delete publicationStore.publicationItem.data
 			}
-			delete store.publicationItem.id
-			delete store.publicationItem._id
-			store.publicationItem.status = 'concept'
+			delete publicationStore.publicationItem.id
+			delete publicationStore.publicationItem._id
+			publicationStore.publicationItem.status = 'concept'
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -79,24 +80,24 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.publicationItem),
+					body: JSON.stringify(publicationStore.publicationItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshPublicationList()
+					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
-						store.setPublicationItem(data)
+						publicationStore.setPublicationItem(data)
 					})
-					store.setSelected('publication')
+					navigationStore.setSelected('publication')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setPublicationItem(false)
-						store.setDialog(false)
+						publicationStore.setPublicationItem(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {

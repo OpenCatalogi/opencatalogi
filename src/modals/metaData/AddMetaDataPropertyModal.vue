@@ -1,11 +1,12 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="store.modal === 'addMetadataDataModal'"
+		v-if="navigationStore.modal === 'addMetadataDataModal'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		label-id="addMetaDataPropertyModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap toevoegen</h2>
 			<NcNoteCard v-if="success" type="success">
@@ -17,52 +18,113 @@ import { store } from '../../store.js'
 
 			<div v-if="!success" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Naam"
+					label="Eigenschap naam"
 					required
-					:value.sync="propertyName" />
+					:value.sync="properties.title" />
+
+				<NcTextField :disabled="loading"
+					label="Beschrijving"
+					:value.sync="properties.description" />
 
 				<NcSelect v-bind="typeOptions"
 					v-model="properties.type"
 					required />
 
-				<NcTextField :disabled="loading"
-					label="description"
-					:value.sync="properties.description" />
+				<NcSelect v-bind="formatOptions"
+					v-model="properties.format" />
 
 				<NcTextField :disabled="loading"
-					label="format"
-					:value.sync="properties.format" />
+					label="Patroon (regex)"
+					:value.sync="properties.pattern" />
 
 				<NcTextField :disabled="loading"
-					label="max date"
-					:value.sync="properties.maxDate" />
+					label="Default waarde"
+					:value.sync="properties.default" />
+
+				<NcTextField :disabled="loading"
+					label="Gedrag"
+					:value.sync="properties.behavior" />
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
 					:checked.sync="properties.required">
-					Required
+					Verplicht
 				</NcCheckboxRadioSwitch>
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
-					:checked.sync="properties.default">
-					Default
+					:checked.sync="properties.deprecated">
+					Verouderd
 				</NcCheckboxRadioSwitch>
 
-				<NcCheckboxRadioSwitch
-					:disabled="loading"
-					:checked.sync="properties.cascadeDelete">
-					Cascade delete
-				</NcCheckboxRadioSwitch>
+				<NcInputField :disabled="loading"
+					type="number"
+					label="Minimum lengte"
+					:value.sync="properties.minLength" />
+
+				<NcInputField :disabled="loading"
+					type="number"
+					label="Maximum lengte"
+					:value.sync="properties.maxLength" />
 
 				<NcTextField :disabled="loading"
-					type="number"
-					label="Exclusive minimum"
-					:value.sync="properties.exclusiveMinimum" />
+					label="Voorbeeld"
+					:value.sync="properties.example" />
+
+				<!-- type integer and number only -->
+				<div v-if="properties.type === 'integer' || properties.type === 'number'">
+					<h5 class="weightNormal">
+						type: nummer
+					</h5>
+
+					<NcInputField :disabled="loading"
+						type="number"
+						label="Minimum waarde"
+						:value.sync="properties.minimum" />
+
+					<NcInputField :disabled="loading"
+						type="number"
+						label="Maximum waarde"
+						:value.sync="properties.maximum" />
+
+					<NcInputField :disabled="loading"
+						type="number"
+						label="Deelbaar door"
+						:value.sync="properties.multipleOf" />
+
+					<NcCheckboxRadioSwitch
+						:disabled="loading"
+						:checked.sync="properties.exclusiveMin">
+						Exclusief minimum
+					</NcCheckboxRadioSwitch>
+
+					<NcCheckboxRadioSwitch
+						:disabled="loading"
+						:checked.sync="properties.exclusiveMax">
+						Exclusief maximum
+					</NcCheckboxRadioSwitch>
+				</div>
+
+				<!-- type array only -->
+				<div v-if="properties.type === 'array'">
+					<h5 class="weightNormal">
+						type: array
+					</h5>
+
+					<NcInputField :disabled="loading"
+						type="number"
+						label="Minimale hoeveelheid items"
+						:value.sync="properties.minItems" />
+
+					<NcInputField :disabled="loading"
+						type="number"
+						label="Minimale hoeveelheid items"
+						:value.sync="properties.maxItems" />
+				</div>
 			</div>
 
 			<NcButton v-if="!success"
-				:disabled="!propertyName || !properties.type || loading"
+				:disabled="!properties.title || !properties.type || loading"
 				type="primary"
 				@click="AddMetadata()">
 				<template #icon>
@@ -76,7 +138,7 @@ import { store } from '../../store.js'
 
 			<NcButton v-if="success"
 				type="primary"
-				@click="store.setModal(false)">
+				@click="navigationStore.setModal(false)">
 				Sluiten
 			</NcButton>
 		</div>
@@ -90,6 +152,7 @@ import {
 	NcTextField,
 	NcSelect,
 	NcCheckboxRadioSwitch,
+	NcInputField,
 	NcNoteCard,
 	NcLoadingIcon,
 } from '@nextcloud/vue'
@@ -104,32 +167,43 @@ export default {
 		NcTextField,
 		NcSelect,
 		NcCheckboxRadioSwitch,
+		NcInputField,
 		NcButton,
 		NcNoteCard,
 		NcLoadingIcon,
 	},
 	data() {
 		return {
-			propertyName: '',
 			properties: {
-				type: '',
+				title: '',
 				description: '',
+				type: '',
 				format: '',
-				maxDate: '',
+				pattern: '',
+				default: '',
+				behavior: '',
 				required: false,
-				default: false,
-				cascadeDelete: false,
-				exclusiveMinimum: '',
+				deprecated: false,
+				minLength: 0,
+				maxLength: 0,
+				example: '',
+				minimum: 0,
+				maximum: 0,
+				multipleOf: 0,
+				exclusiveMin: false,
+				exclusiveMax: false,
+				minItems: 0,
+				maxItems: 0,
 			},
 			typeOptions: {
 				inputLabel: 'Type',
 				multiple: false,
-				options: [
-					'string',
-					'boolean',
-					'object',
-					'array',
-				],
+				options: ['string', 'number', 'integer', 'object', 'array', 'boolean', 'dictionary'],
+			},
+			formatOptions: {
+				inputLabel: 'Format',
+				multiple: false,
+				options: ['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'],
 			},
 			loading: false,
 			success: false,
@@ -138,45 +212,52 @@ export default {
 		}
 	},
 	methods: {
-		closeModal() {
-			store.modal = false
-		},
 		AddMetadata() {
-			store.metaDataItem.properties[this.propertyName] = this.properties
+			metadataStore.metaDataItem.properties[this.properties.title] = this.properties
 
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.metaDataItem),
+					body: JSON.stringify(metadataStore.metaDataItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.success = true
 					// Lets refresh the catalogiList
-					store.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
 					setTimeout(() => {
 						// lets reset
-						this.propertyName = ''
 						this.properties = {
-							type: '',
+							title: '',
 							description: '',
+							type: '',
 							format: '',
-							maxDate: '',
+							pattern: '',
+							default: '',
+							behavior: '',
 							required: false,
-							default: false,
-							cascadeDelete: false,
-							exclusiveMinimum: '',
+							deprecated: false,
+							minLength: 0,
+							maxLength: 0,
+							example: '',
+							minimum: 0,
+							maximum: 0,
+							multipleOf: 0,
+							exclusiveMin: false,
+							exclusiveMax: false,
+							minItems: 0,
+							maxItems: 0,
 						}
-						this.closeModal()
+						navigationStore.setModal(false)
 					    this.success = false
 					}, 2000)
 				})
@@ -208,5 +289,9 @@ export default {
 
 .success {
   color: green;
+}
+
+.weightNormal {
+    font-weight: normal;
 }
 </style>

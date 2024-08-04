@@ -1,4 +1,15 @@
 {
   "files.autoSave": "afterDelay",
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+"editor.formatOnSave": true,
+"cSpell.words": [
+    "gedepubliceerd",
+    "depubliceren",
+    "Depubliceren",
+    "Matadata",
+    "nextcloud",
+    "opencatalogi",
+    "pinia",
+    "Toegangs"
+]
 }

@@ -1,30 +1,41 @@
 <script setup>
-import { store } from '../../store.js'
+import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="store.modal === 'editCatalog'" ref="modalRef" @close="store.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'editCatalog'"
+		ref="modalRef"
+		label-id="editCatalogModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Catalogus succesvol bewerkt</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Catalogus succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van de catalogus</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Naam"
+					label="Titel"
 					maxlength="255"
-					:value.sync="store.catalogiItem.name"
+					:value.sync="catalogiStore.catalogiItem.title"
 					required />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
-					:value.sync="store.catalogiItem.summary" />
+					:value.sync="catalogiStore.catalogiItem.summary" />
+				<NcTextField :disabled="loading"
+					label="Beschrijving"
+					maxlength="255"
+					:value.sync="catalogiStore.catalogiItem.description" />
 			</div>
-			<NcButton
-				v-if="!succes"
+			<NcButton v-if="success === null"
 				:disabled="loading"
 				type="primary"
 				@click="editCatalog()">
@@ -56,40 +67,40 @@ export default {
 	data() {
 		return {
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
 	methods: {
 		closeModal() {
-			store.modal = false
+			navigationStore.modal = false
 		},
 		editCatalog() {
 			this.loading = true
 			this.error = false
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${store.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.catalogiItem),
+					body: JSON.stringify(catalogiStore.catalogiItem),
 				},
 			)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
+					this.success = response.ok
 					// Lets refresh the catalogiList
-					store.refreshCatalogiList()
+					catalogiStore.refreshCatalogiList()
 					response.json().then((data) => {
-						store.setCatalogiItem(data)
+						catalogiStore.setCatalogiItem(data)
 					})
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
-						store.setModal(false)
+						self.success = null
+						navigationStore.setModal(false)
 					}, 2000)
 				})
 				.catch((err) => {

@@ -1,29 +1,34 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal
-		v-if="store.modal === 'editMetaData'"
+	<NcModal v-if="navigationStore.modal === 'editMetaData'"
 		ref="modalRef"
-		@close="store.setModal(false)">
+		label-id="editMetaDataModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData bewerken</h2>
-			<NcNoteCard v-if="succes" type="success">
-				<p>Meta data succesvol gewijzigd</p>
-			</NcNoteCard>
-			<NcNoteCard v-if="error" type="error">
-				<p>{{ error }}</p>
-			</NcNoteCard>
-			<div v-if="!succes" class="form-group">
-				<NcTextField label="Titel" :disabled="loading" :value.sync="store.metaDataItem.title" />
-				<NcTextField label="Versie" :disabled="loading" :value.sync="store.metaDataItem.version" />
-				<NcTextField label="Samenvatting" :disabled="loading" :value.sync="store.metaDataItem.summery" />
-				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="store.metaDataItem.description" />
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Metadata succesvol bewerkt</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het bewerken van metadata</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
+			<div v-if="success == null" class="form-group">
+				<NcTextField label="Titel" :disabled="loading" :value.sync="metadataStore.metaDataItem.title" />
+				<NcTextField label="Versie" :disabled="loading" :value.sync="metadataStore.metaDataItem.version" />
+				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metadataStore.metaDataItem.description" />
+				<NcTextField label="vereisten (splits op ,)" :value.sync="metadataStore.metaDataItem.required" />
 			</div>
 			<NcButton
-				v-if="!succes"
-				:disabled="!store.metaDataItem.title || loading"
+				v-if="success == null"
+				:disabled="!metadataStore.metaDataItem.title || loading"
 				type="primary"
 				@click="editMetaData">
 				<template #icon>
@@ -54,8 +59,9 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
@@ -70,7 +76,7 @@ export default {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-						store.setMetaDataItem(data)
+						metadataStore.setMetaDataItem(data)
 					})
 					this.loading = false
 				})
@@ -79,34 +85,34 @@ export default {
 					this.loading = false
 				})
 		},
-		closeModal() {
-			store.modal = false
-		},
 		editMetaData() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem?.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem?.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(store.metaDataItem),
+					body: JSON.stringify({
+						...metadataStore.metaDataItem,
+						required: metadataStore.metaDataItem.required.split(/, */g),
+					}),
 				},
 			).then((response) => {
 				this.loading = false
-				this.succes = true
+				this.success = response.ok
 				// Lets refresh the catalogiList
-				store.refreshMetaDataList()
+				metadataStore.refreshMetaDataList()
 				response.json().then((data) => {
-					store.setMetaDataItem(data)
+					metadataStore.setMetaDataItem(data)
 				})
-				store.setSelected('metaData')
+				navigationStore.setSelected('metaData')
 				// Wait for the user to read the feedback then close the model
 				const self = this
 				setTimeout(function() {
-					self.succes = false
-					store.setModal(false)
+					self.success = null
+					navigationStore.setModal(false)
 				}, 2000)
 			}).catch((err) => {
 				this.error = err

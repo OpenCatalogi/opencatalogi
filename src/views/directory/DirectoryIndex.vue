@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, searchStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcAppContent>
 		<template #list>
-			<DirectoryList :search="store.search" />
+			<DirectoryList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!store.listingItem || store.selected != 'directory' "
+			<NcEmptyContent v-if="!directoryStore.listingItem || navigationStore.selected != 'directory' "
 				class="detailContainer"
 				name="Geen directory"
 				description="Nog geen directory geselecteerd">
@@ -16,12 +16,12 @@ import { store } from '../../store.js'
 					<LayersOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="store.setModal('addListing')">
+					<NcButton type="primary" @click="navigationStore.setModal('addListing')">
 						Directory toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<ListingDetails v-if="store.listingItem && store.selected === 'directory'" :listing-item="store.listingItem" />
+			<ListingDetails v-if="directoryStore.listingItem && navigationStore.selected === 'directory'" :listing-item="directoryStore.listingItem" />
 		</template>
 	</NcAppContent>
 </template>
@@ -42,6 +42,11 @@ export default {
 		DirectoryList,
 		ListingDetails,
 		LayersOutline,
+	},
+	data() {
+		return {
+
+		}
 	},
 }
 </script>

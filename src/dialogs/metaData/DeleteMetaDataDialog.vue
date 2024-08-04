@@ -1,14 +1,14 @@
 <script setup>
-import { store } from '../../store.js'
+import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="store.dialog === 'deleteMetaData'"
+		v-if="navigationStore.dialog === 'deleteMetaData'"
 		name="Metadata verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ store.metaDataItem.title ?? store.metaDataItem.name }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ metadataStore.metaDataItem.title ?? metadataStore.metaDataItem.name }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Metadata succesvol verwijderd</p>
@@ -17,7 +17,7 @@ import { store } from '../../store.js'
 			<p>{{ error }}</p>
 		</NcNoteCard>
 		<template #actions>
-			<NcButton :disabled="loading" icon="" @click="store.setDialog(false)">
+			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
@@ -58,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+
 			loading: false,
 			succes: false,
 			error: false,
@@ -67,7 +68,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${store.metaDataItem.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -79,13 +80,13 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					store.refreshMetaDataList()
+					metadataStore.refreshMetaDataList()
+					metadataStore.setMetaDataItem(false)
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						store.setMetaDataItem(false)
-						store.setDialog(false)
+						navigationStore.setDialog(false)
 					}, 2000)
 				})
 				.catch((err) => {
