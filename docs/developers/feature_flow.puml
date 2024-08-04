@@ -1,0 +1,37 @@
+@startuml
+actor Gebruiker
+actor ProductOwner as "Product Owner"
+actor ProductSturingGroep as "Stuur Groep"
+actor Ontwikkelingspartij as "Development Partij"
+actor Beheerderspartij as "Beheer Partij"
+
+Gebruiker -> ProductOwner: Maakt feature-aanvraag via GitHub issue
+ProductOwner -> ProductOwner: Keurt feature-aanvraag goed of af
+ProductOwner -> Gebruiker: Informeert beslissing (goedgekeurd of afgewezen)
+
+alt Feature-aanvraag afgewezen
+    Gebruiker -> ProductSturingGroep: Vraagt eventueel om de beslissing te overrule
+    ProductSturingGroep -> ProductOwner: Bespreekt overrule
+    ProductSturingGroep -> Gebruiker: Informeert beslissing (goedgekeurd of afgewezen)
+end
+
+alt Feature-aanvraag goedgekeurd
+    Gebruiker -> Ontwikkelingspartij: Zoekt ontwikkelingspartij
+    Ontwikkelingspartij -> Ontwikkelingspartij: Forkt de codebase
+    Ontwikkelingspartij -> Ontwikkelingspartij: Bouwt de feature
+    Ontwikkelingspartij -> Beheerderspartij: Maakt PR met verwijzing naar het issue-nummer
+    Beheerderspartij -> Beheerderspartij: Beoordeelt code op basis van issue en codeerstandaard
+
+    note right of Beheerderspartij
+        De beheerderspartij mag de PR alleen
+        beoordelen op basis van het goedgekeurde
+        issue en de codeerstandaard.
+    end note
+
+    alt PR afgewezen
+        Gebruiker -> ProductSturingGroep: Vraagt om de beslissing te overrule
+        ProductSturingGroep -> Beheerderspartij: Bespreekt overrule
+        ProductSturingGroep -> Gebruiker: Informeert beslissing (goedgekeurd of afgewezen)
+    end
+end
+@enduml

@@ -16,12 +16,16 @@ Daarbovenop hanteren we een aantal extra spelregeles:
 * **Seperation of concerns**: Voor zowel backend als frontend moet business logic zijn opgenomen in Services. Dat betekend dat Controllers, Templates, Views, Components en Store _géén_ business logic mogen bevatten.
 * **Vier ogen principe**: Pull requests moeten zijn beoordeeld door een andere developer dan de maker voordat ze worden geaccepteerd
 * **Automatische test**: Code mag alleen naar master/main als alle automatische tests goed gaan
+* **Vraag gestuurde development**: Code wordt alleen geacepteerd als deze is gekopeld aan een door de PO goed gekeurde user story ([regel](https://github.com/OpenCatalogi/.github/issues/new/choose) die dus eerst)
+
+## Feature flow
+![alt text](feature_flow.png)
 
 ## Application development
 
-Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het _documentation-first_ principe gehanteerd, waarbij de ontwikkelaars eerst de[ Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) hebben geraadpleegd.
+Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het _documentation-first_ principe gehanteerd, waarbij de ontwikkelaars eerst de [ Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) hebben geraadpleegd.
 
-## Kwaliteit, Stabilitiet en veiligheid
+## Kwaliteit, Stabilitiet en Veiligheid
 Als onderdeel van de CI/CD straat voeren we een aantal tests uit, hiermee handhaven we zowel de code quility eisen van nextcloud als die van onzelf. Deze test worden geborgt in een workflow zodat je de resultaten zelf op iedere commit ziet. Let op! het falen van deze tests betekend dat de code niet naar master/main kan worden gemerged en dus niet in productie kan worden genomen. 
 
 ### Voor de kwaliteit van de code maken we gebruik van linters
@@ -80,6 +84,8 @@ Voor bijde geld dat het aantal acceptabele critcal vulnurabilities 0 is.
 ### Gebruikers documentatie
 
 We gebruiken Gitbook voor de gebruikers documentatie, features binnen de app zouden zo veel mogelijk direct moeten doorverwijzen naar deze documentatie.
+
+Ook voor de documentatie wordt een linter gerbuikt namenlijk 
 
 ## API Development
 
