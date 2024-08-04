@@ -175,7 +175,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-			search: '',
 		}
 	},
 	computed: {

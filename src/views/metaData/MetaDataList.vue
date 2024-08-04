@@ -123,7 +123,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-			search: '',
 		}
 	},
 	watch: {
