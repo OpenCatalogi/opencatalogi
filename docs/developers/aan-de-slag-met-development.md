@@ -30,7 +30,9 @@ De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.
 
 ## Frontend Development
 
-### Storage en Typing
+
+
+### Typing, Storage en Typing
 
 Om gegevens deelbaar te maken tussen de verschillende Vue-componenten maken we gebruik van [statemanagement](https://vuejs.org/guide/scaling-up/state-management) waarbij we het Action, State, View patroon van Vue zelf volgen. Omdat de applicatie ingewikkelder begint te worden stappen we daarbij over van [simple state management](https://vuejs.org/guide/scaling-up/state-management#simple-state-management-with-reactivity-api) naar [Pinia](https://pinia.vuejs.org/), de door Vue zelf geadviseerde opvolger van [Vuex](https://vuejs.org/guide/scaling-up/state-management#pinia).
 
@@ -50,3 +52,7 @@ Omdat Pinia vanuit zichzelf al typing ondersteund en daarop testbaar is vervalt 
 * Views moeten dezelfde bestandsnaam hebben als de geëxporteerde naam en een correlatie hebben met de map waarin het bestand zich bevindt.
 * Bijvoorbeeld, als het bestand een detailpagina is en het zich in de map `publications` bevindt, moet het bestand de naam `PublicationDetail.vue` hebben.
 
+## Documentatie
+- [Icons](https://pictogrammers.com/library/mdi/)
+- [Layout](https://docs.nextcloud.com/server/latest/developer_manual/design/layout.html)-
+- [Componenten](https://nextcloud-vue-components.netlify.app/)
