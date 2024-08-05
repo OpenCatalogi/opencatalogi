@@ -78,7 +78,7 @@ $ npm audit
 Voor php de backend is dat:
 
 ```cli
-$ ???
+$ composer audit
 ```
 ![alt text](composer_audit.png)
 
