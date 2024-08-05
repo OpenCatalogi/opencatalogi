@@ -16,12 +16,12 @@ const metadataStore = useMetadataStore(pinia)
 const publicationStore = usePublicationStore(pinia)
 
 export {
-	// generic
-	navigationStore,
-	searchStore,
-	// feature-specific
-	catalogiStore,
-	directoryStore,
-	metadataStore,
-	publicationStore,
+    // generic
+    navigationStore,
+    searchStore,
+    // feature-specific
+    catalogiStore,
+    directoryStore,
+    metadataStore,
+    publicationStore,
 }
