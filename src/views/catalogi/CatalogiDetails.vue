@@ -23,7 +23,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				</template>
 				<NcActionButton
 					title="Bekijk de documentatie over catalogi"
-					@click="open('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/catalogi', '_blank')">
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/catalogi', '_blank')">
 					<template #icon>
 						<HelpCircleOutline :size="20" />
 					</template>
@@ -141,7 +141,7 @@ export default {
 					this.loading = false
 				})
 		},
-		open(url, type = '') {
+		openLink(url, type = '') {
 			window.open(url, type)
 		},
 	},

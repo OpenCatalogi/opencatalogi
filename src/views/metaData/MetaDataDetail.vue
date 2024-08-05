@@ -18,7 +18,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				:menu-name="loading ? 'Laden...' : 'Acties'">
 				<NcActionButton
 					title="Bekijk de documentatie over metadata"
-					@click="open('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">
 					<template #icon>
 						<HelpCircleOutline :size="20" />
 					</template>
@@ -199,7 +199,7 @@ export default {
 					this.loading = false
 				})
 		},
-		open(url, type = '') {
+		openLink(url, type = '') {
 			window.open(url, type)
 		},
 	},

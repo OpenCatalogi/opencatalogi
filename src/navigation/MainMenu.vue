@@ -29,7 +29,7 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<LayersSearchOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem name="Documentatie" @click="open('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers', '_blank')">
+			<NcAppNavigationItem name="Documentatie" @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers', '_blank')">
 				<template #icon>
 					<BookOpenVariantOutline :size="20" />
 				</template>
@@ -161,7 +161,7 @@ export default {
 			navigationStore.setSelectedCatalogus(catalogus.id)
 			catalogiStore.setCatalogiItem(catalogus)
 		},
-		open(url, type = '') {
+		openLink(url, type = '') {
 			window.open(url, type)
 		},
 	},

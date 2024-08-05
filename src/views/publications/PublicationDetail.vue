@@ -25,7 +25,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 				</template>
 				<NcActionButton
 					title="Bekijk de documentatie over publicaties"
-					@click="open('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
 					<template #icon>
 						<HelpCircleOutline :size="20" />
 					</template>
@@ -533,7 +533,7 @@ export default {
 			catalogiStore.setCatalogiItem(this.catalogi)
 			navigationStore.setSelected('catalogi')
 		},
-		open(url, type = '') {
+		openLink(url, type = '') {
 			window.open(url, type)
 		},
 	},
