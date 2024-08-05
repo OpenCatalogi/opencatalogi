@@ -16,7 +16,7 @@ Daarbovenop hanteren we een aantal extra spelregels:
 * **Seperation of concerns**: Voor zowel backend als frontend moet business logica zijn opgenomen in Services. Dat betekent dat Controllers, Templates, Views, Componenten en Store _géén_ business logica mogen bevatten.
 * **Vier ogen-principe**: Pull requests moeten zijn beoordeeld door een andere developer dan de maker voordat ze worden geaccepteerd
 * **Automatische test**: Code mag alleen naar master/main als alle automatische tests goed gaan
-* **Vraag gestuurde development**: Code wordt alleen geaccepteerd als deze is gekoppeld aan een door de PO goed gekeurde user story ([regel](https://github.com/OpenCatalogi/.github/issues/new/choose) die dus eerst)
+* **Vraag gestuurde development**: Code wordt alleen geaccepteerd als deze is gekoppeld aan een door de PO goedgekeurde user story ([regel](https://github.com/OpenCatalogi/.github/issues/new/choose))
 
 ## Feature flow
 
@@ -65,10 +65,12 @@ npm run test-coverage
 Voor de backend is dat:
 
 ```cli
-???
+phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml
 ```
 
 Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele errors 0.
+
+> **Note** We volgens de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html)
 
 ## Voor veiligheid gebruiken we dependency scanning
 
@@ -96,7 +98,7 @@ We gebruiken Gitbook voor de gebruikersdocumentatie. Features binnen de app zoud
 
 Ook voor de documentatie wordt een linter gebruikt namelijk [remarklint](https://github.com/remarkjs/remark-lint).
 
-De commando's om deze linter in de CLI te gebruiken zijn [hier te vinden](npx remark doc/ --use remark-preset-lint-consistent --use remark-preset-lint-recommended) voor een uitgebreide output in de terminal.
+De commando's om deze linter in de CLI te gebruiken zijn [hier te vinden](https://github.com/remarkjs/remark-lint?tab=readme-ov-file#what-is-this) voor een uitgebreide output in de terminal.
 
 ## API Development
 
