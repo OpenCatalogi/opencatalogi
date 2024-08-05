@@ -8,43 +8,46 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			<h1 class="h1">
 				{{ catalogi.title }}
 			</h1>
-			<div class="flex-hor">
-				<a target="_blank" href="https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/catalogi">
-					<NcButton type="tertiary-no-background">
-						<template #icon>
-							<HelpCircleOutline :size="20" />
-						</template>
-					</NcButton>
-				</a>
-				<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+
+			<NcActions :disabled="loading"
+				:primary="true"
+				:inline="1"
+				:menu-name="loading ? 'Laden...' : 'Acties'">
+				<template #icon>
+					<span>
+						<NcLoadingIcon v-if="loading"
+							:size="20"
+							appearance="dark" />
+						<DotsHorizontal v-if="!loading" :size="20" />
+					</span>
+				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over catalogi"
+					@click="open('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/catalogi', '_blank')">
 					<template #icon>
-						<span>
-							<NcLoadingIcon v-if="loading"
-								:size="20"
-								appearance="dark" />
-							<DotsHorizontal v-if="!loading" :size="20" />
-						</span>
+						<HelpCircleOutline :size="20" />
 					</template>
-					<NcActionButton @click="navigationStore.setModal('editCatalog')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton @click="navigationStore.setSelected('publication'); navigationStore.setSelectedCatalogus(catalogi?.id)">
-						<template #icon>
-							<OpenInApp :size="20" />
-						</template>
-						Catalogus bekijken
-					</NcActionButton>
-					<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
-						<template #icon>
-							<Delete :size="20" />
-						</template>
-						Verwijderen
-					</NcActionButton>
-				</NcActions>
-			</div>
+					Help
+				</NcActionButton>
+				<NcActionButton @click="navigationStore.setModal('editCatalog')">
+					<template #icon>
+						<Pencil :size="20" />
+					</template>
+					Bewerken
+				</NcActionButton>
+				<NcActionButton @click="navigationStore.setSelected('publication'); navigationStore.setSelectedCatalogus(catalogi?.id)">
+					<template #icon>
+						<OpenInApp :size="20" />
+					</template>
+					Catalogus bekijken
+				</NcActionButton>
+				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
+					<template #icon>
+						<Delete :size="20" />
+					</template>
+					Verwijderen
+				</NcActionButton>
+			</NcActions>
 		</div>
 		<span>{{ catalogi.summary }}</span>
 		<div class="tabContainer">
@@ -68,7 +71,6 @@ import {
 	NcActions,
 	NcActionButton,
 	NcLoadingIcon,
-	NcButton,
 } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
@@ -138,6 +140,9 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+		},
+		open(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }

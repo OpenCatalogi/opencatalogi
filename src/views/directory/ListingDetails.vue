@@ -8,37 +8,39 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			<h1 class="h1">
 				{{ listing.title }}
 			</h1>
-			<div class="flex-hor">
-				<a target="_blank" href="https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory">
-					<NcButton type="tertiary-no-background">
-						<template #icon>
-							<HelpCircleOutline :size="20" />
-						</template>
-					</NcButton>
-				</a>
-				<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+			<NcActions :disabled="loading"
+				:primary="true"
+				:inline="1"
+				:menu-name="loading ? 'Laden...' : 'Acties'">
+				<NcActionButton
+					title="Bekijk de documentatie over directories"
+					@click="open('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory', '_blank')">
 					<template #icon>
-						<span>
-							<NcLoadingIcon v-if="loading"
-								:size="20"
-								appearance="dark" />
-							<DotsHorizontal v-if="!loading" :size="20" />
-						</span>
+						<HelpCircleOutline :size="20" />
 					</template>
-					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
-						<template #icon>
-							<Delete :size="20" />
-						</template>
-						Verwijderen
-					</NcActionButton>
-				</NcActions>
-			</div>
+					Help
+				</NcActionButton>
+				<template #icon>
+					<span>
+						<NcLoadingIcon v-if="loading"
+							:size="20"
+							appearance="dark" />
+						<DotsHorizontal v-if="!loading" :size="20" />
+					</span>
+				</template>
+				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
+					<template #icon>
+						<Pencil :size="20" />
+					</template>
+					Bewerken
+				</NcActionButton>
+				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
+					<template #icon>
+						<Delete :size="20" />
+					</template>
+					Verwijderen
+				</NcActionButton>
+			</NcActions>
 		</div>
 		<div>
 			<div>
@@ -77,7 +79,6 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 import {
 	NcActions,
 	NcActionButton,
-	NcButton,
 	NcLoadingIcon,
 } from '@nextcloud/vue'
 
@@ -139,6 +140,9 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+		},
+		open(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }

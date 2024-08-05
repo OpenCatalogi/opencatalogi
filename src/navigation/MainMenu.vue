@@ -24,9 +24,14 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<DatabaseEyeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="navigationStore.selected === 'search'" name="Search" @click="navigationStore.setSelected('search')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'search'" name="Zoeken" @click="navigationStore.setSelected('search')">
 				<template #icon>
 					<LayersSearchOutline :size="20" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem name="Documentatie" @click="open('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers', '_blank')">
+				<template #icon>
+					<BookOpenVariantOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 		</NcAppNavigationList>
@@ -35,6 +40,16 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 			<NcAppNavigationItem :active="navigationStore.selected === 'catalogi'" name="Catalogi" @click="navigationStore.setSelected('catalogi')">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem :active="navigationStore.selected === 'organisations'" name="Organisaties" @click="navigationStore.setSelected('organisations')">
+				<template #icon>
+					<OfficeBuildingOutline :size="20" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem :active="navigationStore.selected === 'themes'" name="Thema's" @click="navigationStore.setSelected('themes')">
+				<template #icon>
+					<ShapeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
 			<NcAppNavigationItem :active="navigationStore.selected === 'directory'" name="Directory" @click="navigationStore.setSelected('directory')">
@@ -48,183 +63,7 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationItem name="Configuration" @click="settingsOpen = true">
-				<template #icon>
-					<CogOutline :size="20" />
-				</template>
-			</NcAppNavigationItem>
-
-			<NcAppNavigationItem name="Documentatie" @click="open('https://conduction.gitbook.io/opencatalogi-nextcloud', '_blank')">
-				<template #icon>
-					<HelpCircleOutline :size="20" />
-				</template>
-			</NcAppNavigationItem>
-
-			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Applicatie instellingen">
-				<NcAppSettingsSection id="sharing" name="Connecties" doc-url="zaakafhandel.app">
-					<template #icon>
-						<Connection :size="20" />
-					</template>
-
-					<p>
-						Hier kunt u de details instellen voor verschillende verbindingen.
-					</p>
-					<NcCheckboxRadioSwitch :checked.sync="configuration.mongoStorage" type="switch">
-						{{ t('forms', 'Gebruik externe opslag (bijv. MongoDb) in plaats van de interne opslag van Next Cloud.') }}
-					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch :checked.sync="configuration.cloudStorage" type="switch">
-						{{ t('forms', 'Gebruik VNG API\'s in plaats van MongoDB.') }}
-					</NcCheckboxRadioSwitch>
-					<p>
-						<table>
-							<tbody>
-								<tr>
-									<td class="row-name">
-										DRC
-									</td>
-									<td>Location</td>
-									<td>
-										<NcTextField id="drcLocation"
-											:value.sync="configuration.drcLocation"
-											:label-outside="true"
-											placeholder="https://" />
-									</td>
-									<td>Key</td>
-									<td>
-										<NcTextField id="drcKey"
-											:value.sync="configuration.drcKey"
-											:label-outside="true"
-											placeholder="***" />
-									</td>
-								</tr>
-								<tr>
-									<td class="row-name">
-										ORC
-									</td>
-									<td>Location</td>
-									<td>
-										<NcTextField id="orcLocation"
-											:value.sync="configuration.orcLocation"
-											:label-outside="true"
-											placeholder="https://" />
-									</td>
-									<td>Key</td>
-									<td>
-										<NcTextField id="orcKey"
-											:value.sync="configuration.orcKey"
-											:label-outside="true"
-											placeholder="***" />
-									</td>
-								</tr>
-								<tr>
-									<td class="row-name">
-										Elastic
-									</td>
-									<td>Location</td>
-									<td>
-										<NcTextField id="elasticLocation"
-											:value.sync="configuration.elasticLocation"
-											:label-outside="true"
-											placeholder="https://" />
-									</td>
-									<td>Key</td>
-									<td>
-										<NcTextField id="elasticKey"
-											:value.sync="configuration.elasticKey"
-											:label-outside="true"
-											placeholder="***" />
-									</td>
-									<td>Index</td>
-									<td>
-										<NcTextField id="elasticIndex"
-											:value.sync="configuration.elasticIndex"
-											:label-outside="true"
-											placeholder="objects" />
-									</td>
-								</tr>
-								<tr>
-									<td class="row-name">
-										Mongo DB
-									</td>
-									<td>Location</td>
-									<td>
-										<NcTextField id="mongodbLocation"
-											:value.sync="configuration.mongodbLocation"
-											:label-outside="true"
-											placeholder="https://" />
-									</td>
-									<td>Key</td>
-									<td>
-										<NcTextField id="mongodbKey"
-											:value.sync="configuration.mongodbKey"
-											:label-outside="true"
-											placeholder="***" />
-									</td>
-									<td>Cluster name</td>
-									<td>
-										<NcTextField id="mongodbCluster"
-											:value.sync="configuration.mongodbCluster"
-											:label-outside="true"
-											placeholder="***" />
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</p>
-					<NcButton aria-label="Opslaan"
-						type="primary"
-						wide
-						@click="saveConfig(); feedbackPosition = 'top'">
-						<template #icon>
-							<ContentSave :size="20" />
-						</template>
-						Opslaan
-					</NcButton>
-					<div v-if="feedbackPosition === 'top' && configurationSuccess !== -1">
-						<NcNoteCard :type="configurationSuccess ? 'success' : 'error'">
-							<p>
-								{{ configurationSuccess ?
-									'Configuratie succesvol opgeslagen.' :
-									'Opslaan van configuratie mislukt.'
-								}}
-							</p>
-						</NcNoteCard>
-					</div>
-				</NcAppSettingsSection>
-				<NcAppSettingsSection id="organisation" name="Organisatie" doc-url="zaakafhandel.app">
-					<template #icon>
-						<Connection :size="20" />
-					</template>
-
-					<p>
-						Hier kunt u de details voor uw organisatie instellen.
-					</p>
-
-					<NcTextField id="organisationName" :value.sync="configuration.organisationName" />
-					<NcTextField id="organisationOin" :value.sync="configuration.organisationOin" />
-					<NcTextArea id="organisationPki" :value.sync="configuration.organisationPki" />
-
-					<NcButton aria-label="Opslaan"
-						type="primary"
-						wide
-						@click="saveConfig(); feedbackPosition = 'bottom'">
-						<template #icon>
-							<ContentSave :size="20" />
-						</template>
-						Opslaan
-					</NcButton>
-					<div v-if="feedbackPosition === 'bottom' && configurationSuccess !== -1">
-						<NcNoteCard :type="configurationSuccess ? 'success' : 'error'">
-							<p>
-								{{ configurationSuccess ?
-									'Configuratie succesvol opgeslagen.' :
-									'Opslaan van configuratie mislukt.'
-								}}
-							</p>
-						</NcNoteCard>
-					</div>
-				</NcAppSettingsSection>
-			</NcAppSettingsDialog>
+			<Configuration />
 		</NcAppNavigationSettings>
 	</NcAppNavigation>
 </template>
@@ -236,26 +75,23 @@ import {
 	NcAppNavigationItem,
 	NcAppNavigationNew,
 	NcAppNavigationSettings,
-	NcAppSettingsDialog,
-	NcAppSettingsSection,
-	NcButton,
-	NcTextField,
-	NcTextArea,
-	NcNoteCard,
-	NcCheckboxRadioSwitch,
 } from '@nextcloud/vue'
 
-import Connection from 'vue-material-design-icons/Connection.vue'
+// Configuration
+import Configuration from './Configuration.vue'
+
+// Icons
+
 import Plus from 'vue-material-design-icons/Plus.vue'
 import DatabaseEyeOutline from 'vue-material-design-icons/DatabaseEyeOutline.vue'
 import DatabaseCogOutline from 'vue-material-design-icons/DatabaseCogOutline.vue'
 import LayersSearchOutline from 'vue-material-design-icons/LayersSearchOutline.vue'
 import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
-import CogOutline from 'vue-material-design-icons/CogOutline.vue'
-import ContentSave from 'vue-material-design-icons/ContentSave.vue'
 import Finance from 'vue-material-design-icons/Finance.vue'
-import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import BookOpenVariantOutline from 'vue-material-design-icons/BookOpenVariantOutline.vue'
+import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
+import ShapeOutline from 'vue-material-design-icons/ShapeOutline.vue'
 
 export default {
 	name: 'MainMenu',
@@ -266,24 +102,18 @@ export default {
 		NcAppNavigationItem,
 		NcAppNavigationNew,
 		NcAppNavigationSettings,
-		NcAppSettingsDialog,
-		NcAppSettingsSection,
-		NcTextField,
-		NcTextArea,
-		NcButton,
-		NcNoteCard,
-		NcCheckboxRadioSwitch,
+		Configuration,
 		// icons
 		Plus,
-		Connection,
 		DatabaseEyeOutline,
 		DatabaseCogOutline,
 		LayersSearchOutline,
 		LayersOutline,
 		FileTreeOutline,
-		CogOutline,
-		ContentSave,
 		Finance,
+		BookOpenVariantOutline,
+		OfficeBuildingOutline,
+		ShapeOutline,
 	},
 	data() {
 		return {
@@ -322,70 +152,16 @@ export default {
 		}
 	},
 	mounted() {
-		this.fetchData()
 		catalogiStore.refreshCatalogiList()
 	},
 	methods: {
-		// We use the catalogi in the menu so lets fetch those
-		fetchData(newPage) {
-			this.loading = true
-
-			fetch(
-				'/index.php/apps/opencatalogi/configuration',
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.configuration = data
-					})
-				})
-				.catch((err) => {
-					console.error(err)
-				})
-		},
-		saveConfig() {
-			 // Simple POST request with a JSON body using fetch
-			const requestOptions = {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(this.configuration),
-			}
-
-			const debounceNotification = (status) => {
-				this.configurationSuccess = status
-
-				if (this.debounceTimeout) {
-					clearTimeout(this.debounceTimeout)
-				}
-
-				this.debounceTimeout = setTimeout(() => {
-					this.feedbackPosition = undefined
-					this.configurationSuccess = -1
-				}, 1500)
-			}
-
-			fetch('/index.php/apps/opencatalogi/configuration', requestOptions)
-				.then((response) => {
-					debounceNotification(response.ok)
-
-					response.json().then((data) => {
-						this.configuration = data
-					})
-				})
-				.catch((err) => {
-					debounceNotification(false)
-					console.error(err)
-				})
-		},
 		switchCatalogus(catalogus) {
 			if (catalogus.id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
 			navigationStore.setSelected('publication')
 			navigationStore.setSelectedCatalogus(catalogus.id)
 			catalogiStore.setCatalogiItem(catalogus)
 		},
-		open(url, type) {
+		open(url, type = '') {
 			window.open(url, type)
 		},
 	},

@@ -20,10 +20,10 @@ export const useCatalogiStore = defineStore('catalogi', {
 		},
 		async refreshCatalogiList(search = null) {
 			// @todo this might belong in a service?
-            let endpoint = '/index.php/apps/opencatalogi/api/catalogi';
-            if (search !== null && search !== '') {
-                endpoint = endpoint + '?_search=' + search
-            }
+			let endpoint = '/index.php/apps/opencatalogi/api/catalogi'
+			if (search !== null && search !== '') {
+				endpoint = endpoint + '?_search=' + search
+			}
 			return fetch(endpoint, {
 				method: 'GET',
 			})
