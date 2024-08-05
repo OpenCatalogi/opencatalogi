@@ -1,16 +1,11 @@
 /* eslint-disable no-console */
-import { Attachment, Publication } from '../../entities/index.js'
+import { Organisation } from '../../entities/index.js'
 import { defineStore } from 'pinia'
 
 export const useOrganizationStore = defineStore('organization', {
 	state: () => ({
-		publicationItem: false,
-		publicationList: [],
-		publicationDataKey: false,
-		attachmentItem: false,
-		publicationAttachments: [],
-		conceptPublications: [],
-		conceptAttachments: [],
+		organizationItem: false,
+		organizationList: [],
 	}),
 	actions: {
 		setPublicationItem(publicationItem) {
