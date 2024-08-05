@@ -2,21 +2,21 @@
 import { Organisation } from '../../entities/index.js'
 import { defineStore } from 'pinia'
 
-export const useOrganizationStore = defineStore('organization', {
+export const useOrganisationStore = defineStore('organisation', {
 	state: () => ({
-		organizationItem: false,
-		organizationList: [],
+		organisationItem: false,
+		organisationList: [],
 	}),
 	actions: {
-		setCOrganisationItem(organizationItem) {
-			this.organizationItem = organizationItem && new Organisation(organizationItem)
-			console.log('Active theme item set to ' + organizationItem && organizationItem?.id)
+		setCOrganisationItem(organisationItem) {
+			this.organisationItem = organisationItem && new Organisation(organisationItem)
+			console.log('Active theme item set to ' + organisationItem && organisationItem?.id)
 		},
-		setOrganisationList(organizationList) {
-			this.organizationList = organizationList.map(
-				(organizationItem) => new Organisation(organizationItem),
+		setOrganisationList(organisationList) {
+			this.organisationList = organisationList.map(
+				(organisationItem) => new Organisation(organisationItem),
 			)
-			console.log('Organisation list set to ' + organizationList.length + ' items')
+			console.log('Organisation list set to ' + organisationList.length + ' items')
 		},
 		async refreshOrganisationList(search = null) {
 			// @todo this might belong in a service?
@@ -29,8 +29,8 @@ export const useOrganizationStore = defineStore('organization', {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.organizationList = data.results.map(
-							(organizationItem) => new Organisation(organizationItem),
+						this.organisationList = data.results.map(
+							(organisationItem) => new Organisation(organisationItem),
 						)
 					})
 				})

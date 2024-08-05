@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { setActivePinia, createPinia } from 'pinia'
 
-import { useOrganisationStore } from './Organisation.js'
+import { useOrganisationStore } from './organization.js'
 import { Organisation } from '../../entities/index.js'
 
 describe('Metadata Store', () => {

@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { setActivePinia, createPinia } from 'pinia'
 
-import { usePublicationStore } from './publication.js'
-import { Attachment, Publication } from '../../entities/index.js'
+import { useThemesStore } from './theme.js'
+import { Theme } from '../../entities/index.js'
 
 describe('Metadata Store', () => {
 	beforeEach(() => {
