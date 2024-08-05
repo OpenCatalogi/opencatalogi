@@ -16,7 +16,7 @@ jobs:
           extensions: mbstring, zip, xml, curl, intl, sqlite, gd, pdo_mysql
           tools: cs2pr, phpcbf, phpcs, phpmd, phpunit
 
-      - name: Install Composer
+      - name: Install Composer dependencies
         run: composer install
 
       - name: Run phpcbf
@@ -39,8 +39,14 @@ jobs:
         run: phpmd src xml phpmd.xml --not-strict
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}
 
-      - name: Install Composer dependencies
-        run: composer install
+      - name: List files in repository root
+        run: ls -alh
+
+      - name: List files in tests directory
+        run: ls -alh ./tests
+
+      - name: List files in vendor directory
+        run: ls -alh ./vendor
 
       - name: Run PHPUnit tests
         env:
@@ -99,11 +105,11 @@ jobs:
             echo "PHP CodeSniffer found issues. Please fix them before merging."
             exit 1
           fi
-          if grep -q "ERROR" <(phpmd src text phpmd.xml --strict); then
+          if grep -q "ERROR" <(phpmd src xml phpmd.xml --strict); then
             echo "PHP Mess Detector found issues. Please fix them before merging."
             exit 1
           fi
-          if ! phpunit --configuration phpunit.xml; then
+          if ! phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml; then
             echo "PHPUnit tests failed. Please fix them before merging."
             exit 1
           fi
