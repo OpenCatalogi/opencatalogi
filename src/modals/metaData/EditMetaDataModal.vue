@@ -24,7 +24,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcTextField label="Titel" :disabled="loading" :value.sync="metadataStore.metaDataItem.title" />
 				<NcTextField label="Versie" :disabled="loading" :value.sync="metadataStore.metaDataItem.version" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metadataStore.metaDataItem.description" />
-				<NcTextField label="vereisten (splits op ,)" :value.sync="metadataStore.metaDataItem.required" />
+				<NcTextField label="vereisten (splits op ,)" :value.sync="metadataRequired" />
 			</div>
 			<NcButton
 				v-if="success == null"
@@ -59,10 +59,10 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
 			success: null,
 			error: false,
+			metadataRequired: '',
 		}
 	},
 	methods: {
@@ -77,6 +77,7 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						metadataStore.setMetaDataItem(data)
+						this.metadataRequired = data.required.toString()
 					})
 					this.loading = false
 				})
@@ -96,7 +97,7 @@ export default {
 					},
 					body: JSON.stringify({
 						...metadataStore.metaDataItem,
-						required: metadataStore.metaDataItem.required.split(/, */g),
+						required: this.metadataRequired.split(/, */g),
 					}),
 				},
 			).then((response) => {
