@@ -67,7 +67,8 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add .
-          git diff --cached --quiet || (git reset package.json && git reset package-lock.json && git reset node_modules && git commit -m "Update src from remark-lint" && git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash && git push)
+          git add package.json package-lock.json
+          git diff --cached --quiet || (git commit -m "Update src from remark-lint" && git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash && git push)
 
   checks:
     needs: [build, lint]
