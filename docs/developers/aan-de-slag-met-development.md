@@ -97,18 +97,18 @@ De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.
 
 ## Frontend Development
 
-### Typing, Storage en Typing
+### Storage en Typing
 
 Om gegevens deelbaar te maken tussen de verschillende Vue-componenten maken we gebruik van [statemanagement](https://vuejs.org/guide/scaling-up/state-management) waarbij we het Action, State, View patroon van Vue zelf volgen. Omdat de applicatie ingewikkelder begint te worden stappen we daarbij over van [simple state management](https://vuejs.org/guide/scaling-up/state-management#simple-state-management-with-reactivity-api) naar [Pinia](https://pinia.vuejs.org/), de door Vue zelf geadviseerde opvolger van [Vuex](https://vuejs.org/guide/scaling-up/state-management#pinia).
 
-Omdat Pinia vanuit zichzelf al typing ondersteund en daarop testbaar is vervalt daarmee ook de noodzaak om in de voorkant te werken met Typescript, de ontwikkeling daarvan is dan ook gestopt.
+Daarnaast gebruiken we typescript voor het defineren van entities.
 
 ### Modals
 
 * Er mag altijd slechts één modal actief zijn.
 * Modals moeten abstract en overal bereikbaar zijn.
 * Modals moeten geplaatst worden in de map src/modals.
-* Modals moeten getriggerd worden via de state.
+* Modals moeten getriggerd worden via de state (zodat knoppen die modal openen overal plaatsbaar zijn).
 * Modals moeten geïmporteerd worden via `/src/modals/Modals.vue`.
 
 
@@ -118,6 +118,8 @@ Omdat Pinia vanuit zichzelf al typing ondersteund en daarop testbaar is vervalt 
 * Bijvoorbeeld, als het bestand een detailpagina is en het zich in de map `publications` bevindt, moet het bestand de naam `PublicationDetail.vue` hebben.
 
 ## Documentatie
+Het is goed om bij development kennen te nemen/hebben van de de volgende gebruikte nextcloud onderdelen
+
 - [Icons](https://pictogrammers.com/library/mdi/)
 - [Layout](https://docs.nextcloud.com/server/latest/developer_manual/design/layout.html)-
 - [Componenten](https://nextcloud-vue-components.netlify.app/)
