@@ -16,14 +16,6 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				:primary="true"
 				:inline="1"
 				:menu-name="loading ? 'Laden...' : 'Acties'">
-				<NcActionButton
-					title="Bekijk de documentatie over metadata"
-					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">
-					<template #icon>
-						<HelpCircleOutline :size="20" />
-					</template>
-					Help
-				</NcActionButton>
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
@@ -32,6 +24,14 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over metadata"
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Help
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setModal('editMetaData')">
 					<template #icon>
 						<Pencil :size="20" />

@@ -12,14 +12,6 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				:primary="true"
 				:inline="1"
 				:menu-name="loading ? 'Laden...' : 'Acties'">
-				<NcActionButton
-					title="Bekijk de documentatie over directories"
-					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory', '_blank')">
-					<template #icon>
-						<HelpCircleOutline :size="20" />
-					</template>
-					Help
-				</NcActionButton>
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
@@ -28,6 +20,14 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over directories"
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory', '_blank')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Help
+				</NcActionButton>
 				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
 					<template #icon>
 						<Pencil :size="20" />
