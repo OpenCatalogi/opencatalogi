@@ -113,6 +113,25 @@
 										placeholder="***" />
 								</td>
 							</tr>
+							<tr>
+								<td class="row-name">
+									Nextcloud Admin User
+								</td>
+								<td>Username</td>
+								<td>
+									<NcTextField id="mongodbLocation"
+												 :value.sync="configuration.adminUsername"
+												 :label-outside="true"
+												 placeholder="admin" />
+								</td>
+								<td>Password</td>
+								<td>
+									<NcTextField id="mongodbKey"
+												 :value.sync="configuration.adminPassword"
+												 :label-outside="true"
+												 placeholder="***" />
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</p>
@@ -233,6 +252,8 @@ export default {
 				organisationName: '',
 				organisationOin: '',
 				organisationPki: '',
+				adminUsername: '',
+				adminPassword: ''
 			},
 			configurationSuccess: -1,
 			feedbackPosition: '',

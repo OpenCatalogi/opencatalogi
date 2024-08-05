@@ -5,16 +5,32 @@ namespace OCA\OpenCatalogi\Service;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use OCP\IAppConfig;
 use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
 class FileService
 {
+	protected string $appName = 'opencatalogi';
 	private Client $client;
 
-	public function __construct(private readonly IUserSession $userSession, private readonly LoggerInterface $logger)
-	{
+	public function __construct(
+		private readonly IUserSession $userSession,
+		private readonly LoggerInterface $logger,
+		private readonly IAppConfig $config
+	) {
 		$this->client = new Client();
+	}
+
+	/**
+	 * Sets the appName used for getting configuration, this should be set after creating this service!
+	 *
+	 * @param string $appName The appName to set.
+	 * @return void
+	 */
+	public function setAppName(string $appName): void
+	{
+		$this->appName = $appName;
 	}
 
 	/**
@@ -49,15 +65,15 @@ class FileService
 	public function createShareLink(string $path, ?int $shareType = 3, ?int $permissions = null): string
 	{
 		// API endpoint to create a share
-		$url = "{{$this->getCurrentDomain()}}/ocs/v2.php/apps/files_sharing/api/v1/shares";
+		$url = "{$this->getCurrentDomain()}/ocs/v2.php/apps/files_sharing/api/v1/shares";
 
-		// Get the current user
+		// Get the admin username & password for auth
+		$username = $this->config->getValueString(app: $this->appName, key: 'adminUsername', default: 'admin');
+		$password = $this->config->getValueString(app: $this->appName, key: 'adminPassword', default: 'admin');
+
+		// Get the current username
 		$currentUser = $this->userSession->getUser();
-		$username = $currentUser ? $currentUser->getUID() : 'Guest';
-
-		// Todo: get this from settings (make it configurable)
-		// Get the password
-		$password = 'admin';
+		$currentUsername = $currentUser ? $currentUser->getUID() : 'Guest';
 
 		// Data for the POST request
 		$options = [
@@ -69,14 +85,15 @@ class FileService
 			'form_params' => [
 				'path' => $path,
 				'shareType' => $shareType,
-				'permissions' => $permissions
+				'permissions' => $permissions,
+				'shareWith' => $currentUsername
 			]
 		];
 
 		try {
-			$response = $this->client->post($url, $options);
+			$response = $this->client->post(uri: $url, options: $options);
 			$data = json_decode($response->getBody()->getContents(), true);
-			return $data['ocs']['data']['url'];
+			return $data['ocs']['data']['url'] ?? '';
 		} catch (Exception $e) {
 			$this->logger->error('Failed to create share link: ' . $e->getMessage());
 			throw $e;
