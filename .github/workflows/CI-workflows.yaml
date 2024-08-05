@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
+      
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -101,11 +101,11 @@ jobs:
             echo "phpmd could not be found. Please ensure it's installed."
             exit 1
           fi
-          if grep -q "ERROR" <(phpcs -q --report=checkstyle src); then
+          if phpcs -q --report=checkstyle src | grep -q "ERROR"; then
             echo "PHP CodeSniffer found issues. Please fix them before merging."
             exit 1
           fi
-          if grep -q "ERROR" <(phpmd src xml phpmd.xml --strict); then
+          if phpmd src xml phpmd.xml --strict | grep -q "ERROR"; then
             echo "PHP Mess Detector found issues. Please fix them before merging."
             exit 1
           fi
