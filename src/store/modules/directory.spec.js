@@ -6,15 +6,15 @@ import { Listing } from '../../entities/index.js'
 
 describe(
     'Directory Store', () => {
-        beforeEach(
-        () => {
-                setActivePinia(createPinia())
+    beforeEach(
+            () => {
+            setActivePinia(createPinia())
             }
-    )
+        )
 
     it(
         'sets listing item correctly', () => {
-        const store = useDirectoryStore()
+            const store = useDirectoryStore()
 
             store.setListingItem(testData[0])
 
@@ -25,7 +25,7 @@ describe(
 
     it(
         'sets listings list correctly', () => {
-        const store = useDirectoryStore()
+            const store = useDirectoryStore()
 
             store.setListingList(testData)
 

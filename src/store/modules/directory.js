@@ -32,18 +32,18 @@ export const useDirectoryStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.listingList = data.results.map(
-                                    (listingItem) => new Listing(listingItem),
-                                )
+                        response.json().then(
+                        (data) => {
+                                this.listingList = data.results.map(
+                                (listingItem) => new Listing(listingItem),
+                            )
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                     }
                 )
         },

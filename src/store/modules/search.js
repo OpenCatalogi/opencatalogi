@@ -25,16 +25,16 @@ export const useSearchStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.searchResults = data
+                        response.json().then(
+                        (data) => {
+                                this.searchResults = data
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                     }
                 )
         },

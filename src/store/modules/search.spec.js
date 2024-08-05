@@ -5,15 +5,15 @@ import { useSearchStore } from './search.js'
 
 describe(
     'Search Store', () => {
-        beforeEach(
-        () => {
-                setActivePinia(createPinia())
+    beforeEach(
+            () => {
+            setActivePinia(createPinia())
             }
-    )
+        )
 
     it(
         'set search correctly', () => {
-        const store = useSearchStore()
+            const store = useSearchStore()
 
             store.setSearch('cata')
             expect(store.search).toBe('cata')
@@ -28,7 +28,7 @@ describe(
 
     it(
         'set search result correctly', () => {
-        const store = useSearchStore()
+            const store = useSearchStore()
 
             store.setSearchResults(['foo', 'bar', 'bux'])
             expect(store.searchResults).toEqual(['foo', 'bar', 'bux'])
@@ -37,7 +37,7 @@ describe(
 
     it(
         'clear search correctly', () => {
-        const store = useSearchStore()
+            const store = useSearchStore()
 
             store.setSearch('Lorem ipsum dolor sit amet')
             expect(store.search).toBe('Lorem ipsum dolor sit amet')

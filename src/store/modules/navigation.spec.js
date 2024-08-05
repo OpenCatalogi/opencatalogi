@@ -5,15 +5,15 @@ import { useNavigationStore } from './navigation.js'
 
 describe(
     'Navigation Store', () => {
-        beforeEach(
-        () => {
-                setActivePinia(createPinia())
+    beforeEach(
+            () => {
+            setActivePinia(createPinia())
             }
-    )
+        )
 
     it(
         'set current selected view correctly', () => {
-        const store = useNavigationStore()
+            const store = useNavigationStore()
 
             store.setSelected('publication')
             expect(store.selected).toBe('publication')
@@ -28,7 +28,7 @@ describe(
 
     it(
         'set current selected publication catalogi correctly', () => {
-        const store = useNavigationStore()
+            const store = useNavigationStore()
 
             store.setSelectedCatalogus('7a048bfd-210f-4e93-a1e8-5aa9261740b7')
             expect(store.selectedCatalogus).toBe('7a048bfd-210f-4e93-a1e8-5aa9261740b7')
@@ -43,7 +43,7 @@ describe(
 
     it(
         'set modal correctly', () => {
-        const store = useNavigationStore()
+            const store = useNavigationStore()
 
             store.setModal('editPublication')
             expect(store.modal).toBe('editPublication')
@@ -58,7 +58,7 @@ describe(
 
     it(
         'set modal correctly', () => {
-        const store = useNavigationStore()
+            const store = useNavigationStore()
 
             store.setDialog('deletePublication')
             expect(store.dialog).toBe('deletePublication')
