@@ -32,18 +32,18 @@ export const useCatalogiStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.catalogiList = data.results.map(
-                                    (catalogiItem) => new Catalogi(catalogiItem),
-                                )
+                        response.json().then(
+                        (data) => {
+                                this.catalogiList = data.results.map(
+                                (catalogiItem) => new Catalogi(catalogiItem),
+                            )
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                     }
                 )
         },

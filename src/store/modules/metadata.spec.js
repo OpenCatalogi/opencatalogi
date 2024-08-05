@@ -5,15 +5,15 @@ import { useMetadataStore } from './metadata.js'
 
 describe(
     'Metadata Store', () => {
-        beforeEach(
-        () => {
-                setActivePinia(createPinia())
+    beforeEach(
+            () => {
+            setActivePinia(createPinia())
             }
-    )
+        )
 
     it(
         'sets metadata item correctly', () => {
-        const store = useMetadataStore()
+            const store = useMetadataStore()
             const metadataItem = {
                 id: '1',
                 name: 'Test metadata name',
@@ -39,11 +39,11 @@ describe(
 
                             expect(store.metaDataItem).toEqual(metadataItem)
                             }
-                            )
+    )
 
                             it(
                                 'sets metadata item with string "properties" property', () => {
-                                    const store = useMetadataStore()
+                                const store = useMetadataStore()
                                         const metadataItem = {
                                             id: '1',
                                             name: 'Test metadata name',
@@ -76,7 +76,7 @@ describe(
 
                             it(
                                 'sets metadata list correctly', () => {
-                                    const store = useMetadataStore()
+                                const store = useMetadataStore()
                                         const metadataList = [
                                          {
                                                 id: '1',
@@ -124,15 +124,15 @@ describe(
                                                                     expect(store.metaDataList).toHaveLength(metadataList.length)
                                                                     store.metaDataList.forEach(
                                                                         (item, index) => {
-                                                                            expect(item).toEqual(metadataList[index])
+                                                                        expect(item).toEqual(metadataList[index])
                                                                         }
                                                                     )
                                                                     }
-                                                                    )
+                            )
 
                                                                     it(
                                                                         'get metadata property from key', () => {
-                                                                            const store = useMetadataStore()
+                                                                        const store = useMetadataStore()
                                                                                   const metadataItem = {
                                                                                         id: '1',
                                                                                         name: 'Test metadata name',
@@ -175,6 +175,6 @@ describe(
 
                                                                                                             expect(properties).toEqual(metadataItem.properties.sasds)
                                                                                                             }
-                                                                    )
+                                                                                                            )
                                                                                                             }
-)
+                                                                                                            )

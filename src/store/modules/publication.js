@@ -37,17 +37,17 @@ export const usePublicationStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.setPublicationList(data?.results)
+                        response.json().then(
+                        (data) => {
+                                this.setPublicationList(data?.results)
                                 return data
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                         return err
                     }
                 )
@@ -61,19 +61,19 @@ export const usePublicationStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.publicationAttachments = data.results.map(
-                                    (attachmentItem) => new Attachment(attachmentItem),
-                                )
+                        response.json().then(
+                        (data) => {
+                                this.publicationAttachments = data.results.map(
+                                (attachmentItem) => new Attachment(attachmentItem),
+                            )
                             return data
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                         return err
                     }
                 )
@@ -87,17 +87,17 @@ export const usePublicationStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.conceptPublications = data
+                        response.json().then(
+                        (data) => {
+                                this.conceptPublications = data
                                 return data
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                         return err
                     }
                 )
@@ -111,17 +111,17 @@ export const usePublicationStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.conceptAttachments = data
+                        response.json().then(
+                        (data) => {
+                                this.conceptAttachments = data
                                 return data
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                         return err
                     }
                 )

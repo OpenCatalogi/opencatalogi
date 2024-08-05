@@ -6,15 +6,15 @@ import { Attachment, Publication } from '../../entities/index.js'
 
 describe(
     'Metadata Store', () => {
-        beforeEach(
-        () => {
-                setActivePinia(createPinia())
+    beforeEach(
+            () => {
+            setActivePinia(createPinia())
             }
-    )
+        )
 
     it(
         'sets publication item correctly', () => {
-        const store = usePublicationStore()
+            const store = usePublicationStore()
 
             store.setPublicationItem(testData[0])
 
@@ -38,7 +38,7 @@ describe(
 
     it(
         'sets publication list correctly', () => {
-        const store = usePublicationStore()
+            const store = usePublicationStore()
 
             store.setPublicationList(testData)
 
@@ -61,7 +61,7 @@ describe(
     // TODO: fix this
     it(
         'set publication data.data property key correctly', () => {
-        const store = usePublicationStore()
+            const store = usePublicationStore()
 
             store.setPublicationDataKey('contactPoint')
 
@@ -71,7 +71,7 @@ describe(
 
     it(
         'set attachment item correctly', () => {
-        const store = usePublicationStore()
+            const store = usePublicationStore()
 
             store.setAttachmentItem(attachmentTestData[0])
 

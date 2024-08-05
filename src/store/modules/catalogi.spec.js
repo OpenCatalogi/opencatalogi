@@ -6,15 +6,15 @@ import { Catalogi } from '../../entities/index.js'
 
 describe(
     'Catalogi Store', () => {
-        beforeEach(
-        () => {
-                setActivePinia(createPinia())
+    beforeEach(
+            () => {
+            setActivePinia(createPinia())
             }
-    )
+        )
 
     it(
         'sets catalogi item correctly', () => {
-        const store = useCatalogiStore()
+            const store = useCatalogiStore()
 
             store.setCatalogiItem(testData[0])
 
@@ -27,7 +27,7 @@ describe(
 
     it(
         'sets catalogi list correctly', () => {
-        const store = useCatalogiStore()
+            const store = useCatalogiStore()
 
             store.setCatalogiList(testData)
 
