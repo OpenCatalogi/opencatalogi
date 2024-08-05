@@ -93,7 +93,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function catalog(string $id): TemplateResponse
+    public function catalog(string|int $id): TemplateResponse
     {
         // The TemplateResponse loads the 'main.php'
         // defined in our app's 'templates' folder.
@@ -114,25 +114,46 @@ class PublicationsController extends Controller
     {
         $filters = $this->request->getParams();
 
-        foreach($filters as $key => $value) {
-            if(str_starts_with($key, '_')) {
-                unset($filters[$key]);
+        $searchConditions = [];
+        $searchParams = [];
+        $fieldsToSearch = ['title', 'description', 'summary'];
+
+        foreach ($filters as $key => $value) {
+            if ($key === '_search') {
+                // MongoDB
+                $searchRegex = ['$regex' => $value, '$options' => 'i'];
+                $filters['$or'] = [];
+
+                // MySQL
+                $searchParams['search'] = '%' . strtolower($value) . '%';
+
+                foreach ($fieldsToSearch as $field) {
+                    // MongoDB
+                    $filters['$or'][] = [$field => $searchRegex];
+
+                    // MySQL
+                    $searchConditions[] = "LOWER($field) LIKE :search";
+                }
             }
+
+            if (str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            } 
         }
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters)]);
+            // Unset mongodb filter
+            unset($filters['$or']);
+
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-
-
-
+        
 		$filters['_schema'] = 'publication';
 
 		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
@@ -145,7 +166,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function show(string $id, ObjectService $objectService): JSONResponse
+    public function show(string|int $id, ObjectService $objectService): JSONResponse
     {
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
@@ -157,7 +178,7 @@ class PublicationsController extends Controller
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters['_id'] = $id;
+		$filters['_id'] = (string) $id;
 
 		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
 
@@ -222,7 +243,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function update(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    public function update(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 
 		$data = $this->request->getParams();
@@ -248,7 +269,7 @@ class PublicationsController extends Controller
 			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-			$filters['_id'] = $id;
+			$filters['_id'] = (string) $id;
 			$returnData = $objectService->updateObject(
 				filters: $filters,
 				update: $data,
@@ -283,7 +304,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function destroy(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    public function destroy(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
@@ -296,7 +317,7 @@ class PublicationsController extends Controller
 			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-			$filters['_id'] = $id;
+			$filters['_id'] = (string) $id;
 			$returnData = $objectService->deleteObject(
 				filters: $filters,
 				config: $dbConfig

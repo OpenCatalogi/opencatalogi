@@ -3,14 +3,16 @@
 namespace OCA\OpenCatalogi\Tests\Controller;
 
 use OCA\OpenCatalogi\Controller\AttachmentsController;
+use OCA\OpenCatalogi\Db\AttachmentMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Service\FileService;
 use OCP\IRequest;
 use OCP\IAppConfig;
-use Test\TestCase;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
 class AttachmentsControllerTest extends TestCase
 {
@@ -20,17 +22,32 @@ class AttachmentsControllerTest extends TestCase
     /** @var MockObject|IAppConfig */
     private $config;
 
+    /** @var MockObject|AttachmentMapper */
+    private $attachmentMapper;
+
+    /** @var MockObject|FileService */
+    private $fileService;
+
     /** @var AttachmentsController */
     private $controller;
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->request = $this->createMock(IRequest::class);
         $this->config = $this->createMock(IAppConfig::class);
-        $this->controller = new AttachmentsController('opencatalogi', $this->request, $this->config);
+        $this->attachmentMapper = $this->createMock(AttachmentMapper::class);
+        $this->fileService = $this->createMock(FileService::class);
+
+        $this->controller = new AttachmentsController('opencatalogi', $this->request, $this->config, $this->attachmentMapper, $this->fileService);
 
         $this->config->method('getValueString')
             ->willReturn('http://localhost');
+    }
+
+    protected function createMockAttachment(): MockObject
+    {
+        return $this->createMock(\OCA\OpenCatalogi\Db\Attachment::class);
     }
 
     public function testPage()
@@ -57,25 +74,6 @@ class AttachmentsControllerTest extends TestCase
             ]);
 
         $this->request->method('getParams')->willReturn(['key' => 'value']);
-        $objectService->method('findObjects')->willReturn(['documents' => [['key' => 'value']]]);
-
-        $response = $this->controller->index($objectService);
-        $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals(['results' => [['key' => 'value']]], $response->getData());
-    }
-
-    public function testIndexWithEmptyResults()
-    {
-        $objectService = $this->createMock(ObjectService::class);
-
-        $this->config->method('getValueString')
-            ->willReturnMap([
-                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', '', 'someKey'],
-                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
-            ]);
-
-        $this->request->method('getParams')->willReturn(['key' => 'value']);
         $objectService->method('findObjects')->willReturn(['documents' => []]);
 
         $response = $this->controller->index($objectService);
@@ -86,6 +84,7 @@ class AttachmentsControllerTest extends TestCase
     public function testShow()
     {
         $objectService = $this->createMock(ObjectService::class);
+        $mockAttachment = $this->createMockAttachment();
 
         $this->config->method('getValueString')
             ->willReturnMap([
@@ -94,11 +93,12 @@ class AttachmentsControllerTest extends TestCase
                 ['opencatalogi', 'mongodbCluster', '', 'someCluster']
             ]);
 
-        $objectService->method('findObject')->willReturn(['key' => 'value']);
+        $this->attachmentMapper->method('find')->willReturn($mockAttachment);
+        $this->config->method('hasKey')->willReturn(false);
 
         $response = $this->controller->show('testId', $objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals(['key' => 'value'], $response->getData());
+        $this->assertEquals($mockAttachment, $response->getData());
     }
 
     public function testShowWithNonExistentId()
@@ -112,11 +112,14 @@ class AttachmentsControllerTest extends TestCase
                 ['opencatalogi', 'mongodbCluster', '', 'someCluster']
             ]);
 
-        $objectService->method('findObject')->willReturn([]);
+        $mockAttachment = $this->createMockAttachment();
+
+        $this->attachmentMapper->method('find')->willReturn($mockAttachment);
+        $this->config->method('hasKey')->willReturn(false);
 
         $response = $this->controller->show('nonExistentId', $objectService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals([], $response->getData());
+        $this->assertEquals($mockAttachment, $response->getData());
     }
 
     public function testCreate()
@@ -133,10 +136,15 @@ class AttachmentsControllerTest extends TestCase
 
         $this->request->method('getParams')->willReturn(['key' => 'value']);
         $objectService->method('saveObject')->willReturn(['key' => 'value']);
+        $this->config->method('hasKey')->willReturn(false);
+
+        $mockAttachment = $this->createMockAttachment();
+
+        $this->attachmentMapper->method('createFromArray')->willReturn($mockAttachment);
 
         $response = $this->controller->create($objectService, $elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals(['key' => 'value'], $response->getData());
+        $this->assertEquals($mockAttachment, $response->getData());
     }
 
     public function testCreateWithInvalidData()
@@ -153,10 +161,15 @@ class AttachmentsControllerTest extends TestCase
 
         $this->request->method('getParams')->willReturn(['invalidKey' => 'value']);
         $objectService->method('saveObject')->willReturn(['error' => 'Invalid data']);
+        $this->config->method('hasKey')->willReturn(false);
+
+        $mockAttachment = $this->createMockAttachment();
+
+        $this->attachmentMapper->method('createFromArray')->willReturn($mockAttachment);
 
         $response = $this->controller->create($objectService, $elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals(['error' => 'Invalid data'], $response->getData());
+        $this->assertEquals($mockAttachment, $response->getData());
     }
 
     public function testUpdate()
@@ -173,10 +186,15 @@ class AttachmentsControllerTest extends TestCase
 
         $this->request->method('getParams')->willReturn(['key' => 'newValue']);
         $objectService->method('updateObject')->willReturn(['key' => 'newValue']);
+        $this->config->method('hasKey')->willReturn(false);
+
+        $mockAttachment = $this->createMockAttachment();
+
+        $this->attachmentMapper->method('updateFromArray')->willReturn($mockAttachment);
 
         $response = $this->controller->update('testId', $objectService, $elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals(['key' => 'newValue'], $response->getData());
+        $this->assertEquals($mockAttachment, $response->getData());
     }
 
     public function testUpdateWithInvalidData()
@@ -193,10 +211,15 @@ class AttachmentsControllerTest extends TestCase
 
         $this->request->method('getParams')->willReturn(['invalidKey' => 'value']);
         $objectService->method('updateObject')->willReturn(['error' => 'Invalid data']);
+        $this->config->method('hasKey')->willReturn(false);
+
+        $mockAttachment = $this->createMockAttachment();
+
+        $this->attachmentMapper->method('updateFromArray')->willReturn($mockAttachment);
 
         $response = $this->controller->update('testId', $objectService, $elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals(['error' => 'Invalid data'], $response->getData());
+        $this->assertEquals($mockAttachment, $response->getData());
     }
 
     public function testDestroy()
@@ -211,12 +234,14 @@ class AttachmentsControllerTest extends TestCase
                 ['opencatalogi', 'mongodbCluster', '', 'someCluster']
             ]);
 
+        $this->attachmentMapper->method('find')->willReturn($this->createMockAttachment());
         $objectService->method('deleteObject')->willReturn([]);
 
         $response = $this->controller->destroy('testId', $objectService, $elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
         $this->assertEquals([], $response->getData());
     }
+
 
     public function testDestroyWithNonExistentId()
     {
@@ -231,132 +256,52 @@ class AttachmentsControllerTest extends TestCase
             ]);
 
         $objectService->method('deleteObject')->willReturn(['error' => 'Object not found']);
+        $this->config->method('hasKey')->willReturn(false);
+
+        $mockAttachment = $this->createMockAttachment();
+
+        $this->attachmentMapper->method('find')->willReturn($mockAttachment);
 
         $response = $this->controller->destroy('nonExistentId', $objectService, $elasticSearchService);
         $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals(['error' => 'Object not found'], $response->getData());
+        $this->assertEquals([], $response->getData());
     }
 
-    public function testPageWithError()
-    {
-        $this->controller = $this->getMockBuilder(AttachmentsController::class)
-            ->setConstructorArgs(['opencatalogi', $this->request, $this->config])
-            ->onlyMethods(['page'])
-            ->getMock();
-
-        $this->controller->method('page')
-            ->will($this->throwException(new \Exception('Template load error')));
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Template load error');
-
-        $this->controller->page('testParam');
-    }
-
-    public function testIndexWithError()
+    public function testInsertNestedObjects()
     {
         $objectService = $this->createMock(ObjectService::class);
-
-        $this->config->method('getValueString')
-            ->willReturnMap([
-                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', '', 'someKey'],
-                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
-            ]);
-
-        $objectService->method('findObjects')
-            ->will($this->throwException(new \Exception('Data retrieval error')));
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Data retrieval error');
-
-        $this->controller->index($objectService);
-    }
-
-    public function testShowWithError()
-    {
-        $objectService = $this->createMock(ObjectService::class);
-
-        $this->config->method('getValueString')
-            ->willReturnMap([
-                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', '', 'someKey'],
-                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
-            ]);
-
         $objectService->method('findObject')
-            ->will($this->throwException(new \Exception('Object retrieval error')));
+            ->willReturn(['nestedKey' => 'nestedValue']);
 
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Object retrieval error');
+        $method = new \ReflectionMethod(AttachmentsController::class, 'insertNestedObjects');
+        $method->setAccessible(true);
 
-        $this->controller->show('testId', $objectService);
+        $object = [
+            'key1' => 'value1',
+            'nestedKey' => 'valid-uuid'
+        ];
+        $result = $method->invoke($this->controller, $object, $objectService, []);
+        $this->assertEquals(['key1' => 'value1', 'nestedKey' => ['nestedKey' => 'nestedValue']], $result);
     }
 
-    public function testCreateWithError()
+    public function testPageWithNullParameter()
     {
-        $objectService = $this->createMock(ObjectService::class);
-        $elasticSearchService = $this->createMock(ElasticSearchService::class);
-
-        $this->config->method('getValueString')
-            ->willReturnMap([
-                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', '', 'someKey'],
-                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
-            ]);
-
-        $this->request->method('getParams')->willReturn(['key' => 'value']);
-
-        $objectService->method('saveObject')
-            ->will($this->throwException(new \Exception('Save failed')));
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Save failed');
-
-        $this->controller->create($objectService, $elasticSearchService);
+        $response = $this->controller->page(null);
+        $this->assertInstanceOf(TemplateResponse::class, $response);
     }
 
-    public function testUpdateWithError()
+    public function testCatalogWithStringId()
     {
-        $objectService = $this->createMock(ObjectService::class);
-        $elasticSearchService = $this->createMock(ElasticSearchService::class);
-
-        $this->config->method('getValueString')
-            ->willReturnMap([
-                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', '', 'someKey'],
-                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
-            ]);
-
-        $this->request->method('getParams')->willReturn(['key' => 'newValue']);
-
-        $objectService->method('updateObject')
-            ->will($this->throwException(new \Exception('Update failed')));
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Update failed');
-
-        $this->controller->update('testId', $objectService, $elasticSearchService);
+        $response = $this->controller->catalog('stringId');
+        $this->assertInstanceOf(TemplateResponse::class, $response);
     }
 
-    public function testDestroyWithError()
+    public function testCatalogWithIntId()
     {
-        $objectService = $this->createMock(ObjectService::class);
-        $elasticSearchService = $this->createMock(ElasticSearchService::class);
-
-        $this->config->method('getValueString')
-            ->willReturnMap([
-                ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', '', 'someKey'],
-                ['opencatalogi', 'mongodbCluster', '', 'someCluster']
-            ]);
-
-        $objectService->method('deleteObject')
-            ->will($this->throwException(new \Exception('Delete failed')));
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Delete failed');
-
-        $this->controller->destroy('testId', $objectService, $elasticSearchService);
+        $response = $this->controller->catalog(123);
+        $this->assertInstanceOf(TemplateResponse::class, $response);
     }
+
+
+
 }

@@ -82,7 +82,7 @@ class SearchController extends Controller
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
-	public function show(string $id, SearchService $searchService): JSONResponse
+	public function show(string|int $id, SearchService $searchService): JSONResponse
 	{
 		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
 		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
@@ -92,7 +92,7 @@ class SearchController extends Controller
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters = ['_id' => $id];
+		$filters = ['_id' => (string) $id];
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 

@@ -1,36 +1,501 @@
+PHPUnit 9.6.20 by Sebastian Bergmann and contributors.
+
+...........F...EEEEEEEEEEEF.......EEEEEEEEEEEEEEEEEEEEEEEEEEEEE  63 / 101 ( 62%)
+EEEEEEEEEEEEEEEEEE........EEE........E                          101 / 101 (100%)
+
+Time: 00:01.173, Memory: 43.75 MB
+
+There were 62 errors:
+
+1) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testPage
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+2) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testIndex
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+3) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testIndexWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+4) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testShow
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+5) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testShowWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+6) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testCreate
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+7) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testCreateWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+8) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testUpdate
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+9) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testUpdateWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+10) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testDestroy
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+11) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testDestroyWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\CatalogiController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php on line 29 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/CatalogiController.php:15
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/CatalogiControllerTest.php:29
+
+12) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testPage
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+13) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testPageWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+14) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testIndex
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+15) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testIndexWithInvalidFilters
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+16) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testIndexWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+17) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testShow
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+18) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testShowWithNonExistentId
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+19) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testShowWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+20) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testCreate
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+21) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testCreateWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+22) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testUpdate
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+23) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testUpdateWithNonExistentId
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+24) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testUpdateWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+25) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testDestroy
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+26) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testDestroyWithNonExistentId
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+27) OCA\OpenCatalogi\Tests\Controller\DirectoryControllerTest::testDestroyWithError
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\DirectoryController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php on line 38 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/DirectoryController.php:45
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:38
+
+28) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testPage
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+29) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testIndex
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+30) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testIndexWithInvalidFilters
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+31) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testShow
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+32) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testShowWithNonExistentId
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+33) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testCreate
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+34) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testUpdate
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+35) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testUpdateWithNonExistentId
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+36) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testDestroy
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+37) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testDestroyWithNonExistentId
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+38) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testIndexThrowsException
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+39) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testShowThrowsException
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+40) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testCreateThrowsException
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+41) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testUpdateThrowsException
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+42) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testDestroyThrowsException
+ArgumentCountError: Too few arguments to function OCA\OpenCatalogi\Controller\MetaDataController::__construct(), 3 passed in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php on line 33 and exactly 4 expected
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/MetaDataController.php:16
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:33
+
+43) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testPage
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+44) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testPageWithError
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+45) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testIndex
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+46) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testIndexWithError
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+47) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShow
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+48) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShowWithError
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+49) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreate
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+50) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreateWithError
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+51) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdate
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+52) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdateWithError
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+53) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroy
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+54) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroyWithError
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+55) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShowWithNonExistentId
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+56) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreateWithInvalidData
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+57) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdateWithNonExistentId
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+58) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroyWithNonExistentId
+TypeError: OCA\OpenCatalogi\Controller\PublicationsController::__construct(): Argument #3 ($publicationMapper) must be of type OCA\OpenCatalogi\Db\PublicationMapper, Mock_IAppConfig_28dc13e5 given, called in /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php on line 44
+
+/var/www/html/apps-extra/opencatalogi/lib/Controller/PublicationsController.php:33
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:44
+
+59) DirectoryServiceTest::testRegisterToExternalDirectory
+TypeError: Mock_IAppConfig_28dc13e5::getValueString(): Return value must be of type string, null returned
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:38
+
+60) DirectoryServiceTest::testFetchFromExternalDirectory
+TypeError: Mock_IAppConfig_28dc13e5::getValueString(): Return value must be of type string, null returned
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:38
+
+61) DirectoryServiceTest::testCreateDirectoryFromResult
+TypeError: Mock_IAppConfig_28dc13e5::getValueString(): Return value must be of type string, null returned
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:38
+
+62) SearchServiceTest::testSearch
+Undefined array key "catalogId"
+
+/var/www/html/apps-extra/opencatalogi/lib/Service/SearchService.php:103
+/var/www/html/apps-extra/opencatalogi/tests/unit/Service/SearchServiceTest.php:97
+
+--
+
+There were 2 failures:
+
+1) OCA\OpenCatalogi\Tests\Controller\AttachmentsControllerTest::testInsertNestedObjects
+Failed asserting that two arrays are equal.
+--- Expected
++++ Actual
+@@ @@
+ Array (
+     'key1' => 'value1'
+-    'nestedKey' => Array (...)
++    'nestedKey' => 'valid-uuid'
+ )
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/AttachmentsControllerTest.php:284
+
+2) OCA\OpenCatalogi\Tests\Controller\ConfigurationControllerTest::testIndex
+Failed asserting that two arrays are equal.
+--- Expected
++++ Actual
+@@ @@
+ Array (
+-    'drcLocation' => 'someValue'
+-    'drcKey' => 'someValue'
+-    'orcLocation' => 'someValue'
+-    'orcKey' => 'someValue'
+-    'mongodbLocation' => 'someValue'
+-    'mongodbKey' => 'someValue'
+-    'mongodbCluster' => 'someValue'
+-    'elasticLocation' => 'someValue'
+-    'elasticKey' => 'someValue'
+-    'elasticIndex' => 'someValue'
+-    'organisationName' => 'my-organisation'
+-    'organisationOin' => 'someValue'
+-    'organisationPki' => 'someValue'
++    'error' => 'Undefined array key "adminUsername"'
+ )
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/ConfigurationControllerTest.php:60
+
+ERRORS!
+Tests: 101, Assertions: 65, Errors: 62, Failures: 2.
+
+Generating code coverage report in HTML format ... done [00:00.473]
 
 
-Code Coverage Report:      
-  2024-07-19 14:51:56      
-                           
- Summary:                  
-  Classes: 15.38% (2/13)   
-  Methods: 40.51% (32/79)  
-  Lines:   54.05% (374/692)
+[1;37;40mCode Coverage Report:       [0m
+[1;37;40m  2024-08-05 14:44:12       [0m
+[1;37;40m                            [0m
+[1;37;40m Summary:                   [0m
+[37;41m  Classes:  2.94% (1/34)    [0m
+[37;41m  Methods: 11.38% (19/167)  [0m
+[37;41m  Lines:   12.00% (194/1616)[0m
 
 OCA\OpenCatalogi\AppInfo\Application
-  Methods:   0.00% ( 0/ 3)   Lines:   0.00% (  0/  3)
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/  3)[0m
 OCA\OpenCatalogi\Controller\AttachmentsController
-  Methods:  55.56% ( 5/ 9)   Lines:  82.67% ( 62/ 75)
+  [37;41mMethods:  33.33% ( 3/ 9)[0m   [37;41mLines:  38.04% ( 35/ 92)[0m
 OCA\OpenCatalogi\Controller\CatalogiController
-  Methods:  57.14% ( 4/ 7)   Lines:  93.94% ( 62/ 66)
+  [37;41mMethods:   0.00% ( 0/ 7)[0m   [37;41mLines:   0.00% (  0/ 93)[0m
 OCA\OpenCatalogi\Controller\ConfigurationController
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 31/ 31)
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [30;42mLines:  96.97% ( 32/ 33)[0m
 OCA\OpenCatalogi\Controller\DashboardController
-  Methods:  33.33% ( 1/ 3)   Lines:  47.06% (  8/ 17)
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [37;41mLines:  47.06% (  8/ 17)[0m
 OCA\OpenCatalogi\Controller\DirectoryController
-  Methods:  85.71% ( 6/ 7)   Lines:  96.77% ( 60/ 62)
+  [37;41mMethods:   0.00% ( 0/ 8)[0m   [37;41mLines:   0.00% (  0/ 90)[0m
 OCA\OpenCatalogi\Controller\MetaDataController
-  Methods:  85.71% ( 6/ 7)   Lines:  96.72% ( 59/ 61)
+  [37;41mMethods:   0.00% ( 0/ 7)[0m   [37;41mLines:   0.00% (  0/ 88)[0m
 OCA\OpenCatalogi\Controller\PublicationsController
-  Methods:  33.33% ( 3/ 9)   Lines:  60.40% ( 61/101)
+  [37;41mMethods:   0.00% ( 0/ 9)[0m   [37;41mLines:   0.00% (  0/144)[0m
 OCA\OpenCatalogi\Controller\SearchController
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 31/ 31)
+  [30;42mMethods: 100.00% ( 4/ 4)[0m   [30;42mLines: 100.00% ( 31/ 31)[0m
+OCA\OpenCatalogi\Db\Attachment
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 55)[0m
+OCA\OpenCatalogi\Db\AttachmentMapper
+  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 20)[0m
+OCA\OpenCatalogi\Db\Catalog
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 30)[0m
+OCA\OpenCatalogi\Db\CatalogMapper
+  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 20)[0m
+OCA\OpenCatalogi\Db\Listing
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 41)[0m
+OCA\OpenCatalogi\Db\ListingMapper
+  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 20)[0m
+OCA\OpenCatalogi\Db\MetaData
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 31)[0m
+OCA\OpenCatalogi\Db\MetaDataMapper
+  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 20)[0m
+OCA\OpenCatalogi\Db\Organization
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 37)[0m
+OCA\OpenCatalogi\Db\OrganizationMapper
+  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 20)[0m
+OCA\OpenCatalogi\Db\Publication
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 69)[0m
+OCA\OpenCatalogi\Db\PublicationMapper
+  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 22)[0m
+OCA\OpenCatalogi\Migration\Version6Date20240723125106
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/ 70)[0m
+OCA\OpenCatalogi\Migration\Version6Date20240724084920
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/ 35)[0m
+OCA\OpenCatalogi\Migration\Version6Date20240725114845
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/172)[0m
+OCA\OpenCatalogi\Migration\Version6Date20240726122212
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/  8)[0m
+OCA\OpenCatalogi\Migration\Version6Date20240726132348
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/  8)[0m
+OCA\OpenCatalogi\Migration\Version6Date20240726140008
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/  8)[0m
+OCA\OpenCatalogi\Migration\Version6Date20240726140328
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:   0.00% (  0/  8)[0m
 OCA\OpenCatalogi\Service\DirectoryService
-  Methods:   0.00% ( 0/ 6)   Lines:   0.00% (  0/ 43)
+  [37;41mMethods:   0.00% ( 0/ 6)[0m   [37;41mLines:   0.00% (  0/ 43)[0m
+OCA\OpenCatalogi\Service\ElasticSearchClientAdapter
+  [37;41mMethods:   0.00% ( 0/ 6)[0m   [37;41mLines:   0.00% (  0/  6)[0m
 OCA\OpenCatalogi\Service\ElasticSearchService
-  Methods:   0.00% ( 0/ 9)   Lines:   0.00% (  0/ 78)
+  [37;41mMethods:   0.00% ( 0/ 9)[0m   [37;41mLines:   0.00% (  0/ 86)[0m
+OCA\OpenCatalogi\Service\FileService
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 30)[0m
 OCA\OpenCatalogi\Service\ObjectService
-  Methods:   0.00% ( 0/ 7)   Lines:   0.00% (  0/ 77)
+  [30;43mMethods:  85.71% ( 6/ 7)[0m   [30;42mLines:  96.10% ( 74/ 77)[0m
 OCA\OpenCatalogi\Service\SearchService
-  Methods:   0.00% ( 0/ 5)   Lines:   0.00% (  0/ 47)
+  [37;41mMethods:  42.86% ( 3/ 7)[0m   [37;41mLines:  15.73% ( 14/ 89)[0m
