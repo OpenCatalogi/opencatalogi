@@ -15,6 +15,14 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
+					<NcActionButton
+						title="Bekijk de documentatie over publicaties"
+						@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
+						<template #icon>
+							<HelpCircleOutline :size="20" />
+						</template>
+						Help
+					</NcActionButton>
 					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
@@ -111,6 +119,9 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 </template>
 <script>
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
+import { debounce } from 'lodash'
+
+// Icons
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -125,7 +136,7 @@ import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
-import { debounce } from 'lodash'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'PublicationList',
@@ -149,6 +160,11 @@ export default {
 		Pencil,
 		Publish,
 		ArchivePlusOutline,
+		HelpCircleOutline,
+	},
+	beforeRouteLeave(to, from, next) {
+		search = ''
+		next()
 	},
 	props: {
 		search: {
@@ -159,7 +175,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-			search: '',
 		}
 	},
 	computed: {
@@ -191,10 +206,6 @@ export default {
 		debouncedFetchData: debounce(function(search) {
 			this.fetchData(search)
 		}, 500),
-	},
-	beforeRouteLeave(to, from, next) {
-		search = ''
-		next()
 	},
 }
 </script>
