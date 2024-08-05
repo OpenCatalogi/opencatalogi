@@ -5,6 +5,7 @@ return [
         'metadata' => ['url' => '/api/metadata'],
         'publications' => ['url' => '/api/publications'],
         'organizations' => ['url' => '/api/organizations'],
+        'themes' => ['url' => '/api/themes'],
         'attachments' => ['url' => '/api/attachments'],
         'catalogi' => ['url' => '/api/catalogi'],
         'directory' => ['url' => '/api/directory']
