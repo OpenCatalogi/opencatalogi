@@ -17,9 +17,17 @@ end
 
 alt Feature-aanvraag goedgekeurd
     Gebruiker -> Ontwikkelingspartij: Zoekt ontwikkelingspartij
+    note right of Ontwikkelingspartij
+        De Ontwikkelingspartij kan ook de beheerderspartij zijn als de Product Owner 
+        de feature dusdanig intressant vind dat er vanuit OC budget wordt gecreeerd
+    end note
+
     Ontwikkelingspartij -> Ontwikkelingspartij: Forkt de codebase
     Ontwikkelingspartij -> Ontwikkelingspartij: Bouwt de feature
     Ontwikkelingspartij -> Beheerderspartij: Maakt PR met verwijzing naar het issue-nummer
+    note right of Beheerderspartij
+     Code wordt bij voorkeur terug geleverd aan de centrale codebase
+    end note
     Beheerderspartij -> Beheerderspartij: Beoordeelt code op basis van issue en codeerstandaard
 
     note right of Beheerderspartij

@@ -19,6 +19,10 @@ Daarbovenop hanteren we een aantal extra spelregeles:
 * **Vraag gestuurde development**: Code wordt alleen geacepteerd als deze is gekopeld aan een door de PO goed gekeurde user story ([regel](https://github.com/OpenCatalogi/.github/issues/new/choose) die dus eerst)
 
 ## Feature flow
+In de meeste gevallen zal een wijzigings voorstel voor de open catalogi nextcloud app voortkomen vanuit de PO owner van Open Catalogi ([Core](https://documentatie.opencatalogi.nl/Docs/Projecten/)) of de product owner van een van de [projecten](https://documentatie.opencatalogi.nl/Docs/Projecten/). Maar feitenlijk kan iedere gebruiker een feature request indienen.
+
+De Ontwikkelpartijen van [Core](https://documentatie.opencatalogi.nl/Docs/Projecten/) fungeren tevens als beheer partijen voor de code base.
+
 ![alt text](feature_flow.png)
 
 ## Application development
