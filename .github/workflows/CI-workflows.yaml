@@ -25,9 +25,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add src
-          git commit -m "Update src from PHP Codesniffer" || echo "No changes to commit"
-          git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash
-          git push
+          git diff --cached --quiet || (git commit -m "Update src from PHP Codesniffer" && git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash && git push)
 
       - name: Run phpcs
         run: phpcs -q --report=checkstyle src | cs2pr
@@ -69,12 +67,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add .
-          git reset package.json
-          git reset package-lock.json
-          git reset node_modules
-          git commit -m "Update src from remark-lint" || echo "No changes to commit"
-          git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash
-          git push
+          git diff --cached --quiet || (git reset package.json && git reset package-lock.json && git reset node_modules && git commit -m "Update src from remark-lint" && git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash && git push)
 
   checks:
     needs: [build, lint]
@@ -98,7 +91,7 @@ jobs:
             echo "PHPUnit tests failed. Please fix them before merging."
             exit 1
           fi
-          if npx remark . --use remark-preset-lint-consistent --use remark-preset-lint-recommended --use remark-lint-list-item-indent; then
+          if ! npx remark . --use remark-preset-lint-consistent --use remark-preset-lint-recommended --use remark-lint-list-item-indent; then
             echo "Markdown linting failed. Please fix them before merging."
             exit 1
           fi
