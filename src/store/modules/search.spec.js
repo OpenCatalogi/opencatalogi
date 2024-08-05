@@ -3,39 +3,49 @@ import { setActivePinia, createPinia } from 'pinia'
 
 import { useSearchStore } from './search.js'
 
-describe('Search Store', () => {
-	beforeEach(() => {
-		setActivePinia(createPinia())
-	})
+describe(
+    'Search Store', () => {
+        beforeEach(
+        () => {
+                setActivePinia(createPinia())
+            }
+    )
 
-	it('set search correctly', () => {
-		const store = useSearchStore()
+    it(
+        'set search correctly', () => {
+        const store = useSearchStore()
 
-		store.setSearch('cata')
-		expect(store.search).toBe('cata')
+            store.setSearch('cata')
+            expect(store.search).toBe('cata')
 
-		store.setSearch('woo')
-		expect(store.search).toBe('woo')
+            store.setSearch('woo')
+            expect(store.search).toBe('woo')
 
-		store.setSearch('foo bar')
-		expect(store.search).toBe('foo bar')
-	})
+            store.setSearch('foo bar')
+            expect(store.search).toBe('foo bar')
+        }
+    )
 
-	it('set search result correctly', () => {
-		const store = useSearchStore()
+    it(
+        'set search result correctly', () => {
+        const store = useSearchStore()
 
-		store.setSearchResults(['foo', 'bar', 'bux'])
-		expect(store.searchResults).toEqual(['foo', 'bar', 'bux'])
-	})
+            store.setSearchResults(['foo', 'bar', 'bux'])
+            expect(store.searchResults).toEqual(['foo', 'bar', 'bux'])
+        }
+    )
 
-	it('clear search correctly', () => {
-		const store = useSearchStore()
+    it(
+        'clear search correctly', () => {
+        const store = useSearchStore()
 
-		store.setSearch('Lorem ipsum dolor sit amet')
-		expect(store.search).toBe('Lorem ipsum dolor sit amet')
+            store.setSearch('Lorem ipsum dolor sit amet')
+            expect(store.search).toBe('Lorem ipsum dolor sit amet')
 
-		store.clearSearch()
+            store.clearSearch()
 
-		expect(store.search).toBe('')
-	})
-})
+            expect(store.search).toBe('')
+        }
+    )
+    }
+)
