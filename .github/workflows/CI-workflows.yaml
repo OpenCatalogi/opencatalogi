@@ -78,8 +78,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup PHP (for checks)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: cs2pr, phpcs, phpmd, phpunit
+
       - name: Run Checks
         run: |
+          if ! command -v phpcs &> /dev/null; then
+            echo "phpcs could not be found. Please ensure it's installed."
+            exit 1
+          fi
+          if ! command -v phpmd &> /dev/null; then
+            echo "phpmd could not be found. Please ensure it's installed."
+            exit 1
+          fi
           if grep -q "ERROR" <(phpcs -q --report=checkstyle src); then
             echo "PHP CodeSniffer found issues. Please fix them before merging."
             exit 1
