@@ -33,7 +33,7 @@ jobs:
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Run phpmd
-        run: phpmd src text phpmd.xml --not-strict
+        run: phpmd src xml phpmd.xml --not-strict
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Install Composer dependencies
