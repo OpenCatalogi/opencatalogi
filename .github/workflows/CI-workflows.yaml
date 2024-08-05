@@ -16,6 +16,9 @@ jobs:
           extensions: mbstring, zip, xml, curl, intl, sqlite, gd, pdo_mysql
           tools: cs2pr, phpcbf, phpcs, phpmd, phpunit
 
+      - name: Install Composer
+        run: composer install
+
       - name: Run phpcbf
         run: phpcbf .
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}
