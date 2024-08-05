@@ -112,7 +112,7 @@ jobs:
           # if ! phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml; then
           #  echo "PHPUnit tests failed. Please fix them before merging."
           #  exit 1
-          fi
+          #fi
           if ! npx remark . --use remark-preset-lint-consistent --use remark-preset-lint-recommended --use remark-lint-list-item-indent; then
             echo "Markdown linting failed. Please fix them before merging."
             exit 1
