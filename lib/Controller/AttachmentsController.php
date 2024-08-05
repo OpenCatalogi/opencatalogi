@@ -10,8 +10,10 @@ use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\Files\IRootFolder;
 use OCP\IAppConfig;
 use OCP\IRequest;
+use OCP\IUserSession;
 use Symfony\Component\Uid\Uuid;
 
 class AttachmentsController extends Controller
@@ -148,10 +150,17 @@ class AttachmentsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService, IRootFolder $rootFolder, IUserSession $userSession): JSONResponse
     {
-
 		$data = $this->request->getParams();
+
+		$uploadedFile = $this->request->getUploadedFile('_file');
+
+		$userFolder = $rootFolder->getUserFolder($userSession->getUser()->getUID());
+		$userFolder->touch(mtime: $uploadedFile['name']);
+		$file = $userFolder->get(path: $uploadedFile['name']);
+
+		$file->putContent(data: $uploadedFile['content']);
 
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
