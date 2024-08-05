@@ -3,6 +3,7 @@
 namespace OCA\OpenCatalogi\Controller;
 
 use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -25,7 +26,11 @@ class SearchController extends Controller
         ]
     ];
 
-    public function __construct($appName, IRequest $request, private readonly IAppConfig $config)
+    public function __construct(
+        $appName,
+        IRequest $request,
+		private readonly PublicationMapper $publicationMapper,
+        private readonly IAppConfig $config)
     {
         parent::__construct($appName, $request);
     }
@@ -63,6 +68,18 @@ class SearchController extends Controller
 
 		$filters = $this->request->getParams();
 		unset($filters['_route']);
+
+        $fieldsToSearch = ['title', 'description', 'summary'];
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$searchParams = $searchService->createMySQLSearchParams($filters, $fieldsToSearch);
+			$searchConditions = $searchService->createMySQLSearchConditions($filters, $fieldsToSearch);
+			$filters = $searchService->unsetSpecialQueryParams($filters);
+
+			return new JSONResponse(['results' => $this->publicationMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+		}
 
 		//@TODO: find a better way to get query params. This fixes it for now.
 		$keys   = array_keys(array: $filters);

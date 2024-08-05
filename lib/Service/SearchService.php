@@ -175,6 +175,91 @@ class SearchService
 	}//end recursiveRequestQueryKey()
 
 	/**
+	 * This function creates a mongodb filter array.
+	 *
+	 * Also unsets _search in filters !
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 * @param array $fieldsToSearch Database field names to filter/search on.
+	 *
+	 * @return array $filters
+	 */
+	public function createMongoDBSearchFilter(array $filters, array $fieldsToSearch): array
+	{
+        if (isset($filters['_search']) === true) {
+			$searchRegex = ['$regex' => $filters['_search'], '$options' => 'i'];
+			$filters['$or'] = [];
+
+			foreach ($fieldsToSearch as $field) {
+				$filters['$or'][] = [$field => $searchRegex];
+			}
+
+			unset($filters['_search']);
+		}
+
+		return $filters;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates mysql search conditions based on given filters from request.
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 * @param array $fieldsToSearch Fields to search on in sql.
+	 *
+	 * @return array $searchConditions
+	 */
+	public function createMySQLSearchConditions(array $filters, array $fieldsToSearch): array
+	{
+		$searchConditions = [];
+		if (isset($filters['_search']) === true) {
+			foreach ($fieldsToSearch as $field) {
+				$searchConditions[] = "LOWER($field) LIKE :search";
+			}
+		}
+
+		return $searchConditions;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function unsets all keys starting with _ from filters.
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $filters
+	 */
+	public function unsetSpecialQueryParams(array $filters): array
+	{
+        foreach ($filters as $key => $value) {
+            if (str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            }
+        }
+
+		return $filters;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates mysql search parameters based on given filters from request.
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 *
+	 * @return array $searchParams
+	 */
+	public function createMySQLSearchParams(array $filters): array
+	{
+		$searchParams = [];
+		if (isset($filters['_search']) === true) {
+			$searchParams['search'] = '%' . strtolower($filters['_search']) . '%';
+		}
+
+		return $searchParams;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
 	 * Parses the request query string and returns it as an array of queries.
 	 *
 	 * @param string $queryString The input query string from the request.
