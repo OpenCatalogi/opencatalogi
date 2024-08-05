@@ -8,6 +8,8 @@ import { useDirectoryStore } from './modules/directory.js'
 import { useMetadataStore } from './modules/metadata.js'
 import { usePublicationStore } from './modules/publication.js'
 import { useOrganizationStore } from './modules/organization.js'
+import { useThemeStore } from './modules/theme.js'
+import { useConfigurationStore } from './modules/configuration.js'
 
 const navigationStore = useNavigationStore(pinia)
 const searchStore = useSearchStore(pinia)
@@ -16,6 +18,8 @@ const directoryStore = useDirectoryStore(pinia)
 const metadataStore = useMetadataStore(pinia)
 const publicationStore = usePublicationStore(pinia)
 const organizationStore = useOrganizationStore(pinia)
+const themeStore = useThemeStore(pinia)
+const configurationStore = useConfigurationStore(pinia)
 
 export {
 	// generic
@@ -27,4 +31,6 @@ export {
 	metadataStore,
 	publicationStore,
 	organizationStore,
+	themeStore,
+	configurationStore,
 }

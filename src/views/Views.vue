@@ -7,6 +7,9 @@ import { navigationStore, searchStore } from '../store/store.js'
 	<NcAppContent>
 		<template #default>
 			<Catalogi v-if="navigationStore.selected === 'catalogi'" />
+			<Organisations v-if="navigationStore.selected === 'organisations'" />
+			<Themes v-if="navigationStore.selected === 'themes'" />
+			<Catalogi v-if="navigationStore.selected === 'catalogi'" />
 			<Dashboard v-if="navigationStore.selected === 'dashboard'" />
 			<Directory v-if="navigationStore.selected === 'directory'" />
 			<Publications v-if="navigationStore.selected === 'publication'" />
@@ -19,6 +22,8 @@ import { navigationStore, searchStore } from '../store/store.js'
 <script>
 import { NcAppContent } from '@nextcloud/vue'
 import Catalogi from './catalogi/CatalogiIndex.vue'
+import Organisations from './organizations/OrganizationIndex.vue'
+import Themes from './themes/ThemeIndex.vue'
 import Dashboard from './dashboard/DashboardIndex.vue'
 import Directory from './directory/DirectoryIndex.vue'
 import Matadata from './metaData/MetaDataIndex.vue'
@@ -29,6 +34,8 @@ export default {
 	name: 'Views',
 	components: {
 		Catalogi,
+		Organisations,
+		Themes,
 		Dashboard,
 		Directory,
 		Matadata,

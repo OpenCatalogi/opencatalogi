@@ -1,46 +1,47 @@
 <script setup>
-import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
+import { navigationStore, searchStore, organisationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcAppContent>
 		<template #list>
-			<PublicationList :search="searchStore.search" />
+			<OrganizationList :search="searchStore.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!publicationStore.publicationItem.id || navigationStore.selected != 'publication'"
 				class="detailContainer"
-				name="Geen publicatie"
-				description="Nog geen publicatie geselecteerd">
+				name="Geen organisatie"
+				description="Nog geen organisatie geselecteerd">
 				<template #icon>
-					<ListBoxOutline />
+					<OfficeBuildingOutline />
 				</template>
 				<template #action>
-					<NcButton type="primary" @click="navigationStore.setModal('publicationAdd')">
-						Publicatie toevoegen
+					<NcButton type="primary" @click="navigationStore.setModal('organisationAdd')">
+						Organisatie toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<PublicationDetails v-if="publicationStore.publicationItem.id && navigationStore.selected === 'publication'" :publication-item="publicationStore.publicationItem" />
+			<OrganizationDetails v-if="organisationStore.organisationItem.id && navigationStore.selected === 'publication'" :organisation-item="organisationStore.organisationItem" />
 		</template>
 	</NcAppContent>
 </template>
 
 <script>
 import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
-import PublicationList from './OrganizationList.vue'
-import PublicationDetails from './OrganizationDetail.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
+import OrganizationList from './OrganizationList.vue'
+import OrganizationDetails from './OrganizationDetail.vue'
+import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
 
 export default {
-	name: 'PublicationIndex',
+	name: 'OrganizationIndex',
 	components: {
 		NcAppContent,
 		NcEmptyContent,
-		ListBoxOutline,
 		PublicationList,
 		PublicationDetails,
 		NcButton,
+		// Icons
+		OfficeBuildingOutline,
 	},
 	data() {
 		return {

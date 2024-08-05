@@ -15,7 +15,7 @@ use OCP\IAppConfig;
 use OCP\IRequest;
 use Symfony\Component\Uid\Uuid;
 
-class OrganizationsController extends Controller
+class ThemesController extends Controller
 {
     const TEST_ARRAY = [
         "354980e5-c967-4ba5-989b-65c2b0cd2ff4" => [
@@ -35,7 +35,7 @@ class OrganizationsController extends Controller
 		$appName,
 		IRequest $request,
 		private readonly PublicationMapper $publicationMapper,
-		private readonly IAppConfig $config
+		private readonly IAppConfig $config,
 	)
     {
         parent::__construct($appName, $request);
