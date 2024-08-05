@@ -48,10 +48,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:counter-number="publication?.attachmentCount.toString()"
 					@click="publicationStore.setPublicationItem(publication)">
 					<template #icon>
-						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
-						<ArchiveOutline v-if="publication.status === 'archived'" :size="44" />
-						<Pencil v-if="publication.status === 'concept'" :size="44" />
-						<AlertOutline v-if="publication.status === 'retracted'" :size="44" />
+						<ShapeOutline :size="44" />
 					</template>
 					<template #subname>
 						{{ publication?.summary }}
@@ -125,15 +122,13 @@ import { debounce } from 'lodash'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
-import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
+import ShapeOutline from 'vue-material-design-icons/ShapeOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
@@ -145,7 +140,6 @@ export default {
 		NcActionButton,
 		NcAppContentList,
 		NcTextField,
-		ListBoxOutline,
 		Magnify,
 		NcLoadingIcon,
 		NcActions,
@@ -155,8 +149,7 @@ export default {
 		FilePlusOutline,
 		FileTreeOutline,
 		ContentCopy,
-		ArchiveOutline,
-		AlertOutline,
+		ShapeOutline,
 		Pencil,
 		Publish,
 		ArchivePlusOutline,

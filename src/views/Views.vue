@@ -22,7 +22,7 @@ import { navigationStore, searchStore } from '../store/store.js'
 <script>
 import { NcAppContent } from '@nextcloud/vue'
 import Catalogi from './catalogi/CatalogiIndex.vue'
-import Organisations from './organizations/OrganizationIndex.vue'
+import Organisations from './organisations/OrganisationIndex.vue'
 import Themes from './themes/ThemeIndex.vue'
 import Dashboard from './dashboard/DashboardIndex.vue'
 import Directory from './directory/DirectoryIndex.vue'
