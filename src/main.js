@@ -6,7 +6,9 @@ Vue.mixin({ methods: { t, n } })
 
 Vue.use(PiniaVuePlugin)
 
-new Vue({
-	pinia,
-	render: h => h(App),
-}).$mount('#opencatalogi')
+new Vue(
+    {
+        pinia,
+        render: h => h(App),
+    }
+).$mount('#opencatalogi')
