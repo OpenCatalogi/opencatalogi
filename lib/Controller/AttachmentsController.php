@@ -144,14 +144,24 @@ class AttachmentsController extends Controller
     }
 
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @throws GuzzleException In case the file upload to NextCloud fails.
+	 */
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-
 		$data = $this->request->getParams();
+
+		$uploadedFile = $this->request->getUploadedFile('_file');
+		// Todo: $uploadedFile['content'] does not contain the file content...
+		$this->fileService->uploadFile(content: $uploadedFile['content'], filePath: $uploadedFile['name']);
+		$data['downloadUrl'] = $this->fileService->createShareLink(path: $uploadedFile['name']);
+		$data['type'] = $uploadedFile['type'];
+		$data['size'] = $uploadedFile['size'];
+		$explodedName = explode('.', $uploadedFile['name']);
+		$data['name'] = $explodedName[0];
+		$data['extension'] = end($explodedName);
 
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
@@ -188,6 +198,8 @@ class AttachmentsController extends Controller
     {
 		$data = $this->request->getParams();
 
+		// Todo: file upload, create new fileService function for updating a file.
+
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
@@ -223,9 +235,15 @@ class AttachmentsController extends Controller
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
+	 * @throws GuzzleException In case deleting the file from NextCloud fails.
+	 * @throws \OCP\DB\Exception In case deleting attachment from the NextCloud DB fails.
      */
     public function destroy(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
+		$attachment = $this->show($id, $objectService);
+		// Todo: test this, and are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
+		$this->fileService->deleteFile(filePath: $attachment['name']. '.' .$attachment['extension']);
+
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
