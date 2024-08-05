@@ -4,84 +4,96 @@ import { setActivePinia, createPinia } from 'pinia'
 import { usePublicationStore } from './publication.js'
 import { Attachment, Publication } from '../../entities/index.js'
 
-describe('Metadata Store', () => {
-	beforeEach(() => {
-		setActivePinia(createPinia())
-	})
+describe(
+	'Metadata Store', () => {
+		beforeEach(
+			() => {
+				setActivePinia(createPinia())
+			},
+		)
 
-	it('sets publication item correctly', () => {
-		const store = usePublicationStore()
+		it(
+			'sets publication item correctly', () => {
+				const store = usePublicationStore()
 
-		store.setPublicationItem(testData[0])
+				store.setPublicationItem(testData[0])
 
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).toEqual(testData[0])
-		expect(store.publicationItem.validate()).toBe(true)
+				expect(store.publicationItem).toBeInstanceOf(Publication)
+				expect(store.publicationItem).toEqual(testData[0])
+				expect(store.publicationItem.validate()).toBe(true)
 
-		store.setPublicationItem(testData[1])
+				store.setPublicationItem(testData[1])
 
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).not.toEqual(testData[1])
-		expect(store.publicationItem.validate()).toBe(true)
+				expect(store.publicationItem).toBeInstanceOf(Publication)
+				expect(store.publicationItem).not.toEqual(testData[1])
+				expect(store.publicationItem.validate()).toBe(true)
 
-		store.setPublicationItem(testData[2])
+				store.setPublicationItem(testData[2])
 
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).toEqual(testData[2])
-		expect(store.publicationItem.validate()).toBe(false)
-	})
+				expect(store.publicationItem).toBeInstanceOf(Publication)
+				expect(store.publicationItem).toEqual(testData[2])
+				expect(store.publicationItem.validate()).toBe(false)
+			},
+		)
 
-	it('sets publication list correctly', () => {
-		const store = usePublicationStore()
+		it(
+			'sets publication list correctly', () => {
+				const store = usePublicationStore()
 
-		store.setPublicationList(testData)
+				store.setPublicationList(testData)
 
-		expect(store.publicationList).toHaveLength(testData.length)
+				expect(store.publicationList).toHaveLength(testData.length)
 
-		expect(store.publicationList[0]).toBeInstanceOf(Publication)
-		expect(store.publicationList[0]).toEqual(testData[0])
-		expect(store.publicationList[0].validate()).toBe(true)
+				expect(store.publicationList[0]).toBeInstanceOf(Publication)
+				expect(store.publicationList[0]).toEqual(testData[0])
+				expect(store.publicationList[0].validate()).toBe(true)
 
-		expect(store.publicationList[1]).toBeInstanceOf(Publication)
-		expect(store.publicationList[1]).not.toEqual(testData[1])
-		expect(store.publicationList[1].validate()).toBe(true)
+				expect(store.publicationList[1]).toBeInstanceOf(Publication)
+				expect(store.publicationList[1]).not.toEqual(testData[1])
+				expect(store.publicationList[1].validate()).toBe(true)
 
-		expect(store.publicationList[2]).toBeInstanceOf(Publication)
-		expect(store.publicationList[2]).toEqual(testData[2])
-		expect(store.publicationList[2].validate()).toBe(false)
-	})
+				expect(store.publicationList[2]).toBeInstanceOf(Publication)
+				expect(store.publicationList[2]).toEqual(testData[2])
+				expect(store.publicationList[2].validate()).toBe(false)
+			},
+		)
 
-	// TODO: fix this
-	it('set publication data.data property key correctly', () => {
-		const store = usePublicationStore()
+		// TODO: fix this
+		it(
+			'set publication data.data property key correctly', () => {
+				const store = usePublicationStore()
 
-		store.setPublicationDataKey('contactPoint')
+				store.setPublicationDataKey('contactPoint')
 
-		expect(store.publicationDataKey).toBe('contactPoint')
-	})
+				expect(store.publicationDataKey).toBe('contactPoint')
+			},
+		)
 
-	it('set attachment item correctly', () => {
-		const store = usePublicationStore()
+		it(
+			'set attachment item correctly', () => {
+				const store = usePublicationStore()
 
-		store.setAttachmentItem(attachmentTestData[0])
+				store.setAttachmentItem(attachmentTestData[0])
 
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).toEqual(attachmentTestData[0])
-		expect(store.attachmentItem.validate()).toBe(true)
+				expect(store.attachmentItem).toBeInstanceOf(Attachment)
+				expect(store.attachmentItem).toEqual(attachmentTestData[0])
+				expect(store.attachmentItem.validate()).toBe(true)
 
-		store.setAttachmentItem(attachmentTestData[1])
+				store.setAttachmentItem(attachmentTestData[1])
 
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).not.toEqual(attachmentTestData[1])
-		expect(store.attachmentItem.validate()).toBe(true)
+				expect(store.attachmentItem).toBeInstanceOf(Attachment)
+				expect(store.attachmentItem).not.toEqual(attachmentTestData[1])
+				expect(store.attachmentItem.validate()).toBe(true)
 
-		store.setAttachmentItem(attachmentTestData[2])
+				store.setAttachmentItem(attachmentTestData[2])
 
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).toEqual(attachmentTestData[2])
-		expect(store.attachmentItem.validate()).toBe(false)
-	})
-})
+				expect(store.attachmentItem).toBeInstanceOf(Attachment)
+				expect(store.attachmentItem).toEqual(attachmentTestData[2])
+				expect(store.attachmentItem.validate()).toBe(false)
+			},
+		)
+	},
+)
 
 const testData = [
 	{ // full data

@@ -12,13 +12,13 @@ De organisatie-eigen catalogi (waartoe een gebruiker toegang heeft) zijn opgenom
 
 Catalogi kunnen worden beheerd via het menu-item Instellingen -> Catalogi.
 
-- **Configuratie**: Onder de configuratie van een catalogus kan worden aangegeven
-  - Of deze actief is (anders wordt de catalogus niet getoond in het navigatiemenu en de zoekresultaten)
-  - Of deze openbaar is (anders wordt de catalogus alleen getoond aan de geselecteerde gebruikersgroepen)
-- **Rollen selecteren**: Hier kunnen de rollen worden geselecteerd die toegang hebben tot de catalogus indien deze **niet** openbaar is.
-- **Metadata selecteren**: Hier kunnen de metadatatypen worden aangegeven die worden geaccepteerd door deze catalogus, dat kunnen zowel [interne metadatatypen](metadata.md) zijn als [externe metadatatypen](directory.md). Deze laatste moeten dan wel zijn geactiveerd via de directory.
+* **Configuratie**: Onder de configuratie van een catalogus kan worden aangegeven
+  * Of deze actief is (anders wordt de catalogus niet getoond in het navigatiemenu en de zoekresultaten)
+  * Of deze openbaar is (anders wordt de catalogus alleen getoond aan de geselecteerde gebruikersgroepen)
+* **Rollen selecteren**: Hier kunnen de rollen worden geselecteerd die toegang hebben tot de catalogus indien deze **niet** openbaar is.
+* **Metadata selecteren**: Hier kunnen de metadatatypen worden aangegeven die worden geaccepteerd door deze catalogus, dat kunnen zowel [interne metadatatypen](metadata.md) zijn als [externe metadatatypen](directory.md). Deze laatste moeten dan wel zijn geactiveerd via de directory.
 
-> [warning] Het is niet mogelijk om een catalogus te verwijderen als deze nog publicaties bevat.
+> \[warning] Het is niet mogelijk om een catalogus te verwijderen als deze nog publicaties bevat.
 
 ## Publicaties verplaatsen
 

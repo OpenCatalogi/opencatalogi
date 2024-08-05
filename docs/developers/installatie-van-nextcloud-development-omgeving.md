@@ -10,7 +10,7 @@ De makkelijkste manier is om naar de repository te gaan van de [OpenCatalogi-Nex
 
 Dat kan op 2 manieren.
 
-1) De `git clone`-manier (verondersteld dat je [git](https://git-scm.com/) geinstalleerd hebt):
+1. De `git clone`-manier (verondersteld dat je [git](https://git-scm.com/) geinstalleerd hebt):
 
 Ga in jouw terminal naar de "apps-extra"-directory. Die is te vinden in `nextcloud-docker-dev/workspace/server/apps-extra/`
 
@@ -23,7 +23,7 @@ npm install
 docker compose up nextcloud proxy 
 ```
 
-2) in plaats van de git clone, kan er gekozen worden voor de code te downloaden in een `.ZIP-bestand` en daarna uit te pakken in de `apps-extra`-directory. Dit vervangt het `git clone`-commando. De rest van de stappen zijn hetzelfde.
+2. in plaats van de git clone, kan er gekozen worden voor de code te downloaden in een `.ZIP-bestand` en daarna uit te pakken in de `apps-extra`-directory. Dit vervangt het `git clone`-commando. De rest van de stappen zijn hetzelfde.
 
 Hou er rekening mee dat er afspraken zijn over het terugleveren van ontwikkelinde code die vind je [hier](aan-de-slag-met-development.md).
 

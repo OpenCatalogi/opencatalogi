@@ -4,19 +4,19 @@ We gaan er voor deze stap vanuit dat je reeds een werkende lokale Nextcloud-omge
 
 ## Bijdragen
 
-Als Nextcloud-app volgen we sowieso de [Nextcloud publishing guidelines](https://docs.nextcloud.com/server/19/developer\_manual/app/publishing.html#app-guidelines).
+Als Nextcloud-app volgen we sowieso de [Nextcloud publishing guidelines](https://docs.nextcloud.com/server/19/developer_manual/app/publishing.html#app-guidelines).
 
 Daarbovenop hanteren we een aantal extra spelregels:
 
 * **Features moeten zijn voorzien van gebruikersdocumentatie**
-* **Backend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html).
-* **Backend code moet zuiver zijn**: Code mag _géén_ linting errors bevatten
+* **Backend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html).
+* **Backend code moet zuiver zijn**: Code mag *géén* linting errors bevatten
 * **Frontend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd
-* **Frontend code moet zuiver zijn**: Code mag _géén_ linting errors bevatten
-* **Seperation of concerns**: Voor zowel backend als frontend moet business logica zijn opgenomen in Services. Dat betekent dat Controllers, Templates, Views, Componenten en Store _géén_ business logica mogen bevatten.
+* **Frontend code moet zuiver zijn**: Code mag *géén* linting errors bevatten
+* **Seperation of concerns**: Voor zowel backend als frontend moet business logica zijn opgenomen in Services. Dat betekent dat Controllers, Templates, Views, Componenten en Store *géén* business logica mogen bevatten.
 * **Vier ogen-principe**: Pull requests moeten zijn beoordeeld door een andere developer dan de maker voordat ze worden geaccepteerd
 * **Automatische test**: Code mag alleen naar master/main als alle automatische tests goed gaan
-* **Vraag gestuurde development**: Code wordt alleen geaccepteerd als deze is gekoppeld aan een door de PO goed gekeurde user story ([regel](https://github.com/OpenCatalogi/.github/issues/new/choose) die dus eerst)
+* **Vraag gestuurde development**: Code wordt alleen geaccepteerd als deze is gekoppeld aan een door de PO goedgekeurde user story ([regel](https://github.com/OpenCatalogi/.github/issues/new/choose))
 
 ## Feature flow
 
@@ -28,7 +28,7 @@ De Ontwikkelpartijen van [Core](https://documentatie.opencatalogi.nl/Docs/Projec
 
 ## Application development
 
-Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het _documentation-first_ principe gehanteerd, waarbij de ontwikkelaars eerst de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) hebben geraadpleegd.
+Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het *documentation-first* principe gehanteerd, waarbij de ontwikkelaars eerst de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer_manual/index.html) hebben geraadpleegd.
 
 ## Kwaliteit, Stabiliteit en Veiligheid
 
@@ -65,10 +65,12 @@ npm run test-coverage
 Voor de backend is dat:
 
 ```cli
-???
+phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml
 ```
 
 Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele errors 0.
+
+> **Note** We volgens de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html)
 
 ## Voor veiligheid gebruiken we dependency scanning
 
@@ -96,11 +98,11 @@ We gebruiken Gitbook voor de gebruikersdocumentatie. Features binnen de app zoud
 
 Ook voor de documentatie wordt een linter gebruikt namelijk [remarklint](https://github.com/remarkjs/remark-lint).
 
-De commando's om deze linter in de CLI te gebruiken zijn [hier te vinden](npx remark doc/ --use remark-preset-lint-consistent --use remark-preset-lint-recommended) voor een uitgebreide output in de terminal.
+De commando's om deze linter in de CLI te gebruiken zijn [hier te vinden](https://github.com/remarkjs/remark-lint?tab=readme-ov-file#what-is-this) voor een uitgebreide output in de terminal.
 
 ## API Development
 
-De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.io](https://stoplight.io/), die automatisch een [OpenAPI Specificatie (OAS)](https://www.noraonline.nl/wiki/FS:Openapi-specification#:~:text=Een%20OpenAPI%20Specification%20(OAS)%20beschrijft,er%20achter%20de%20API%20schuilgaat.) genereert uit de documentatie. De Stoplight voor OpenCatalogi is [hier](https://conduction.stoplight.io/docs/open-catalogi/6yuj08rgf7w44-open-catalogi-api) te vinden.
+De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.io](https://stoplight.io/), die automatisch een [OpenAPI Specificatie (OAS)](https://www.noraonline.nl/wiki/FS:Openapi-specification#:~:text=Een%20OpenAPI%20Specification%20\(OAS\)%20beschrijft,er%20achter%20de%20API%20schuilgaat.) genereert uit de documentatie. De Stoplight voor OpenCatalogi is [hier](https://conduction.stoplight.io/docs/open-catalogi/6yuj08rgf7w44-open-catalogi-api) te vinden.
 
 ## Frontend Development
 
