@@ -63,8 +63,8 @@ class PublicationMapper extends QBMapper
 
 	public function updateFromArray(int $id, array $object): Publication
 	{
-		$publication = $this->find($id);
-		$publication->hydrate($object);
+		$publication = $this->find(id: $id);
+		$publication->hydrate(object: $object);
 
 		return $this->update($publication);
 	}
