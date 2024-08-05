@@ -10,7 +10,7 @@ import { searchStore } from '../../store/store.js'
 		<NcAppSidebarTab id="search-tab" name="Zoeken" :order="1">
 			<template #icon>
 				<Magnify :size="20" />
-			</template>test1
+			</template>
 			Zoek snel in het voor uw beschikbare federatieve netwerk<br>
 			<NcTextField class="searchField"
 				:value.sync="searchStore.search"
