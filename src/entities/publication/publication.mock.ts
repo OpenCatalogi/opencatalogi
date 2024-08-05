@@ -1,7 +1,7 @@
 import { Publication } from './publication'
 import { TPublication } from './publication.types'
 
-const mockPublicationsData = (): TPublication[] => [
+export const mockPublicationsData = (): TPublication[] => [
 	{ // full data
 		id: '1',
 		reference: 'ref1',

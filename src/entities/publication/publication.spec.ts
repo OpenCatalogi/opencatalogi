@@ -9,9 +9,6 @@ describe('Directory Store', () => {
 		expect(publication).toBeInstanceOf(Publication)
 		expect(publication).toEqual(mockPublications()[0])
 
-		// log any errors
-		!publication.validate().success && console.error(publication.validate().error)
-
 		expect(publication.validate().success).toBe(true)
 	})
 
@@ -22,9 +19,6 @@ describe('Directory Store', () => {
 		expect(publication).not.toBe(mockPublications()[1])
 		expect(publication.status).toBe('Concept')
 
-		// log any errors
-		!publication.validate().success && console.error(publication.validate().error)
-
 		expect(publication.validate().success).toBe(true)
 	})
 
@@ -33,9 +27,6 @@ describe('Directory Store', () => {
 
 		expect(publication).toBeInstanceOf(Publication)
 		expect(publication).toEqual(mockPublications()[2])
-
-		// log any errors
-		!publication.validate().success && console.error(publication.validate().error)
 
 		expect(publication.validate().success).toBe(false)
 	})
