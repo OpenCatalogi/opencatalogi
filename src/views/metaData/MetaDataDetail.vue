@@ -11,34 +11,43 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				</h1>
 				<span>{{ metadata.description }}</span>
 			</div>
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
-				<template #icon>
-					<span>
-						<NcLoadingIcon v-if="loading"
-							:size="20"
-							appearance="dark" />
-						<DotsHorizontal v-if="!loading" :size="20" />
-					</span>
-				</template>
-				<NcActionButton @click="navigationStore.setModal('editMetaData')">
+			<div class="flex-hor">
+				<a target="_blank" href="https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata">
+					<NcButton type="tertiary-no-background">
+						<template #icon>
+							<HelpCircleOutline :size="20" />
+						</template>
+					</NcButton>
+				</a>
+				<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 					<template #icon>
-						<Pencil :size="20" />
+						<span>
+							<NcLoadingIcon v-if="loading"
+								:size="20"
+								appearance="dark" />
+							<DotsHorizontal v-if="!loading" :size="20" />
+						</span>
 					</template>
-					Bewerken
-				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('addMetadataDataModal')">
-					<template #icon>
-						<PlusCircleOutline :size="20" />
-					</template>
-					Eigenschap toevoegen
-				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('deleteMetaData')">
-					<template #icon>
-						<Delete :size="20" />
-					</template>
-					Verwijderen
-				</NcActionButton>
-			</NcActions>
+					<NcActionButton @click="navigationStore.setModal('editMetaData')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Bewerken
+					</NcActionButton>
+					<NcActionButton @click="navigationStore.setModal('addMetadataDataModal')">
+						<template #icon>
+							<PlusCircleOutline :size="20" />
+						</template>
+						Eigenschap toevoegen
+					</NcActionButton>
+					<NcActionButton @click="navigationStore.setDialog('deleteMetaData')">
+						<template #icon>
+							<Delete :size="20" />
+						</template>
+						Verwijderen
+					</NcActionButton>
+				</NcActions>
+			</div>
 		</div>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
@@ -119,6 +128,7 @@ import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'MetaDataDetail',
@@ -252,6 +262,11 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.flex-hor {
+    display: flex;
+    gap: 4px;
 }
 
 .float-right {

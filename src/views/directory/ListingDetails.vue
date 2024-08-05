@@ -8,28 +8,37 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			<h1 class="h1">
 				{{ listing.title }}
 			</h1>
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
-				<template #icon>
-					<span>
-						<NcLoadingIcon v-if="loading"
-							:size="20"
-							appearance="dark" />
-						<DotsHorizontal v-if="!loading" :size="20" />
-					</span>
-				</template>
-				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
+			<div class="flex-hor">
+				<a target="_blank" href="https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory">
+					<NcButton type="tertiary-no-background">
+						<template #icon>
+							<HelpCircleOutline :size="20" />
+						</template>
+					</NcButton>
+				</a>
+				<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 					<template #icon>
-						<Pencil :size="20" />
+						<span>
+							<NcLoadingIcon v-if="loading"
+								:size="20"
+								appearance="dark" />
+							<DotsHorizontal v-if="!loading" :size="20" />
+						</span>
 					</template>
-					Bewerken
-				</NcActionButton>
-				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
-					<template #icon>
-						<Delete :size="20" />
-					</template>
-					Verwijderen
-				</NcActionButton>
-			</NcActions>
+					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Bewerken
+					</NcActionButton>
+					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
+						<template #icon>
+							<Delete :size="20" />
+						</template>
+						Verwijderen
+					</NcActionButton>
+				</NcActions>
+			</div>
 		</div>
 		<div>
 			<div>
@@ -68,12 +77,14 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 import {
 	NcActions,
 	NcActionButton,
+	NcButton,
 	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'ListingDetails',
@@ -195,5 +206,10 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.flex-hor {
+    display: flex;
+    gap: 4px;
 }
 </style>

@@ -9,64 +9,74 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 				{{ publicationStore.publicationItem.title }}
 			</h1>
 
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
-				<template #icon>
-					<span>
-						<NcLoadingIcon v-if="loading"
-							:size="20"
-							appearance="dark" />
-						<DotsHorizontal v-if="!loading" :size="20" />
-					</span>
-				</template>
-				<NcActionButton @click="navigationStore.setModal('editPublication')">
+			<div class="flex-hor">
+				<a target="_blank" href="https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties">
+					<NcButton type="tertiary-no-background">
+						<template #icon>
+							<HelpCircleOutline :size="20" />
+						</template>
+					</NcButton>
+				</a>
+
+				<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
 					<template #icon>
-						<Pencil :size="20" />
+						<span>
+							<NcLoadingIcon v-if="loading"
+								:size="20"
+								appearance="dark" />
+							<DotsHorizontal v-if="!loading" :size="20" />
+						</span>
 					</template>
-					Bewerken
-				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('copyPublication')">
-					<template #icon>
-						<ContentCopy :size="20" />
-					</template>
-					Kopiëren
-				</NcActionButton>
-				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
-					<template #icon>
-						<Publish :size="20" />
-					</template>
-					Publiceren
-				</NcActionButton>
-				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
-					<template #icon>
-						<PublishOff :size="20" />
-					</template>
-					Depubliceren
-				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('archivePublication')">
-					<template #icon>
-						<ArchivePlusOutline :size="20" />
-					</template>
-					Archiveren
-				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('addPublicationData')">
-					<template #icon>
-						<FileTreeOutline :size="20" />
-					</template>
-					Eigenschap toevoegen
-				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('AddAttachment')">
-					<template #icon>
-						<FilePlusOutline :size="20" />
-					</template>
-					Bijlage toevoegen
-				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('deletePublication')">
-					<template #icon>
-						<Delete :size="20" />
-					</template>
-					Verwijderen
-				</NcActionButton>
-			</NcActions>
+					<NcActionButton @click="navigationStore.setModal('editPublication')">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Bewerken
+					</NcActionButton>
+					<NcActionButton @click="navigationStore.setDialog('copyPublication')">
+						<template #icon>
+							<ContentCopy :size="20" />
+						</template>
+						Kopiëren
+					</NcActionButton>
+					<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
+						<template #icon>
+							<Publish :size="20" />
+						</template>
+						Publiceren
+					</NcActionButton>
+					<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
+						<template #icon>
+							<PublishOff :size="20" />
+						</template>
+						Depubliceren
+					</NcActionButton>
+					<NcActionButton @click="navigationStore.setDialog('archivePublication')">
+						<template #icon>
+							<ArchivePlusOutline :size="20" />
+						</template>
+						Archiveren
+					</NcActionButton>
+					<NcActionButton @click="navigationStore.setModal('addPublicationData')">
+						<template #icon>
+							<FileTreeOutline :size="20" />
+						</template>
+						Eigenschap toevoegen
+					</NcActionButton>
+					<NcActionButton @click="navigationStore.setModal('AddAttachment')">
+						<template #icon>
+							<FilePlusOutline :size="20" />
+						</template>
+						Bijlage toevoegen
+					</NcActionButton>
+					<NcActionButton @click="navigationStore.setDialog('deletePublication')">
+						<template #icon>
+							<Delete :size="20" />
+						</template>
+						Verwijderen
+					</NcActionButton>
+				</NcActions>
+			</div>
 		</div>
 		<div class="container">
 			<div class="detailGrid">
@@ -343,6 +353,7 @@ import LockOutline from 'vue-material-design-icons/LockOutline.vue'
 import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
 import Download from 'vue-material-design-icons/Download.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -566,6 +577,11 @@ h4 {
 .buttonLinkContainer{
 	display: flex;
     align-items: center;
+}
+
+.flex-hor {
+    display: flex;
+    gap: 4px;
 }
 
 .float-right {

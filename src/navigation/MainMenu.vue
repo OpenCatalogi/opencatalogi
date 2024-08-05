@@ -54,6 +54,12 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 				</template>
 			</NcAppNavigationItem>
 
+			<NcAppNavigationItem name="Documentatie" @click="open('https://conduction.gitbook.io/opencatalogi-nextcloud', '_blank')">
+				<template #icon>
+					<HelpCircleOutline :size="20" />
+				</template>
+			</NcAppNavigationItem>
+
 			<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Applicatie instellingen">
 				<NcAppSettingsSection id="sharing" name="Connecties" doc-url="zaakafhandel.app">
 					<template #icon>
@@ -249,6 +255,7 @@ import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import ContentSave from 'vue-material-design-icons/ContentSave.vue'
 import Finance from 'vue-material-design-icons/Finance.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'MainMenu',
@@ -377,6 +384,9 @@ export default {
 			navigationStore.setSelected('publication')
 			navigationStore.setSelectedCatalogus(catalogus.id)
 			catalogiStore.setCatalogiItem(catalogus)
+		},
+		open(url, type) {
+			window.open(url, type)
 		},
 	},
 }
