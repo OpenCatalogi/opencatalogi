@@ -33,7 +33,7 @@ class OrganisationMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('organisations')
+			->from('organizations')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 

@@ -33,7 +33,7 @@ class ThemeMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('themes')
+			->from('themas')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
