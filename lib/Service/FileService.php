@@ -133,7 +133,7 @@ class FileService
 			. $userInfo['currentUsername'] . '/' . trim(string: $filePath, characters: '/');
 
 		try {
-			$response = $this->client->request('PUT', $url, [
+			$response = $this->client->request(method: 'PUT', uri: $url, options: [
 				'auth' => [$userInfo['username'], $userInfo['password']],
 				'body' => $content
 			]);
@@ -169,7 +169,7 @@ class FileService
 			. $userInfo['currentUsername'] . '/' . trim(string: $filePath, characters: '/');
 
 		try {
-			$response = $this->client->request('DELETE', $url, [
+			$response = $this->client->request(method: 'DELETE', uri: $url, options: [
 				'auth' => [$userInfo['username'], $userInfo['password']],
 			]);
 
@@ -202,7 +202,7 @@ class FileService
 			. $userInfo['currentUsername'] . '/' . trim(string: $folderPath, characters: '/');
 
 		try {
-			$response = $this->client->request('PROPFIND', $url, [
+			$response = $this->client->request(method: 'PROPFIND', uri: $url, options: [
 				'auth' => [$userInfo['username'], $userInfo['password']],
 				'headers' => [
 					'Depth' => '1',
@@ -231,7 +231,7 @@ class FileService
 	 */
 	public function createFolder(string $folderPath): bool
 	{
-		if ($this->folderExists($folderPath) === true) {
+		if ($this->folderExists(folderPath: $folderPath) === true) {
 			$this->logger->info('Folder creation failed: Folder already exists');
 			return false;
 		}
@@ -244,7 +244,7 @@ class FileService
 			. $userInfo['currentUsername'] . '/' . trim(string: $folderPath, characters: '/');
 
 		try {
-			$response = $this->client->request('MKCOL', $url, [
+			$response = $this->client->request(method: 'MKCOL', uri: $url, options: [
 				'auth' => [$userInfo['username'], $userInfo['password']],
 			]);
 
