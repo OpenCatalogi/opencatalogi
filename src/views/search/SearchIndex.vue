@@ -4,9 +4,9 @@ import { searchStore } from '../../store/store.js'
 
 <template>
 	<NcAppContent>
-		<div class="dashboardContainer">
-			<h2>Resultaten</h2>
-		</div>
+		<h2 class="pageHeader">
+			Resultaten
+		</h2>
 		<ul>
 			<NcListItem
 				v-for="(result, i) in searchStore.searchResults.results"
@@ -34,7 +34,6 @@ import { searchStore } from '../../store/store.js'
 </template>
 
 <script>
-
 import { NcAppContent, NcListItem, NcActionButton } from '@nextcloud/vue'
 
 import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
@@ -57,9 +56,7 @@ export default {
 		},
 	},
 	data() {
-		return {
-
-		}
+		return {}
 	},
 	watch: {
 		search: {
@@ -78,9 +75,3 @@ export default {
 	},
 }
 </script>
-<style>
-.dashboardContainer {
-    margin-inline-start: 65px;
-    margin-block-start: 20px
-}
-</style>

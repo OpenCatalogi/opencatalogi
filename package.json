@@ -43,7 +43,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.24.8",
+    "@babel/preset-env": "^7.25.3",
     "@nextcloud/browserslist-config": "^3.0.1",
     "@nextcloud/eslint-config": "^8.4.1",
     "@nextcloud/stylelint-config": "^2.4.0",

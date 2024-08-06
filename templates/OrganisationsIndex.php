@@ -3,7 +3,7 @@
 use OCP\Util;
 
 $appId = OCA\OpenCatalogi\AppInfo\Application::APP_ID;
-Util::addScript($appId, $appId . '-organizationsScript');
+Util::addScript($appId, $appId . '-organisationsScript');
 Util::addStyle($appId, 'main');
 ?>
-<div id="organizations"></div>
+<div id="organisations"></div>

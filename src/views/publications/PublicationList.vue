@@ -33,8 +33,12 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						</template>
 						Kies een eigenschap
 					</NcActionInput>
-					<NcActionRadio name="Richting" value="Asc">Oplopend</NcActionRadio>
-					<NcActionRadio name="Richting" value="Desc">Aflopend</NcActionRadio>
+					<NcActionRadio name="Richting" value="Asc">
+						Oplopend
+					</NcActionRadio>
+					<NcActionRadio name="Richting" value="Desc">
+						Aflopend
+					</NcActionRadio>
 					<NcActionSeparator />
 					<NcActionCaption name="Acties" />
 					<NcActionButton

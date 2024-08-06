@@ -126,11 +126,27 @@ class ThemesController extends Controller
 	 */
 	public function show(string $id, ObjectService $objectService): JSONResponse
 	{
-		// Latere zorg
-		$query= $this->request->getParams();
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->themeMapper->find(id: (int) $id));
+		}
 
-		$results = $callService->show(source: 'brc', endpoint: 'besluiten', id: $id);
-		return new JSONResponse($results);
+        try {
+            $dbConfig = [
+                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
+                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
+                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
+            ];
+
+            $filters['_id'] = (string) $id;
+
+            $result = $objectService->findObject($filters, $dbConfig);
+
+            return new JSONResponse($result);
+        } catch (\Exception $e) {
+            return new JSONResponse(['error' => $e->getMessage()], 500);
+        }
 	}
 
 
@@ -144,10 +160,35 @@ class ThemesController extends Controller
 	 */
 	public function create(ObjectService $objectService): JSONResponse
 	{
-		// get post from requests
-		$body = $this->request->getParams();
-		$results = $callService->create(source: 'brc', endpoint: 'besluiten', data: $body);
-		return new JSONResponse($results);
+		
+		$data = $this->request->getParams();
+
+		foreach ($data as $key => $value) {
+			if (str_starts_with($key, '_')) {
+				unset($data[$key]);
+			}
+		}
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->themeMapper->createFromArray(object: $data));
+		}
+
+		try {
+            $dbConfig = [
+                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
+                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
+                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
+            ];
+
+            $filters['_schema'] = 'organisation';
+
+            $result = $objectService->findObjects(filters: $filters, config: $dbConfig);
+
+            return new JSONResponse(["results" => $result['documents']]);
+        } catch (\Exception $e) {
+            return new JSONResponse(['error' => $e->getMessage()], 500);
+        }
 	}
 
 	/**
@@ -160,9 +201,37 @@ class ThemesController extends Controller
 	 */
 	public function update(string $id, ObjectService $objectService): JSONResponse
 	{
-		$body = $this->request->getParams();
-		$results = $callService->update(source: 'brc', endpoint: 'besluiten', data: $body, id: $id);
-		return new JSONResponse($results);
+		$data = $this->request->getParams();
+
+		foreach ($data as $key => $value) {
+			if (str_starts_with($key, '_')) {
+				unset($data[$key]);
+			}
+		}
+		if (isset($data['id'])) {
+			unset($data['id']);
+		}
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse($this->themeMapper->updateFromArray(id: (int) $id, object: $data));
+		}
+
+        try {
+            $dbConfig = [
+                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
+                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
+                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
+            ];
+
+            $filters['_id'] = (string) $id;
+            $returnData = $objectService->updateObject($filters, $data, $dbConfig);
+
+            return new JSONResponse($returnData);
+        } catch (\Exception $e) {
+            return new JSONResponse(['error' => $e->getMessage()], 500);
+        }
 	}
 
 	/**
@@ -175,8 +244,27 @@ class ThemesController extends Controller
 	 */
 	public function destroy(string $id, ObjectService $objectService): JSONResponse
 	{
-		$callService->destroy(source: 'brc', endpoint: 'besluiten', id: $id);
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$this->catalogMapper->delete($this->themeMapper->find((int) $id));
 
-		return new JsonResponse([]);
-	}
+			return new JSONResponse([]);
+		}
+
+        try {
+            $dbConfig = [
+                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
+                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
+                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
+            ];
+
+            $filters['_id'] = (string) $id;
+            $returnData = $objectService->deleteObject($filters, $dbConfig);
+
+            return new JSONResponse($returnData);
+        } catch (\Exception $e) {
+            return new JSONResponse(['error' => $e->getMessage()], 500);
+        }
+    }
 }

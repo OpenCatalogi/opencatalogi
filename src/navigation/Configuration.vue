@@ -120,16 +120,16 @@
 								<td>Username</td>
 								<td>
 									<NcTextField id="mongodbLocation"
-												 :value.sync="configuration.adminUsername"
-												 :label-outside="true"
-												 placeholder="admin" />
+										:value.sync="configuration.adminUsername"
+										:label-outside="true"
+										placeholder="admin" />
 								</td>
 								<td>Password</td>
 								<td>
 									<NcTextField id="mongodbKey"
-												 :value.sync="configuration.adminPassword"
-												 :label-outside="true"
-												 placeholder="***" />
+										:value.sync="configuration.adminPassword"
+										:label-outside="true"
+										placeholder="***" />
 								</td>
 							</tr>
 						</tbody>
@@ -253,7 +253,7 @@ export default {
 				organisationOin: '',
 				organisationPki: '',
 				adminUsername: '',
-				adminPassword: ''
+				adminPassword: '',
 			},
 			configurationSuccess: -1,
 			feedbackPosition: '',

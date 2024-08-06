@@ -2,7 +2,7 @@
 
 namespace OCA\OpenCatalogi\Db;
 
-use OCA\OpenCatalogi\Db\Publication;
+use OCA\OpenCatalogi\Db\Organisation;
 use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -15,7 +15,7 @@ class OrganisationMapper extends QBMapper
 		parent::__construct($db, 'organizations');
 	}
 
-	public function find(int $id): Organization
+	public function find(int $id): Organisation
 	{
 		$qb = $this->db->getQueryBuilder();
 
@@ -51,21 +51,21 @@ class OrganisationMapper extends QBMapper
 		return $this->findEntities(query: $qb);
 	}
 
-	public function createFromArray(array $object): Organization
+	public function createFromArray(array $object): Organisation
 	{
-		$organization = new Organization();
-		$organization->hydrate(object: $object);
+		$organisation = new Organisation();
+		$organisation->hydrate(object: $object);
 
-//		var_dump($organization->getTitle());
+//		var_dump($organisation->getTitle());
 
-		return $this->insert(entity: $organization);
+		return $this->insert(entity: $organisation);
 	}
 
-	public function updateFromArray(int $id, array $object): Organization
+	public function updateFromArray(int $id, array $object): Organisation
 	{
-		$organization = $this->find($id);
-		$organization->hydrate($object);
+		$organisation = $this->find($id);
+		$organisation->hydrate($object);
 
-		return $this->update($organization);
+		return $this->update($organisation);
 	}
 }

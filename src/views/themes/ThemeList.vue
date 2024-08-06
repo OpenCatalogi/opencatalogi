@@ -45,7 +45,6 @@ import { navigationStore, themeStore } from '../../store/store.js'
 					:force-display-actions="true"
 					:active="themeStore.themeItem.id === theme.id"
 					:details="theme?.status"
-					:counter-number="theme?.attachmentCount.toString()"
 					@click="themeStore.setThemeItem(theme)">
 					<template #icon>
 						<ShapeOutline :size="44" />
@@ -85,18 +84,18 @@ import { navigationStore, themeStore } from '../../store/store.js'
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
+import { NcActionButton, NcActions, NcAppContentList, NcListItem, NcLoadingIcon, NcTextField } from '@nextcloud/vue'
 import { debounce } from 'lodash'
 
 // Icons
-import Magnify from 'vue-material-design-icons/Magnify.vue'
-import Refresh from 'vue-material-design-icons/Refresh.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import ShapeOutline from 'vue-material-design-icons/ShapeOutline.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import Refresh from 'vue-material-design-icons/Refresh.vue'
+import ShapeOutline from 'vue-material-design-icons/ShapeOutline.vue'
 
 export default {
 	name: 'ThemeList',
@@ -135,7 +134,7 @@ export default {
 		filteredThemes() {
 			if (!themeStore?.themeList) return []
 			return themeStore.themeList.filter((theme) => {
-				return theme.catalogi.toString() === navigationStore.selectedCatalogus.toString()
+				return theme
 			})
 		},
 	},
