@@ -94,8 +94,8 @@ class AttachmentsController extends Controller
      */
     public function index(ObjectService $objectService): JSONResponse
     {
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
 			return new JSONResponse(['results' =>$this->attachmentMapper->findAll()]);
 		}
@@ -125,8 +125,8 @@ class AttachmentsController extends Controller
      */
     public function show(string|int $id, ObjectService $objectService): JSONResponse
     {
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
 			return new JSONResponse($this->attachmentMapper->find(id: (int) $id));
 		}
@@ -151,27 +151,42 @@ class AttachmentsController extends Controller
     {
 		$data = $this->request->getParams();
 
-		$uploadedFile = $this->request->getUploadedFile('_file');
-		$this->fileService->createFolder('Attachments');
-		// Todo: $uploadedFile['content'] does not contain the file content...
-		$this->fileService->uploadFile(content: $uploadedFile['content'], filePath: 'Attachments/'.$uploadedFile['name']);
+		// Check if a file was uploaded
+		$uploadedFile = $this->request->getUploadedFile(key: '_file');
+		if (empty($uploadedFile) === true) {
+			return new JSONResponse(data: ['error' => 'No file uploaded for key "_file"'], statusCode: 400);
+		}
+
+		// Check for upload errors
+		if ($uploadedFile['error'] !== UPLOAD_ERR_OK) {
+			return new JSONResponse(data: ['error' => 'File upload error: '.$uploadedFile['error']], statusCode: 400);
+		}
+
+		// Save the uploaded file
+		$this->fileService->createFolder(folderPath: 'Attachments');
+		$this->fileService->uploadFile(
+			content: file_get_contents(filename: $uploadedFile['tmp_name']),
+			filePath: 'Attachments/'.$uploadedFile['name']
+		);
+
+		// Update Attachment data
 		$data['downloadUrl'] = $this->fileService->createShareLink(path: 'Attachments/'.$uploadedFile['name']);
 		$data['type'] = $uploadedFile['type'];
 		$data['size'] = $uploadedFile['size'];
-		$explodedName = explode('.', $uploadedFile['name']);
+		$explodedName = explode(separator: '.', string: $uploadedFile['name']);
 		$data['title'] = $explodedName[0];
-		$data['extension'] = end($explodedName);
+		$data['extension'] = end(array: $explodedName);
 
 		// Remove fields we should never post
 		unset($data['id']);
 		foreach($data as $key => $value) {
-			if(str_starts_with($key, '_')) {
+			if(str_starts_with(haystack: $key, needle: '_')) {
 				unset($data[$key]);
 			}
 		}
 
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
 			return new JSONResponse($this->attachmentMapper->createFromArray(object: $data));
 		}
@@ -200,31 +215,36 @@ class AttachmentsController extends Controller
     {
 		$data = $this->request->getParams();
 
-		$uploadedFile = $this->request->getUploadedFile('_file');
-		$this->fileService->createFolder('Attachments');
-		// Todo: $uploadedFile['content'] does not contain the file content...
+		// Todo: $uploadedFile is empty when doing a PUT...
+		$uploadedFile = $this->request->getUploadedFile(key: '_file');
+
+		// Save the uploaded file
+		$this->fileService->createFolder(folderPath: 'Attachments');
 		$this->fileService->uploadFile(
-			content: $uploadedFile['content'],
+			content: file_get_contents(filename: $uploadedFile['tmp_name']),
 			filePath: 'Attachments/'.$uploadedFile['name'],
 			update: true
 		);
+
+		// Update Attachment data
+		// Todo: when should we create a new share link?
 //		$data['downloadUrl'] = $this->fileService->createShareLink(path: 'Attachments/'.$uploadedFile['name']);
 		$data['type'] = $uploadedFile['type'];
 		$data['size'] = $uploadedFile['size'];
-		$explodedName = explode('.', $uploadedFile['name']);
+		$explodedName = explode(separator: '.', string: $uploadedFile['name']);
 		$data['title'] = $explodedName[0];
-		$data['extension'] = end($explodedName);
+		$data['extension'] = end(array: $explodedName);
 
 		// Remove fields we should never post
 		unset($data['id']);
 		foreach($data as $key => $value) {
-			if(str_starts_with($key, '_')) {
+			if(str_starts_with(haystack: $key, needle: '_')) {
 				unset($data[$key]);
 			}
 		}
 
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
 			return new JSONResponse($this->attachmentMapper->updateFromArray(id: (int) $id, object: $data));
 		}
@@ -254,14 +274,16 @@ class AttachmentsController extends Controller
      */
     public function destroy(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		$attachment = $this->show($id, $objectService)->getData()->jsonSerialize();
-		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
-		$this->fileService->deleteFile(filePath: 'Attachments/' . $attachment['title'] . '.' . $attachment['extension']);
+		$attachment = $this->show(id: $id, objectService: $objectService)->getData();
 
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
-			$this->attachmentMapper->delete($this->attachmentMapper->find((int) $id));
+			$attachment = $attachment->jsonSerialize();
+
+			// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
+			$this->fileService->deleteFile(filePath: 'Attachments/' . $attachment['title'] . '.' . $attachment['extension']);
+			$this->attachmentMapper->delete(entity: $this->attachmentMapper->find(id: (int) $id));
 
 			return new JSONResponse([]);
 		}
@@ -269,6 +291,9 @@ class AttachmentsController extends Controller
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
+		$this->fileService->deleteFile(filePath: 'Attachments/' . $attachment['title'] . '.' . $attachment['extension']);
 
 		$filters['_id'] = (string) $id;
 		$returnData = $objectService->deleteObject(
