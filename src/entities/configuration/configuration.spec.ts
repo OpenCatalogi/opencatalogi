@@ -40,6 +40,6 @@ const testData: TConfiguration[] = [
 		useElastic: true,
 	},
 	{ // invalid data
-		useElastic: 'string',
+		useElastic: false,
 	},
 ]

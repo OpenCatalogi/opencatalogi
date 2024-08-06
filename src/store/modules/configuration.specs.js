@@ -2,7 +2,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 
 import { useConfigurationStore } from './configuration.js'
-import { Configuration} from '../../entities/index.js'
+import { Configuration } from '../../entities/index.js'
 
 describe('Metadata Store', () => {
 	beforeEach(() => {

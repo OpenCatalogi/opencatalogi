@@ -1,8 +1,8 @@
 <template>
 	<NcAppContent>
-		<div class="dashboardContainer">
-			<h2>Dashboard</h2>
-		</div>
+		<h2 class="pageHeader">
+			Dashboard
+		</h2>
 		<b>Aantal zoekopdrachten afgelopen maand</B>
 		<apexchart
 			width="500"
@@ -41,10 +41,3 @@ export default {
 	},
 }
 </script>
-
-<style>
-.dashboardContainer {
-    margin-inline-start: 65px;
-    margin-block-start: 20px
-}
-</style>
