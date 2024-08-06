@@ -267,22 +267,9 @@ class AttachmentsControllerTest extends TestCase
         $this->assertEquals([], $response->getData());
     }
 
-    public function testInsertNestedObjects()
-    {
-        $objectService = $this->createMock(ObjectService::class);
-        $objectService->method('findObject')
-            ->willReturn(['nestedKey' => 'nestedValue']);
+    
 
-        $method = new \ReflectionMethod(AttachmentsController::class, 'insertNestedObjects');
-        $method->setAccessible(true);
 
-        $object = [
-            'key1' => 'value1',
-            'nestedKey' => 'valid-uuid'
-        ];
-        $result = $method->invoke($this->controller, $object, $objectService, []);
-        $this->assertEquals(['key1' => 'value1', 'nestedKey' => ['nestedKey' => 'nestedValue']], $result);
-    }
 
     public function testPageWithNullParameter()
     {

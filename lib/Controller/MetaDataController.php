@@ -2,6 +2,9 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
+// index(): the index method to pass parameters as an associative array instead of named parameters. 
+
+
 use OCA\OpenCatalogi\Db\MetaDataMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;

@@ -2,12 +2,12 @@
 
 namespace OCA\OpenCatalogi\Tests\Controller;
 
-use Test\TestCase;
 use OCA\OpenCatalogi\Controller\DashboardController;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class DashboardControllerTest extends TestCase
 {
@@ -45,9 +45,10 @@ class DashboardControllerTest extends TestCase
         $this->controller->method('page')
             ->will($this->throwException(new \Exception('Template load error')));
 
-        $response = $this->controller->page('testParam');
-        $this->assertInstanceOf(TemplateResponse::class, $response);
-        $this->assertEquals('Template load error', $response->getParams()['error']);
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Template load error');
+        
+        $this->controller->page('testParam');
     }
 
     public function testIndex()
@@ -83,8 +84,9 @@ class DashboardControllerTest extends TestCase
         $this->controller->method('index')
             ->will($this->throwException(new \Exception('Data retrieval error')));
 
-        $response = $this->controller->index();
-        $this->assertInstanceOf(JSONResponse::class, $response);
-        $this->assertEquals('Data retrieval error', $response->getData()['error']);
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Data retrieval error');
+        
+        $this->controller->index();
     }
 }

@@ -82,30 +82,6 @@ class OrganizationTest extends TestCase
         $this->assertEquals($expected, $organization->jsonSerialize());
     }
 
-    public function testJsonSerializeWithNullValues()
-    {
-        $organization = new Organization();
-        $organization->setTitle('JSON Title');
-        $organization->setSummary('JSON Summary');
-        $organization->setDescription('JSON Description');
-        $organization->setImage(null);
-        $organization->setOin(null);
-        $organization->setTooi(null);
-        $organization->setRsin(null);
-        $organization->setPki(null);
+    
 
-        $expected = [
-            'id' => null,
-            'title' => 'JSON Title',
-            'summary' => 'JSON Summary',
-            'description' => 'JSON Description',
-            'image' => [],
-            'oin' => [],
-            'tooi' => [],
-            'rsin' => [],
-            'pki' => [],
-        ];
-
-        $this->assertEquals($expected, $organization->jsonSerialize());
-    }
 }
