@@ -1,9 +1,6 @@
 {
     "files.autoSave": "afterDelay",
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.codeActionsOnSave": {
-        "source.organizeImports": "explicit",
-    },
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
     "cSpell.words": [
