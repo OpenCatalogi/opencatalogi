@@ -150,6 +150,10 @@ export default {
 		Publish,
 		ArchivePlusOutline,
 	},
+    beforeRouteLeave(to, from, next) {
+        search = ''
+        next()
+    },
 	props: {
 		search: {
 			type: String,
@@ -159,7 +163,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-            search: '',
 		}
 	},
 	computed: {
@@ -173,7 +176,7 @@ export default {
 	watch: {
 		search: {
 			handler(search) {
-                this.debouncedFetchData(search);
+                this.debouncedFetchData(search)
 			},
 		},
 	},
@@ -189,13 +192,9 @@ export default {
 				})
 		},
         debouncedFetchData: debounce(function(search) {
-            this.fetchData(search);
-        }, 500), 
+            this.fetchData(search)
+        }, 500),
 	},
-    beforeRouteLeave(to, from, next) {
-        search = '';
-        next();
-    },
 }
 </script>
 <style>

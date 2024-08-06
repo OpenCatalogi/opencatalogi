@@ -99,6 +99,10 @@ export default {
 		Pencil,
 		Delete,
 	},
+    beforeRouteLeave(to, from, next) {
+        search = '';
+        next();
+    },
 	props: {
 		search: {
 			type: String,
@@ -108,7 +112,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-            search: '',
 		}
 	},
 	watch: {
@@ -131,12 +134,8 @@ export default {
 		},
         debouncedFetchData: debounce(function(search) {
             this.fetchData(search);
-        }, 500), 
+        }, 500),
 	},
-    beforeRouteLeave(to, from, next) {
-        search = '';
-        next();
-    },
 }
 </script>
 <style>
