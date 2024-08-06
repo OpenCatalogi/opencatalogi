@@ -4,6 +4,7 @@ namespace OCA\OpenCatalogi\Controller;
 
 use OCA\OpenCatalogi\Db\CatalogMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
+use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
@@ -35,45 +36,23 @@ class CatalogiController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function index(ObjectService $objectService): JSONResponse
+    public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
     {
         $filters = $this->request->getParams();
-
-        $searchConditions = [];
-        $searchParams = [];
         $fieldsToSearch = ['title', 'description', 'summary'];
-
-        foreach ($filters as $key => $value) {
-            if ($key === '_search') {
-                // MongoDB
-                $searchRegex = ['$regex' => $value, '$options' => 'i'];
-                $filters['$or'] = [];
-
-                // MySQL
-                $searchParams['search'] = '%' . strtolower($value) . '%';
-
-                foreach ($fieldsToSearch as $field) {
-                    // MongoDB
-                    $filters['$or'][] = [$field => $searchRegex];
-
-                    // MySQL
-                    $searchConditions[] = "LOWER($field) LIKE :search";
-                }
-            }
-
-            if (str_starts_with($key, '_')) {
-                unset($filters[$key]);
-            }
-        }
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-            // Unset mongodb filter
-            unset($filters['$or']);
+			$searchParams = $searchService->createMySQLSearchParams($filters, $fieldsToSearch);
+			$searchConditions = $searchService->createMySQLSearchConditions($filters, $fieldsToSearch);
+			$filters = $searchService->unsetSpecialQueryParams($filters);
 
 			return new JSONResponse(['results' => $this->catalogMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
 		}
+
+		$filters = $searchService->createMongoDBSearchFilter($filters, $fieldsToSearch);
+		$filters = $searchService->unsetSpecialQueryParams($filters, $fieldsToSearch);
 
         try {
             $dbConfig = [
