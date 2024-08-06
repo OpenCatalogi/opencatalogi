@@ -18,7 +18,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * FIXME Auto-generated migration step: Please modify to your needs!
  */
-class Version6Date20240731141731 extends SimpleMigrationStep {
+class Version6Date20240806114939 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
@@ -40,12 +40,13 @@ class Version6Date20240731141731 extends SimpleMigrationStep {
 		 */
 		$schema = $schemaClosure();
 
-		if($schema->hasTable(tableName: 'listings') === true) {
-			$table = $schema->getTable(tableName: 'listings');
+		if($schema->hasTable(tableName: 'catalogi') === true) {
+			$table = $schema->getTable(tableName: 'catalogi');
 
-			if($table->hasColumn(name: 'catalog_id') === false) {
-				$table->addColumn(name: 'catalog_id', typeName: Types::STRING);
+			if($table->hasColumn(name: 'listed') === false) {
+				$table->addColumn(name: 'listed', typeName: Types::BOOLEAN, options: ['notNull' => false, 'default' => false]);
 			}
+
 		}
 
 		return $schema;

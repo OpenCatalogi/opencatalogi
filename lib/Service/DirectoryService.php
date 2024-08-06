@@ -39,7 +39,8 @@ class DirectoryService
 			'status'	=> '',
 			'lastSync'	=> $now->format(format: 'c'),
 			'default'	=> true,
-			'catalogId' => $catalogId
+			'catalogId' => $catalogId,
+			'reference' => '',
 		];
 	}
 
@@ -86,7 +87,7 @@ class DirectoryService
 		if(
 			isset($result['directory']) === false
 			|| $result['directory'] === $myDirectory['directory']
-			|| count($this->listDirectory(filters: ['catalogus' => $result['catalogus'], 'directory' => $result['directory']])) > 0
+			|| count($this->listDirectory(filters: ['catalogId' => $result['catalogId'], 'directory' => $result['directory']])) > 0
 		) {
 			return null;
 		}
@@ -148,5 +149,97 @@ class DirectoryService
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		return $this->objectService->findObjects(filters: $filters, config: $dbConfig)['documents'];
+	}
+
+	public function deleteListing(string $catalogId, string $directoryUrl): void
+	{
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$results = $this->listingMapper->findAll(filters: ['directory' => $directoryUrl, 'catalog_id' => $catalogId]);
+
+			foreach($results as $result) {
+				$this->listingMapper->delete($result);
+			}
+
+			return;
+		}
+		$dbConfig = [
+			'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
+			'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
+			'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
+		];
+
+		$results = $this->objectService->findObjects(filters: ['directory' => $directoryUrl, 'catalogId' => $catalogId, '_schema' => 'directory'], config: $dbConfig);
+
+		foreach($results['documents'] as $result) {
+			$this->objectService->deleteObject(filters: ['_id' => $result['_id']], config: $dbConfig);
+		}
+
+		return;
+	}
+
+	public function directoryExists(string $catalogId): bool
+	{
+		$directoryUrl = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute(routeName:"opencatalogi.directory.index"));
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$results = $this->listingMapper->findAll(filters: ['directory' => $directoryUrl, 'catalog_id' => $catalogId]);
+
+			return count($results) > 0;
+		}
+		$dbConfig = [
+			'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
+			'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
+			'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
+		];
+
+		$results = $this->objectService->findObjects(filters: ['directory' => $directoryUrl, 'catalogId' => $catalogId, '_schema' => 'directory'], config: $dbConfig);
+
+		return count($results['documents']) > 0;
+
+	}
+
+	public function listCatalog (array $catalog): array
+	{
+		$catalogId = $catalog['id'];
+		if($catalog['listed'] === false) {
+			$this->deleteListing(catalogId: $catalogId, directoryUrl: $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute(routeName:"opencatalogi.directory.index")),);
+			return $catalog;
+		} else if ($this->directoryExists($catalogId) === true) {
+			return $catalog;
+		}
+
+
+		$listing = $this->getDirectoryEntry(catalogId: $catalogId);
+
+		$listing['title'] = $catalog['title'];
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$listing = $this->listingMapper->createFromArray(object: $listing);
+
+			return $catalog;
+		}
+
+		try {
+			$dbConfig = [
+				'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
+				'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
+				'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
+			];
+
+			$data['_schema'] = 'catalog';
+
+			$returnData = $this->objectService->saveObject($data, $dbConfig);
+			return $catalog;
+		} catch (\Exception $e) {
+			$catalog['listed'] = false;
+			return $catalog;
+		}
+
 	}
 }
