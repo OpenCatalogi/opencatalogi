@@ -112,3 +112,35 @@
 .errorMessage {
   color: var(--color-error);
 }
+
+
+/* File drag and drop */
+
+.filesListDragDropNotice{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 113px;
+  margin: 0;
+  user-select: none;
+  color: var(--color-text-maxcontrast);
+  background-color: var(--color-main-background);
+  border-color: #000;
+}
+
+.filesListDragDropNoticeWrapper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 15vh;
+  max-height: 70%;
+  padding: 0 5vw;
+  border: 2px var(--color-border-dark) dashed;
+  border-radius: var(--border-radius-large);
+}
+
+.filesListDragDropNoticeTitle{
+  margin-left: 16px;
+  color: inherit;
+}

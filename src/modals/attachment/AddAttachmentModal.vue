@@ -42,6 +42,33 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Download URL"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.downloadURL" />
+				<div>
+					<NcButton v-if="success === null && !files"
+						:disabled="loading"
+						type="primary"
+						@click="openFileUpload()">
+						<template #icon>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<Plus v-if="!loading" :size="20" />
+						</template>
+						Bestand toevoegen
+					</NcButton>
+
+					<NcButton v-if="success === null && files"
+						:disabled="loading"
+						type="primary"
+						@click="reset()">
+						<template #icon>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<Minus v-if="!loading" :size="20" />
+						</template>
+						<span v-for="file of files" :key="file.name">
+							{{ file }}
+						</span>
+					</NcButton>
+
+					<div>{{ files && Object.values(files)[0] }}</div>
+				</div>
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!publicationStore.attachmentItem.title || loading"
@@ -58,8 +85,12 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import { NcButton, NcLoadingIcon, NcModal, NcNoteCard, NcTextArea, NcTextField } from '@nextcloud/vue'
+import { useFileDialog } from '@vueuse/core'
+import Minus from 'vue-material-design-icons/Minus.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+
+const { files, open: openFileUpload, reset } = useFileDialog()
 
 export default {
 	name: 'AddAttachmentModal',
@@ -87,6 +118,14 @@ export default {
 		closeModal() {
 			navigationStore.modal = false
 		},
+
+		test() {
+
+			console.log(JSON.stringify({
+				...(publicationStore.attachmentItem),
+				_file: Object.values(files)[0],
+			}))
+		},
 		addAttachment() {
 			this.loading = true
 			this.errorMessage = false
@@ -97,7 +136,10 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.attachmentItem),
+					body: JSON.stringify({
+						...(publicationStore.attachmentItem),
+						_file: files,
+					}),
 				},
 			)
 				.then((response) => {

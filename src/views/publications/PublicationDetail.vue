@@ -266,7 +266,15 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 							</NcListItem>
 						</div>
 						<div v-else class="tabPanel">
-							Geen bijlagen gevonden
+							<!-- <div>dropzone {{ isOverDropZone }}</div>
+							<div class="filesListDragDropNotice">
+								<div class="filesListDragDropNoticeWrapper">
+									<TrayArrowDown :size="48" />
+									<h3 class="filesListDragDropNoticeTitle">
+										Drag and drop files here to upload
+									</h3>
+								</div>
+							</div> -->
 						</div>
 					</BTab>
 					<BTab title="Logging">
@@ -334,29 +342,33 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcButton, NcListItem, NcActionLink, NcSelectTags, NcNoteCard } from '@nextcloud/vue'
-import { BTabs, BTab } from 'bootstrap-vue'
+import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
+import { useDropZone, useFileDialog } from '@vueuse/core'
+import { BTab, BTabs } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 
 // Icons
+import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
-import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import Publish from 'vue-material-design-icons/Publish.vue'
-import PublishOff from 'vue-material-design-icons/PublishOff.vue'
-import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
-import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
-import LockOutline from 'vue-material-design-icons/LockOutline.vue'
-import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Download from 'vue-material-design-icons/Download.vue'
-import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
+import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import LockOutline from 'vue-material-design-icons/LockOutline.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Publish from 'vue-material-design-icons/Publish.vue'
+import PublishOff from 'vue-material-design-icons/PublishOff.vue'
+import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
+import TrayArrowDown from 'vue-material-design-icons/TrayArrowDown.vue'
+
+
 
 export default {
 	name: 'PublicationDetail',
@@ -369,6 +381,8 @@ export default {
 		NcListItem,
 		NcSelectTags,
 		NcNoteCard,
+		BTab,
+		BTabs,
 		apexchart: VueApexCharts,
 		// Icons
 		CheckCircle,
@@ -389,6 +403,7 @@ export default {
 		Download,
 		ArchivePlusOutline,
 		HelpCircleOutline,
+		TrayArrowDown,
 	},
 	props: {
 		publicationItem: {
