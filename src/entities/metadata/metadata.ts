@@ -1,35 +1,39 @@
+import { SafeParseReturnType, z } from 'zod'
 import { TMetadata } from './metadata.types'
-import { z } from 'zod'
 
 export class Metadata implements TMetadata {
 
 	public id: string
 	public title: string
-	public description?: string
-	public version?: string
-	public required?: string[]
-
+	public description: string
+	public version: string
+	public required: string[]
 	public properties: Record<string, {
         title: string
-        description?: string
-        type?: 'string' | 'number' | 'integer' | 'object' | 'array' | 'boolean' | 'dictionary'
-        format?: 'date' | 'time' | 'duration' | 'date-time' | 'url' | 'uri' | 'uuid' | 'email' | 'idn-email' | 'hostname' | 'idn-hostname' | 'ipv4' | 'ipv6' | 'uri-reference' | 'iri' | 'iri-reference' | 'uri-template' | 'json-pointer' | 'regex' | 'binary' | 'byte' | 'password' | 'rsin' | 'kvk' | 'bsn' | 'oidn' | 'telephone'
-        pattern?: number
-        default?: string
-        behavior?: string
-        required?: boolean
-        deprecated?: boolean
-        minLength?: number
-        maxLength?: number
-        example?: string
-        minimum?: number
-        maximum?: number
-        multipleOf?: number
-        exclusiveMin?: boolean
-        exclusiveMax?: boolean
-        minItems?: number
-        maxItems?: number
+        description: string
+        type: 'string' | 'number' | 'integer' | 'object' | 'array' | 'boolean' | 'dictionary'
+        format: 'date' | 'time' | 'duration' | 'date-time' | 'url' | 'uri' | 'uuid' | 'email' | 'idn-email' | 'hostname' | 'idn-hostname' | 'ipv4' | 'ipv6' | 'uri-reference' | 'iri' | 'iri-reference' | 'uri-template' | 'json-pointer' | 'regex' | 'binary' | 'byte' | 'password' | 'rsin' | 'kvk' | 'bsn' | 'oidn' | 'telephone'
+        pattern: number
+        default: string
+        behavior: string
+        required: boolean
+        deprecated: boolean
+        minLength: number
+        maxLength: number
+        example: string
+        minimum: number
+        maximum: number
+        multipleOf: number
+        exclusiveMin: boolean
+        exclusiveMax: boolean
+        minItems: number
+        maxItems: number
     }>
+
+	public archive: {
+        valuation: 'b' | 'v' | 'n'
+        class: 1 | 2 | 3 | 4 | 5
+    }
 
 	constructor(data: TMetadata) {
 		this.hydrate(data)
@@ -44,51 +48,57 @@ export class Metadata implements TMetadata {
 		this.required = data?.required || []
 		// backend (PHP) doesn't know objects so it will return an array if empty
 		this.properties = (!Array.isArray(data?.properties) && data?.properties) || {}
+		this.archive = (!Array.isArray(data?.archive) && data?.archive) || {
+			valuation: 'n',
+			class: 1,
+		}
 	}
 
 	/* istanbul ignore next */
-	public validate(): boolean {
-		// https://conduction.stoplight.io/docs/open-catalogi/92e81a078982b-metadata
+	public validate(): SafeParseReturnType<TMetadata, unknown> {
+		// https://conduction.stoplight.io/docs/open-catalogi/5og7tj13bkzj5-create-metadata
 		const propertiesDataSchema = z.object({
 			title: z.string().min(1),
-			description: z.string().optional(),
-			type: z.string().min(1),
-			format: z.string().optional(),
-			pattern: z.number().optional(),
-			default: z.string().optional(),
-			behavior: z.string().optional(),
-			required: z.boolean().optional(),
-			deprecated: z.boolean().optional(),
-			minLength: z.number().optional(),
-			maxLength: z.number().optional(),
-			example: z.string().optional(),
-			minimum: z.number().optional(),
-			maximum: z.number().optional(),
-			multipleOf: z.number().optional(),
-			exclusiveMin: z.boolean().optional(),
-			exclusiveMax: z.boolean().optional(),
-			minItems: z.number().optional(),
-			maxItems: z.number().optional(),
+			description: z.string(),
+			type: z.enum(['string', 'number', 'integer', 'object', 'array', 'boolean', 'dictionary']),
+			format: z.enum(['date', 'time', 'duration', 'date-time', 'url', 'uri', 'uuid', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6', 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer', 'regex', 'binary', 'byte', 'password', 'rsin', 'kvk', 'bsn', 'oidn', 'telephone'])
+				.or(z.literal('')),
+			pattern: z.number(),
+			default: z.string(),
+			behavior: z.string(),
+			required: z.boolean(),
+			deprecated: z.boolean(),
+			minLength: z.number(),
+			maxLength: z.number(),
+			example: z.string(),
+			minimum: z.number(),
+			maximum: z.number(),
+			multipleOf: z.number(),
+			exclusiveMin: z.boolean(),
+			exclusiveMax: z.boolean(),
+			minItems: z.number(),
+			maxItems: z.number(),
 		})
 
 		const schema = z.object({
 			title: z.string().min(1), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
-			description: z.string().optional(),
-			version: z.string().optional(),
-			required: z.string().array().optional(),
-			properties: z.record(propertiesDataSchema).optional(), // z.record allows for any amount of any keys, with specific type for value validation
+			description: z.string(),
+			version: z.string(),
+			required: z.string().array(),
+			properties: z.record(propertiesDataSchema), // z.record allows for any amount of any keys, with specific type for value validation
+			archive: z.object({
+				valuation: z.enum(['b', 'v', 'n']),
+				class: z.number().refine((data: number) => {
+					return [1, 2, 3, 4, 5].includes(data)
+				}),
+			}),
 		})
 
 		const result = schema.safeParse({
-			id: this.id,
-			title: this.title,
-			description: this.description,
-			version: this.version,
-			required: this.required,
-			properties: this.properties,
+			...this,
 		})
 
-		return result.success
+		return result
 	}
 
 }

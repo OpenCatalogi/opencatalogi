@@ -11,7 +11,11 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				</h1>
 				<span>{{ metadata.description }}</span>
 			</div>
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+
+			<NcActions :disabled="loading"
+				:primary="true"
+				:inline="1"
+				:menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
@@ -20,6 +24,14 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over metadata"
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Help
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setModal('editMetaData')">
 					<template #icon>
 						<Pencil :size="20" />
@@ -119,6 +131,7 @@ import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'MetaDataDetail',
@@ -186,6 +199,9 @@ export default {
 					this.loading = false
 				})
 		},
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>
@@ -252,6 +268,11 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.flex-hor {
+    display: flex;
+    gap: 4px;
 }
 
 .float-right {
