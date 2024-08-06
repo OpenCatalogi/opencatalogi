@@ -1,20 +1,20 @@
 <script setup>
-import { navigationStore, organisationStore } from '../../store/store.js'
+import { navigationStore, themeStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="navigationStore.modal === 'organisationAdd'"
+		v-if="navigationStore.modal === 'themeAdd'"
 		ref="modalRef"
-		label-id="addOrganisationModal"
+		label-id="addThemeModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
-			<h2>Organisatie toevoegen</h2>
+			<h2>Thema toevoegen</h2>
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
-					<p>Organisatie succesvol toegevoegd</p>
+					<p>Thema succesvol toegevoegd</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het toevoegen van Organisatie</p>
+					<p>Er is iets fout gegaan bij het toevoegen van Thema</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="error" type="error">
 					<p>{{ error }}</p>
@@ -25,38 +25,22 @@ import { navigationStore, organisationStore } from '../../store/store.js'
 					<NcTextField
 						:disabled="loading"
 						label="Titel"
-						:value.sync="organisation.title" />
+						:value.sync="theme.title" />
 					<NcTextField
 						:disabled="loading"
 						label="Samenvatting"
-						:value.sync="organisation.summary" />
+						:value.sync="theme.summary" />
 					<NcTextArea
 						:disabled="loading"
 						label="Beschrijving"
-						:value.sync="organisation.description" />
-					<NcTextField
-						:disabled="loading"
-						label="OIN (organisatie-identificatienummer)"
-						:value.sync="organisation.oin" />
-					<NcTextField
-						:disabled="loading"
-						label="TOOI"
-						:value.sync="organisation.tooi" />
-					<NcTextField
-						:disabled="loading"
-						label="RSIN"
-						:value.sync="organisation.rsin" />
-					<NcTextField
-						:disabled="loading"
-						label="PKI"
-						:value.sync="organisation.pki" />
+						:value.sync="theme.description" />
 				</div>
 			</div>
 			<NcButton
 				v-if="success === null"
-				:disabled="!organisation.title || loading"
+				:disabled="!theme.title || loading"
 				type="primary"
-				@click="addOrganisation()">
+				@click="addTheme()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
@@ -79,7 +63,7 @@ import {
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
-	name: 'AddOrganisationModal',
+	name: 'AddThemeModal',
 	components: {
 		NcModal,
 		NcTextField,
@@ -92,18 +76,14 @@ export default {
 	},
 	data() {
 		return {
-			organisation: {
+			theme: {
 				title: '',
 				summary: '',
 				description: '',
-				oin: '',
-				tooi: '',
-				rsin: '',
-				pki: '',
 			},
 
 			errorCode: '',
-			organisationLoading: false,
+			themeLoading: false,
 			hasUpdated: false,
 			loading: false,
 			success: null,
@@ -111,7 +91,7 @@ export default {
 		}
 	},
 	updated() {
-		if (navigationStore.modal === 'organisationAdd' && !this.hasUpdated) {
+		if (navigationStore.modal === 'themeAdd' && !this.hasUpdated) {
 			this.hasUpdated = true
 		}
 	},
@@ -124,33 +104,33 @@ export default {
 			}
 			return true
 		},
-		addOrganisation() {
+		addTheme() {
 			this.loading = true
 			this.error = false
-			fetch('/index.php/apps/opencatalogi/api/organisations', {
+			fetch('/index.php/apps/opencatalogi/api/themes', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
-					...this.organisation,
+					...this.theme,
 				}),
 			})
 				.then((response) => {
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the organisationList
-					organisationStore.refreshOrganisationList()
+					// Lets refresh the themeList
+					themeStore.refreshThemeList()
 					response.json().then((data) => {
-						organisationStore.setOrganisationList(data)
+						themeStore.setThemeList(data)
 					})
-					navigationStore.setSelected('organisations')
+					navigationStore.setSelected('themes')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.success = null
 						navigationStore.setModal(false)
-						self.organisation = {
+						self.theme = {
 							title: '',
 							summary: '',
 							description: '',

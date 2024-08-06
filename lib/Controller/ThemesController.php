@@ -274,5 +274,4 @@ class ThemesController extends Controller
             return new JSONResponse(['error' => $e->getMessage()], 500);
         }
     }
-	}
 }

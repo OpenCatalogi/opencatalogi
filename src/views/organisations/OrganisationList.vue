@@ -45,7 +45,6 @@ import { navigationStore, organisationStore } from '../../store/store.js'
 					:force-display-actions="true"
 					:active="organisationStore.organisationItem.id === organisation.id"
 					:details="organisation?.status"
-					:counter-number="organisation?.attachmentCount.toString()"
 					@click="organisationStore.setOrganisationItem(organisation)">
 					<template #icon>
 						<OfficeBuildingOutline :size="44" />
@@ -85,18 +84,18 @@ import { navigationStore, organisationStore } from '../../store/store.js'
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
+import { NcActionButton, NcActions, NcAppContentList, NcListItem, NcLoadingIcon, NcTextField } from '@nextcloud/vue'
 import { debounce } from 'lodash'
 
 // Icons
-import Magnify from 'vue-material-design-icons/Magnify.vue'
-import Refresh from 'vue-material-design-icons/Refresh.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
 	name: 'OrganisationList',
@@ -135,7 +134,7 @@ export default {
 		filteredOrganisations() {
 			if (!organisationStore?.organisationList) return []
 			return organisationStore.organisationList.filter((organisation) => {
-				return organisation.catalogi.toString() === navigationStore.selectedCatalogus.toString()
+				return organisation
 			})
 		},
 	},

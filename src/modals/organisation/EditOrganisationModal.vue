@@ -3,18 +3,18 @@ import { navigationStore, organisationStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="navigationStore.modal === 'organisationAdd'"
+		v-if="navigationStore.modal === 'editOrganisation'"
 		ref="modalRef"
 		label-id="addOrganisationModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
-			<h2>Organisatie toevoegen</h2>
+			<h2>Organisatie Bewerken</h2>
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
-					<p>Organisatie succesvol toegevoegd</p>
+					<p>Organisatie succesvol bewerkt</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het toevoegen van Organisatie</p>
+					<p>Er is iets fout gegaan bij het bewerken van Organisatie</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="error" type="error">
 					<p>{{ error }}</p>
@@ -25,31 +25,31 @@ import { navigationStore, organisationStore } from '../../store/store.js'
 					<NcTextField
 						:disabled="loading"
 						label="Titel"
-						:value.sync="organisation.title" />
+						:value.sync="organisationStore.organisationItem.title" />
 					<NcTextField
 						:disabled="loading"
 						label="Samenvatting"
-						:value.sync="organisation.summary" />
+						:value.sync="organisation.organisationItem.summary" />
 					<NcTextArea
 						:disabled="loading"
 						label="Beschrijving"
-						:value.sync="organisation.description" />
+						:value.sync="organisation.organisationItem.description" />
 					<NcTextField
 						:disabled="loading"
 						label="OIN (organisatie-identificatienummer)"
-						:value.sync="organisation.oin" />
+						:value.sync="organisation.organisationItem.oin" />
 					<NcTextField
 						:disabled="loading"
 						label="TOOI"
-						:value.sync="organisation.tooi" />
+						:value.sync="organisation.organisationItem.tooi" />
 					<NcTextField
 						:disabled="loading"
 						label="RSIN"
-						:value.sync="organisation.rsin" />
+						:value.sync="organisation.organisationItem.rsin" />
 					<NcTextField
 						:disabled="loading"
 						label="PKI"
-						:value.sync="organisation.pki" />
+						:value.sync="organisation.organisationItem.pki" />
 				</div>
 			</div>
 			<NcButton
@@ -79,7 +79,7 @@ import {
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
-	name: 'AddOrganisationModal',
+	name: 'EditOrganisationModal',
 	components: {
 		NcModal,
 		NcTextField,
@@ -124,10 +124,30 @@ export default {
 			}
 			return true
 		},
-		addOrganisation() {
+		fetchData(id) {
+			this.loading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/organisations/${id}`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						organisationStore.setOrganisationItem(data)
+						this.organisationStore = data.required.toString()
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					this.error = err
+					this.loading = false
+				})
+		},
+		editOrganisation() {
 			this.loading = true
 			this.error = false
-			fetch('/index.php/apps/opencatalogi/api/organisations', {
+			fetch(`/index.php/apps/opencatalogi/api/metadata/${organisationStore.organisationItem?.id}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

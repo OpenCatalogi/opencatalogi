@@ -12,7 +12,7 @@ class ThemeMapper extends QBMapper
 {
 	public function __construct(IDBConnection $db)
 	{
-		parent::__construct($db, 'themes');
+		parent::__construct($db, 'themas');
 	}
 
 	public function find(int $id): Theme
@@ -20,7 +20,7 @@ class ThemeMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('themes')
+			->from('themas')
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
@@ -58,7 +58,7 @@ class ThemeMapper extends QBMapper
 
 //		var_dump($catalog->getTitle());
 
-		return $this->insert(entity: $catalog);
+		return $this->insert(entity: $theme);
 	}
 
 	public function updateFromArray(int $id, array $object): Theme

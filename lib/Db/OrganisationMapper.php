@@ -12,7 +12,7 @@ class OrganisationMapper extends QBMapper
 {
 	public function __construct(IDBConnection $db)
 	{
-		parent::__construct($db, 'organisations');
+		parent::__construct($db, 'organizations');
 	}
 
 	public function find(int $id): Organisation
@@ -20,7 +20,7 @@ class OrganisationMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('organisations')
+			->from('organizations')
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
@@ -33,7 +33,7 @@ class OrganisationMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('organisations')
+			->from('organizations')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
