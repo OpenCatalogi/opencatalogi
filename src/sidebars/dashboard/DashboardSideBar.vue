@@ -10,10 +10,10 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 			<template #icon>
 				<Magnify :size="20" />
 			</template>
-			Zoek snel in het voor uw beschickbare federatieve netwerk
+			Zoek snel in het voor uw beschikbare federatieve netwerk
 			<NcTextField class="searchField"
 				:value.sync="searchStore.search"
-				label="Search" />
+				label="Zoeken" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="settings-tab" name="Publicaties" :order="2">
 			<template #icon>
@@ -33,7 +33,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 						:size="44" />
 				</template>
 				<template #subname>
-					{{ publication?.description }} wdsfdf
+					{{ publication?.description }}
 				</template>
 				<template #actions>
 					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setSelected('publication');">
@@ -52,7 +52,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 						<template #icon>
 							<Publish :size="20" />
 						</template>
-						Publiseren
+						Publiceren
 					</NcActionButton>
 					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('deletePublication')">
 						<template #icon>
@@ -62,7 +62,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard v-if="!publicationStore.conceptPublications.results.length > 0" type="success">
+			<NcNoteCard v-if="!publicationStore.conceptPublications?.results?.length > 0" type="success">
 				<p>Er zijn op dit moment geen publicaties die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>
@@ -84,7 +84,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 						:size="44" />
 				</template>
 				<template #subname>
-					{{ publication?.description }}
+					{{ attachment?.description }}
 				</template>
 				<template #actions>
 					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('editAttachment')">
@@ -97,7 +97,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 						<template #icon>
 							<Publish :size="20" />
 						</template>
-						Publiseren
+						Publiceren
 					</NcActionButton>
 					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 						<template #icon>
@@ -107,7 +107,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard v-if="!publicationStore.conceptAttachments.results.length > 0" type="success">
+			<NcNoteCard v-if="!publicationStore.conceptAttachments?.results?.length > 0" type="success">
 				<p>Er zijn op dit moment geen bijlagen die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>

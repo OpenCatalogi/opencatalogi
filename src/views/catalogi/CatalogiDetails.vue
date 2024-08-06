@@ -8,7 +8,11 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			<h1 class="h1">
 				{{ catalogi.title }}
 			</h1>
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+
+			<NcActions :disabled="loading"
+				:primary="true"
+				:inline="1"
+				:menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
@@ -17,11 +21,25 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over catalogi"
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/catalogi', '_blank')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Help
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setModal('editCatalog')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
+				</NcActionButton>
+				<NcActionButton @click="navigationStore.setSelected('publication'); navigationStore.setSelectedCatalogus(catalogi?.id)">
+					<template #icon>
+						<OpenInApp :size="20" />
+					</template>
+					Catalogus bekijken
 				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
@@ -59,6 +77,8 @@ import { BTabs, BTab } from 'bootstrap-vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'CatalogiDetails',
@@ -120,6 +140,9 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+		},
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }
@@ -187,5 +210,10 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.flex-hor {
+    display: flex;
+    gap: 4px;
 }
 </style>

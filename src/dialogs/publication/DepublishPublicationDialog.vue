@@ -8,10 +8,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		name="Publicatie de-publiseren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> depubliseren? De publicatie is dan niet meer vindbaar via de zoek index. Bijlagen die alléén aan deze publicatie zijn gekoppeld zijn dan ook niet meer vindbaar
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> depubliceren? De publicatie is dan niet meer vindbaar via de zoek index. Bijlagen die alléén aan deze publicatie zijn gekoppeld zijn dan ook niet meer vindbaar
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Publicatie succesvol gedepubliseerd</p>
+			<p>Publicatie succesvol gedepubliceerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -33,7 +33,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<PublishOff v-if="!loading" :size="20" />
 				</template>
-				Depubliseren
+				Depubliceren
 			</NcButton>
 		</template>
 	</NcDialog>

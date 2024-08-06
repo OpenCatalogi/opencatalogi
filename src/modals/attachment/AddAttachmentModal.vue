@@ -3,7 +3,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'AddAttachment'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'AddAttachment'"
+		ref="modalRef"
+		label-id="AddAttachmentModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bijlage toevoegen</h2>
 			<div v-if="success !== null || error">

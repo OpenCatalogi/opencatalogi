@@ -18,9 +18,13 @@ export const useDirectoryStore = defineStore('directory', {
 			)
 			console.log('Active directory item set to ' + listingList.length)
 		},
-		refreshListingList() {
+		async refreshListingList(search = null) {
 			// @todo this might belong in a service?
-			fetch('/index.php/apps/opencatalogi/api/directory', {
+			let endpoint = '/index.php/apps/opencatalogi/api/directory'
+			if (search !== null && search !== '') {
+				endpoint = endpoint + '?_search=' + search
+			}
+			return fetch(endpoint, {
 				method: 'GET',
 			})
 				.then((response) => {

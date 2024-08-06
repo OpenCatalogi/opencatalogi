@@ -11,7 +11,11 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				</h1>
 				<span>{{ metadata.description }}</span>
 			</div>
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+
+			<NcActions :disabled="loading"
+				:primary="true"
+				:inline="1"
+				:menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
@@ -20,6 +24,14 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over metadata"
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Help
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setModal('editMetaData')">
 					<template #icon>
 						<Pencil :size="20" />
@@ -68,7 +80,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 								<template #icon>
 									<ContentCopy :size="20" />
 								</template>
-								Kopieren
+								Kopiëren
 							</NcActionButton>
 							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('deleteMetaDataProperty')">
 								<template #icon>
@@ -79,10 +91,10 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 						</template>
 					</NcListItem>
 				</BTab>
-				<BTab title="Loging">
+				<BTab title="Logging">
 					<table width="100%">
 						<tr>
-							<th><b>Tijstip</b></th>
+							<th><b>Tijdstip</b></th>
 							<th><b>Gebruiker</b></th>
 							<th><b>Actie</b></th>
 							<th><b>Details</b></th>
@@ -109,7 +121,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcLoadingIcon, NcActions, NcActionButton, NcListItem } from '@nextcloud/vue'
+import { NcLoadingIcon, NcActions, NcActionButton, NcListItem, NcButton } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
@@ -118,6 +130,8 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import PlusCircleOutline from 'vue-material-design-icons/PlusCircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'MetaDataDetail',
@@ -125,6 +139,7 @@ export default {
 		NcLoadingIcon,
 		NcActions,
 		NcActionButton,
+		NcButton,
 		// Icons
 		PlusCircleOutline,
 		ContentCopy,
@@ -183,6 +198,9 @@ export default {
 					// this.oldZaakId = id
 					this.loading = false
 				})
+		},
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }
@@ -250,6 +268,11 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.flex-hor {
+    display: flex;
+    gap: 4px;
 }
 
 .float-right {

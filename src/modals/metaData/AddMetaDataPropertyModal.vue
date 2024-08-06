@@ -5,6 +5,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 	<NcModal
 		v-if="navigationStore.modal === 'addMetadataDataModal'"
 		ref="modalRef"
+		label-id="addMetaDataPropertyModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Eigenschap toevoegen</h2>
@@ -19,15 +20,10 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Eigenschap naam"
 					required
-					:value.sync="propertyName" />
-
-				<NcTextField :disabled="loading"
-					label="Titel"
-					required
 					:value.sync="properties.title" />
 
 				<NcTextField :disabled="loading"
-					label="description"
+					label="Beschrijving"
 					:value.sync="properties.description" />
 
 				<NcSelect v-bind="typeOptions"
@@ -37,44 +33,42 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcSelect v-bind="formatOptions"
 					v-model="properties.format" />
 
-				<NcInputField :disabled="loading"
-					type="number"
-					label="patroon"
+				<NcTextField :disabled="loading"
+					label="Patroon (regex)"
 					:value.sync="properties.pattern" />
 
 				<NcTextField :disabled="loading"
-					label="default"
+					label="Default waarde"
 					:value.sync="properties.default" />
 
 				<NcTextField :disabled="loading"
-					label="behavior"
+					label="Gedrag"
 					:value.sync="properties.behavior" />
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
 					:checked.sync="properties.required">
-					Required
+					Verplicht
 				</NcCheckboxRadioSwitch>
 
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
 					:checked.sync="properties.deprecated">
-					Deprecated
+					Verouderd
 				</NcCheckboxRadioSwitch>
 
 				<NcInputField :disabled="loading"
 					type="number"
-					label="minimum lengte"
+					label="Minimum lengte"
 					:value.sync="properties.minLength" />
 
 				<NcInputField :disabled="loading"
 					type="number"
-					label="maximum lengte"
+					label="Maximum lengte"
 					:value.sync="properties.maxLength" />
 
 				<NcTextField :disabled="loading"
-					type="number"
-					label="exemplaar"
+					label="Voorbeeld"
 					:value.sync="properties.example" />
 
 				<!-- type integer and number only -->
@@ -85,29 +79,29 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 
 					<NcInputField :disabled="loading"
 						type="number"
-						label="minimum waarde"
+						label="Minimum waarde"
 						:value.sync="properties.minimum" />
 
 					<NcInputField :disabled="loading"
 						type="number"
-						label="maximum waarde"
+						label="Maximum waarde"
 						:value.sync="properties.maximum" />
 
 					<NcInputField :disabled="loading"
 						type="number"
-						label="multipleOf"
+						label="Deelbaar door"
 						:value.sync="properties.multipleOf" />
 
 					<NcCheckboxRadioSwitch
 						:disabled="loading"
 						:checked.sync="properties.exclusiveMin">
-						exclusief minimum
+						Exclusief minimum
 					</NcCheckboxRadioSwitch>
 
 					<NcCheckboxRadioSwitch
 						:disabled="loading"
 						:checked.sync="properties.exclusiveMax">
-						exclusief maximum
+						Exclusief maximum
 					</NcCheckboxRadioSwitch>
 				</div>
 
@@ -119,18 +113,18 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 
 					<NcInputField :disabled="loading"
 						type="number"
-						label="minimale items"
+						label="Minimale hoeveelheid items"
 						:value.sync="properties.minItems" />
 
 					<NcInputField :disabled="loading"
 						type="number"
-						label="minimale items"
+						label="Minimale hoeveelheid items"
 						:value.sync="properties.maxItems" />
 				</div>
 			</div>
 
 			<NcButton v-if="!success"
-				:disabled="!propertyName || !properties.type || loading"
+				:disabled="!properties.title || !properties.type || loading"
 				type="primary"
 				@click="AddMetadata()">
 				<template #icon>
@@ -180,14 +174,12 @@ export default {
 	},
 	data() {
 		return {
-
-			propertyName: '',
 			properties: {
 				title: '',
 				description: '',
 				type: '',
 				format: '',
-				pattern: 0,
+				pattern: '',
 				default: '',
 				behavior: '',
 				required: false,
@@ -221,7 +213,7 @@ export default {
 	},
 	methods: {
 		AddMetadata() {
-			metadataStore.metaDataItem.properties[this.propertyName] = this.properties
+			metadataStore.metaDataItem.properties[this.properties.title] = this.properties
 
 			this.loading = true
 			fetch(
@@ -244,13 +236,12 @@ export default {
 					})
 					setTimeout(() => {
 						// lets reset
-						this.propertyName = ''
 						this.properties = {
 							title: '',
 							description: '',
 							type: '',
 							format: '',
-							pattern: 0,
+							pattern: '',
 							default: '',
 							behavior: '',
 							required: false,

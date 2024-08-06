@@ -5,6 +5,7 @@ namespace OCA\OpenCatalogi\Controller;
 use GuzzleHttp\Exception\GuzzleException;
 use OCA\OpenCatalogi\Db\AttachmentMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Service\FileService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -21,10 +22,12 @@ class AttachmentsController extends Controller
 		$appName,
 		IRequest $request,
 		private readonly IAppConfig $config,
-		private readonly AttachmentMapper $attachmentMapper
+		private readonly AttachmentMapper $attachmentMapper,
+		private readonly FileService $fileService
 	)
     {
         parent::__construct($appName, $request);
+		$this->fileService->setAppName($appName);
     }
 
 	private function insertNestedObjects(array $object, ObjectService $objectService, array $config): array
@@ -71,7 +74,7 @@ class AttachmentsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function catalog(string $id): TemplateResponse
+    public function catalog(string|int $id): TemplateResponse
     {
         // The TemplateResponse loads the 'main.php'
         // defined in our app's 'templates' folder.
@@ -122,7 +125,7 @@ class AttachmentsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function show(string $id, ObjectService $objectService): JSONResponse
+    public function show(string|int $id, ObjectService $objectService): JSONResponse
     {
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
@@ -133,7 +136,7 @@ class AttachmentsController extends Controller
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters['_id'] = $id;
+		$filters['_id'] = (string) $id;
 
 		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
 
@@ -181,7 +184,7 @@ class AttachmentsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function update(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    public function update(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		$data = $this->request->getParams();
 
@@ -206,7 +209,7 @@ class AttachmentsController extends Controller
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 
-		$filters['_id'] = $id;
+		$filters['_id'] = (string) $id;
 		$returnData = $objectService->updateObject(
 			filters: $filters,
 			update: $data,
@@ -221,7 +224,7 @@ class AttachmentsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function destroy(string $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    public function destroy(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
@@ -235,7 +238,7 @@ class AttachmentsController extends Controller
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters['_id'] = $id;
+		$filters['_id'] = (string) $id;
 		$returnData = $objectService->deleteObject(
 			filters: $filters,
 			config: $dbConfig
