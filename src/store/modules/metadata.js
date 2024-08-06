@@ -25,6 +25,7 @@ export const useMetadataStore = defineStore('metadata', {
 			)
 			console.log('Active metadata lest set')
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		async refreshMetaDataList(search = null) {
 			// @todo this might belong in a service?
 			let endpoint = '/index.php/apps/opencatalogi/api/metadata'

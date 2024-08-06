@@ -18,6 +18,7 @@ export const useDirectoryStore = defineStore('directory', {
 			)
 			console.log('Active directory item set to ' + listingList.length)
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		async refreshListingList(search = null) {
 			// @todo this might belong in a service?
 			let endpoint = '/index.php/apps/opencatalogi/api/directory'

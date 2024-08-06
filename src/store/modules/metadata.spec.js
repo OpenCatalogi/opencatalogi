@@ -38,12 +38,12 @@ describe('Metadata Store', () => {
 	it('sets metadata list correctly', () => {
 		const store = useMetadataStore()
 
-		store.setMetaDataItem(mockMetadata()[0])
+		store.setMetaDataList(mockMetadata())
 
-		expect(store.metaDataItem).toBeInstanceOf(Metadata)
-		expect(store.metaDataItem).toEqual(mockMetadata()[0])
+		expect(store.metaDataList[0]).toBeInstanceOf(Metadata)
+		expect(store.metaDataList[0]).toEqual(mockMetadata()[0])
 
-		expect(store.metaDataItem.validate().success).toBe(true)
+		expect(store.metaDataList[0].validate().success).toBe(true)
 	})
 
 	it('get metadata property from key', () => {

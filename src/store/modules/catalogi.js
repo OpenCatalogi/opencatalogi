@@ -18,6 +18,7 @@ export const useCatalogiStore = defineStore('catalogi', {
 			)
 			console.log('Catalogi list set to ' + catalogiList.length + ' item')
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		async refreshCatalogiList(search = null) {
 			// @todo this might belong in a service?
 			let endpoint = '/index.php/apps/opencatalogi/api/catalogi'

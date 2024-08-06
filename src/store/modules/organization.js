@@ -2,22 +2,23 @@
 import { Organization } from '../../entities/index.js'
 import { defineStore } from 'pinia'
 
-export const useOrganisationStore = defineStore('organisation', {
+export const useOrganizationStore = defineStore('organization', {
 	state: () => ({
-		organisationItem: false,
-		organisationList: [],
+		organizationItem: false,
+		organizationList: [],
 	}),
 	actions: {
-		setCOrganisationItem(organisationItem) {
-			this.organisationItem = organisationItem && new Organization(organisationItem)
-			console.log('Active theme item set to ' + organisationItem && organisationItem?.id)
+		setOrganizationItem(organizationItem) {
+			this.organizationItem = organizationItem && new Organization(organizationItem)
+			console.log('Active organization item set to ' + organizationItem && organizationItem?.id)
 		},
-		setOrganisationList(organisationList) {
-			this.organisationList = organisationList.map(
-				(organisationItem) => new Organization(organisationItem),
+		setOrganizationList(organizationList) {
+			this.organizationList = organizationList.map(
+				(organizationItem) => new Organization(organizationItem),
 			)
-			console.log('Organisation list set to ' + organisationList.length + ' items')
+			console.log('Organization list set to ' + organizationList.length + ' items')
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		async refreshOrganisationList(search = null) {
 			// @todo this might belong in a service?
 			let endpoint = '/index.php/apps/opencatalogi/api/organisations'
@@ -29,9 +30,7 @@ export const useOrganisationStore = defineStore('organisation', {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.organisationList = data.results.map(
-							(organisationItem) => new Organization(organisationItem),
-						)
+						this.setOrganizationList(data.results)
 					})
 				})
 				.catch((err) => {

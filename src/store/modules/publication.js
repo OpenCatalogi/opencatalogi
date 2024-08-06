@@ -22,6 +22,7 @@ export const usePublicationStore = defineStore('publication', {
 			this.publicationList = publicationList.map((publicationItem) => new Publication(publicationItem))
 			console.log('Active publication item set to ' + publicationList.length)
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		async refreshPublicationList(search = null) {
 			// @todo this might belong in a service?
 			let endpoint = '/index.php/apps/opencatalogi/api/publications'
@@ -45,6 +46,7 @@ export const usePublicationStore = defineStore('publication', {
 					return err
 				})
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		getPublicationAttachments(publication) { // @todo this might belong in a service?
 			fetch(
 				'/index.php/apps/opencatalogi/api/attachments',
@@ -65,6 +67,7 @@ export const usePublicationStore = defineStore('publication', {
 					return err
 				})
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		getConceptPublications() { // @todo this might belong in a service?
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications?status=concept',
@@ -83,6 +86,7 @@ export const usePublicationStore = defineStore('publication', {
 					return err
 				})
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		getConceptAttachments() { // @todo this might belong in a service?
 			fetch(
 				'/index.php/apps/opencatalogi/api/attachments?status=concept',
