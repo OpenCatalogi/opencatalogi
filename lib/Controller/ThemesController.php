@@ -126,17 +126,10 @@ class ThemesController extends Controller
 	 */
 	public function show(string $id, ObjectService $objectService): JSONResponse
 	{
-		$data = $this->request->getParams();
-
-		foreach ($data as $key => $value) {
-			if (str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->themeMapper->createFromArray(object: $data));
+			return new JSONResponse($this->themeMapper->find(id: (int) $id));
 		}
 
         try {
@@ -146,11 +139,11 @@ class ThemesController extends Controller
                 'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
             ];
 
-            $data['_schema'] = 'catalog';
+            $filters['_id'] = (string) $id;
 
-            $returnData = $objectService->saveObject($data, $dbConfig);
+            $result = $objectService->findObject($filters, $dbConfig);
 
-            return new JSONResponse($returnData);
+            return new JSONResponse($result);
         } catch (\Exception $e) {
             return new JSONResponse(['error' => $e->getMessage()], 500);
         }
