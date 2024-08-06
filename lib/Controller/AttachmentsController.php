@@ -152,9 +152,10 @@ class AttachmentsController extends Controller
 		$data = $this->request->getParams();
 
 		$uploadedFile = $this->request->getUploadedFile('_file');
+		$this->fileService->createFolder('Attachments');
 		// Todo: $uploadedFile['content'] does not contain the file content...
-		$this->fileService->uploadFile(content: $uploadedFile['content'], filePath: $uploadedFile['name']);
-		$data['downloadUrl'] = $this->fileService->createShareLink(path: $uploadedFile['name']);
+		$this->fileService->uploadFile(content: $uploadedFile['content'], filePath: 'Attachments/'.$uploadedFile['name']);
+		$data['downloadUrl'] = $this->fileService->createShareLink(path: 'Attachments/'.$uploadedFile['name']);
 		$data['type'] = $uploadedFile['type'];
 		$data['size'] = $uploadedFile['size'];
 		$explodedName = explode('.', $uploadedFile['name']);
@@ -193,15 +194,21 @@ class AttachmentsController extends Controller
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
+	 * @throws GuzzleException In case updating the file in NextCloud fails.
      */
     public function update(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		$data = $this->request->getParams();
 
 		$uploadedFile = $this->request->getUploadedFile('_file');
+		$this->fileService->createFolder('Attachments');
 		// Todo: $uploadedFile['content'] does not contain the file content...
-		$this->fileService->uploadFile(content: $uploadedFile['content'], filePath: $uploadedFile['name'], update: true);
-//		$data['downloadUrl'] = $this->fileService->createShareLink(path: $uploadedFile['name']);
+		$this->fileService->uploadFile(
+			content: $uploadedFile['content'],
+			filePath: 'Attachments/'.$uploadedFile['name'],
+			update: true
+		);
+//		$data['downloadUrl'] = $this->fileService->createShareLink(path: 'Attachments/'.$uploadedFile['name']);
 		$data['type'] = $uploadedFile['type'];
 		$data['size'] = $uploadedFile['size'];
 		$explodedName = explode('.', $uploadedFile['name']);
@@ -249,7 +256,7 @@ class AttachmentsController extends Controller
     {
 		$attachment = $this->show($id, $objectService)->getData()->jsonSerialize();
 		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
-		$this->fileService->deleteFile(filePath: $attachment['title']. '.' .$attachment['extension']);
+		$this->fileService->deleteFile(filePath: 'Attachments/' . $attachment['title'] . '.' . $attachment['extension']);
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'

@@ -114,14 +114,14 @@ class FileService
 	}
 
 	/**
-	 * Uploads a file to nextCloud. Will overwrite a file if it already exists and create a new one if it doesn't exist.
+	 * Uploads a file to NextCloud. Will overwrite a file if it already exists and create a new one if it doesn't exist.
 	 *
 	 * @param mixed $content The content of the file.
 	 * @param string|null $filePath Path (from root) where to save the file. NOTE: this should include the name and extension/format of the file as well! (example.pdf)
 	 * @param bool|null $update If set to true, the response status code 204 will also be seen as a success result. (NextCloud will return 204 when successfully updating a file)
 	 *
 	 * @return bool True if successful.
-	 * @throws GuzzleException In case the Guzzle call returns an exception.
+	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
 	 */
 	public function uploadFile(mixed $content, ?string $filePath = '', ?bool $update = false): bool
 	{
@@ -130,7 +130,7 @@ class FileService
 
 		// API endpoint to upload the file
 		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
-			. $userInfo['currentUsername'] . '/' . ltrim(string: $filePath, characters: '/');
+			. $userInfo['currentUsername'] . '/' . trim(string: $filePath, characters: '/');
 
 		try {
 			$response = $this->client->request('PUT', $url, [
@@ -138,10 +138,11 @@ class FileService
 				'body' => $content
 			]);
 
+			// 201 Created indicates that the file was created, 204 No Content indicates that the file was updated.
 			if ($response->getStatusCode() === 201 || ($update === true && $response->getStatusCode() === 204)) {
 				return true;
 			}
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$str = $update === true ? 'update' : 'upload';
 			$this->logger->error("File $str failed: " . $e->getMessage());
 			throw $e;
@@ -151,7 +152,7 @@ class FileService
 	}
 
 	/**
-	 * Deletes a file from nextCloud.
+	 * Deletes a file from NextCloud.
 	 *
 	 * @param string $filePath Path (from root) to the file you want to delete.
 	 *
@@ -163,24 +164,53 @@ class FileService
 		// Get the admin username & password for auth & get the current username
 		$userInfo = $this->getUserInfo();
 
-		// API endpoint to upload the file
+		// API endpoint to delete the file
 		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
-			. $userInfo['currentUsername'] . '/' . ltrim(string: $filePath, characters: '/');
+			. $userInfo['currentUsername'] . '/' . trim(string: $filePath, characters: '/');
 
 		try {
 			$response = $this->client->request('DELETE', $url, [
 				'auth' => [$userInfo['username'], $userInfo['password']],
 			]);
 
-			if ($response->getStatusCode() === 204) {
+			if ($response->getStatusCode() === 204) { // 204 No Content indicates the file was deleted.
 				return true;
 			}
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->logger->error('File deletion failed: ' . $e->getMessage());
 			throw $e;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Creates a new folder in NextCloud, unless it already exists.
+	 *
+	 * @param string $folderPath Path (from root) to where you want to create a folder. NOTE: this should include the name of the folder as well! (/Media/exampleFolder)
+	 *
+	 * @return bool True if successfully created a new folder.
+	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
+	 */
+	public function createFolder(string $folderPath): bool
+	{
+		// Get the admin username & password for auth & get the current username
+		$userInfo = $this->getUserInfo();
+
+		// API endpoint to create a folder
+		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
+			. $userInfo['currentUsername'] . '/' . trim(string: $folderPath, characters: '/');
+
+		try {
+			$response = $this->client->request('MKCOL', $url, [
+				'auth' => [$userInfo['username'], $userInfo['password']],
+			]);
+
+			return $response->getStatusCode() === 201; // 201 Created indicates the folder was created.
+		} catch (\Exception $e) {
+			$this->logger->error('Folder creation failed: ' . $e->getMessage());
+			throw $e;
+		}
 	}
 
 }
