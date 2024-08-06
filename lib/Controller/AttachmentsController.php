@@ -5,6 +5,7 @@ namespace OCA\OpenCatalogi\Controller;
 use GuzzleHttp\Exception\GuzzleException;
 use OCA\OpenCatalogi\Db\AttachmentMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Service\FileService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -21,10 +22,12 @@ class AttachmentsController extends Controller
 		$appName,
 		IRequest $request,
 		private readonly IAppConfig $config,
-		private readonly AttachmentMapper $attachmentMapper
+		private readonly AttachmentMapper $attachmentMapper,
+		private readonly FileService $fileService
 	)
     {
         parent::__construct($appName, $request);
+		$this->fileService->setAppName($appName);
     }
 
 	private function insertNestedObjects(array $object, ObjectService $objectService, array $config): array
