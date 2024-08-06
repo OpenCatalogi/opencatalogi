@@ -47,7 +47,7 @@ npm run lint
 Voor de backend is dat:
 
 ```cli
-???
+phpcs
 ```
 
 Voor beide geldt dat het aantal acceptabele errors 0 is.
@@ -65,12 +65,16 @@ npm run test-coverage
 Voor de backend is dat:
 
 ```cli
-phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml
+phpunit 
 ```
 
 Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele errors 0.
 
-> **Note** We volgens de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html)
+> **NOTE 1** We volgen de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html) en de juist configuratie van `phpunit.xml`en de `bootstrap.php`. Een voorbeeld van deze files zijn te vinden in de `root` van de applicatie (`phpunit.xml`) en de `/tests/unit`(`bootstrap.php`). Er zijn veel mogelijkheden om het jezelf makkelijk te maken, zoals een percentageoverzicht in de terminal. Het commando dat wij gebruiken is :
+
+`XDEBUG_MODE=coverage phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml --coverage-html ./coverage --coverage-text | tee coverage.txt`
+
+> **NOTE 2** Unit testing doe je in een draaiende container van Docker. Hiervoor kijk je met `docker ps` naar de draaiende containers. De container heet `nextcloud` of `master_nextcloud_1`. Het commando om in de container te komen is: `docker exec -it [containernaam] /bin/bash`. Je komt dan met root priviliges in `var/www/html` en moet nog navigeren naar de juiste directory met het commando `cd apps-exta/opencatalogi`. Daar werken de `phpunit`-commando's voor het uitvoeren van de unit tests.
 
 ## Voor veiligheid gebruiken we dependency scanning
 
