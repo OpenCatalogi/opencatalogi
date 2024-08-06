@@ -82,13 +82,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 <script>
 import {
 	NcButton,
-	NcModal,
-	NcTextField,
-	NcTextArea,
-	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
 	NcDateTimePicker,
+	NcLoadingIcon,
+	NcModal,
 	NcNoteCard,
+	NcTextArea,
+	NcTextField,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 

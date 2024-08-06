@@ -1,15 +1,22 @@
 {
-  "files.autoSave": "afterDelay",
-"editor.defaultFormatter": "dbaeumer.vscode-eslint",
-"editor.formatOnSave": true,
-"cSpell.words": [
-    "gedepubliceerd",
-    "depubliceren",
-    "Depubliceren",
-    "Matadata",
-    "nextcloud",
-    "opencatalogi",
-    "pinia",
-    "Toegangs"
-]
+    "files.autoSave": "afterDelay",
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+    },
+    "editor.formatOnSave": true,
+    "eslint.format.enable": true,
+    "cSpell.words": [
+        "gedepubliceerd",
+        "depubliceren",
+        "Depubliceren",
+        "Matadata",
+        "nextcloud",
+        "opencatalogi",
+        "pinia",
+        "Toegangs"
+    ],
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
 }
