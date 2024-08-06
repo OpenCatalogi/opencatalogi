@@ -5,7 +5,7 @@ export type TCatalogi = {
     description: string
     image: string
     listed: boolean
-    organization: {
+    organisation: {
         id: string
         title: string
         summary: string

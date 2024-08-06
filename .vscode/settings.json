@@ -7,12 +7,14 @@
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
     "cSpell.words": [
-        "gedepubliceerd",
         "depubliceren",
         "Depubliceren",
+        "gedepubliceerd",
         "Matadata",
         "nextcloud",
         "opencatalogi",
+        "organisation",
+        "Organisation",
         "pinia",
         "Toegangs"
     ],

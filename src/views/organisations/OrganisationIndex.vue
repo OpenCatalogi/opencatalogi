@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, organizationStore, searchStore } from '../../store/store.js'
+import { navigationStore, organisationStore, searchStore } from '../../store/store.js';
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import { navigationStore, organizationStore, searchStore } from '../../store/sto
 			<OrganisationList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!organizationStore.organisationItem.id || navigationStore.selected != 'organisations'"
+			<NcEmptyContent v-if="!organisationStore.organisationItem.id || navigationStore.selected != 'organisations'"
 				class="detailContainer"
 				name="Geen organisatie"
 				description="Nog geen organisatie geselecteerd">
@@ -21,16 +21,16 @@ import { navigationStore, organizationStore, searchStore } from '../../store/sto
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<OrganisationDetails v-if="organizationStore.organisationItem.id && navigationStore.selected === 'organisations'" :organisation-item="organizationStore.organisationItem" />
+			<OrganisationDetails v-if="organisationStore.organisationItem.id && navigationStore.selected === 'organisations'" :organisation-item="organisationStore.organisationItem" />
 		</template>
 	</NcAppContent>
 </template>
 
 <script>
-import { NcAppContent, NcButton, NcEmptyContent } from '@nextcloud/vue'
-import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
-import OrganisationDetails from './OrganisationDetail.vue'
-import OrganisationList from './OrganisationList.vue'
+import { NcAppContent, NcButton, NcEmptyContent } from '@nextcloud/vue';
+import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue';
+import OrganisationDetails from './OrganisationDetail.vue';
+import OrganisationList from './OrganisationList.vue';
 
 export default {
 	name: 'OrganisationIndex',

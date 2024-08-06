@@ -1,4 +1,4 @@
-export type TOrganization = {
+export type TOrganisation = {
     id: string
     title: string
     summary: string

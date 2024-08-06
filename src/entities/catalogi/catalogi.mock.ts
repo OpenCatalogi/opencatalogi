@@ -1,5 +1,5 @@
-import { Catalogi } from './catalogi'
-import { TCatalogi } from './catalogi.types'
+import { Catalogi } from './catalogi';
+import { TCatalogi } from './catalogi.types';
 
 export const mockCatalogiData = (): TCatalogi[] => [
 	{
@@ -9,7 +9,7 @@ export const mockCatalogiData = (): TCatalogi[] => [
 		description: 'a really really long description about this catalogus',
 		image: 'string',
 		listed: false,
-		organization: {
+		organisation: {
 			id: '2',
 			title: 'gogle',
 			summary: 'consultant services',
@@ -27,7 +27,7 @@ export const mockCatalogiData = (): TCatalogi[] => [
 		description: 'a really really long description about this catalogus',
 		image: '',
 		listed: false,
-		organization: {
+		organisation: {
 			id: '2',
 			title: 'gogle',
 			summary: 'consultant services',
@@ -46,7 +46,7 @@ export const mockCatalogiData = (): TCatalogi[] => [
 		image: 'string',
 		// @ts-expect-error -- listed needs to be a boolean
 		listed: 0.2,
-		organization: {
+		organisation: {
 			id: '2',
 			title: 'gogle',
 			summary: 'consultant services',

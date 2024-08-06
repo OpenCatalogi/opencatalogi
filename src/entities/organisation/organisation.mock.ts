@@ -1,7 +1,7 @@
-import { Organization } from './organization'
-import { TOrganization } from './organization.types'
+import { Organisation } from './organisation'
+import { TOrganisation } from './organisation.types'
 
-export const mockOrganizationData = (): TOrganization[] => [
+export const mockOrganisationData = (): TOrganisation[] => [
 	{ // full data
 		id: '1',
 		title: 'Decat',
@@ -31,4 +31,4 @@ export const mockOrganizationData = (): TOrganization[] => [
 	},
 ]
 
-export const mockOrganization = (data: TOrganization[] = mockOrganizationData()): TOrganization[] => data.map(item => new Organization(item))
+export const mockOrganisation = (data: TOrganisation[] = mockOrganisationData()): TOrganisation[] => data.map(item => new Organisation(item))

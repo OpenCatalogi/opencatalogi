@@ -1,7 +1,7 @@
-import { SafeParseReturnType, z } from 'zod'
-import { TOrganization } from './organization.types'
+import { SafeParseReturnType, z } from 'zod';
+import { TOrganisation } from './organisation.types';
 
-export class Organization implements TOrganization {
+export class Organisation implements TOrganisation {
 
 	public id: string
 	public title: string
@@ -12,12 +12,12 @@ export class Organization implements TOrganization {
 	public rsin: string
 	public pki: string
 
-	constructor(data: TOrganization) {
+	constructor(data: TOrganisation) {
 		this.hydrate(data)
 	}
 
 	/* istanbul ignore next */ // Jest does not recognize the code coverage of these 2 methods
-	private hydrate(data: TOrganization) {
+	private hydrate(data: TOrganisation) {
 		this.id = data?.id?.toString() || ''
 		this.title = data?.title || ''
 		this.summary = data?.summary || ''
@@ -29,7 +29,7 @@ export class Organization implements TOrganization {
 	}
 
 	/* istanbul ignore next */
-	public validate(): SafeParseReturnType<TOrganization, unknown> {
+	public validate(): SafeParseReturnType<TOrganisation, unknown> {
 		// https://conduction.stoplight.io/docs/open-catalogi/ewlydzkylhygj-create-organisation
 		const schema = z.object({
 			title: z.string().min(1),

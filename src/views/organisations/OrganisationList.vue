@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, organizationStore } from '../../store/store.js';
+import { navigationStore, organisationStore } from '../../store/store.js';
 </script>
 
 <template>
@@ -43,7 +43,7 @@ import { navigationStore, organizationStore } from '../../store/store.js';
 					:name="organisation.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="organizationStore.organisationItem.id === organisation.id"
+					:active="organisationStore.organisationItem.id === organisation.id"
 					:details="organisation?.status"
 					@click="organisationStore.setOrganisationItem(organisation)">
 					<template #icon>
@@ -53,19 +53,19 @@ import { navigationStore, organizationStore } from '../../store/store.js';
 						{{ organisation?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="organizationStore.setOrganisationItem(organisation); navigationStore.setModal('editOrganisation')">
+						<NcActionButton @click="organisationStore.setOrganisationItem(organisation); navigationStore.setModal('editOrganisation')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="organizationStore.setOrganisationItem(organisation); navigationStore.setDialog('copyOrganisation')">
+						<NcActionButton @click="organisationStore.setOrganisationItem(organisation); navigationStore.setDialog('copyOrganisation')">
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
 							Kopiëren
 						</NcActionButton>
-						<NcActionButton class="organisationsList-actionsDelete" @click="organizationStore.setOrganisationItem(organisation); navigationStore.setDialog('deleteOrganisation')">
+						<NcActionButton class="organisationsList-actionsDelete" @click="organisationStore.setOrganisationItem(organisation); navigationStore.setDialog('deleteOrganisation')">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -84,18 +84,18 @@ import { navigationStore, organizationStore } from '../../store/store.js';
 	</NcAppContentList>
 </template>
 <script>
-import { NcActionButton, NcActions, NcAppContentList, NcListItem, NcLoadingIcon, NcTextField } from '@nextcloud/vue'
-import { debounce } from 'lodash'
+import { NcActionButton, NcActions, NcAppContentList, NcListItem, NcLoadingIcon, NcTextField } from '@nextcloud/vue';
+import { debounce } from 'lodash';
 
 // Icons
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
-import Magnify from 'vue-material-design-icons/Magnify.vue'
-import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
-import Refresh from 'vue-material-design-icons/Refresh.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue';
+import Delete from 'vue-material-design-icons/Delete.vue';
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue';
+import Magnify from 'vue-material-design-icons/Magnify.vue';
+import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue';
+import Pencil from 'vue-material-design-icons/Pencil.vue';
+import Plus from 'vue-material-design-icons/Plus.vue';
+import Refresh from 'vue-material-design-icons/Refresh.vue';
 
 export default {
 	name: 'OrganisationList',
@@ -151,7 +151,7 @@ export default {
 	methods: {
 		fetchData(search = null) {
 			this.loading = true
-			organizationStore.refreshOrganisationList(search)
+			organisationStore.refreshOrganisationList(search)
 				.then(() => {
 					this.loading = false
 				})
