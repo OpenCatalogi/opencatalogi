@@ -1,12 +1,12 @@
 <script setup>
-import { catalogiStore, metadataStore, navigationStore, organisationStore } from '../../store/store.js'
+import { navigationStore, organisationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ organisationStore.organisationItem.title }}
+				{{ organisation.title }}
 			</h1>
 
 			<NcActions
@@ -24,8 +24,8 @@ import { catalogiStore, metadataStore, navigationStore, organisationStore } from
 					</span>
 				</template>
 				<NcActionButton
-					title="Bekijk de documentatie over publicaties"
-					@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
+					title="Bekijk de documentatie over organisaties"
+					@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/organisaties')">
 					<template #icon>
 						<HelpCircleOutline :size="20" />
 					</template>
@@ -55,11 +55,11 @@ import { catalogiStore, metadataStore, navigationStore, organisationStore } from
 			<div class="detailGrid">
 				<div>
 					<b>Samenvatting:</b>
-					<span>{{ organisationStore.organisationItem.summary }}</span>
+					<span>{{ organisation.summary }}</span>
 				</div>
 				<div>
 					<b>Beschrijving:</b>
-					<span>{{ organisationStore.organisationItem.description }}</span>
+					<span>{{ organisation.description }}</span>
 				</div>
 			</div>
 		</div>
@@ -68,8 +68,7 @@ import { catalogiStore, metadataStore, navigationStore, organisationStore } from
 
 <script>
 // Components
-import { NcActionButton, NcActionLink, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
-import { BTab, BTabs } from 'bootstrap-vue'
+import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
 import VueApexCharts from 'vue-apexcharts'
 
 // Icons
@@ -133,8 +132,6 @@ export default {
 	data() {
 		return {
 			organisation: [],
-			catalogi: [],
-			metadata: [],
 			prive: false,
 			loading: false,
 			catalogiLoading: false,
@@ -166,9 +163,13 @@ export default {
 	watch: {
 		organisationItem: {
 			handler(newOrganisationItem, oldOrganisationItem) {
+				// why this? because when you fetch a new item it changes the reference to said item, which in return causes it to fetch again (a.k.a. infinite loop)
+				// run the fetch only once to update the item
 				if (!this.upToDate || JSON.stringify(newOrganisationItem) !== JSON.stringify(oldOrganisationItem)) {
-					this.organisation = organisationStore.organisationItem
-					organisationStore.organisationItem && this.fetchData(organisationStore.organisationItem.id)
+					this.organisation = newOrganisationItem
+					// check if newCatalogiItem is not false
+					newOrganisationItem && this.fetchData(newOrganisationItem?.id)
+					this.upToDate = true
 				}
 			},
 			deep: true,
@@ -183,24 +184,16 @@ export default {
 	},
 	methods: {
 		fetchData(id) {
-			// this.loading = true
 			fetch(`/index.php/apps/opencatalogi/api/organisations/${id}`, {
 				method: 'GET',
 			})
 				.then((response) => {
 					response.json().then((data) => {
 						this.organisation = data
-						// this.oldZaakId = id
-						this.fetchCatalogi(data.catalogi)
-						this.fetchMetaData(data.metaData)
-						organisationStore.getOrganisationAttachments()
-						// this.loading = false
 					})
 				})
 				.catch((err) => {
 					console.error(err)
-					// this.oldZaakId = id
-					// this.loading = false
 				})
 		},
 		linkToOtherWindow(url) {

@@ -6,7 +6,7 @@ import { navigationStore, themeStore } from '../../store/store.js'
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ themeStore.themeItem.title }}
+				{{ theme.title }}
 			</h1>
 
 			<NcActions
@@ -24,8 +24,8 @@ import { navigationStore, themeStore } from '../../store/store.js'
 					</span>
 				</template>
 				<NcActionButton
-					title="Bekijk de documentatie over publicaties"
-					@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
+					title="Bekijk de documentatie over themas"
+					@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/themas')">
 					<template #icon>
 						<HelpCircleOutline :size="20" />
 					</template>
@@ -55,11 +55,11 @@ import { navigationStore, themeStore } from '../../store/store.js'
 			<div class="detailGrid">
 				<div>
 					<b>Samenvatting:</b>
-					<span>{{ themeStore.themeItem.summary }}</span>
+					<span>{{ theme.summary }}</span>
 				</div>
 				<div>
 					<b>Beschrijving:</b>
-					<span>{{ themeStore.themeItem.description }}</span>
+					<span>{{ theme.description }}</span>
 				</div>
 			</div>
 		</div>
@@ -132,8 +132,6 @@ export default {
 	data() {
 		return {
 			theme: [],
-			catalogi: [],
-			metadata: [],
 			prive: false,
 			loading: false,
 			catalogiLoading: false,
@@ -165,9 +163,13 @@ export default {
 	watch: {
 		themeItem: {
 			handler(newThemeItem, oldThemeItem) {
+				// why this? because when you fetch a new item it changes the reference to said item, which in return causes it to fetch again (a.k.a. infinite loop)
+				// run the fetch only once to update the item
 				if (!this.upToDate || JSON.stringify(newThemeItem) !== JSON.stringify(oldThemeItem)) {
-					this.theme = themeStore.themeItem
-					themeStore.themeItem && this.fetchData(themeStore.themeItem.id)
+					this.theme = newThemeItem
+					// check if newCatalogiItem is not false
+					newThemeItem && this.fetchData(newThemeItem?.id)
+					this.upToDate = true
 				}
 			},
 			deep: true,
@@ -182,24 +184,16 @@ export default {
 	},
 	methods: {
 		fetchData(id) {
-			// this.loading = true
 			fetch(`/index.php/apps/opencatalogi/api/themes/${id}`, {
 				method: 'GET',
 			})
 				.then((response) => {
 					response.json().then((data) => {
 						this.theme = data
-						// this.oldZaakId = id
-						this.fetchCatalogi(data.catalogi)
-						this.fetchMetaData(data.metaData)
-						themeStore.getThemeAttachments()
-						// this.loading = false
 					})
 				})
 				.catch((err) => {
 					console.error(err)
-					// this.oldZaakId = id
-					// this.loading = false
 				})
 		},
 		linkToOtherWindow(url) {
