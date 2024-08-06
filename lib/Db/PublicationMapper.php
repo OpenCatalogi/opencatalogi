@@ -49,8 +49,6 @@ class PublicationMapper extends QBMapper
 		$publication = new Publication();
 		$publication->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
-
 		return $this->insert(entity: $publication);
 	}
 

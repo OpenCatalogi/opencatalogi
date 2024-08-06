@@ -1,21 +1,22 @@
 PHPUnit 9.6.20 by Sebastian Bergmann and contributors.
 
-.................R..................RR..........R...........R..  63 / 121 ( 52%)
-..R.R.R........................R.W...RRRR.....RR.W........      121 / 121 (100%)
+.................R..................RR..........R...........RR.  63 / 130 ( 48%)
+R.R.R.R...............................................RR.WW.... 126 / 130 ( 96%)
+....                                                            130 / 130 (100%)
 
-Time: 00:01.665, Memory: 41.76 MB
+Time: 00:01.701, Memory: 39.75 MB
 
 There were 2 warnings:
 
 1) Warning
-No tests found in class "OCA\OpenCatalogi\Tests\Db\OrganizationMapperTest".
+No tests found in class "OCA\OpenCatalogi\Tests\Service\ElasticSearchClientAdapterTest".
 
 2) Warning
 No tests found in class "OCA\OpenCatalogi\Tests\Service\ElasticSearchServiceTest".
 
 --
 
-There were 15 risky tests:
+There were 12 risky tests:
 
 1) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testIndexWithMongoDBDisabled
 This test did not perform any assertions
@@ -40,71 +41,56 @@ This test did not perform any assertions
 5) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testIndexWithMongoDBDisabled
 This test did not perform any assertions
 
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:58
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:52
 
-6) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreateWithMongoDBEnabled
+6) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testIndexWithMongoDBEnabled
+This test did not perform any assertions
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:62
+
+7) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShowWithMongoDBEnabled
+This test did not perform any assertions
+
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:87
+
+8) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreateWithMongoDBEnabled
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:113
 
-7) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdateWithMongoDBEnabled
+9) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdateWithMongoDBEnabled
 This test did not perform any assertions
 
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:136
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:140
 
-8) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroyWithMongoDBEnabled
+10) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroyWithMongoDBEnabled
 This test did not perform any assertions
 
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:160
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:168
 
-9) OCA\OpenCatalogi\Tests\Db\ListingTest::testJsonSerialize
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Db/ListingTest.php:56
-
-10) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testFind
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Db/PublicationMapperTest.php:26
-
-11) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testFindAll
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Db/PublicationMapperTest.php:49
-
-12) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testCreateFromArray
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Db/PublicationMapperTest.php:73
-
-13) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testUpdateFromArray
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Db/PublicationMapperTest.php:91
-
-14) OCA\OpenCatalogi\Tests\Service\DirectoryServiceTest::testRegisterToExternalDirectory
+11) OCA\OpenCatalogi\Tests\Service\DirectoryServiceTest::testRegisterToExternalDirectory
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:67
 
-15) OCA\OpenCatalogi\Tests\Service\DirectoryServiceTest::testCreateDirectoryFromResult
+12) OCA\OpenCatalogi\Tests\Service\DirectoryServiceTest::testCreateDirectoryFromResult
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:94
 
 WARNINGS!
-Tests: 121, Assertions: 308, Warnings: 2, Risky: 15.
+Tests: 130, Assertions: 327, Warnings: 2, Risky: 12.
 
-Generating code coverage report in HTML format ... done [00:00.221]
+Generating code coverage report in HTML format ... done [00:00.186]
 
 
 [1;37;40mCode Coverage Report:       [0m
-[1;37;40m  2024-08-06 15:02:33       [0m
+[1;37;40m  2024-08-06 19:55:31       [0m
 [1;37;40m                            [0m
 [1;37;40m Summary:                   [0m
-[37;41m  Classes:  7.41% (2/27)    [0m
-[37;41m  Methods: 39.04% (57/146)  [0m
-[30;43m  Lines:   52.07% (679/1304)[0m
+[37;41m  Classes: 11.11% (3/27)    [0m
+[37;41m  Methods: 49.32% (72/146)  [0m
+[30;43m  Lines:   57.13% (745/1304)[0m
 
 OCA\OpenCatalogi\AppInfo\Application
   [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% (  3/  3)[0m
@@ -121,33 +107,33 @@ OCA\OpenCatalogi\Controller\DirectoryController
 OCA\OpenCatalogi\Controller\MetaDataController
   [30;43mMethods:  57.14% ( 4/ 7)[0m   [30;43mLines:  81.82% ( 72/ 88)[0m
 OCA\OpenCatalogi\Controller\PublicationsController
-  [37;41mMethods:  44.44% ( 4/ 9)[0m   [37;41mLines:  38.89% ( 56/144)[0m
+  [37;41mMethods:  33.33% ( 3/ 9)[0m   [37;41mLines:  26.39% ( 38/144)[0m
 OCA\OpenCatalogi\Controller\SearchController
   [30;42mMethods: 100.00% ( 4/ 4)[0m   [30;42mLines: 100.00% ( 31/ 31)[0m
 OCA\OpenCatalogi\Db\Attachment
   [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;42mLines:  94.55% ( 52/ 55)[0m
 OCA\OpenCatalogi\Db\AttachmentMapper
-  [30;43mMethods:  60.00% ( 3/ 5)[0m   [37;41mLines:  35.00% (  7/ 20)[0m
+  [30;42mMethods: 100.00% ( 5/ 5)[0m   [30;42mLines: 100.00% ( 20/ 20)[0m
 OCA\OpenCatalogi\Db\Catalog
   [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;42mLines:  90.00% ( 27/ 30)[0m
 OCA\OpenCatalogi\Db\CatalogMapper
-  [30;43mMethods:  60.00% ( 3/ 5)[0m   [37;41mLines:  35.00% (  7/ 20)[0m
+  [30;43mMethods:  80.00% ( 4/ 5)[0m   [30;43mLines:  65.00% ( 13/ 20)[0m
 OCA\OpenCatalogi\Db\Listing
   [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;43mLines:  51.22% ( 21/ 41)[0m
 OCA\OpenCatalogi\Db\ListingMapper
-  [30;43mMethods:  60.00% ( 3/ 5)[0m   [37;41mLines:  35.00% (  7/ 20)[0m
+  [30;43mMethods:  80.00% ( 4/ 5)[0m   [30;43mLines:  65.00% ( 13/ 20)[0m
 OCA\OpenCatalogi\Db\MetaData
-  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:   0.00% (  0/ 31)[0m
+  [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;42mLines:  90.32% ( 28/ 31)[0m
 OCA\OpenCatalogi\Db\MetaDataMapper
-  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 20)[0m
+  [30;43mMethods:  80.00% ( 4/ 5)[0m   [30;43mLines:  65.00% ( 13/ 20)[0m
 OCA\OpenCatalogi\Db\Organization
-  [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;42mLines:  91.89% ( 34/ 37)[0m
+  [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;42mLines:  94.59% ( 35/ 37)[0m
 OCA\OpenCatalogi\Db\OrganizationMapper
-  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 20)[0m
+  [30;43mMethods:  60.00% ( 3/ 5)[0m   [37;41mLines:  50.00% ( 10/ 20)[0m
 OCA\OpenCatalogi\Db\Publication
   [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;42mLines:  95.65% ( 66/ 69)[0m
 OCA\OpenCatalogi\Db\PublicationMapper
-  [37;41mMethods:   0.00% ( 0/ 5)[0m   [37;41mLines:   0.00% (  0/ 22)[0m
+  [30;43mMethods:  60.00% ( 3/ 5)[0m   [37;41mLines:  31.82% (  7/ 22)[0m
 OCA\OpenCatalogi\Service\DirectoryService
   [37;41mMethods:  50.00% ( 3/ 6)[0m   [30;43mLines:  51.16% ( 22/ 43)[0m
 OCA\OpenCatalogi\Service\ElasticSearchClientAdapter

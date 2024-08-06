@@ -1,16 +1,12 @@
 <?php
 
 namespace OCA\OpenCatalogi\Tests\Service;
-//
-// Niet te testen zonder code aan te passen. De code in Elastic\Elasticsearch\Client is declared as final. 
-// Er zijn libs zoals Mockito etc om dit te doen, of Wrapper classes  
 
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
-use Elastic\Elasticsearch\Exception\ElasticsearchException;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ElasticSearchServiceTest extends TestCase
 {
@@ -18,104 +14,159 @@ class ElasticSearchServiceTest extends TestCase
     private $client;
 
     /** @var ElasticSearchService */
-    private $elasticSearchService;
+    private $service;
 
     // protected function setUp(): void
     // {
     //     $this->client = $this->createMock(Client::class);
-    //     $this->elasticSearchService = $this->getMockBuilder(ElasticSearchService::class)
-    //         ->onlyMethods(['getClient'])
-    //         ->getMock();
-    //     $this->elasticSearchService->method('getClient')->willReturn($this->client);
+    //     $this->service = $this->getMockBuilder(ElasticSearchService::class)
+    //                           ->onlyMethods(['getClient'])
+    //                           ->getMock();
+
+    //     $this->service->method('getClient')
+    //                   ->willReturn($this->client);
     // }
 
     // public function testAddObject()
     // {
-    //     $object = ['id' => '123', 'title' => 'Test Object'];
-    //     $config = ['index' => 'test_index', 'location' => 'http://localhost', 'key' => base64_encode('user:password')];
+    //     $config = ['location' => 'http://localhost', 'key' => base64_encode('id:key'), 'index' => 'test'];
+    //     $object = ['id' => '1', 'title' => 'Test Object'];
 
-    //     $this->client->method('index')->willReturn(['_id' => '123']);
-    //     $this->client->method('get')->willReturn(['_source' => $object]);
+    //     $this->client->method('index')
+    //                  ->willReturn(['_source' => $object]);
 
-    //     $result = $this->elasticSearchService->addObject($object, $config);
+    //     $result = $this->service->addObject($object, $config);
     //     $this->assertEquals($object, $result);
-    // }
-
-    // public function testAddObjectException()
-    // {
-    //     $object = ['id' => '123', 'title' => 'Test Object'];
-    //     $config = ['index' => 'test_index', 'location' => 'http://localhost', 'key' => base64_encode('user:password')];
-
-    //     $this->client->method('index')->willThrowException(new \Exception('Test Exception'));
-
-    //     $result = $this->elasticSearchService->addObject($object, $config);
-    //     $this->assertArrayHasKey('exception', $result);
-    //     $this->assertEquals('Test Exception', $result['exception']['message']);
     // }
 
     // public function testRemoveObject()
     // {
-    //     $id = '123';
-    //     $config = ['index' => 'test_index', 'location' => 'http://localhost', 'key' => base64_encode('user:password')];
+    //     $config = ['location' => 'http://localhost', 'key' => base64_encode('id:key'), 'index' => 'test'];
+    //     $id = '1';
 
-    //     $this->client->method('delete')->willReturn([]);
+    //     $this->client->expects($this->once())
+    //                  ->method('delete')
+    //                  ->with(['index' => 'test', 'id' => $id])
+    //                  ->willReturn([]);
 
-    //     $result = $this->elasticSearchService->removeObject($id, $config);
+    //     $result = $this->service->removeObject($id, $config);
     //     $this->assertEquals([], $result);
-    // }
-
-    // public function testRemoveObjectException()
-    // {
-    //     $id = '123';
-    //     $config = ['index' => 'test_index', 'location' => 'http://localhost', 'key' => base64_encode('user:password')];
-
-    //     $this->client->method('delete')->willThrowException(new \Exception('Test Exception'));
-
-    //     $result = $this->elasticSearchService->removeObject($id, $config);
-    //     $this->assertArrayHasKey('exception', $result);
-    //     $this->assertEquals('Test Exception', $result['exception']['message']);
     // }
 
     // public function testUpdateObject()
     // {
-    //     $id = '123';
+    //     $config = ['location' => 'http://localhost', 'key' => base64_encode('id:key'), 'index' => 'test'];
+    //     $id = '1';
     //     $object = ['title' => 'Updated Object'];
-    //     $config = ['index' => 'test_index', 'location' => 'http://localhost', 'key' => base64_encode('user:password')];
 
-    //     $this->client->method('index')->willReturn(['_id' => '123']);
+    //     $this->client->method('index')
+    //                  ->willReturn([]);
 
-    //     $result = $this->elasticSearchService->updateObject($id, $object, $config);
+    //     $result = $this->service->updateObject($id, $object, $config);
     //     $this->assertEquals([], $result);
-    // }
-
-    // public function testUpdateObjectException()
-    // {
-    //     $id = '123';
-    //     $object = ['title' => 'Updated Object'];
-    //     $config = ['index' => 'test_index', 'location' => 'http://localhost', 'key' => base64_encode('user:password')];
-
-    //     $this->client->method('index')->willThrowException(new \Exception('Test Exception'));
-
-    //     $result = $this->elasticSearchService->updateObject($id, $object, $config);
-    //     $this->assertArrayHasKey('exception', $result);
-    //     $this->assertEquals('Test Exception', $result['exception']['message']);
     // }
 
     // public function testSearchObject()
     // {
-    //     $filters = ['key' => 'value'];
-    //     $config = ['index' => 'test_index', 'location' => 'http://localhost', 'key' => base64_encode('user:password')];
+    //     $config = ['location' => 'http://localhost', 'key' => base64_encode('id:key'), 'index' => 'test'];
+    //     $filters = ['title' => 'Test'];
 
-    //     $searchResults = [
-    //         'hits' => [
-    //             'hits' => [['_source' => ['id' => '123', 'title' => 'Test Object']]]
+    //     $response = [
+    //         'hits' => ['hits' => [['_source' => ['title' => 'Test']]]],
+    //         'aggregations' => []
+    //     ];
+
+    //     $this->client->method('search')
+    //                  ->willReturn($response);
+
+    //     $result = $this->service->searchObject($filters, $config);
+    //     $expected = ['results' => [['title' => 'Test']], 'facets' => []];
+
+    //     $this->assertEquals($expected, $result);
+    // }
+
+    // public function testParseFilters()
+    // {
+    //     $filters = [
+    //         '.search' => 'test',
+    //         '.queries' => ['query1', 'query2'],
+    //         '.catalogi' => ['cat1', 'cat2'],
+    //         'field1' => 'value1'
+    //     ];
+
+    //     $expected = [
+    //         'query' => [
+    //             'bool' => [
+    //                 'must' => [
+    //                     ['query_string' => ['query' => '*test*']],
+    //                     ['match' => ['catalogi._id' => ['query' => 'cat1 cat2', 'operator' => 'OR']]],
+    //                     ['match' => ['field1' => 'value1']]
+    //                 ]
+    //             ]
+    //         ],
+    //         'runtime_mappings' => [
+    //             'query1' => ['type' => 'keyword'],
+    //             'query2' => ['type' => 'keyword']
+    //         ],
+    //         'aggs' => [
+    //             'query1' => ['terms' => ['field' => 'query1']],
+    //             'query2' => ['terms' => ['field' => 'query2']]
     //         ]
     //     ];
 
-    //     $this->client->method('search')->willReturn($searchResults);
+    //     $result = $this->service->parseFilters($filters);
+    //     $this->assertEquals($expected, $result);
+    // }
 
-    //     $result = $this->elasticSearchService->searchObject($filters, $config);
-    //     $this->assertArrayHasKey('results', $result);
-    //     $this->assertEquals('Test Object', $result['results'][0]['title']);
+    // public function testFormatResults()
+    // {
+    //     $hit = [
+    //         '_source' => ['title' => 'Test'],
+    //         '_id' => '1'
+    //     ];
+
+    //     $expected = [
+    //         '_id' => '1',
+    //         'title' => 'Test'
+    //     ];
+
+    //     $result = $this->service->formatResults($hit);
+    //     $this->assertEquals($expected, $result);
+    // }
+
+    // public function testRenameBucketItems()
+    // {
+    //     $bucketItem = [
+    //         'key' => 'bucket1',
+    //         'doc_count' => 10
+    //     ];
+
+    //     $expected = [
+    //         '_id' => 'bucket1',
+    //         'count' => 10
+    //     ];
+
+    //     $result = $this->service->renameBucketItems($bucketItem);
+    //     $this->assertEquals($expected, $result);
+    // }
+
+    // public function testMapAggregationResults()
+    // {
+    //     $result = [
+    //         'buckets' => [
+    //             ['key' => 'bucket1', 'doc_count' => 10],
+    //             ['key' => 'bucket2', 'doc_count' => 5]
+    //         ]
+    //     ];
+
+    //     $expected = [
+    //         ['_id' => 'bucket1', 'count' => 10],
+    //         ['_id' => 'bucket2', 'count' => 5]
+    //     ];
+
+    //     $mappedResult = $this->service->mapAggregationResults($result);
+    //     $this->assertEquals($expected, $mappedResult);
     // }
 }
+
+?>

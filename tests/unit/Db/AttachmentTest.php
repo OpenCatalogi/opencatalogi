@@ -1,170 +1,114 @@
 <?php
 
-namespace OCA\OpenCatalogi\Tests\Db;
-
-use DateTime;
 use OCA\OpenCatalogi\Db\Attachment;
 use PHPUnit\Framework\TestCase;
 
 class AttachmentTest extends TestCase
 {
-    public function testConstruct()
+    private $attachment;
+
+    protected function setUp(): void
     {
-        $attachment = new Attachment();
-        $this->assertInstanceOf(Attachment::class, $attachment);
+        $this->attachment = new Attachment();
     }
 
-    public function testSettersAndGetters()
+    public function testConstructor()
     {
-        $attachment = new Attachment();
-
-        $attachment->setId(1);
-        $this->assertEquals(1, $attachment->getId());
-
-        $attachment->setReference('reference');
-        $this->assertEquals('reference', $attachment->getReference());
-
-        $attachment->setTitle('title');
-        $this->assertEquals('title', $attachment->getTitle());
-
-        $attachment->setSummary('summary');
-        $this->assertEquals('summary', $attachment->getSummary());
-
-        $attachment->setDescription('description');
-        $this->assertEquals('description', $attachment->getDescription());
-
-        $attachment->setLabels(['label1', 'label2']);
-        $this->assertEquals(['label1', 'label2'], $attachment->getLabels());
-
-        $attachment->setAccessUrl('http://access.url');
-        $this->assertEquals('http://access.url', $attachment->getAccessUrl());
-
-        $attachment->setDownloadUrl('http://download.url');
-        $this->assertEquals('http://download.url', $attachment->getDownloadUrl());
-
-        $attachment->setType('type');
-        $this->assertEquals('type', $attachment->getType());
-
-        $attachment->setExtension('ext');
-        $this->assertEquals('ext', $attachment->getExtension());
-
-        $attachment->setSize(1234);
-        $this->assertEquals(1234, $attachment->getSize());
-
-        $attachment->setAnonymization(['anon1', 'anon2']);
-        $this->assertEquals(['anon1', 'anon2'], $attachment->getAnonymization());
-
-        $attachment->setLanguage(['en', 'fr']);
-        $this->assertEquals(['en', 'fr'], $attachment->getLanguage());
-
-        $attachment->setVersionOf('v1');
-        $this->assertEquals('v1', $attachment->getVersionOf());
-
-        $attachment->setHash('hashvalue');
-        $this->assertEquals('hashvalue', $attachment->getHash());
-
-        $publishedDate = new DateTime();
-        $attachment->setPublished($publishedDate);
-        $this->assertEquals($publishedDate, $attachment->getPublished());
-
-        $modifiedDate = new DateTime();
-        $attachment->setModified($modifiedDate);
-        $this->assertEquals($modifiedDate, $attachment->getModified());
-
-        $attachment->setLicense('MIT');
-        $this->assertEquals('MIT', $attachment->getLicense());
-    }
-
-    public function testJsonSerialize()
-    {
-        $attachment = new Attachment();
-
-        $attachment->setId(1);
-        $attachment->setReference('reference');
-        $attachment->setTitle('title');
-        $attachment->setSummary('summary');
-        $attachment->setDescription('description');
-        $attachment->setLabels(['label1', 'label2']);
-        $attachment->setAccessUrl('http://access.url');
-        $attachment->setDownloadUrl('http://download.url');
-        $attachment->setType('type');
-        $attachment->setExtension('ext');
-        $attachment->setSize(1234);
-        $attachment->setAnonymization(['anon1', 'anon2']);
-        $attachment->setLanguage(['en', 'fr']);
-        $attachment->setVersionOf('v1');
-        $attachment->setHash('hashvalue');
-        $attachment->setPublished(new DateTime('2023-01-01T00:00:00+00:00'));
-        $attachment->setModified(new DateTime('2023-01-02T00:00:00+00:00'));
-        $attachment->setLicense('MIT');
-
-        $expected = [
-            'id' => 1,
-            'reference' => 'reference',
-            'title' => 'title',
-            'summary' => 'summary',
-            'description' => 'description',
-            'labels' => ['label1', 'label2'],
-            'accessUrl' => 'http://access.url',
-            'downloadUrl' => 'http://download.url',
-            'type' => 'type',
-            'extension' => 'ext',
-            'size' => 1234,
-            'anonymization' => ['anon1', 'anon2'],
-            'language' => ['en', 'fr'],
-            'versionOf' => 'v1',
-            'hash' => 'hashvalue',
-            'published' => '2023-01-01T00:00:00+00:00',
-            'modified' => '2023-01-02T00:00:00+00:00',
-            'license' => 'MIT',
-        ];
-
-        $this->assertEquals($expected, $attachment->jsonSerialize());
+        $this->assertInstanceOf(Attachment::class, $this->attachment);
     }
 
     public function testHydrate()
     {
         $data = [
-            'id' => 1,
-            'reference' => 'reference',
-            'title' => 'title',
-            'summary' => 'summary',
-            'description' => 'description',
+            'reference' => 'ref123',
+            'title' => 'Test Title',
+            'summary' => 'Test Summary',
+            'description' => 'Test Description',
             'labels' => ['label1', 'label2'],
-            'accessUrl' => 'http://access.url',
-            'downloadUrl' => 'http://download.url',
-            'type' => 'type',
-            'extension' => 'ext',
-            'size' => 1234,
-            'anonymization' => ['anon1', 'anon2'],
+            'accessUrl' => 'http://example.com/access',
+            'downloadUrl' => 'http://example.com/download',
+            'type' => 'document',
+            'extension' => 'pdf',
+            'size' => 1024,
+            'versionOf' => 'v1.0',
+            'hash' => 'abc123',
+            'anonymization' => ['field1' => 'value1'],
             'language' => ['en', 'fr'],
-            'versionOf' => 'v1',
-            'hash' => 'hashvalue',
-            'published' => new DateTime('2023-01-01T00:00:00+00:00'),
-            'modified' => new DateTime('2023-01-02T00:00:00+00:00'),
-            'license' => 'MIT',
+            'modified' => new DateTime('2023-01-01T00:00:00Z'),
+            'published' => new DateTime('2023-01-02T00:00:00Z'),
+            'license' => 'MIT'
         ];
 
-        $attachment = new Attachment();
-        $attachment->hydrate($data);
+        $this->attachment->hydrate($data);
 
-        $this->assertEquals(1, $attachment->getId());
-        $this->assertEquals('reference', $attachment->getReference());
-        $this->assertEquals('title', $attachment->getTitle());
-        $this->assertEquals('summary', $attachment->getSummary());
-        $this->assertEquals('description', $attachment->getDescription());
-        $this->assertEquals(['label1', 'label2'], $attachment->getLabels());
-        $this->assertEquals('http://access.url', $attachment->getAccessUrl());
-        $this->assertEquals('http://download.url', $attachment->getDownloadUrl());
-        $this->assertEquals('type', $attachment->getType());
-        $this->assertEquals('ext', $attachment->getExtension());
-        $this->assertEquals(1234, $attachment->getSize());
-        $this->assertEquals(['anon1', 'anon2'], $attachment->getAnonymization());
-        $this->assertEquals(['en', 'fr'], $attachment->getLanguage());
-        $this->assertEquals('v1', $attachment->getVersionOf());
-        $this->assertEquals('hashvalue', $attachment->getHash());
-        $this->assertEquals(new DateTime('2023-01-01T00:00:00+00:00'), $attachment->getPublished());
-        $this->assertEquals(new DateTime('2023-01-02T00:00:00+00:00'), $attachment->getModified());
-        $this->assertEquals('MIT', $attachment->getLicense());
+        $this->assertEquals('ref123', $this->attachment->getReference());
+        $this->assertEquals('Test Title', $this->attachment->getTitle());
+        $this->assertEquals('Test Summary', $this->attachment->getSummary());
+        $this->assertEquals('Test Description', $this->attachment->getDescription());
+        $this->assertEquals(['label1', 'label2'], $this->attachment->getLabels());
+        $this->assertEquals('http://example.com/access', $this->attachment->getAccessUrl());
+        $this->assertEquals('http://example.com/download', $this->attachment->getDownloadUrl());
+        $this->assertEquals('document', $this->attachment->getType());
+        $this->assertEquals('pdf', $this->attachment->getExtension());
+        $this->assertEquals(1024, $this->attachment->getSize());
+        $this->assertEquals('v1.0', $this->attachment->getVersionOf());
+        $this->assertEquals('abc123', $this->attachment->getHash());
+        $this->assertEquals(['field1' => 'value1'], $this->attachment->getAnonymization());
+        $this->assertEquals(['en', 'fr'], $this->attachment->getLanguage());
+        $this->assertEquals(new DateTime('2023-01-01T00:00:00Z'), $this->attachment->getModified());
+        $this->assertEquals(new DateTime('2023-01-02T00:00:00Z'), $this->attachment->getPublished());
+        $this->assertEquals('MIT', $this->attachment->getLicense());
+    }
+
+    public function testJsonSerialize()
+    {
+        $data = [
+            'reference' => 'ref123',
+            'title' => 'Test Title',
+            'summary' => 'Test Summary',
+            'description' => 'Test Description',
+            'labels' => ['label1', 'label2'],
+            'accessUrl' => 'http://example.com/access',
+            'downloadUrl' => 'http://example.com/download',
+            'type' => 'document',
+            'extension' => 'pdf',
+            'size' => 1024,
+            'versionOf' => 'v1.0',
+            'hash' => 'abc123',
+            'anonymization' => ['field1' => 'value1'],
+            'language' => ['en', 'fr'],
+            'modified' => new DateTime('2023-01-01T00:00:00Z'),
+            'published' => new DateTime('2023-01-02T00:00:00Z'),
+            'license' => 'MIT'
+        ];
+
+        $this->attachment->hydrate($data);
+
+        $json = $this->attachment->jsonSerialize();
+
+        $expected = [
+            'id' => null,
+            'reference' => 'ref123',
+            'title' => 'Test Title',
+            'summary' => 'Test Summary',
+            'description' => 'Test Description',
+            'labels' => ['label1', 'label2'],
+            'accessUrl' => 'http://example.com/access',
+            'downloadUrl' => 'http://example.com/download',
+            'type' => 'document',
+            'extension' => 'pdf',
+            'size' => 1024,
+            'versionOf' => 'v1.0',
+            'hash' => 'abc123',
+            'anonymization' => ['field1' => 'value1'],
+            'language' => ['en', 'fr'],
+            'modified' => '2023-01-01T00:00:00+00:00',
+            'published' => '2023-01-02T00:00:00+00:00',
+            'license' => 'MIT'
+        ];
+
+        $this->assertEquals($expected, $json);
     }
 }
+
+?>

@@ -2,55 +2,34 @@
 
 namespace OCA\OpenCatalogi\Tests\Db;
 
-// There were 3 errors:
-
-// 1) OCA\OpenCatalogi\Tests\Db\OrganizationMapperTest::testFind
-// PHPUnit\Framework\MockObject\MethodCannotBeConfiguredException: Trying to configure method "eq" which cannot be configured because it does not exist, has not been specified, is final, or is static
-
-// /var/www/html/apps-extra/opencatalogi/tests/unit/Db/OrganizationMapperTest.php:48
-
-// 2) OCA\OpenCatalogi\Tests\Db\OrganizationMapperTest::testCreateFromArray
-// BadFunctionCallException: name is not a valid attribute
-
-// /var/www/html/lib/public/AppFramework/Db/Entity.php:134
-// /var/www/html/lib/public/AppFramework/Db/Entity.php:151
-// /var/www/html/apps-extra/opencatalogi/tests/unit/Db/OrganizationMapperTest.php:131
-
-// 3) OCA\OpenCatalogi\Tests\Db\OrganizationMapperTest::testUpdateFromArray
-// BadFunctionCallException: name is not a valid attribute
-
-// /var/www/html/lib/public/AppFramework/Db/Entity.php:134
-// /var/www/html/lib/public/AppFramework/Db/Entity.php:151
-// /var/www/html/apps-extra/opencatalogi/tests/unit/Db/OrganizationMapperTest.php:162
-
-
-use OCA\OpenCatalogi\Db\Organization;
-use OCA\OpenCatalogi\Db\OrganizationMapper;
+use OCA\OpenCatalogi\Db\MetaData;
+use OCA\OpenCatalogi\Db\MetaDataMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class OrganizationMapperTest extends TestCase
+class MetaDataMapperTest extends TestCase
 {
     /** @var MockObject|IDBConnection */
     private $db;
 
-    /** @var OrganizationMapper */
+    /** @var MetaDataMapper */
     private $mapper;
 
     protected function setUp(): void
     {
         $this->db = $this->createMock(IDBConnection::class);
-        $this->mapper = new OrganizationMapper($this->db);
+        $this->mapper = new MetaDataMapper($this->db);
     }
 
+    // Trying to configure method "eq" which cannot be configured because it does not exist, has not been specified, is final, or is static
     // public function testFind()
     // {
     //     $id = 1;
 
     //     $queryBuilder = $this->createMock(IQueryBuilder::class);
-    //     $expressionBuilder = $this->createMock(\stdClass::class);
+    //     $expressionBuilder = $this->createMock(IQueryBuilder::class);
 
     //     $queryBuilder->expects($this->once())
     //                  ->method('select')
@@ -59,7 +38,7 @@ class OrganizationMapperTest extends TestCase
 
     //     $queryBuilder->expects($this->once())
     //                  ->method('from')
-    //                  ->with('organizations')
+    //                  ->with('metadata')
     //                  ->willReturnSelf();
 
     //     $queryBuilder->expects($this->once())
@@ -84,19 +63,19 @@ class OrganizationMapperTest extends TestCase
     //     $this->db->method('getQueryBuilder')
     //              ->willReturn($queryBuilder);
 
-    //     $mapperMock = $this->getMockBuilder(OrganizationMapper::class)
+    //     $mapperMock = $this->getMockBuilder(MetaDataMapper::class)
     //                        ->setConstructorArgs([$this->db])
     //                        ->onlyMethods(['findEntity'])
     //                        ->getMock();
 
-    //     $organization = new Organization();
+    //     $metadata = new MetaData();
     //     $mapperMock->expects($this->once())
     //                ->method('findEntity')
     //                ->with($queryBuilder)
-    //                ->willReturn($organization);
+    //                ->willReturn($metadata);
 
     //     $result = $mapperMock->find($id);
-    //     $this->assertInstanceOf(Organization::class, $result);
+    //     $this->assertInstanceOf(MetaData::class, $result);
     // }
 
     public function testFindAll()
@@ -112,59 +91,65 @@ class OrganizationMapperTest extends TestCase
 
         $this->db->method('getQueryBuilder')->willReturn($queryBuilder);
 
-        $mapperMock = $this->getMockBuilder(OrganizationMapper::class)
+        $mapperMock = $this->getMockBuilder(MetaDataMapper::class)
                            ->setConstructorArgs([$this->db])
                            ->onlyMethods(['findEntities'])
                            ->getMock();
 
-        $organizations = [new Organization(), new Organization()];
+        $metadatas = [new MetaData(), new MetaData()];
         $mapperMock->expects($this->once())
                    ->method('findEntities')
                    ->with($queryBuilder)
-                   ->willReturn($organizations);
+                   ->willReturn($metadatas);
 
         $result = $mapperMock->findAll($limit, $offset);
         $this->assertIsArray($result);
         $this->assertCount(2, $result);
     }
 
-    // public function testCreateFromArray()
-    // {
-    //     $object = [
-    //         'name' => 'Test Organization',
-    //         'description' => 'Test Description'
-    //     ];
+    public function testCreateFromArray()
+    {
+        $object = [
+            'title' => 'Test MetaData',
+            'version' => '1.0.0',
+            'description' => 'Test Description',
+            'required' => ['field1', 'field2'],
+            'properties' => ['property1' => 'value1', 'property2' => 'value2']
+        ];
 
-    //     $organization = new Organization();
-    //     $organization->hydrate($object);
+        $metadata = new MetaData();
+        $metadata->hydrate($object);
 
-    //     $mapperMock = $this->getMockBuilder(OrganizationMapper::class)
-    //                        ->setConstructorArgs([$this->db])
-    //                        ->onlyMethods(['insert'])
-    //                        ->getMock();
+        $mapperMock = $this->getMockBuilder(MetaDataMapper::class)
+                           ->setConstructorArgs([$this->db])
+                           ->onlyMethods(['insert'])
+                           ->getMock();
 
-    //     $mapperMock->expects($this->once())
-    //                ->method('insert')
-    //                ->with($this->isInstanceOf(Organization::class))
-    //                ->willReturn($organization);
+        $mapperMock->expects($this->once())
+                   ->method('insert')
+                   ->with($this->isInstanceOf(MetaData::class))
+                   ->willReturn($metadata);
 
-    //     $result = $mapperMock->createFromArray($object);
-    //     $this->assertInstanceOf(Organization::class, $result);
-    //     $this->assertEquals('Test Organization', $result->getName());
-    // }
+        $result = $mapperMock->createFromArray($object);
+        $this->assertInstanceOf(MetaData::class, $result);
+        $this->assertEquals('Test MetaData', $result->getTitle());
+    }
 
     public function testUpdateFromArray()
     {
         $id = 1;
         $object = [
-            'name' => 'Updated Organization',
-            'description' => 'Updated Description'
+            'title' => 'Updated MetaData',
+            'version' => '1.0.1',
+            'description' => 'Updated Description',
+            'required' => ['field1', 'field2'],
+            'properties' => ['property1' => 'newValue1', 'property2' => 'newValue2']
         ];
 
-        $organization = new Organization();
-        $organization->hydrate($object);
+        $metadata = new MetaData();
+        $metadata->hydrate($object);
 
-        $mapperMock = $this->getMockBuilder(OrganizationMapper::class)
+        $mapperMock = $this->getMockBuilder(MetaDataMapper::class)
                            ->setConstructorArgs([$this->db])
                            ->onlyMethods(['find', 'update'])
                            ->getMock();
@@ -172,15 +157,17 @@ class OrganizationMapperTest extends TestCase
         $mapperMock->expects($this->once())
                    ->method('find')
                    ->with($id)
-                   ->willReturn($organization);
+                   ->willReturn($metadata);
 
         $mapperMock->expects($this->once())
                    ->method('update')
-                   ->with($this->isInstanceOf(Organization::class))
-                   ->willReturn($organization);
+                   ->with($this->isInstanceOf(MetaData::class))
+                   ->willReturn($metadata);
 
         $result = $mapperMock->updateFromArray($id, $object);
-        $this->assertInstanceOf(Organization::class, $result);
-        // $this->assertEquals('Updated Organization', $result->getName());
+        $this->assertInstanceOf(MetaData::class, $result);
+        $this->assertEquals('Updated MetaData', $result->getTitle());
     }
 }
+
+?>

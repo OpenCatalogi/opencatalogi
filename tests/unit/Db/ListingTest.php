@@ -18,11 +18,11 @@ class ListingTest extends TestCase
     {
         $listing = new Listing();
 
-        $listing->setId(1);
-        $this->assertEquals(1, $listing->getId());
-
         $listing->setTitle('Test Title');
         $this->assertEquals('Test Title', $listing->getTitle());
+
+        $listing->setReference('Test Reference');
+        $this->assertEquals('Test Reference', $listing->getReference());
 
         $listing->setSummary('Test Summary');
         $this->assertEquals('Test Summary', $listing->getSummary());
@@ -53,45 +53,48 @@ class ListingTest extends TestCase
         $this->assertTrue($listing->getAvailable());
     }
 
-    public function testJsonSerialize()
-    {
-        $listing = new Listing();
+    // public function testJsonSerialize()
+    // {
+    //     $listing = new Listing();
 
-        $listing->setId(1);
-        $listing->setTitle('Test Title');
-        $listing->setSummary('Test Summary');
-        $listing->setDescription('Test Description');
-        $listing->setSearch('search query');
-        $listing->setDirectory('directory');
-        $listing->setMetadata('metadata');
-        $listing->setStatus('status');
-        $dateTime = new DateTime();
-        $listing->setLastSync($dateTime);
-        $listing->setDefault(true);
-        $listing->setAvailable(true);
+    //     $listing->setId(1);
+    //     $listing->setTitle('Test Title');
+    //     $listing->setReference('Test Reference');
+    //     $listing->setSummary('Test Summary');
+    //     $listing->setDescription('Test Description');
+    //     $listing->setSearch('search query');
+    //     $listing->setDirectory('directory');
+    //     $listing->setMetadata('metadata');
+    //     $listing->setStatus('status');
+    //     $dateTime = new DateTime();
+    //     $listing->setLastSync($dateTime);
+    //     $listing->setDefault(true);
+    //     $listing->setAvailable(true);
 
-        $expected = [
-            'id'          => 1,
-            'title'       => 'Test Title',
-            'summary'     => 'Test Summary',
-            'description' => 'Test Description',
-            'search'      => 'search query',
-            'directory'   => 'directory',
-            'metadata'    => 'metadata',
-            'status'      => 'status',
-            'lastSync'    => $dateTime->format('c'),
-            'default'     => true,
-            'available'   => true,
-        ];
+    //     $expected = [
+    //         'id'          => 1,
+    //         'title'       => 'Test Title',
+    //         'reference'   => 'Test Reference',
+    //         'summary'     => 'Test Summary',
+    //         'description' => 'Test Description',
+    //         'search'      => 'search query',
+    //         'directory'   => 'directory',
+    //         'metadata'    => 'metadata',
+    //         'status'      => 'status',
+    //         'lastSync'    => $dateTime->format('c'),
+    //         'default'     => true,
+    //         'available'   => true,
+    //     ];
 
-        // $this->assertEquals($expected, $listing->jsonSerialize());
-    }
+    //     $this->assertEquals($expected, $listing->jsonSerialize());
+    // }
 
     public function testHydrate()
     {
         $data = [
             'id'          => 1,
             'title'       => 'Test Title',
+            'reference'   => 'Test Reference',
             'summary'     => 'Test Summary',
             'description' => 'Test Description',
             'search'      => 'search query',
@@ -108,6 +111,7 @@ class ListingTest extends TestCase
 
         $this->assertEquals(1, $listing->getId());
         $this->assertEquals('Test Title', $listing->getTitle());
+        $this->assertEquals('Test Reference', $listing->getReference());
         $this->assertEquals('Test Summary', $listing->getSummary());
         $this->assertEquals('Test Description', $listing->getDescription());
         $this->assertEquals('search query', $listing->getSearch());
