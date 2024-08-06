@@ -72,7 +72,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 							<template #icon>
 								<Delete :size="20" />
 							</template>
-							Delete
+							Verwijder
 						</NcActionButton>
 					</template>
 				</NcListItem>

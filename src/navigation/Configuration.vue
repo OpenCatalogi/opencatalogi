@@ -27,14 +27,14 @@
 								<td class="row-name">
 									DRC
 								</td>
-								<td>Location</td>
+								<td>Locatie</td>
 								<td>
 									<NcTextField id="drcLocation"
 										:value.sync="configuration.drcLocation"
 										:label-outside="true"
 										placeholder="https://" />
 								</td>
-								<td>Key</td>
+								<td>Sleutel</td>
 								<td>
 									<NcTextField id="drcKey"
 										:value.sync="configuration.drcKey"
@@ -46,14 +46,14 @@
 								<td class="row-name">
 									ORC
 								</td>
-								<td>Location</td>
+								<td>Locatie</td>
 								<td>
 									<NcTextField id="orcLocation"
 										:value.sync="configuration.orcLocation"
 										:label-outside="true"
 										placeholder="https://" />
 								</td>
-								<td>Key</td>
+								<td>Sleutel</td>
 								<td>
 									<NcTextField id="orcKey"
 										:value.sync="configuration.orcKey"
@@ -65,14 +65,14 @@
 								<td class="row-name">
 									Elastic
 								</td>
-								<td>Location</td>
+								<td>Locatie</td>
 								<td>
 									<NcTextField id="elasticLocation"
 										:value.sync="configuration.elasticLocation"
 										:label-outside="true"
 										placeholder="https://" />
 								</td>
-								<td>Key</td>
+								<td>Sleutel</td>
 								<td>
 									<NcTextField id="elasticKey"
 										:value.sync="configuration.elasticKey"
@@ -91,21 +91,21 @@
 								<td class="row-name">
 									Mongo DB
 								</td>
-								<td>Location</td>
+								<td>Locatie</td>
 								<td>
 									<NcTextField id="mongodbLocation"
 										:value.sync="configuration.mongodbLocation"
 										:label-outside="true"
 										placeholder="https://" />
 								</td>
-								<td>Key</td>
+								<td>Sleutel</td>
 								<td>
 									<NcTextField id="mongodbKey"
 										:value.sync="configuration.mongodbKey"
 										:label-outside="true"
 										placeholder="***" />
 								</td>
-								<td>Cluster name</td>
+								<td>Cluster naam</td>
 								<td>
 									<NcTextField id="mongodbCluster"
 										:value.sync="configuration.mongodbCluster"
@@ -117,14 +117,14 @@
 								<td class="row-name">
 									Nextcloud Admin User
 								</td>
-								<td>Username</td>
+								<td>Gebruikersnaam</td>
 								<td>
 									<NcTextField id="mongodbLocation"
 										:value.sync="configuration.adminUsername"
 										:label-outside="true"
 										placeholder="admin" />
 								</td>
-								<td>Password</td>
+								<td>Wachwoord</td>
 								<td>
 									<NcTextField id="mongodbKey"
 										:value.sync="configuration.adminPassword"

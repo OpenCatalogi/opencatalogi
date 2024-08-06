@@ -4,12 +4,13 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 
 <template>
 	<NcModal
-		v-if="navigationStore.modal === 'addListing'"
+		v-if="navigationStore.modal === 'addDirectory'"
 		ref="modalRef"
 		label-id="addListingModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
+			Je directory bevat alle bij jouw installatie bekende catalogi. Om nieuwe catalogi te ontdekken heb je de directory van een andere (externe) installatie nodig. Nadat deze is opgegeven zullen de twee installaties een federatief netwerk vormen en catalogi blijven uitwisselen.
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
 					<p>Listing succesvol toegevoegd</p>
@@ -38,6 +39,12 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				</template>
 				Toevoegen
 			</NcButton>
+			<NcButton @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory', '_blank')">
+				<template #icon>
+					<HelpCircleOutline :size="20" />
+				</template>
+				Meer informatie over de directory
+			</NcButton>
 		</div>
 	</NcModal>
 </template>
@@ -45,16 +52,19 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 <script>
 import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
-	name: 'AddListingModal',
+	name: 'AddDirectoryModal',
 	components: {
 		NcModal,
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
+		// Icons
 		Plus,
+		HelpCircleOutline,
 	},
 	data() {
 		return {
@@ -121,6 +131,9 @@ export default {
 			} else {
 				this.validateUrlError = null
 			}
+		},
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }
