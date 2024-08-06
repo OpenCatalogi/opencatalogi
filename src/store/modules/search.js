@@ -27,22 +27,22 @@ export const useSearchStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            if (data?.code === 403 && data?.message) {
-                                this.searchError = data.message
-                                console.log(this.searchError)
-                            } else {
-                                this.searchError = '' // Clear any previous errors
-                            }
+                        response.json().then(
+                        (data) => {
+                                if (data?.code === 403 && data?.message) {
+                                    this.searchError = data.message
+                                    console.log(this.searchError)
+                                } else {
+                                    this.searchError = '' // Clear any previous errors
+                                }
                                 this.searchResults = data
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    this.searchError = err.message || 'An error occurred'
+                        this.searchError = err.message || 'An error occurred'
                         console.error(err.message ?? err)
                     }
                 )
