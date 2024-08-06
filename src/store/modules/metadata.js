@@ -56,4 +56,4 @@ export const useMetadataStore = defineStore('metadata', {
 			console.log('Active metadata data key set to ' + metadataDataKey)
 		},
 	},
-)
+})
