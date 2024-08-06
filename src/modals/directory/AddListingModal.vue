@@ -34,9 +34,9 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				@click="addDirectory">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
 				</template>
-				Submit
+				Toevoegen
 			</NcButton>
 		</div>
 	</NcModal>
@@ -44,7 +44,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'AddListingModal',
@@ -54,7 +54,7 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
-		ContentSaveOutline,
+		Plus,
 	},
 	data() {
 		return {
