@@ -21,62 +21,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			</div>
 			<div class="formContainer">
 				<div v-if="success === null" class="form-group">
-					<NcTextField :disabled="loading"
-						label="Titel"
-						:value.sync="publication.title" />
-					<NcTextField :disabled="loading"
-						label="Samenvatting"
-						:value.sync="publication.summary" />
-					<NcTextArea :disabled="loading"
-						label="Beschrijving"
-						:value.sync="publication.description" />
-					<NcTextField :disabled="loading"
-						label="Reference"
-						:value.sync="publication.reference" />
-					<NcTextField :disabled="loading"
-						label="Categorie"
-						:value.sync="publication.category" />
-					<NcTextField :disabled="loading"
-						label="Portaal"
-						:value.sync="publication.portal" />
-					<span>
-						<p>Published</p>
-						<NcDateTimePicker v-model="publication.published"
-							:disabled="loading"
-							label="Publicatie datum" />
-					</span>
-					<span>
-						<p>Modified</p>
-						<NcDateTimePicker v-model="publication.modified"
-							:disabled="loading"
-							label="Modified" />
-					</span>
-					<NcTextField :disabled="loading"
-						label="Organisatie"
-						:value.sync="publication.organization" />
-					<NcTextField :disabled="loading"
-						label="Attachments"
-						:value.sync="publication.attachments" />
-					<NcTextField :disabled="loading"
-						label="Schema"
-						:value.sync="publication.schema" />
-					<NcTextField :disabled="loading"
-						label="Thema's (splits op ,)"
-						:value.sync="publication.themes" />
-					<span class="APM-horizontal">
-						<NcCheckboxRadioSwitch :disabled="loading"
-							label="Featured"
-							:checked.sync="publication.featured">
-							Featured
-						</NcCheckboxRadioSwitch>
-					</span>
-					<NcTextField :disabled="loading"
-						label="Image"
-						:value.sync="publication.image" />
-					<b>Juridisch</b>
-					<NcTextField :disabled="loading"
-						label="Licentie"
-						:value.sync="publication.license" />
 					<NcSelect v-bind="catalogi"
 						v-model="catalogi.value"
 						input-label="Catalogi"
@@ -89,6 +33,52 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						:loading="metaDataLoading"
 						:disabled="publicationLoading"
 						required />
+					<div v-if="catalogi.value?.id && metaData.value?.id">
+						<NcTextField :disabled="loading"
+							label="Titel"
+							:value.sync="publication.title" />
+						<NcTextField :disabled="loading"
+							label="Samenvatting"
+							:value.sync="publication.summary" />
+						<NcTextArea :disabled="loading"
+							label="Beschrijving"
+							:value.sync="publication.description" />
+						<NcTextField :disabled="loading"
+							label="Reference"
+							:value.sync="publication.reference" />
+						<NcTextField :disabled="loading"
+							label="Categorie"
+							:value.sync="publication.category" />
+						<NcTextField :disabled="loading"
+							label="Portaal"
+							:value.sync="publication.portal" />
+						<span>
+							<p>Published</p>
+							<NcDateTimePicker v-model="publication.published"
+								:disabled="loading"
+								label="Publicatie datum" />
+						</span>
+						<span>
+							<p>Modified</p>
+							<NcDateTimePicker v-model="publication.modified"
+								:disabled="loading"
+								label="Modified" />
+						</span>
+						<span class="APM-horizontal">
+							<NcCheckboxRadioSwitch :disabled="loading"
+								label="Featured"
+								:checked.sync="publication.featured">
+								Featured
+							</NcCheckboxRadioSwitch>
+						</span>
+						<NcTextField :disabled="loading"
+							label="Image"
+							:value.sync="publication.image" />
+						<b>Juridisch</b>
+						<NcTextField :disabled="loading"
+							label="Licentie"
+							:value.sync="publication.license" />
+					</div>
 				</div>
 			</div>
 			<NcButton v-if="success === null"
@@ -147,11 +137,7 @@ export default {
 				portal: '',
 				category: '',
 				published: new Date(),
-				organization: '',
-				attachments: '[""]',
-				schema: '',
 				image: '',
-				themes: '',
 				data: {},
 			},
 			catalogi: {},
@@ -256,7 +242,6 @@ export default {
 					},
 					body: JSON.stringify({
 						...this.publication,
-						themes: this.publication.themes.split(/, */g),
 						catalogi: this.catalogi.value.id,
 						metaData: this.metaData.value.id,
 					}),
@@ -283,16 +268,11 @@ export default {
 							reference: '',
 							license: '',
 							modified: new Date(),
-							status: '',
 							featured: false,
 							portal: '',
 							category: '',
 							published: new Date(),
-							organization: '',
-							attachments: '[""]',
-							schema: '',
 							image: '',
-							themes: '',
 							data: {},
 						}
 						self.catalogi = {}

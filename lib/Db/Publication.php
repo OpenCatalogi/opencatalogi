@@ -72,10 +72,13 @@ class Publication extends Entity implements JsonSerializable
 		$jsonFields = $this->getJsonFields();
 
         $this->setStatus('concept');
+		$this->setAttachments(null);
+		$this->setOrganization(null);
+		$this->setData(null);
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
-				$value = null;
+				$value = [];
 			}
 
 			$method = 'set'.ucfirst($key);
@@ -87,7 +90,9 @@ class Publication extends Entity implements JsonSerializable
 			}
 		}
 
-		$this->setAttachmentCount(0);
+		$this->setSchema($this->getMetaData());
+
+		$this->setAttachmentCount('0');
 		if($this->attachments !== null) {
 			$this->setAttachmentCount(count($this->getAttachments()));
 		}

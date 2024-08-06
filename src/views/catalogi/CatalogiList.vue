@@ -90,7 +90,7 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
-import { debounce } from 'lodash';
+import { debounce } from 'lodash'
 
 export default {
 	name: 'CatalogiList',
@@ -108,10 +108,10 @@ export default {
 		Pencil,
 		Delete,
 	},
-    beforeRouteLeave(to, from, next) {
-        search = '';
-        next();
-    },
+	beforeRouteLeave(to, from, next) {
+		search = ''
+		next()
+	},
 	props: {
 		search: {
 			type: String,
@@ -127,7 +127,7 @@ export default {
 	watch: {
 		search: {
 			handler(search) {
-                this.debouncedFetchData(search);
+				this.debouncedFetchData(search)
 			},
 		},
 	},
@@ -142,9 +142,9 @@ export default {
 					this.loading = false
 				})
 		},
-        debouncedFetchData: debounce(function(search) {
-            this.fetchData(search);
-        }, 500),
+		debouncedFetchData: debounce(function(search) {
+			this.fetchData(search)
+		}, 500),
 	},
 }
 </script>

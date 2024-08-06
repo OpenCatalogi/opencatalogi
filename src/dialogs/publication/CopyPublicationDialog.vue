@@ -8,10 +8,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		name="Publicatie kopieren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> kopieren?
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> kopiëren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Publicatie succesvol gekopierd</p>
+			<p>Publicatie succesvol gekopieerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -32,7 +32,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentCopy v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Kopiëren
 			</NcButton>
 		</template>
 	</NcDialog>

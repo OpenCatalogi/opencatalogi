@@ -15,6 +15,14 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
+					<NcActionButton
+						title="Bekijk de documentatie over publicaties"
+						@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
+						<template #icon>
+							<HelpCircleOutline :size="20" />
+						</template>
+						Help
+					</NcActionButton>
 					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
@@ -59,19 +67,19 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
-							Kopieren
+							Kopiëren
 						</NcActionButton>
 						<NcActionButton v-if="publication.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 							<template #icon>
 								<Publish :size="20" />
 							</template>
-							Publiseren
+							Publiceren
 						</NcActionButton>
 						<NcActionButton v-if="publication.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 							<template #icon>
 								<PublishOff :size="20" />
 							</template>
-							Depubliseren
+							Depubliceren
 						</NcActionButton>
 						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('archivePublication')">
 							<template #icon>
@@ -111,6 +119,9 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 </template>
 <script>
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
+import { debounce } from 'lodash'
+
+// Icons
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -125,7 +136,7 @@ import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
-import { debounce } from 'lodash';
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'PublicationList',
@@ -149,11 +160,12 @@ export default {
 		Pencil,
 		Publish,
 		ArchivePlusOutline,
+		HelpCircleOutline,
 	},
-    beforeRouteLeave(to, from, next) {
-        search = ''
-        next()
-    },
+	beforeRouteLeave(to, from, next) {
+		search = ''
+		next()
+	},
 	props: {
 		search: {
 			type: String,
@@ -176,7 +188,7 @@ export default {
 	watch: {
 		search: {
 			handler(search) {
-                this.debouncedFetchData(search)
+				this.debouncedFetchData(search)
 			},
 		},
 	},
@@ -191,9 +203,9 @@ export default {
 					this.loading = false
 				})
 		},
-        debouncedFetchData: debounce(function(search) {
-            this.fetchData(search)
-        }, 500),
+		debouncedFetchData: debounce(function(search) {
+			this.fetchData(search)
+		}, 500),
 	},
 }
 </script>

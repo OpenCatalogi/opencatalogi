@@ -3,7 +3,8 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'addListing'"
+	<NcModal
+		v-if="navigationStore.modal === 'addListing'"
 		ref="modalRef"
 		label-id="addListingModal"
 		@close="navigationStore.setModal(false)">
@@ -16,15 +17,19 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<NcNoteCard v-if="!success" type="error">
 					<p>Er is iets fout gegaan bij het toevoegen van Listing</p>
 				</NcNoteCard>
-				<NcNoteCard v-if="error" type="error">
+				<NcNoteCard v-if="error && !success" type="error">
 					<p>{{ error }}</p>
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField label="Url" :value.sync="directory.url" />
+				<NcNoteCard v-if="validateUrlError" type="error">
+					<p>Er is geen valide URL ingevoerd.</p>
+				</NcNoteCard>
+				<NcTextField v-model="directory.url" label="Url" @input="validateUrl" />
 			</div>
-			<NcButton v-if="success === null"
-				:disabled="!directory.url"
+			<NcButton
+				v-if="success === null"
+				:disabled="!isUrlValid || loading || !directory.url"
 				type="primary"
 				@click="addDirectory">
 				<template #icon>
@@ -49,64 +54,81 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
-		// Icons
 		ContentSaveOutline,
 	},
 	data() {
 		return {
-
 			directory: {
 				url: '',
 			},
 			loading: false,
 			success: null,
 			error: false,
+			validateUrlError: null,
+			urlPattern: new RegExp(
+				'^(https?:\\/\\/)' // protocol
+                + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' // domain name
+                + '((\\d{1,3}\\.){3}\\d{1,3}))' // OR ip (v4) address
+                + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' // port and path
+                + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+                + '(\\#[-a-z\\d_]*)?$',
+				'i',
+			), // fragment locator
 		}
+	},
+	computed: {
+		isUrlValid() {
+			return this.urlPattern.test(this.directory.url)
+		},
 	},
 	methods: {
 		addDirectory() {
 			this.loading = true
 			this.$emit('metadata', this.title)
-			fetch(
-				'/index.php/apps/opencatalogi/api/directory',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						title: this.title,
-						summary: this.summary,
-						description: this.description,
-						search: this.search,
-						metadata: this.metadata,
-						status: this.status,
-						lastSync: this.lastSync,
-						default: this.defaultValue,
-					}),
+			fetch('/index.php/apps/opencatalogi/api/directory', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
 				},
-			)
+				body: JSON.stringify({
+					title: this.title,
+					summary: this.summary,
+					description: this.description,
+					search: this.search,
+					metadata: this.metadata,
+					status: this.status,
+					lastSync: this.lastSync,
+					default: this.defaultValue,
+				}),
+			})
 				.then((response) => {
-					// Set propper modal states
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the catalogiList
 					directoryStore.refreshListingList()
 					response.json().then((data) => {
 						directoryStore.setListingItem(data)
 					})
 					navigationStore.setSelected('directory')
-					// Wait and then close the modal
-					const self = this
 					setTimeout(() => {
-						self.success = null
-						self.closeModal()
+						this.success = null
+						this.closeModal()
 					}, 2500)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
 				})
+		},
+		closeModal() {
+			navigationStore.setModal(false)
+		},
+		validateUrl(event) {
+			this.directory.url = event.target.value
+			if (!this.isUrlValid) {
+				this.validateUrlError = 'Er is geen valide URL ingevoerd.'
+			} else {
+				this.validateUrlError = null
+			}
 		},
 	},
 }
@@ -123,7 +145,6 @@ export default {
     margin-inline-start: var(--zaa-margin-20);
     margin-inline-end: var(--zaa-margin-20);
 }
-
 .success {
     color: green;
 }
