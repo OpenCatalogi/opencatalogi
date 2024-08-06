@@ -16,8 +16,8 @@ class SearchService
 	];
 
 	public function __construct(
-		private readonly ObjectService $objectService,
-		private readonly ElasticSearchService $elasticService
+		private readonly ElasticSearchService $elasticService,
+		private readonly DirectoryService $directoryService,
 	) {
 		$this->client = new Client();
 	}
@@ -78,11 +78,18 @@ class SearchService
 	public function search(array $parameters, array $elasticConfig, array $dbConfig, array $catalogi = []): array
 	{
 
-		$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
+		$localResults['results'] = [];
+		$localResults['facets'] = [];
 
-		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
+		if($elasticConfig['location'] !== '') {
+			$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
+		}
 
-		if(count($directory['documents']) === 0) {
+		$directory = $this->directoryService->listDirectory(limit: 1000);
+
+//		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
+
+		if(count($directory) === 0) {
 			return $localResults;
 		}
 
@@ -92,7 +99,7 @@ class SearchService
 		$searchEndpoints = [];
 
 		$promises = [];
-		foreach($directory['documents'] as $instance) {
+		foreach($directory as $instance) {
 			if(
 				$instance['default'] === false
 				&& isset($parameters['.catalogi']) === true

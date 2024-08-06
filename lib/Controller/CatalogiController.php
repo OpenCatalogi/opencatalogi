@@ -3,6 +3,7 @@
 namespace OCA\OpenCatalogi\Controller;
 
 use OCA\OpenCatalogi\Db\CatalogMapper;
+use OCA\OpenCatalogi\Service\DirectoryService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
@@ -104,7 +105,7 @@ class CatalogiController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function create(ObjectService $objectService): JSONResponse
+    public function create(ObjectService $objectService, DirectoryService $directoryService): JSONResponse
     {
 		$data = $this->request->getParams();
 
@@ -113,10 +114,18 @@ class CatalogiController extends Controller
 				unset($data[$key]);
 			}
 		}
+
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->catalogMapper->createFromArray(object: $data));
+			$result = $this->catalogMapper->createFromArray(object: $data);
+
+			$resultArray = $directoryService->listCatalog($result->jsonSerialize());
+
+			$result->hydrate($resultArray);
+			$this->catalogMapper->update($result);
+
+			return new JSONResponse($result);
 		}
 
         try {
@@ -128,7 +137,9 @@ class CatalogiController extends Controller
 
             $data['_schema'] = 'catalog';
 
-            $returnData = $objectService->saveObject($data, $dbConfig);
+            $returnData  = $objectService->saveObject($data, $dbConfig);
+			$resultArray = $directoryService->listCatalog($returnData);
+			$returnData  = $objectService->updateObject(['_id' => $resultArray['_id']], $resultArray, $dbConfig);
 
             return new JSONResponse($returnData);
         } catch (\Exception $e) {
@@ -140,7 +151,7 @@ class CatalogiController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function update(string|int $id, ObjectService $objectService): JSONResponse
+    public function update(string|int $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
     {
 		$data = $this->request->getParams();
 
@@ -156,7 +167,14 @@ class CatalogiController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->catalogMapper->updateFromArray(id: (int) $id, object: $data));
+			$result = $this->catalogMapper->updateFromArray(id: (int) $id, object: $data);
+
+			$resultArray = $directoryService->listCatalog($result->jsonSerialize());
+
+			$result->hydrate($resultArray);
+			$this->catalogMapper->update($result);
+
+			return new JSONResponse($result);
 		}
 
         try {
@@ -167,9 +185,12 @@ class CatalogiController extends Controller
             ];
 
             $filters['_id'] = (string) $id;
-            $returnData = $objectService->updateObject($filters, $data, $dbConfig);
+            $returnData  = $objectService->updateObject($filters, $data, $dbConfig);
+			$resultArray = $directoryService->listCatalog($returnData);
+			$returnData  = $objectService->updateObject($filters, $resultArray, $dbConfig);
 
-            return new JSONResponse($returnData);
+
+			return new JSONResponse($returnData);
         } catch (\Exception $e) {
             return new JSONResponse(['error' => $e->getMessage()], 500);
         }
@@ -179,8 +200,11 @@ class CatalogiController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function destroy(string|int $id, ObjectService $objectService): JSONResponse
+    public function destroy(string|int $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
     {
+		$directoryService->listCatalog(['id' => $id, 'listed' => false]);
+
+
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
