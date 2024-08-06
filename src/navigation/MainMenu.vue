@@ -146,7 +146,7 @@ export default {
 				organisationOin: '',
 				organisationPki: '',
 				adminUsername: '',
-				adminPassword: ''
+				adminPassword: '',
 			},
 			configurationSuccess: -1,
 			feedbackPosition: '',

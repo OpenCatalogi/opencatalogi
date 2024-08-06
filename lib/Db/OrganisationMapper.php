@@ -2,25 +2,25 @@
 
 namespace OCA\OpenCatalogi\Db;
 
-use OCA\OpenCatalogi\Db\Catalog;
+use OCA\OpenCatalogi\Db\Organisation;
 use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
-class CatalogMapper extends QBMapper
+class OrganisationMapper extends QBMapper
 {
 	public function __construct(IDBConnection $db)
 	{
-		parent::__construct($db, 'catalogi');
+		parent::__construct($db, 'organizations');
 	}
 
-	public function find(int $id): Catalog
+	public function find(int $id): Organisation
 	{
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('catalogi')
+			->from('organizations')
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
@@ -33,7 +33,7 @@ class CatalogMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('catalogi')
+			->from('organizations')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
@@ -51,21 +51,21 @@ class CatalogMapper extends QBMapper
 		return $this->findEntities(query: $qb);
 	}
 
-	public function createFromArray(array $object): Catalog
+	public function createFromArray(array $object): Organisation
 	{
-		$catalog = new Catalog();
-		$catalog->hydrate(object: $object);
+		$organisation = new Organisation();
+		$organisation->hydrate(object: $object);
 
-//		var_dump($catalog->getTitle());
+//		var_dump($organisation->getTitle());
 
-		return $this->insert(entity: $catalog);
+		return $this->insert(entity: $organisation);
 	}
 
-	public function updateFromArray(int $id, array $object): Catalog
+	public function updateFromArray(int $id, array $object): Organisation
 	{
-		$catalog = $this->find($id);
-		$catalog->hydrate($object);
+		$organisation = $this->find($id);
+		$organisation->hydrate($object);
 
-		return $this->update($catalog);
+		return $this->update($organisation);
 	}
 }
