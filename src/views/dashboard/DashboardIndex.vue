@@ -59,11 +59,6 @@ export default {
 	mounted() {
 		searchStore.getSearchResults()
 	},
-	methods: {
-		goToLink(link) {
-			//
-		},
-	},
 }
 </script>
 

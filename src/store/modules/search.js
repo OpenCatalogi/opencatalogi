@@ -25,7 +25,6 @@ export const useSearchStore = defineStore('search', {
 			)
 				.then((response) => {
 					response.json().then((data) => {
-                        console.log(data)
                         if (data?.code == 403 && data?.message) {
                             this.searchError = data.message
                             console.log(this.searchError)
