@@ -18,6 +18,7 @@ export const useThemeStore = defineStore('theme', {
 			)
 			console.log('Theme list set to ' + themeList.length + ' items')
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		async refreshThemeList(search = null) {
 			// @todo this might belong in a service?
 			let endpoint = '/index.php/apps/opencatalogi/api/themes'
@@ -29,9 +30,7 @@ export const useThemeStore = defineStore('theme', {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.themeList = data.results.map(
-							(themeItem) => new Theme(themeItem),
-						)
+						this.setThemeList(data.results)
 					})
 				})
 				.catch((err) => {

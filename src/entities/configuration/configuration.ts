@@ -1,9 +1,10 @@
 import { TConfiguration } from './configuration.types'
+import { SafeParseReturnType, z } from 'zod'
 
 export class Configuration implements TConfiguration {
 
-	public useElastic?: boolean
-	public useMongo?: boolean
+	public useElastic: boolean
+	public useMongo: boolean
 
 	constructor(data: TConfiguration) {
 		this.hydrate(data)
@@ -16,11 +17,18 @@ export class Configuration implements TConfiguration {
 	}
 
 	/* istanbul ignore next */
-	public validate(): boolean {
-		// these have to exist
-		if (!this.useElastic || typeof this.useElastic !== 'boolean') return false
-		if (!this.useMongo || typeof this.useMongo !== 'boolean') return false
-		return true
+	public validate(): SafeParseReturnType<TConfiguration, unknown> {
+		// https://conduction.stoplight.io/docs/open-catalogi/8azwyic71djee-create-listing
+		const schema = z.object({
+			useElastic: z.boolean(),
+			useMongo: z.boolean(),
+		})
+
+		const result = schema.safeParse({
+			...this,
+		})
+
+		return result
 	}
 
 }

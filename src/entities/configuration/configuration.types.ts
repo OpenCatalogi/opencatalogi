@@ -1,4 +1,4 @@
 export type TConfiguration = {
-    useElastic?: boolean
-    useMongo?: boolean
+    useElastic: boolean
+    useMongo: boolean
 }

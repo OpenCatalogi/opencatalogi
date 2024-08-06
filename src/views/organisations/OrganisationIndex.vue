@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, searchStore, organisationStore } from '../../store/store.js'
+import { navigationStore, organisationStore, searchStore } from '../../store/store.js';
 </script>
 
 <template>
@@ -27,10 +27,10 @@ import { navigationStore, searchStore, organisationStore } from '../../store/sto
 </template>
 
 <script>
-import { NcAppContent, NcEmptyContent, NcButton } from '@nextcloud/vue'
-import OrganisationList from './OrganisationList.vue'
-import OrganisationDetails from './OrganisationDetail.vue'
-import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
+import { NcAppContent, NcButton, NcEmptyContent } from '@nextcloud/vue';
+import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue';
+import OrganisationDetails from './OrganisationDetail.vue';
+import OrganisationList from './OrganisationList.vue';
 
 export default {
 	name: 'OrganisationIndex',

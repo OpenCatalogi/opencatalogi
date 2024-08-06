@@ -1,45 +1,32 @@
 /* eslint-disable no-console */
 import { Configuration } from './configuration'
-import { TConfiguration } from './configuration.types'
+import { mockConfiguration } from './configuration.mock'
 
 describe('Configuration Store', () => {
 	it('create Configuration entity with full data', () => {
-		const configuration = new Configuration(testData[0])
+		const configuration = new Configuration(mockConfiguration()[0])
 
 		expect(configuration).toBeInstanceOf(Configuration)
-		expect(configuration).toEqual(testData[0])
+		expect(configuration).toEqual(mockConfiguration()[0])
 
-		expect(configuration.validate()).toBe(true)
+		expect(configuration.validate().success).toBe(true)
 	})
 
 	it('create Configuration entity with partial data', () => {
-		const configuration = new Configuration(testData[1])
+		const configuration = new Configuration(mockConfiguration()[1])
 
 		expect(configuration).toBeInstanceOf(Configuration)
-		expect(configuration.useElastic).toBe(testData[1].useElastic)
+		expect(configuration.useElastic).toBe(mockConfiguration()[1].useElastic)
 
-		expect(configuration.validate()).toBe(true)
+		expect(configuration.validate().success).toBe(true)
 	})
 
 	it('create Configuration entity with falsy data', () => {
-		const configuration = new Configuration(testData[2])
+		const configuration = new Configuration(mockConfiguration()[2])
 
 		expect(configuration).toBeInstanceOf(Configuration)
-		expect(configuration).toEqual(testData[2])
+		expect(configuration).toEqual(mockConfiguration()[2])
 
-		expect(configuration.validate()).toBe(false)
+		expect(configuration.validate().success).toBe(false)
 	})
 })
-
-const testData: TConfiguration[] = [
-	{ // full data
-		useElastic: true,
-		useMongo: true,
-	},
-	{ // partial data
-		useElastic: true,
-	},
-	{ // invalid data
-		useElastic: false,
-	},
-]

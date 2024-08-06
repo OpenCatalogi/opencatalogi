@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { Configuration } from '../../entities/index.js'
 import { defineStore } from 'pinia'
+import { Configuration } from '../../entities/index.js'
 
 export const useConfigurationStore = defineStore('configuration', {
 	state: () => ({
@@ -8,10 +8,11 @@ export const useConfigurationStore = defineStore('configuration', {
 		configurationList: [],
 	}),
 	actions: {
-		setConfigurationItem(catalogiItem) {
-			this.catalogiItem = catalogiItem && new Configuration(catalogiItem)
-			console.log('Active catalog item set to ' + catalogiItem && catalogiItem?.id)
+		setConfigurationItem(configurationItem) {
+			this.configurationItem = configurationItem && new Configuration(configurationItem)
+			console.log('Active configuration item set to ' + configurationItem)
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		async refreshConfiguration(search = null) {
 			// @todo this might belong in a service?
 			let endpoint = '/index.php/apps/opencatalogi/api/configuration'

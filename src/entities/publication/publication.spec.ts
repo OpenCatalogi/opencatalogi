@@ -16,7 +16,7 @@ describe('Directory Store', () => {
 		const publication = new Publication(mockPublications()[1])
 
 		expect(publication).toBeInstanceOf(Publication)
-		expect(publication).not.toBe(mockPublications()[1])
+		expect(publication).toEqual(mockPublications()[1])
 		expect(publication.status).toBe('Concept')
 
 		expect(publication.validate().success).toBe(true)

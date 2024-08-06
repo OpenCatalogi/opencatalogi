@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import { setActivePinia, createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia';
 
-import { useConfigurationStore } from './configuration.js'
-import { Configuration } from '../../entities/index.js'
+import { Configuration } from '../../entities/index.js';
+import { useConfigurationStore } from './configuration.js';
 
 describe('Metadata Store', () => {
 	beforeEach(() => {
@@ -67,7 +67,7 @@ const testData = [
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
+		organisation: [{ name: 'Org1' }],
 		data: [{ key: 'value1' }],
 		attachments: ['attachment1'],
 		attachmentCount: 1,
@@ -92,7 +92,7 @@ const testData = [
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
+		organisation: [{ name: 'Org1' }],
 		data: [{ key: 'value1' }],
 		attachments: ['attachment1'],
 		attachmentCount: 1,
@@ -115,7 +115,7 @@ const testData = [
 		publicationDate: '2024-01-01',
 		modified: '2024-01-02',
 		featured: true,
-		organization: [{ name: 'Org1' }],
+		organisation: [{ name: 'Org1' }],
 		data: [{ key: 'value1' }],
 		attachments: ['attachment1'],
 		attachmentCount: 1,
