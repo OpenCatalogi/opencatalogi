@@ -6,7 +6,7 @@ use DateTime;
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
 
-class Organization extends Entity implements JsonSerializable
+class Organisation extends Entity implements JsonSerializable
 {
 
 	protected ?string $title 	   = null;

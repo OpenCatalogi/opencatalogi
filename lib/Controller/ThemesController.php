@@ -2,7 +2,7 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use OCA\OpenCatalogi\Db\ThemesMapper;
+use OCA\OpenCatalogi\Db\ThemeMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -29,7 +29,7 @@ class ThemesController extends Controller
 	(
 		$appName,
 		IRequest $request,
-		private readonly ThemesMapper $themesMapper,
+		private readonly ThemeMapper $themeMapper,
 		private readonly IAppConfig $config,
 	)
     {
@@ -96,7 +96,7 @@ class ThemesController extends Controller
             // Unset mongodb filter
             unset($filters['$or']);
 
-			return new JSONResponse(['results' => $this->themesMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+			return new JSONResponse(['results' => $this->themeMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
 		}
         
         try {
