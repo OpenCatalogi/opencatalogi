@@ -15,6 +15,28 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
+					<NcActionCaption name="Zoeken" />
+					<NcActionCheckbox>
+						Concept
+					</NcActionCheckbox>
+					<NcActionCheckbox>
+						Gepubliceerd
+					</NcActionCheckbox>
+					<NcActionSeparator />
+					<NcActionCaption name="Sorteren" />
+					<NcActionInput
+						type="multiselect"
+						input-label="Eigenschap"
+						:options="['Apple', 'Banana', 'Cherry']">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Kies een eigenschap
+					</NcActionInput>
+					<NcActionRadio name="Richting" value="Asc">Oplopend</NcActionRadio>
+					<NcActionRadio name="Richting" value="Desc">Aflopend</NcActionRadio>
+					<NcActionSeparator />
+					<NcActionCaption name="Acties" />
 					<NcActionButton
 						title="Bekijk de documentatie over publicaties"
 						@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
@@ -118,7 +140,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
+import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActionRadio, NcActionCheckbox, NcActionInput, NcActionCaption, NcActionSeparator, NcActions } from '@nextcloud/vue'
 import { debounce } from 'lodash'
 
 // Icons
@@ -148,6 +170,11 @@ export default {
 		ListBoxOutline,
 		Magnify,
 		NcLoadingIcon,
+		NcActionRadio,
+		NcActionCheckbox,
+		NcActionInput,
+		NcActionCaption,
+		NcActionSeparator,
 		NcActions,
 		// Icons
 		Refresh,
