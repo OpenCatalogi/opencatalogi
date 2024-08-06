@@ -8,7 +8,7 @@ export const useOrganisationStore = defineStore('organisation', {
 		organisationList: [],
 	}),
 	actions: {
-		setCOrganisationItem(organisationItem) {
+		setOrganisationItem(organisationItem) {
 			this.organisationItem = organisationItem && new Organisation(organisationItem)
 			console.log('Active theme item set to ' + organisationItem && organisationItem?.id)
 		},

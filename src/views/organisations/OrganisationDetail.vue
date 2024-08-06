@@ -359,7 +359,7 @@ import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
-	name: 'PublicationDetail',
+	name: 'OrganisationDetail',
 	components: {
 		// Components
 		NcLoadingIcon,

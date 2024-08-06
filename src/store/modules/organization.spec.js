@@ -9,77 +9,46 @@ describe('Metadata Store', () => {
 		setActivePinia(createPinia())
 	})
 
-	it('sets publication item correctly', () => {
-		const store = usePublicationStore()
+	it('sets organisation item correctly', () => {
+		const store = useOrganisationStore()
 
-		store.setPublicationItem(testData[0])
+		store.setOrganisationItem(testData[0])
 
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).toEqual(testData[0])
-		expect(store.publicationItem.validate()).toBe(true)
+		expect(store.organisationItem).toBeInstanceOf(Organisation)
+		expect(store.organisationItem).toEqual(testData[0])
+		expect(store.organisationItem.validate()).toBe(true)
 
-		store.setPublicationItem(testData[1])
+		store.setOrganisationItem(testData[1])
 
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).not.toEqual(testData[1])
-		expect(store.publicationItem.validate()).toBe(true)
+		expect(store.organisationItem).toBeInstanceOf(Organisation)
+		expect(store.organisationItem).not.toEqual(testData[1])
+		expect(store.organisationItem.validate()).toBe(true)
 
-		store.setPublicationItem(testData[2])
+		store.setOrganisationItem(testData[2])
 
-		expect(store.publicationItem).toBeInstanceOf(Publication)
-		expect(store.publicationItem).toEqual(testData[2])
-		expect(store.publicationItem.validate()).toBe(false)
+		expect(store.organisationItem).toBeInstanceOf(Organisation)
+		expect(store.organisationItem).toEqual(testData[2])
+		expect(store.organisationItem.validate()).toBe(false)
 	})
 
-	it('sets publication list correctly', () => {
-		const store = usePublicationStore()
+	it('sets organisation list correctly', () => {
+		const store = useOrganisationStore()
 
-		store.setPublicationList(testData)
+		store.setOrganisationList(testData)
 
-		expect(store.publicationList).toHaveLength(testData.length)
+		expect(store.organisationList).toHaveLength(testData.length)
 
-		expect(store.publicationList[0]).toBeInstanceOf(Publication)
-		expect(store.publicationList[0]).toEqual(testData[0])
-		expect(store.publicationList[0].validate()).toBe(true)
+		expect(store.organisationList[0]).toBeInstanceOf(Organisation)
+		expect(store.organisationList[0]).toEqual(testData[0])
+		expect(store.organisationList[0].validate()).toBe(true)
 
-		expect(store.publicationList[1]).toBeInstanceOf(Publication)
-		expect(store.publicationList[1]).not.toEqual(testData[1])
-		expect(store.publicationList[1].validate()).toBe(true)
+		expect(store.organisationList[1]).toBeInstanceOf(Organisation)
+		expect(store.organisationList[1]).not.toEqual(testData[1])
+		expect(store.organisationList[1].validate()).toBe(true)
 
-		expect(store.publicationList[2]).toBeInstanceOf(Publication)
-		expect(store.publicationList[2]).toEqual(testData[2])
-		expect(store.publicationList[2].validate()).toBe(false)
-	})
-
-	// TODO: fix this
-	it('set publication data.data property key correctly', () => {
-		const store = usePublicationStore()
-
-		store.setPublicationDataKey('contactPoint')
-
-		expect(store.publicationDataKey).toBe('contactPoint')
-	})
-
-	it('set attachment item correctly', () => {
-		const store = usePublicationStore()
-
-		store.setAttachmentItem(attachmentTestData[0])
-
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).toEqual(attachmentTestData[0])
-		expect(store.attachmentItem.validate()).toBe(true)
-
-		store.setAttachmentItem(attachmentTestData[1])
-
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).not.toEqual(attachmentTestData[1])
-		expect(store.attachmentItem.validate()).toBe(true)
-
-		store.setAttachmentItem(attachmentTestData[2])
-
-		expect(store.attachmentItem).toBeInstanceOf(Attachment)
-		expect(store.attachmentItem).toEqual(attachmentTestData[2])
-		expect(store.attachmentItem.validate()).toBe(false)
+		expect(store.organisationList[2]).toBeInstanceOf(Organisation)
+		expect(store.organisationList[2]).toEqual(testData[2])
+		expect(store.organisationList[2].validate()).toBe(false)
 	})
 })
 
@@ -156,65 +125,5 @@ const testData = [
 		themes: 'theme1',
 		anonymization: { anonymized: 'yes', results: 'success' },
 		language: { code: 'en', level: 'native' },
-	},
-]
-
-const attachmentTestData = [
-	{ // full data
-		id: '9044ab1e-cf5a-490a-be74-6be7a0c48a5f',
-		reference: 'ref1',
-		title: 'test 1',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		labels: [{ tag: 'tag1' }],
-		accessURL: 'https://example.com/access',
-		downloadURL: 'https://example.com/download',
-		type: 'document',
-		extension: 'pdf',
-		size: 1024,
-		anonymization: { anonymized: 'yes', results: 'success' },
-		language: { code: 'en', level: 'native' },
-		versionOf: 'v1.0',
-		hash: 'abc123',
-		published: '2024-01-01',
-		modified: '2024-01-02',
-		license: 'MIT',
-	},
-	{ // partial data
-		id: 'f849f287-492d-4100-91e1-1c4137f0abb5',
-		reference: 'ref2',
-		title: 'test 2',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		labels: [{ tag: 'tag2' }],
-		accessURL: 'https://example.com/access',
-		downloadURL: 'https://example.com/download',
-		type: 'document',
-		extension: 'pdf',
-		size: 1024,
-		anonymization: { anonymized: 'yes', results: 'success' },
-		language: { code: 'en', level: 'native' },
-		versionOf: 'v1.0',
-		license: 'MIT',
-	},
-	{ // invalid data
-		id: 'e193ea6b-1222-44cf-a71c-6ddcc232a79b',
-		reference: 'ref3',
-		title: '',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		labels: [{ tag: 'tag3' }],
-		accessURL: 'https://example.com/access',
-		downloadURL: 'https://example.com/download',
-		type: 'document',
-		extension: 'pdf',
-		size: 1024,
-		anonymization: { anonymized: 'yes', results: 'success' },
-		language: { code: 'en', level: 'native' },
-		versionOf: 'v1.0',
-		hash: 'abc123',
-		published: '2024-01-01',
-		modified: '2024-01-02',
-		license: 'MIT',
 	},
 ]
