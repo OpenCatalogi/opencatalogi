@@ -13,8 +13,10 @@
 		<EditCatalogModal />
 		<AddListingModal />
 		<EditListingModal />
-		<EditPublicationDataModal />
 		<AddPublicationDataModal />
+		<EditPublicationDataModal />
+		<AddOrganisationModal />
+		<!-- <EditORganisationModal /> -->
 	</div>
 </template>
 
@@ -36,6 +38,7 @@ import AddListingModal from './directory/AddListingModal.vue'
 import EditListingModal from './directory/EditListingModal.vue'
 import EditPublicationDataModal from './publicationData/EditPublicationDataModal.vue'
 import AddPublicationDataModal from './publicationData/AddPublicationDataModal.vue'
+import AddOrganisationModal from './organisation/AddOrganisationModal.vue'
 
 export default {
 	name: 'Modals',
@@ -52,8 +55,10 @@ export default {
 		EditCatalogModal,
 		AddListingModal,
 		EditListingModal,
-		EditPublicationDataModal,
 		AddPublicationDataModal,
+		EditPublicationDataModal,
+		AddOrganisationModal,
+		// EditOrganisationModal,
 	},
 }
 </script>

@@ -1,8 +1,17 @@
 {
   "files.autoSave": "afterDelay",
-"editor.defaultFormatter": "dbaeumer.vscode-eslint",
-"editor.formatOnSave": true,
-"cSpell.words": [
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+  },
+  "editor.formatOnSave": true,
+  "eslint.format.enable": true,
+
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+
+  "cSpell.words": [
     "gedepubliceerd",
     "depubliceren",
     "Depubliceren",
@@ -11,5 +20,5 @@
     "opencatalogi",
     "pinia",
     "Toegangs"
-]
+  ],
 }
