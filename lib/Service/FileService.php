@@ -185,6 +185,43 @@ class FileService
 	}
 
 	/**
+	 * Checks if a folder exists in NextCloud.
+	 *
+	 * @param string $folderPath Path (from root) to a folder you want to check if exists.
+	 *
+	 * @return bool True if the folder exists.
+	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
+	 */
+	public function folderExists(string $folderPath): bool
+	{
+		// Get the admin username & password for auth & get the current username
+		$userInfo = $this->getUserInfo();
+
+		// API endpoint to check if a folder exists
+		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
+			. $userInfo['currentUsername'] . '/' . trim(string: $folderPath, characters: '/');
+
+		try {
+			$response = $this->client->request('PROPFIND', $url, [
+				'auth' => [$userInfo['username'], $userInfo['password']],
+				'headers' => [
+					'Depth' => '1',
+				],
+				'body' => '<?xml version="1.0" encoding="UTF-8"?><d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/></d:prop></d:propfind>',
+			]);
+
+			return $response->getStatusCode() === 207; // Multi-Status indicates the folder exists.
+		} catch (Exception $e) {
+			if ($e->getCode() === 404) {
+				return false;
+			}
+
+			$this->logger->error('Folder existence check failed: ' . $e->getMessage());
+			throw $e;
+		}
+	}
+
+	/**
 	 * Creates a new folder in NextCloud, unless it already exists.
 	 *
 	 * @param string $folderPath Path (from root) to where you want to create a folder. NOTE: this should include the name of the folder as well! (/Media/exampleFolder)
@@ -194,6 +231,11 @@ class FileService
 	 */
 	public function createFolder(string $folderPath): bool
 	{
+		if ($this->folderExists($folderPath) === true) {
+			$this->logger->info('Folder creation failed: Folder already exists');
+			return false;
+		}
+
 		// Get the admin username & password for auth & get the current username
 		$userInfo = $this->getUserInfo();
 
