@@ -23,22 +23,24 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<div v-if="success === null" class="form-group">
 					<NcSelect v-bind="catalogi"
 						v-model="catalogi.value"
-						input-label="Catalogi"
+						input-label="Catalogi *"
 						:loading="catalogiLoading"
 						:disabled="publicationLoading"
 						required />
 					<NcSelect v-bind="metaData"
 						v-model="metaData.value"
-						input-label="MetaData"
+						input-label="MetaData *"
 						:loading="metaDataLoading"
 						:disabled="publicationLoading"
 						required />
 					<div v-if="catalogi.value?.id && metaData.value?.id">
 						<NcTextField :disabled="loading"
-							label="Titel"
+							label="Titel *"
+							required
 							:value.sync="publication.title" />
 						<NcTextField :disabled="loading"
-							label="Samenvatting"
+							label="Samenvatting *"
+							required
 							:value.sync="publication.summary" />
 						<NcTextArea :disabled="loading"
 							label="Beschrijving"
@@ -82,7 +84,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</div>
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="(!publication.title && !catalogi?.value?.id && !metaData?.value?.id) || loading"
+				:disabled="(!publication.title || !catalogi?.value?.id || !metaData?.value?.id || !publication.summary) || loading"
 				type="primary"
 				@click="addPublication()">
 				<template #icon>
