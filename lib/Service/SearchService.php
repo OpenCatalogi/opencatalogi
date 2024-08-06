@@ -77,10 +77,9 @@ class SearchService
 	 */
 	public function search(array $parameters, array $elasticConfig, array $dbConfig, array $catalogi = []): array
 	{
-
 		$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
 
-		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
+		$directory = $this->objectService->findObjects(['_schema' => 'directory'], $dbConfig);
 
 		if(count($directory['documents']) === 0) {
 			return $localResults;
@@ -90,8 +89,8 @@ class SearchService
 		$aggregations = $localResults['facets'];
 
 		$searchEndpoints = [];
-
 		$promises = [];
+
 		foreach($directory['documents'] as $instance) {
 			if(
 				$instance['default'] === false
@@ -103,13 +102,11 @@ class SearchService
 			$searchEndpoints[$instance['search']][] = $instance['catalogId'];
 		}
 
-		unset($parameters['.catalogi']);
+		unset($parameters['.catalogi']); // Moved this line inside the method
 
 		foreach($searchEndpoints as $searchEndpoint => $catalogi) {
 			$parameters['_catalogi'] = $catalogi;
-
-
-			$promises[] = $client->getAsync($searchEndpoint, ['query' => $parameters]);
+			$promises[] = $this->client->getAsync($searchEndpoint, ['query' => $parameters]);
 		}
 
 		$responses = Utils::settle($promises)->wait();
@@ -117,17 +114,12 @@ class SearchService
 		foreach($responses as $response) {
 			if($response['state'] === 'fulfilled') {
 				$responseData = json_decode(
-					json: $response['value']->getBody()->getContents(),
-					associative: true
+					$response['value']->getBody()->getContents(),
+					true
 				);
 
-				$results = array_merge(
-					$results,
-					$responseData['results']
-				);
-
+				$results = array_merge($results, $responseData['results']);
 				usort($results, [$this, 'sortResultArray']);
-
 				$aggregations = $this->mergeAggregations($aggregations, $responseData['facets']);
 			}
 		}

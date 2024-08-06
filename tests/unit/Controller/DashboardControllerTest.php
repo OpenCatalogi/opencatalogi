@@ -29,6 +29,12 @@ class DashboardControllerTest extends TestCase
         $this->assertInstanceOf(TemplateResponse::class, $response);
     }
 
+    public function testPageWithNullParameter()
+    {
+        $response = $this->controller->page(null);
+        $this->assertInstanceOf(TemplateResponse::class, $response);
+    }
+
     public function testPageWithError()
     {
         $this->controller = $this->getMockBuilder(DashboardController::class)
@@ -39,12 +45,9 @@ class DashboardControllerTest extends TestCase
         $this->controller->method('page')
             ->will($this->throwException(new \Exception('Template load error')));
 
-        try {
-            $this->controller->page('testParam');
-            $this->fail('Expected exception not thrown');
-        } catch (\Exception $e) {
-            $this->assertEquals('Template load error', $e->getMessage());
-        }
+        $response = $this->controller->page('testParam');
+        $this->assertInstanceOf(TemplateResponse::class, $response);
+        $this->assertEquals('Template load error', $response->getParams()['error']);
     }
 
     public function testIndex()
@@ -80,11 +83,8 @@ class DashboardControllerTest extends TestCase
         $this->controller->method('index')
             ->will($this->throwException(new \Exception('Data retrieval error')));
 
-        try {
-            $this->controller->index();
-            $this->fail('Expected exception not thrown');
-        } catch (\Exception $e) {
-            $this->assertEquals('Data retrieval error', $e->getMessage());
-        }
+        $response = $this->controller->index();
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals('Data retrieval error', $response->getData()['error']);
     }
 }

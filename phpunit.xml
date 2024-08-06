@@ -13,5 +13,8 @@
         <include>
             <directory suffix=".php">lib/</directory>
         </include>
+        <exclude>
+            <directory>lib/Migration</directory>
+        </exclude>
     </coverage>
 </phpunit>

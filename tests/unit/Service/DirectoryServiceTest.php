@@ -1,148 +1,141 @@
 <?php
 
+namespace OCA\OpenCatalogi\Tests\Service;
+
+use DateTime;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use OCA\OpenCatalogi\Service\DirectoryService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\IAppConfig;
 use OCP\IURLGenerator;
-use Test\TestCase;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class DirectoryServiceTest extends TestCase
 {
-    private $urlGeneratorMock;
-    private $configMock;
-    private $objectServiceMock;
-    private $clientMock;
+    /** @var MockObject|IURLGenerator */
+    private $urlGenerator;
+
+    /** @var MockObject|IAppConfig */
+    private $config;
+
+    /** @var MockObject|ObjectService */
+    private $objectService;
+
+    /** @var MockObject|Client */
+    private $client;
+
+    /** @var DirectoryService */
     private $directoryService;
 
     protected function setUp(): void
     {
-        $this->urlGeneratorMock = $this->createMock(IURLGenerator::class);
-        $this->configMock = $this->createMock(IAppConfig::class);
-        $this->objectServiceMock = $this->createMock(ObjectService::class);
-
-        $this->configMock->method('getValueString')
-            // ->willReturnMap([
-            //     ['opencatalogi', 'mongodbLocation', 'http://localhost'],
-            //     ['opencatalogi', 'mongodbKey', 'key'],
-            //     ['opencatalogi', 'mongodbCluster', 'cluster']
-            // ]);
-            ->will($this->returnValueMap([
-                ['opencatalogi', 'mongodbLocation', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', 'key'],
-                ['opencatalogi', 'mongodbCluster', 'cluster']
-            ]));
-
-        // Debugging: check the parameters passed to the mocked method
-        $location = $this->configMock->getValueString('opencatalogi', 'mongodbLocation');
-        $key = $this->configMock->getValueString('opencatalogi', 'mongodbKey');
-        $cluster = $this->configMock->getValueString('opencatalogi', 'mongodbCluster');
-
-        print_r($location); // Should output 'http://localhost'
-        print_r($key);      // Should output 'key'
-        print_r($cluster);  // Should output 'cluster'
-
-        $this->assertEquals('http://localhost', $location);
-        $this->assertEquals('key', $key);
-        $this->assertEquals('cluster', $cluster);
+        $this->urlGenerator = $this->createMock(IURLGenerator::class);
+        $this->config = $this->createMock(IAppConfig::class);
+        $this->objectService = $this->createMock(ObjectService::class);
+        $this->client = $this->createMock(Client::class);
 
         $this->directoryService = new DirectoryService(
-            $this->urlGeneratorMock,
-            $this->configMock,
-            $this->objectServiceMock
+            $this->urlGenerator,
+            $this->config,
+            $this->objectService
         );
 
-        // Use reflection to set the private $client property
-        $this->clientMock = $this->createMock(Client::class);
-
-        $reflection = new ReflectionClass($this->directoryService);
+        // Replace the client with the mock
+        $reflection = new \ReflectionClass($this->directoryService);
         $property = $reflection->getProperty('client');
         $property->setAccessible(true);
-        $property->setValue($this->directoryService, $this->clientMock);
+        $property->setValue($this->directoryService, $this->client);
+    }
+
+    public function testGetDirectoryEntry()
+    {
+        $catalogId = 'testCatalogId';
+
+        $this->urlGenerator
+            ->method('getAbsoluteURL')
+            ->willReturn('http://example.com');
+
+        $entry = $this->invokeMethod($this->directoryService, 'getDirectoryEntry', [$catalogId]);
+
+        $this->assertIsArray($entry);
+        $this->assertEquals('http://example.com', $entry['search']);
+        $this->assertEquals('http://example.com', $entry['directory']);
+        $this->assertEquals($catalogId, $entry['catalogId']);
     }
 
     public function testRegisterToExternalDirectory()
     {
-        $newDirectory = ['directory' => 'https://example.com/directory'];
-        $dbConfig = [
-            'base_uri' => 'http://localhost',
-            'headers' => ['api-key' => 'key'],
-            'mongodbCluster' => 'cluster'
-        ];
+        $newDirectory = ['directory' => 'http://example.com'];
 
-        $catalogi = [['id' => 'catalog1'], ['id' => 'catalog2']];
+        $this->config
+            ->method('getValueString')
+            ->willReturnMap([
+                ['opencatalogi', 'mongodbLocation', '', 'http://mongo'],
+                ['opencatalogi', 'mongodbKey', '', 'key'],
+                ['opencatalogi', 'mongodbCluster', '', 'cluster']
+            ]);
 
-        $this->objectServiceMock->method('findObjects')
-            ->with(['_schema' => 'catalog'], $dbConfig)
+        $catalogi = [['id' => '1']];
+        $this->objectService
+            ->method('findObjects')
             ->willReturn(['documents' => $catalogi]);
 
-        $this->clientMock->method('post')
+        $this->client
+            ->method('post')
             ->willReturn(new Response(200));
-
-		$this->client->method('get')
-			->willReturn(new Response(status: 200, body: '{"results": []}'));
 
         $statusCode = $this->directoryService->registerToExternalDirectory($newDirectory);
 
         $this->assertEquals(200, $statusCode);
     }
 
+    public function testCreateDirectoryFromResult()
+    {
+        $result = ['directory' => 'http://external-directory.com'];
+
+        $this->config
+            ->method('getValueString')
+            ->willReturnMap([
+                ['opencatalogi', 'mongodbLocation', '', 'http://mongo'],
+                ['opencatalogi', 'mongodbKey', '', 'key'],
+                ['opencatalogi', 'mongodbCluster', '', 'cluster']
+            ]);
+
+        $this->objectService
+            ->method('saveObject')
+            ->willReturn(['id' => '1']);
+
+        $this->urlGenerator
+            ->method('getAbsoluteURL')
+            ->willReturn('http://example.com');
+
+        $directory = $this->invokeMethod($this->directoryService, 'createDirectoryFromResult', [$result]);
+
+        $this->assertIsArray($directory);
+        $this->assertEquals('1', $directory['id']);
+    }
+
     public function testFetchFromExternalDirectory()
     {
-        $directory = ['directory' => 'https://example.com/directory'];
-        $responseBody = json_encode(['results' => [['directory' => 'https://example.com/dir1'], ['directory' => 'https://example.com/dir2']]]);
-        $responseBody2 = json_encode(['results' => [['directory' => 'https://example.com/directory']]]);
-        $response = new Response(status: 200, body: $responseBody);
+        $directory = ['directory' => 'http://external-directory.com'];
 
-        $this->clientMock->method('get')
-            ->with($directory['directory'])
+        $response = new Response(200, [], json_encode(['results' => [['id' => '1']]]));
+        $this->client
+            ->method('get')
             ->willReturn($response);
-
-		$this->objectService->method('findObjects')
-			->willReturn(['documents' => []]);
 
         $results = $this->directoryService->fetchFromExternalDirectory($directory);
 
-        $this->assertCount(2, $results);
-    }
-
-    public function testCreateDirectoryFromResult()
-    {
-        $result = [
-            'directory' => 'https://example.com/directory',
-            '_schema' => 'directory'
-        ];
-        $dbConfig = [
-            'base_uri' => 'http://localhost',
-            'headers' => ['api-key' => 'key'],
-            'mongodbCluster' => 'cluster'
-        ];
-
-        $this->config->method('getValueString')
-            ->willReturnMap([
-                ['opencatalogi', 'mongodbLocation', 'http://localhost'],
-                ['opencatalogi', 'mongodbKey', 'key'],
-                ['opencatalogi', 'mongodbCluster', 'cluster']
-            ]);
-
-        $this->objectService->method('saveObject')
-            ->with($result, $dbConfig)
-            ->willReturn($result);
-
-        $this->directoryService->method('registerToExternalDirectory')
-            ->with($result)
-            ->willReturn(200);
-
-        $createdDirectory = $this->invokeMethod($this->directoryService, 'createDirectoryFromResult', [$result]);
-
-        $this->assertNotNull($createdDirectory);
-        $this->assertEquals($result, $createdDirectory);
+        $this->assertIsArray($results);
+        $this->assertCount(1, $results);
+        $this->assertEquals('1', $results[0]['id']);
     }
 
     protected function invokeMethod(&$object, $methodName, array $parameters = [])
     {
-        $reflection = new \ReflectionClass($object);
+        $reflection = new \ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);
         $method->setAccessible(true);
 

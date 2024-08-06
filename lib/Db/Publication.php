@@ -20,7 +20,8 @@ class Publication extends Entity implements JsonSerializable
 	protected ?string $metaData    		 = null;
 	protected ?DateTime $published = null;
 	protected ?DateTime $modified        = null;
-	protected ?string $featured          = null;
+	// I changed this to a boolean, according to the documentation 
+	protected ?bool $featured          = false;
 	protected ?array $organization       = [];
 	protected ?array $data               = [];
 	protected ?array $attachments        = [];
