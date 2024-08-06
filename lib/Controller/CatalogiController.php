@@ -63,7 +63,7 @@ class CatalogiController extends Controller
 
             if (str_starts_with($key, '_')) {
                 unset($filters[$key]);
-            }  
+            }
         }
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
@@ -74,7 +74,7 @@ class CatalogiController extends Controller
 
 			return new JSONResponse(['results' => $this->catalogMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
 		}
-        
+
         try {
             $dbConfig = [
                 'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
@@ -129,6 +129,8 @@ class CatalogiController extends Controller
     {
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach ($data as $key => $value) {
 			if (str_starts_with($key, '_')) {
 				unset($data[$key]);

@@ -110,7 +110,7 @@ class DirectoryController extends Controller
 
             if (str_starts_with($key, '_')) {
                 unset($filters[$key]);
-            } 
+            }
         }
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
@@ -121,7 +121,7 @@ class DirectoryController extends Controller
 
 			return new JSONResponse(['results' => $this->listingMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
 		}
-        
+
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
@@ -163,9 +163,10 @@ class DirectoryController extends Controller
 	 */
 	public function create(ObjectService $objectService, DirectoryService $directoryService): JSONResponse
 	{
-
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
@@ -204,13 +205,12 @@ class DirectoryController extends Controller
 
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
 			}
-		}
-		if (isset($data['id'])) {
-			unset( $data['id']);
 		}
 
 

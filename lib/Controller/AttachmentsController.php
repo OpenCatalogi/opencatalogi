@@ -161,6 +161,8 @@ class AttachmentsController extends Controller
 		$data['title'] = $explodedName[0];
 		$data['extension'] = end($explodedName);
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
@@ -206,13 +208,12 @@ class AttachmentsController extends Controller
 		$data['title'] = $explodedName[0];
 		$data['extension'] = end($explodedName);
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
 			}
-		}
-		if (isset($data['id'])) {
-			unset( $data['id']);
 		}
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
