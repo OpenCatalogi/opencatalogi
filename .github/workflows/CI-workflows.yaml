@@ -1,0 +1,120 @@
+name: CI Workflow
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, zip, xml, curl, intl, sqlite, gd, pdo_mysql
+          tools: cs2pr, phpcbf, phpcs, phpmd, phpunit
+
+      - name: Install Composer dependencies
+        run: composer install
+
+      - name: Run phpcbf
+        run: phpcbf .
+        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Commit code formatting changes
+        if: success() && github.ref != 'refs/heads/main'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add src
+          git diff --cached --quiet || (git commit -m "Update src from PHP Codesniffer" && git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash && git push)
+
+      - name: Run phpcs
+        run: phpcs -q --report=checkstyle src | cs2pr
+        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Run phpmd
+        run: phpmd src xml phpmd.xml --not-strict
+        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: List files in repository root
+        run: ls -alh
+
+      - name: List files in tests directory
+        run: ls -alh ./tests
+
+      - name: List files in vendor directory
+        run: ls -alh ./vendor
+
+      - name: Run PHPUnit tests
+        env:
+          XDEBUG_MODE: coverage
+        run: |
+          phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml --coverage-html ./coverage --coverage-text | tee coverage.txt
+        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install remark presets
+        run: npm install remark-cli remark-preset-lint-consistent remark-preset-lint-recommended remark-lint-list-item-indent
+      - name: Run remark
+        run: npx remark . --output --use remark-preset-lint-consistent --use remark-preset-lint-recommended --use remark-lint-list-item-indent
+      - name: Check for linting errors
+        run: |
+          npx remark . --use remark-preset-lint-consistent --use remark-preset-lint-recommended --use remark-lint-list-item-indent
+        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+      - name: Git commit
+        if: success() && github.ref != 'refs/heads/main'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git add package.json package-lock.json
+          git diff --cached --quiet || (git commit -m "Update src from remark-lint" && git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash && git push)
+
+  checks:
+    needs: [build, lint]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP (for checks)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, zip, xml, curl, intl, sqlite, gd, pdo_mysql
+          tools: cs2pr, phpcs, phpmd, phpunit
+
+      - name: Run Checks
+        run: |
+          if ! command -v phpcs &> /dev/null; then
+            echo "phpcs could not be found. Please ensure it's installed."
+            exit 1
+          fi
+          if ! command -v phpmd &> /dev/null; then
+            echo "phpmd could not be found. Please ensure it's installed."
+            exit 1
+          fi
+          if phpcs -q --report=checkstyle src | grep -q "ERROR"; then
+            echo "PHP CodeSniffer found issues. Please fix them before merging."
+            exit 1
+          fi
+          if phpmd src xml phpmd.xml --strict | grep -q "ERROR"; then
+            echo "PHP Mess Detector found issues. Please fix them before merging."
+            exit 1
+          fi
+          # if ! phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml; then
+          #  echo "PHPUnit tests failed. Please fix them before merging."
+          #  exit 1
+          #fi
+          if ! npx remark . --use remark-preset-lint-consistent --use remark-preset-lint-recommended --use remark-lint-list-item-indent; then
+            echo "Markdown linting failed. Please fix them before merging."
+            exit 1
+          fi
+        continue-on-error: false

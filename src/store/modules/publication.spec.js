@@ -4,13 +4,17 @@ import { setActivePinia, createPinia } from 'pinia'
 import { usePublicationStore } from './publication.js'
 import { Attachment, mockAttachments, mockPublications, Publication } from '../../entities/index.js'
 
-describe('Metadata Store', () => {
-	beforeEach(() => {
-		setActivePinia(createPinia())
-	})
+describe(
+	'Metadata Store', () => {
+		beforeEach(
+			() => {
+				setActivePinia(createPinia())
+			},
+		)
 
-	it('sets publication item correctly', () => {
-		const store = usePublicationStore()
+		it(
+			'sets publication item correctly', () => {
+				const store = usePublicationStore()
 
 		store.setPublicationItem(mockPublications()[0])
 
@@ -31,8 +35,9 @@ describe('Metadata Store', () => {
 		expect(store.publicationItem.validate().success).toBe(false)
 	})
 
-	it('sets publication list correctly', () => {
-		const store = usePublicationStore()
+		it(
+			'sets publication list correctly', () => {
+				const store = usePublicationStore()
 
 		store.setPublicationList(mockPublications())
 
@@ -51,17 +56,20 @@ describe('Metadata Store', () => {
 		expect(store.publicationList[2].validate().success).toBe(false)
 	})
 
-	// TODO: fix this
-	it('set publication data.data property key correctly', () => {
-		const store = usePublicationStore()
+		// TODO: fix this
+		it(
+			'set publication data.data property key correctly', () => {
+				const store = usePublicationStore()
 
-		store.setPublicationDataKey('contactPoint')
+				store.setPublicationDataKey('contactPoint')
 
-		expect(store.publicationDataKey).toBe('contactPoint')
-	})
+				expect(store.publicationDataKey).toBe('contactPoint')
+			},
+		)
 
-	it('set attachment item correctly', () => {
-		const store = usePublicationStore()
+		it(
+			'set attachment item correctly', () => {
+				const store = usePublicationStore()
 
 		store.setAttachmentItem(mockAttachments()[0])
 

@@ -4,13 +4,17 @@ import { setActivePinia, createPinia } from 'pinia'
 import { useCatalogiStore } from './catalogi.js'
 import { Catalogi, mockCatalogi } from '../../entities/index.js'
 
-describe('Catalogi Store', () => {
-	beforeEach(() => {
-		setActivePinia(createPinia())
-	})
+describe(
+	'Catalogi Store', () => {
+		beforeEach(
+			() => {
+				setActivePinia(createPinia())
+			},
+		)
 
-	it('sets catalogi item correctly', () => {
-		const store = useCatalogiStore()
+		it(
+			'sets catalogi item correctly', () => {
+				const store = useCatalogiStore()
 
 		store.setCatalogiItem(mockCatalogi()[0])
 
@@ -20,8 +24,9 @@ describe('Catalogi Store', () => {
 		expect(store.catalogiItem.validate().success).toBe(true)
 	})
 
-	it('sets catalogi list correctly', () => {
-		const store = useCatalogiStore()
+		it(
+			'sets catalogi list correctly', () => {
+				const store = useCatalogiStore()
 
 		store.setCatalogiList(mockCatalogi())
 

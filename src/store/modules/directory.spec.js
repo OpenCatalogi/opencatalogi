@@ -4,13 +4,17 @@ import { setActivePinia, createPinia } from 'pinia'
 import { useDirectoryStore } from './directory.js'
 import { Listing, mockListings } from '../../entities/index.js'
 
-describe('Directory Store', () => {
-	beforeEach(() => {
-		setActivePinia(createPinia())
-	})
+describe(
+	'Directory Store', () => {
+		beforeEach(
+			() => {
+				setActivePinia(createPinia())
+			},
+		)
 
-	it('sets listing item correctly', () => {
-		const store = useDirectoryStore()
+		it(
+			'sets listing item correctly', () => {
+				const store = useDirectoryStore()
 
 		store.setListingItem(mockListings()[0])
 
@@ -20,8 +24,9 @@ describe('Directory Store', () => {
 		expect(store.listingItem.validate().success).toBe(true)
 	})
 
-	it('sets listings list correctly', () => {
-		const store = useDirectoryStore()
+		it(
+			'sets listings list correctly', () => {
+				const store = useDirectoryStore()
 
 		store.setListingList(mockListings())
 
