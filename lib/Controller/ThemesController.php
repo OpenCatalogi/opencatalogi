@@ -247,7 +247,7 @@ class ThemesController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$this->catalogMapper->delete($this->themeMapper->find((int) $id));
+			$this->themeMapper->delete($this->themeMapper->find((int) $id));
 
 			return new JSONResponse([]);
 		}

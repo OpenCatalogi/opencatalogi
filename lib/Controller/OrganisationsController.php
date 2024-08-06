@@ -232,7 +232,7 @@ class OrganisationsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$this->organisationMapper->delete($this->catalogMapper->find((int) $id));
+			$this->organisationMapper->delete($this->organisationMapper->find((int) $id));
 
 			return new JSONResponse([]);
 		}
