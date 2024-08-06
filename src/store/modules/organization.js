@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Organisation } from '../../entities/index.js'
+import { Organization } from '../../entities/index.js'
 import { defineStore } from 'pinia'
 
 export const useOrganisationStore = defineStore('organisation', {
@@ -9,12 +9,12 @@ export const useOrganisationStore = defineStore('organisation', {
 	}),
 	actions: {
 		setCOrganisationItem(organisationItem) {
-			this.organisationItem = organisationItem && new Organisation(organisationItem)
+			this.organisationItem = organisationItem && new Organization(organisationItem)
 			console.log('Active theme item set to ' + organisationItem && organisationItem?.id)
 		},
 		setOrganisationList(organisationList) {
 			this.organisationList = organisationList.map(
-				(organisationItem) => new Organisation(organisationItem),
+				(organisationItem) => new Organization(organisationItem),
 			)
 			console.log('Organisation list set to ' + organisationList.length + ' items')
 		},
@@ -30,7 +30,7 @@ export const useOrganisationStore = defineStore('organisation', {
 				.then((response) => {
 					response.json().then((data) => {
 						this.organisationList = data.results.map(
-							(organisationItem) => new Organisation(organisationItem),
+							(organisationItem) => new Organization(organisationItem),
 						)
 					})
 				})
