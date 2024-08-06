@@ -49,6 +49,7 @@ Voor de backend is dat:
 ```cli
 phpcs [filename]
 ```
+
 Hiervoor moet php code sniffer geïnstalleerd zijn. [Zie hier](https://dev.to/xxzeroxx/phpcs-php-code-sniffer-59f4) de handleiding ervoor
 
 Voor beide geldt dat het aantal acceptabele errors 0 is.
