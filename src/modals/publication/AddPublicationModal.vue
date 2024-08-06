@@ -84,7 +84,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</div>
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="(!publication.title && !catalogi?.value?.id && !metaData?.value?.id) || loading"
+				:disabled="(!publication.title || !catalogi?.value?.id || !metaData?.value?.id || !publication.summary) || loading"
 				type="primary"
 				@click="addPublication()">
 				<template #icon>
