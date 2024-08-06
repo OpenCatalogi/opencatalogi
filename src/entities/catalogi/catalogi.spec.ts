@@ -16,7 +16,7 @@ describe('Catalogi Store', () => {
 		const catalogi = new Catalogi(mockCatalogi()[1])
 
 		expect(catalogi).toBeInstanceOf(Catalogi)
-		expect(catalogi).not.toBe(mockCatalogi()[1])
+		expect(catalogi).toEqual(mockCatalogi()[1])
 
 		expect(catalogi.validate().success).toBe(true)
 	})

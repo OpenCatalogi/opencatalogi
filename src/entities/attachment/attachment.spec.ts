@@ -16,7 +16,7 @@ describe('Attachment Store', () => {
 		const attachment = new Attachment(mockAttachments()[1])
 
 		expect(attachment).toBeInstanceOf(Attachment)
-		expect(attachment).not.toBe(mockAttachments()[1])
+		expect(attachment).toEqual(mockAttachments()[1])
 
 		expect(attachment.validate().success).toBe(true)
 	})

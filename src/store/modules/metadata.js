@@ -10,12 +10,12 @@ export const useMetadataStore = defineStore('metadata', {
 	}),
 	actions: {
 		setMetaDataItem(metaDataItem) {
-			this.metaDataItem = metaDataItem && new Metadata(metaDataItem)
-
 			// for backward compatibility
-			if (typeof this.metaDataItem?.properties === 'string') {
-				this.metaDataItem.properties = JSON.parse(this.metaDataItem.properties)
+			if (!!metaDataItem && typeof metaDataItem?.properties === 'string') {
+				metaDataItem.properties = JSON.parse(metaDataItem.properties)
 			}
+
+			this.metaDataItem = metaDataItem && new Metadata(metaDataItem)
 
 			console.log('Active metadata object set to ' + metaDataItem && metaDataItem.id)
 		},
@@ -53,23 +53,6 @@ export const useMetadataStore = defineStore('metadata', {
 		setMetadataDataKey(metadataDataKey) {
 			this.metadataDataKey = metadataDataKey
 			console.log('Active metadata data key set to ' + metadataDataKey)
-		},
-		getMetadataPropertyKeys(property) {
-			const defaultKeys = {
-				type: '',
-				description: '',
-				format: '',
-				maxDate: '',
-				required: false,
-				default: false,
-				$ref: '', // $ref should probably be removed as it is not mentioned in the schema
-				cascadeDelete: false,
-				exclusiveMinimum: 0,
-			}
-
-			const propertyKeys = this.metaDataItem.properties[property]
-
-			return { ...defaultKeys, ...propertyKeys }
 		},
 	},
 })
