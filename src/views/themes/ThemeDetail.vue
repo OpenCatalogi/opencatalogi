@@ -1,12 +1,12 @@
 <script setup>
-import { catalogiStore, metadataStore, navigationStore, publicationStore } from '../../store/store.js'
+import { catalogiStore, metadataStore, navigationStore, themeStore } from '../../store/store.js'
 </script>
 
 <template>
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ publicationStore.publicationItem.title }}
+				{{ themeStore.themeItem.title }}
 			</h1>
 
 			<NcActions
@@ -31,37 +31,37 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					</template>
 					Help
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('editPublication')">
+				<NcActionButton @click="navigationStore.setModal('editTheme')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('copyPublication')">
+				<NcActionButton @click="navigationStore.setDialog('copyTheme')">
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
 					Kopiëren
 				</NcActionButton>
-				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
+				<NcActionButton v-if="themeStore.themeItem.status !== 'published'" @click="themeStore.setThemeItem(theme); navigationStore.setDialog('publishTheme')">
 					<template #icon>
 						<Publish :size="20" />
 					</template>
 					Publiceren
 				</NcActionButton>
-				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
+				<NcActionButton v-if="themeStore.themeItem.status === 'published'" @click="themeStore.setThemeItem(theme); navigationStore.setDialog('depublishTheme')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
 					Depubliceren
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('archivePublication')">
+				<NcActionButton @click="navigationStore.setDialog('archiveTheme')">
 					<template #icon>
 						<ArchivePlusOutline :size="20" />
 					</template>
 					Archiveren
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('addPublicationData')">
+				<NcActionButton @click="navigationStore.setModal('addThemeData')">
 					<template #icon>
 						<FileTreeOutline :size="20" />
 					</template>
@@ -73,7 +73,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					</template>
 					Bijlage toevoegen
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('deletePublication')">
+				<NcActionButton @click="navigationStore.setDialog('deleteTheme')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -85,51 +85,51 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 			<div class="detailGrid">
 				<div>
 					<b>Referentie:</b>
-					<span>{{ publicationStore.publicationItem.reference }}</span>
+					<span>{{ themeStore.themeItem.reference }}</span>
 				</div>
 				<div>
 					<b>Samenvatting:</b>
-					<span>{{ publicationStore.publicationItem.summary }}</span>
+					<span>{{ themeStore.themeItem.summary }}</span>
 				</div>
 				<div>
 					<b>Beschrijving:</b>
-					<span>{{ publicationStore.publicationItem.description }}</span>
+					<span>{{ themeStore.themeItem.description }}</span>
 				</div>
 				<div>
 					<b>Categorie:</b>
-					<span>{{ publicationStore.publicationItem.category }}</span>
+					<span>{{ themeStore.themeItem.category }}</span>
 				</div>
 				<div>
 					<b>Portal:</b>
-					<span><a target="_blank" :href="publicationStore.publicationItem.portal">{{ publicationStore.publicationItem.portal }}</a></span>
+					<span><a target="_blank" :href="themeStore.themeItem.portal">{{ themeStore.themeItem.portal }}</a></span>
 				</div>
 				<div>
 					<b>Foto:</b>
-					<span>{{ publicationStore.publicationItem.image }}</span>
+					<span>{{ themeStore.themeItem.image }}</span>
 				</div>
 				<div>
 					<b>Thema's:</b>
-					<span>{{ publicationStore.publicationItem.themes.join(", ") }}</span>
+					<span>{{ themeStore.themeItem.themes.join(", ") }}</span>
 				</div>
 				<div>
 					<b>Featured:</b>
-					<span>{{ publicationStore.publicationItem.featured ? "Yes" : "No" }}</span>
+					<span>{{ themeStore.themeItem.featured ? "Yes" : "No" }}</span>
 				</div>
 				<div>
 					<b>Licentie:</b>
-					<span>{{ publicationStore.publicationItem.license }}</span>
+					<span>{{ themeStore.themeItem.license }}</span>
 				</div>
 				<div>
 					<b>Status:</b>
-					<span>{{ publicationStore.publicationItem.status }}</span>
+					<span>{{ themeStore.themeItem.status }}</span>
 				</div>
 				<div>
 					<b>Gepubliceerd:</b>
-					<span>{{ publicationStore.publicationItem.published?.toLocaleDateString('en-nl') }}</span>
+					<span>{{ themeStore.themeItem.published?.toLocaleDateString('en-nl') }}</span>
 				</div>
 				<div>
 					<b>Gewijzigd:</b>
-					<span>{{ publicationStore.publicationItem.modified?.toLocaleDateString('en-nl') }}</span>
+					<span>{{ themeStore.themeItem.modified?.toLocaleDateString('en-nl') }}</span>
 				</div>
 				<div>
 					<b>Catalogi:</b>
@@ -169,15 +169,15 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
-						<NcListItem v-for="(value, key, i) in publicationStore.publicationItem?.data"
+						<NcListItem v-for="(value, key, i) in themeStore.themeItem?.data"
 							:key="`${key}${i}`"
 							:name="key"
 							:bold="false"
 							:force-display-actions="true"
-							@click="publicationStore.setPublicationDataKey(key)
+							@click="themeStore.setThemeDataKey(key)
 							">
 							<template #icon>
-								<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
+								<CircleOutline :class="themeStore.themeDataKey === key && 'selectedZaakIcon'"
 									disable-menu
 									:size="44" />
 							</template>
@@ -185,13 +185,13 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								{{ value }}
 							</template>
 							<template #actions>
-								<NcActionButton @click="editPublicationDataItem(key)">
+								<NcActionButton @click="editThemeDataItem(key)">
 									<template #icon>
 										<Pencil :size="20" />
 									</template>
 									Bewerken
 								</NcActionButton>
-								<NcActionButton @click="deletePublicationDataItem(key)">
+								<NcActionButton @click="deleteThemeDataItem(key)">
 									<template #icon>
 										<Delete :size="20" />
 									</template>
@@ -202,16 +202,16 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					</BTab>
 					<BTab title="Bijlagen">
 						<div
-							v-if="publicationStore.publicationAttachments.results?.length > 0"
+							v-if="themeStore.themeAttachments.results?.length > 0"
 							class="tabPanel">
-							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments.results"
+							<NcListItem v-for="(attachment, i) in themeStore.themeAttachments.results"
 								:key="`${attachment}${i}`"
 								:name="attachment.name ?? attachment.title"
 								:bold="false"
-								:active="publicationStore.attachmentId === attachment.id"
+								:active="themeStore.attachmentId === attachment.id"
 								:force-display-actions="true"
 								:details="attachment?.status"
-								@click="publicationStore.setAttachmentId(attachment.id)">
+								@click="themeStore.setAttachmentId(attachment.id)">
 								<template #icon>
 									<CheckCircle v-if="attachment?.status === 'published'"
 										:class="attachment?.published && 'publishedIcon'"
@@ -226,7 +226,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 									{{ attachment?.description }}
 								</template>
 								<template #actions>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
+									<NcActionButton @click="themeStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
 										<template #icon>
 											<Pencil :size="20" />
 										</template>
@@ -238,25 +238,25 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 										</template>
 										Download
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status !== 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
+									<NcActionButton v-if="attachment.status !== 'published'" @click="themeStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
 										</template>
 										Publiceren
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
+									<NcActionButton v-if="attachment.status === 'published'" @click="themeStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
 										Depubliceren
 									</NcActionButton>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
+									<NcActionButton @click="themeStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>
 										Kopiëren
 									</NcActionButton>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
+									<NcActionButton @click="themeStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 										<template #icon>
 											<Delete :size="20" />
 										</template>
@@ -317,7 +317,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 						</table>
 					</BTab>
 					<BTab title="Statistieken">
-						<apexchart v-if="publication.status === 'published'"
+						<apexchart v-if="theme.status === 'published'"
 							width="100%"
 							type="line"
 							:options="chart.options"
@@ -391,14 +391,14 @@ export default {
 		HelpCircleOutline,
 	},
 	props: {
-		publicationItem: {
+		themeItem: {
 			type: Object,
 			required: true,
 		},
 	},
 	data() {
 		return {
-			publication: [],
+			theme: [],
 			catalogi: [],
 			metadata: [],
 			prive: false,
@@ -430,13 +430,13 @@ export default {
 		}
 	},
 	watch: {
-		publicationItem: {
-			handler(newPublicationItem, oldPublicationItem) {
-				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
-					this.publication = publicationStore.publicationItem
-					this.fetchCatalogi(publicationStore.publicationItem.catalogi)
-					this.fetchMetaData(publicationStore.publicationItem.metaData)
-					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
+		themeItem: {
+			handler(newThemeItem, oldThemeItem) {
+				if (!this.upToDate || JSON.stringify(newThemeItem) !== JSON.stringify(oldThemeItem)) {
+					this.theme = themeStore.themeItem
+					this.fetchCatalogi(themeStore.themeItem.catalogi)
+					this.fetchMetaData(themeStore.themeItem.metaData)
+					themeStore.themeItem && this.fetchData(themeStore.themeItem.id)
 				}
 			},
 			deep: true,
@@ -445,26 +445,26 @@ export default {
 	},
 	mounted() {
 
-		this.publication = publicationStore.publicationItem
+		this.theme = themeStore.themeItem
 
-		this.fetchCatalogi(publicationStore.publicationItem.catalogi, true)
-		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
-		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
+		this.fetchCatalogi(themeStore.themeItem.catalogi, true)
+		this.fetchMetaData(themeStore.themeItem.metaData, true)
+		themeStore.themeItem && this.fetchData(themeStore.themeItem.id)
 
 	},
 	methods: {
 		fetchData(id) {
 			// this.loading = true
-			fetch(`/index.php/apps/opencatalogi/api/publications/${id}`, {
+			fetch(`/index.php/apps/opencatalogi/api/themes/${id}`, {
 				method: 'GET',
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.publication = data
+						this.theme = data
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
-						publicationStore.getPublicationAttachments()
+						themeStore.getThemeAttachments()
 						// this.loading = false
 					})
 				})
@@ -509,21 +509,21 @@ export default {
 					if (loading) { this.metaDataLoading = false }
 				})
 		},
-		deletePublication() {
-			publicationStore.setPublicationItem(this.publication)
-			navigationStore.setModal('deletePublication')
+		deleteTheme() {
+			themeStore.setThemeItem(this.theme)
+			navigationStore.setModal('deleteTheme')
 		},
-		editPublicationDataItem(key) {
-			publicationStore.setPublicationDataKey(key)
-			navigationStore.setModal('editPublicationData')
+		editThemeDataItem(key) {
+			themeStore.setThemeDataKey(key)
+			navigationStore.setModal('editThemeData')
 		},
-		deletePublicationDataItem(key) {
-			publicationStore.setPublicationDataKey(key)
-			navigationStore.setDialog('deletePublicationDataDialog')
+		deleteThemeDataItem(key) {
+			themeStore.setThemeDataKey(key)
+			navigationStore.setDialog('deleteThemeDataDialog')
 		},
-		editPublicationAttachmentItem(key) {
-			publicationStore.setPublicationDataKey(key)
-			navigationStore.setModal('editPublicationDataModal')
+		editThemeAttachmentItem(key) {
+			themeStore.setThemeDataKey(key)
+			navigationStore.setModal('editThemeDataModal')
 		},
 		goToMetadata() {
 			metadataStore.setMetaDataItem(this.metadata)
@@ -570,14 +570,14 @@ h4 {
   flex-direction: column;
 }
 
-.active.publicationDetails-actionsDelete {
+.active.themeDetails-actionsDelete {
     background-color: var(--color-error) !important;
 }
-.active.publicationDetails-actionsDelete button {
+.active.themeDetails-actionsDelete button {
     color: #EBEBEB !important;
 }
 
-.PublicationDetail-clickable {
+.ThemeDetail-clickable {
     cursor: pointer !important;
 }
 

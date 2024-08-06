@@ -4,7 +4,7 @@ namespace OCA\OpenCatalogi\Controller;
 
 use Elastic\Elasticsearch\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use OCA\opencatalogi\lib\Db\Organization;
+use OCA\opencatalogi\lib\Db\Organisation;
 use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
@@ -15,7 +15,7 @@ use OCP\IAppConfig;
 use OCP\IRequest;
 use Symfony\Component\Uid\Uuid;
 
-class OrganizationsController extends Controller
+class OrganisationsController extends Controller
 {
     const TEST_ARRAY = [
         "354980e5-c967-4ba5-989b-65c2b0cd2ff4" => [

@@ -8,7 +8,7 @@ import { navigationStore, searchStore, organisationStore } from '../../store/sto
 			<OrganisationList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!publicationStore.publicationItem.id || navigationStore.selected != 'publication'"
+			<NcEmptyContent v-if="!organisationStore.organisationItem.id || navigationStore.selected != 'organisations'"
 				class="detailContainer"
 				name="Geen organisatie"
 				description="Nog geen organisatie geselecteerd">
@@ -21,7 +21,7 @@ import { navigationStore, searchStore, organisationStore } from '../../store/sto
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<OrganisationDetails v-if="organisationStore.organisationItem.id && navigationStore.selected === 'publication'" :organisation-item="organisationStore.organisationItem" />
+			<OrganisationDetails v-if="organisationStore.organisationItem.id && navigationStore.selected === 'organisations'" :organisation-item="organisationStore.organisationItem" />
 		</template>
 	</NcAppContent>
 </template>

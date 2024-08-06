@@ -4,7 +4,7 @@ namespace OCA\OpenCatalogi\Controller;
 
 use Elastic\Elasticsearch\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use OCA\opencatalogi\lib\Db\Organization;
+use OCA\opencatalogi\lib\Db\Theme;
 use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;

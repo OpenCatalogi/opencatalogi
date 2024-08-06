@@ -2,25 +2,25 @@
 
 namespace OCA\OpenCatalogi\Db;
 
-use OCA\OpenCatalogi\Db\Catalog;
+use OCA\OpenCatalogi\Db\Theme;
 use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
-class CatalogMapper extends QBMapper
+class ThemeMapper extends QBMapper
 {
 	public function __construct(IDBConnection $db)
 	{
-		parent::__construct($db, 'catalogi');
+		parent::__construct($db, 'themes');
 	}
 
-	public function find(int $id): Catalog
+	public function find(int $id): Theme
 	{
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('catalogi')
+			->from('themes')
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
@@ -33,7 +33,7 @@ class CatalogMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
-			->from('catalogi')
+			->from('themes')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
@@ -51,21 +51,21 @@ class CatalogMapper extends QBMapper
 		return $this->findEntities(query: $qb);
 	}
 
-	public function createFromArray(array $object): Catalog
+	public function createFromArray(array $object): Theme
 	{
-		$catalog = new Catalog();
-		$catalog->hydrate(object: $object);
+		$theme = new Theme();
+		$theme->hydrate(object: $object);
 
 //		var_dump($catalog->getTitle());
 
 		return $this->insert(entity: $catalog);
 	}
 
-	public function updateFromArray(int $id, array $object): Catalog
+	public function updateFromArray(int $id, array $object): Theme
 	{
-		$catalog = $this->find($id);
-		$catalog->hydrate($object);
+		$theme = $this->find($id);
+		$theme->hydrate($object);
 
-		return $this->update($catalog);
+		return $this->update($theme);
 	}
 }
