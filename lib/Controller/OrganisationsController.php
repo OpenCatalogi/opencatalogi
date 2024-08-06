@@ -2,18 +2,13 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use Elastic\Elasticsearch\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use OCA\opencatalogi\lib\Db\Organisation;
-use OCA\OpenCatalogi\Db\PublicationMapper;
-use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Db\OrganisationMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
-use Symfony\Component\Uid\Uuid;
 
 class OrganisationsController extends Controller
 {
@@ -34,7 +29,7 @@ class OrganisationsController extends Controller
 	(
 		$appName,
 		IRequest $request,
-		private readonly PublicationMapper $publicationMapper,
+		private readonly OrganisationMapper $organisationMapper,
 		private readonly IAppConfig $config
 	)
     {
@@ -52,12 +47,7 @@ class OrganisationsController extends Controller
 	 */
 	public function page(): TemplateResponse
 	{
-        return new TemplateResponse(
-            //Application::APP_ID,
-            'zaakafhandelapp',
-            'index',
-            []
-        );
+        return new TemplateResponse($this->appName, 'OrganisationIndex', []);
 	}
 
 	/**
@@ -68,13 +58,62 @@ class OrganisationsController extends Controller
 	 *
 	 * @return JSONResponse
 	 */
-	public function index(CallService $callService): JSONResponse
+	public function index(ObjectService $objectService): JSONResponse
 	{
-		// Latere zorg
-		$query= $this->request->getParams();
+		
+        $filters = $this->request->getParams();
 
-		$results = $callService->index(source: 'brc', endpoint: 'besluiten');
-		return new JSONResponse($results);
+        $searchConditions = [];
+        $searchParams = [];
+        $fieldsToSearch = ['title', 'description', 'summary'];
+
+        foreach ($filters as $key => $value) {
+            if ($key === '_search') {
+                // MongoDB
+                $searchRegex = ['$regex' => $value, '$options' => 'i'];
+                $filters['$or'] = [];
+
+                // MySQL
+                $searchParams['search'] = '%' . strtolower($value) . '%';
+
+                foreach ($fieldsToSearch as $field) {
+                    // MongoDB
+                    $filters['$or'][] = [$field => $searchRegex];
+
+                    // MySQL
+                    $searchConditions[] = "LOWER($field) LIKE :search";
+                }
+            }
+
+            if (str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            }  
+        }
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+            // Unset mongodb filter
+            unset($filters['$or']);
+
+			return new JSONResponse(['results' => $this->organisationMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+		}
+        
+        try {
+            $dbConfig = [
+                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
+                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
+                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
+            ];
+
+            $filters['_schema'] = 'organisation';
+
+            $result = $objectService->findObjects(filters: $filters, config: $dbConfig);
+
+            return new JSONResponse(["results" => $result['documents']]);
+        } catch (\Exception $e) {
+            return new JSONResponse(['error' => $e->getMessage()], 500);
+        }
 	}
 
 	/**
@@ -85,7 +124,7 @@ class OrganisationsController extends Controller
 	 *
 	 * @return JSONResponse
 	 */
-	public function show(string $id, CallService $callService): JSONResponse
+	public function show(string $id, ObjectService $objectService): JSONResponse
 	{
 		// Latere zorg
 		$query= $this->request->getParams();
@@ -103,7 +142,7 @@ class OrganisationsController extends Controller
 	 *
 	 * @return JSONResponse
 	 */
-	public function create(CallService $callService): JSONResponse
+	public function create(ObjectService $objectService): JSONResponse
 	{
 		// get post from requests
 		$body = $this->request->getParams();
@@ -119,7 +158,7 @@ class OrganisationsController extends Controller
 	 *
 	 * @return JSONResponse
 	 */
-	public function update(string $id, CallService $callService): JSONResponse
+	public function update(string $id, ObjectService $objectService): JSONResponse
 	{
 		$body = $this->request->getParams();
 		$results = $callService->update(source: 'brc', endpoint: 'besluiten', data: $body, id: $id);
@@ -134,7 +173,7 @@ class OrganisationsController extends Controller
 	 *
 	 * @return JSONResponse
 	 */
-	public function destroy(string $id, CallService $callService): JSONResponse
+	public function destroy(string $id, ObjectService $objectService): JSONResponse
 	{
 		$callService->destroy(source: 'brc', endpoint: 'besluiten', id: $id);
 
