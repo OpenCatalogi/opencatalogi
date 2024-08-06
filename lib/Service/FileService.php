@@ -63,9 +63,9 @@ class FileService
 		$currentUser = $this->userSession->getUser();
 
 		return [
-			'$username' => $this->config->getValueString(app: $this->appName, key: 'adminUsername', default: 'admin'),
-			'$password' => $this->config->getValueString(app: $this->appName, key: 'adminPassword', default: 'admin'),
-			'$currentUsername' => $currentUser ? $currentUser->getUID() : 'Guest'
+			'username' => $this->config->getValueString(app: $this->appName, key: 'adminUsername', default: 'admin'),
+			'password' => $this->config->getValueString(app: $this->appName, key: 'adminPassword', default: 'admin'),
+			'currentUsername' => $currentUser ? $currentUser->getUID() : 'Guest'
 		];
 	}
 
@@ -114,21 +114,23 @@ class FileService
 	}
 
 	/**
-	 * Uploads a file to nextCloud.
+	 * Uploads a file to nextCloud. Will overwrite a file if it already exists and create a new one if it doesn't exist.
 	 *
 	 * @param mixed $content The content of the file.
-	 * @param string $filePath Path (from root) where to save the file. NOTE: this should include the name and extension/format of the file as well! (example.pdf)
+	 * @param string|null $filePath Path (from root) where to save the file. NOTE: this should include the name and extension/format of the file as well! (example.pdf)
+	 * @param bool|null $update If set to true, the response status code 204 will also be seen as a success result. (NextCloud will return 204 when successfully updating a file)
 	 *
 	 * @return bool True if successful.
-	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
+	 * @throws GuzzleException In case the Guzzle call returns an exception.
 	 */
-	public function uploadFile(mixed $content, string $filePath = '/'): bool
+	public function uploadFile(mixed $content, ?string $filePath = '', ?bool $update = false): bool
 	{
 		// Get the admin username & password for auth & get the current username
 		$userInfo = $this->getUserInfo();
 
 		// API endpoint to upload the file
-		$url = $this->getCurrentDomain() . '/remote.php/dav/files/' . $userInfo['currentUsername'] . '/' . $filePath;
+		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
+			. $userInfo['currentUsername'] . '/' . ltrim(string: $filePath, characters: '/');
 
 		try {
 			$response = $this->client->request('PUT', $url, [
@@ -136,11 +138,12 @@ class FileService
 				'body' => $content
 			]);
 
-			if ($response->getStatusCode() === 201) {
+			if ($response->getStatusCode() === 201 || ($update === true && $response->getStatusCode() === 204)) {
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->logger->error('File upload failed: ' . $e->getMessage());
+			$str = $update === true ? 'update' : 'upload';
+			$this->logger->error("File $str failed: " . $e->getMessage());
 			throw $e;
 		}
 
@@ -153,7 +156,7 @@ class FileService
 	 * @param string $filePath Path (from root) to the file you want to delete.
 	 *
 	 * @return bool True if successful.
-	 * @throws GuzzleException In case the Guzzle call returns an exception.
+	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
 	 */
 	public function deleteFile(string $filePath): bool
 	{
@@ -161,7 +164,8 @@ class FileService
 		$userInfo = $this->getUserInfo();
 
 		// API endpoint to upload the file
-		$url = $this->getCurrentDomain() . '/remote.php/dav/files/' . $userInfo['currentUsername'] . '/' . $filePath;
+		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
+			. $userInfo['currentUsername'] . '/' . ltrim(string: $filePath, characters: '/');
 
 		try {
 			$response = $this->client->request('DELETE', $url, [
