@@ -3,7 +3,7 @@ import { navigationStore, themeStore } from '../../store/store.js'
 </script>
 <template>
 	<NcModal
-		v-if="navigationStore.modal === 'themeEdit'"
+		v-if="navigationStore.modal === 'editTheme'"
 		ref="modalRef"
 		label-id="addThemeModal"
 		@close="navigationStore.setModal(false)">
@@ -38,9 +38,9 @@ import { navigationStore, themeStore } from '../../store/store.js'
 			</div>
 			<NcButton
 				v-if="success === null"
-				:disabled="!theme.title || loading"
+				:disabled="!themeStore.themeItem.title || loading"
 				type="primary"
-				@click="addTheme()">
+				@click="editTheme()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
@@ -76,65 +76,21 @@ export default {
 	},
 	data() {
 		return {
-			theme: {
-				title: '',
-				summary: '',
-				description: '',
-			},
-
-			errorCode: '',
-			themeLoading: false,
-			hasUpdated: false,
 			loading: false,
 			success: null,
 			error: false,
 		}
 	},
-	updated() {
-		if (navigationStore.modal === 'themeAdd' && !this.hasUpdated) {
-			this.hasUpdated = true
-		}
-	},
 	methods: {
-		isJsonString(str) {
-			try {
-				JSON.parse(str)
-			} catch (e) {
-				return false
-			}
-			return true
-		},
-		fetchData(id) {
-			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/themes/${id}`,
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						themeStore.setThemeItem(data)
-						this.themeStore = data.required.toString()
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					this.error = err
-					this.loading = false
-				})
-		},
 		editTheme() {
 			this.loading = true
 			this.error = false
-			fetch(`/index.php/apps/opencatalogi/api/metadata/${themeStore.themeItem?.id}`, {
-				method: 'POST',
+			fetch(`/index.php/apps/opencatalogi/api/themes/${themeStore.themeItem.id}`, {
+				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					...this.theme,
-				}),
+				body: JSON.stringify(themeStore.themeItem),
 			})
 				.then((response) => {
 					this.loading = false
@@ -142,7 +98,7 @@ export default {
 					// Lets refresh the themeList
 					themeStore.refreshThemeList()
 					response.json().then((data) => {
-						themeStore.setThemeList(data)
+						themeStore.setThemeItem(data)
 					})
 					navigationStore.setSelected('themes')
 					// Wait for the user to read the feedback then close the model
@@ -150,22 +106,11 @@ export default {
 					setTimeout(function() {
 						self.success = null
 						navigationStore.setModal(false)
-						self.theme = {
-							title: '',
-							summary: '',
-							description: '',
-							oin: '',
-							tooi: '',
-							rsin: '',
-							pki: '',
-						}
-						self.hasUpdated = false
 					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
-					self.hasUpdated = false
 				})
 		},
 	},

@@ -29,34 +29,34 @@ import { navigationStore, organisationStore } from '../../store/store.js'
 					<NcTextField
 						:disabled="loading"
 						label="Samenvatting"
-						:value.sync="organisation.organisationItem.summary" />
+						:value.sync="organisationStore.organisationItem.summary" />
 					<NcTextArea
 						:disabled="loading"
 						label="Beschrijving"
-						:value.sync="organisation.organisationItem.description" />
+						:value.sync="organisationStore.organisationItem.description" />
 					<NcTextField
 						:disabled="loading"
 						label="OIN (organisatie-identificatienummer)"
-						:value.sync="organisation.organisationItem.oin" />
+						:value.sync="organisationStore.organisationItem.oin" />
 					<NcTextField
 						:disabled="loading"
 						label="TOOI"
-						:value.sync="organisation.organisationItem.tooi" />
+						:value.sync="organisationStore.organisationItem.tooi" />
 					<NcTextField
 						:disabled="loading"
 						label="RSIN"
-						:value.sync="organisation.organisationItem.rsin" />
+						:value.sync="organisationStore.organisationItem.rsin" />
 					<NcTextField
 						:disabled="loading"
 						label="PKI"
-						:value.sync="organisation.organisationItem.pki" />
+						:value.sync="organisationStore.organisationItem.pki" />
 				</div>
 			</div>
 			<NcButton
 				v-if="success === null"
-				:disabled="!organisation.title || loading"
+				:disabled="!organisationStore.organisationItem.title || loading"
 				type="primary"
-				@click="addOrganisation()">
+				@click="editOrganisation()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
@@ -92,69 +92,21 @@ export default {
 	},
 	data() {
 		return {
-			organisation: {
-				title: '',
-				summary: '',
-				description: '',
-				oin: '',
-				tooi: '',
-				rsin: '',
-				pki: '',
-			},
-
-			errorCode: '',
-			organisationLoading: false,
-			hasUpdated: false,
 			loading: false,
 			success: null,
 			error: false,
 		}
 	},
-	updated() {
-		if (navigationStore.modal === 'organisationAdd' && !this.hasUpdated) {
-			this.hasUpdated = true
-		}
-	},
 	methods: {
-		isJsonString(str) {
-			try {
-				JSON.parse(str)
-			} catch (e) {
-				return false
-			}
-			return true
-		},
-		fetchData(id) {
-			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/organisations/${id}`,
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						organisationStore.setOrganisationItem(data)
-						this.organisationStore = data.required.toString()
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					this.error = err
-					this.loading = false
-				})
-		},
 		editOrganisation() {
 			this.loading = true
 			this.error = false
-			fetch(`/index.php/apps/opencatalogi/api/metadata/${organisationStore.organisationItem?.id}`, {
-				method: 'POST',
+			fetch(`/index.php/apps/opencatalogi/api/organisations/${organisationStore.organisationItem.id}`, {
+				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					...this.organisation,
-				}),
+				body: JSON.stringify(organisationStore.organisationItem),
 			})
 				.then((response) => {
 					this.loading = false
@@ -162,7 +114,7 @@ export default {
 					// Lets refresh the organisationList
 					organisationStore.refreshOrganisationList()
 					response.json().then((data) => {
-						organisationStore.setOrganisationList(data)
+						organisationStore.setOrganisationItem(data)
 					})
 					navigationStore.setSelected('organisations')
 					// Wait for the user to read the feedback then close the model
@@ -170,22 +122,11 @@ export default {
 					setTimeout(function() {
 						self.success = null
 						navigationStore.setModal(false)
-						self.organisation = {
-							title: '',
-							summary: '',
-							description: '',
-							oin: '',
-							tooi: '',
-							rsin: '',
-							pki: '',
-						}
-						self.hasUpdated = false
 					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
-					self.hasUpdated = false
 				})
 		},
 	},
