@@ -25,6 +25,7 @@ Klik op het icoontje van OpenCatalogi en je zit in de app!
 ![OpenCatalogi instellingen](../assets/oc_instellingen_1.png)
 
 * Vul bij 'settings' -> 'configuratie' de benodigde gegevens in voor opslag:
+
   * default instellingen voor opslag (optioneel)
   * DRC or ORC (optioneel)
   * Een MongoDB API met sleutel en clusternaam(optioneel).
