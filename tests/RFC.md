@@ -40,6 +40,21 @@
 |-------------------------------|----------------|----------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------|
 | `Listing.php`                 | `jsonSerialize` | Incorrect serialization of fields                        | -        | The `jsonSerialize` method is setting the fields `directory`, `metadata`, `status`, `lastSync`, `default`, and `available` to the value of `search` instead of their actual values. Update the method to correctly serialize these fields based on their actual values. |
 
+## Services
+
+| **File**            | **Method**     | **Issue**                                                | **Line** | **Description**                                                                                     |
+|---------------------|----------------|----------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------|
+| `ObjectService.php` | `saveObject`   | Inconsistent return type and error handling              | -        | Ensure `saveObject` method returns an array and includes proper error handling.                    |
+| `ObjectService.php` | `findObjects`  | Inconsistent return type and error handling              | -        | Ensure `findObjects` method returns an array and includes proper error handling.                   |
+| `ObjectService.php` | `findObject`   | Inconsistent return type and error handling              | -        | Ensure `findObject` method returns an array and includes proper error handling.                    |
+| `ObjectService.php` | `updateObject` | Inconsistent return type and error handling              | -        | Ensure `updateObject` method returns an array and includes proper error handling.                  |
+| `ObjectService.php` | `deleteObject` | Inconsistent return type and error handling              | -        | Ensure `deleteObject` method returns an array and includes proper error handling.                  |
+
+
+
+
+
+
 # Explanation for Elasticsearch Tests Needing a Wrapper
 
 Elasticsearch tests often need a wrapper and interface to handle setup and teardown tasks, ensuring a clean state for each test. This approach provides the following benefits:

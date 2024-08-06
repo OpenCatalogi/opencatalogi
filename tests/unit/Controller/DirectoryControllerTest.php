@@ -2,7 +2,7 @@
 
 namespace OCA\OpenCatalogi\Tests\Controller;
 
-// Stelt dat de index() DirectoryController de fileters niet goed doorgeeft? 
+// Stelt dat de index() DirectoryController de filters niet goed doorgeeft? 
 
 
 use OCA\OpenCatalogi\Controller\DirectoryController;
