@@ -41,19 +41,19 @@ export const useMetadataStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.metaDataList = data.results.map(
-                                    (metadataItem) => new Metadata(metadataItem),
-                                )
+                        response.json().then(
+                        (data) => {
+                                this.metaDataList = data.results.map(
+                                (metadataItem) => new Metadata(metadataItem),
+                            )
                             return data
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                         return err
                     }
                 )
