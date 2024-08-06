@@ -1,9 +1,10 @@
 PHPUnit 9.6.20 by Sebastian Bergmann and contributors.
 
-.................RR.RR.R.R.R.........RR.........RRRRRRR..RRRRRR  63 / 122 ( 51%)
-RR.RRRRR........................R.W...RRRR.....RR.W........     122 / 122 (100%)
+.................RR.RR.R.R.R.........RR..........R...........RR  63 / 126 ( 50%)
+RRRRRR.RRRRR........................R.W...RRRR.....RR.W........ 126 / 126 (100%)
 
-Time: 00:01.724, Memory: 39.75 MB
+
+Time: 00:01.811, Memory: 39.75 MB
 
 There were 2 warnings:
 
@@ -15,7 +16,7 @@ No tests found in class "OCA\OpenCatalogi\Tests\Service\ElasticSearchServiceTest
 
 --
 
-There were 36 risky tests:
+There were 30 risky tests:
 
 1) OCA\OpenCatalogi\Tests\Controller\CatalogiControllerTest::testIndexWithMongoDBDisabled
 This test did not perform any assertions
@@ -62,154 +63,124 @@ This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/DirectoryControllerTest.php:63
 
-10) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testPage
+10) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testIndexWithMongoDBDisabled
 This test did not perform any assertions
 
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:40
+/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:47
 
-11) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testIndex
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:46
-
-12) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testIndexWithInvalidFilters
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:58
-
-13) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testShow
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:76
-
-14) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testCreate
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:89
-
-15) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testUpdate
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:104
-
-16) OCA\OpenCatalogi\Tests\Controller\MetaDataControllerTest::testDestroy
-This test did not perform any assertions
-
-/var/www/html/apps-extra/opencatalogi/tests/unit/Controller/MetaDataControllerTest.php:119
-
-17) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testIndex
+11) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testIndex
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:78
 
-18) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testIndexWithError
+12) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testIndexWithError
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:89
 
-19) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShow
+13) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShow
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:103
 
-20) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShowWithError
+14) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShowWithError
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:114
 
-21) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreate
+15) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreate
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:128
 
-22) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreateWithError
+16) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreateWithError
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:142
 
-23) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdate
+17) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdate
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:158
 
-24) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdateWithError
+18) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdateWithError
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:172
 
-25) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroyWithError
+19) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroyWithError
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:199
 
-26) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShowWithNonExistentId
+20) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testShowWithNonExistentId
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:215
 
-27) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreateWithInvalidData
+21) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testCreateWithInvalidData
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:226
 
-28) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdateWithNonExistentId
+22) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testUpdateWithNonExistentId
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:239
 
-29) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroyWithNonExistentId
+23) OCA\OpenCatalogi\Tests\Controller\PublicationsControllerTest::testDestroyWithNonExistentId
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Controller/PublicationsControllerTest.php:252
 
-30) OCA\OpenCatalogi\Tests\Db\ListingTest::testJsonSerialize
+24) OCA\OpenCatalogi\Tests\Db\ListingTest::testJsonSerialize
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Db/ListingTest.php:56
 
-31) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testFind
+25) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testFind
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Db/PublicationMapperTest.php:26
 
-32) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testFindAll
+26) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testFindAll
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Db/PublicationMapperTest.php:49
 
-33) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testCreateFromArray
+27) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testCreateFromArray
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Db/PublicationMapperTest.php:73
 
-34) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testUpdateFromArray
+28) OCA\OpenCatalogi\Tests\Db\PublicationMapperTest::testUpdateFromArray
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Db/PublicationMapperTest.php:91
 
-35) OCA\OpenCatalogi\Tests\Service\DirectoryServiceTest::testRegisterToExternalDirectory
+29) OCA\OpenCatalogi\Tests\Service\DirectoryServiceTest::testRegisterToExternalDirectory
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:67
 
-36) OCA\OpenCatalogi\Tests\Service\DirectoryServiceTest::testCreateDirectoryFromResult
+30) OCA\OpenCatalogi\Tests\Service\DirectoryServiceTest::testCreateDirectoryFromResult
 This test did not perform any assertions
 
 /var/www/html/apps-extra/opencatalogi/tests/unit/Service/DirectoryServiceTest.php:94
 
 WARNINGS!
-Tests: 122, Assertions: 266, Warnings: 2, Risky: 36.
+Tests: 126, Assertions: 286, Warnings: 2, Risky: 30.
 
-Generating code coverage report in HTML format ... done [00:00.197]
+Generating code coverage report in HTML format ... done [00:00.206]
 
 
 [1;37;40mCode Coverage Report:       [0m
-[1;37;40m  2024-08-06 14:35:49       [0m
+[1;37;40m  2024-08-06 14:53:59       [0m
 [1;37;40m                            [0m
 [1;37;40m Summary:                   [0m
 [37;41m  Classes:  7.41% (2/27)    [0m
-[37;41m  Methods: 34.93% (51/146)  [0m
-[37;41m  Lines:   39.34% (513/1304)[0m
+[37;41m  Methods: 37.67% (55/146)  [0m
+[37;41m  Lines:   44.86% (585/1304)[0m
 
 OCA\OpenCatalogi\AppInfo\Application
   [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% (  3/  3)[0m
@@ -224,7 +195,7 @@ OCA\OpenCatalogi\Controller\DashboardController
 OCA\OpenCatalogi\Controller\DirectoryController
   [37;41mMethods:  25.00% ( 2/ 8)[0m   [37;41mLines:  28.89% ( 26/ 90)[0m
 OCA\OpenCatalogi\Controller\MetaDataController
-  [37;41mMethods:   0.00% ( 0/ 7)[0m   [37;41mLines:   0.00% (  0/ 88)[0m
+  [30;43mMethods:  57.14% ( 4/ 7)[0m   [30;43mLines:  81.82% ( 72/ 88)[0m
 OCA\OpenCatalogi\Controller\PublicationsController
   [37;41mMethods:  22.22% ( 2/ 9)[0m   [37;41mLines:   7.64% ( 11/144)[0m
 OCA\OpenCatalogi\Controller\SearchController

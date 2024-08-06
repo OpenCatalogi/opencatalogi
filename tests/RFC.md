@@ -2,6 +2,10 @@
 
 | **File**                      | **Method**     | **Issue**                                                | **Line** | **Description**                                                                                     |
 |-------------------------------|----------------|----------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------|
+# Changes Required
+
+| **File**                      | **Method**     | **Issue**                                                | **Line** | **Description**                                                                                     |
+|-------------------------------|----------------|----------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------|
 | `MetaDataController.php`      | `index`        | Unknown named parameter `$filters`                        | 84       | The `findAll` method in the `MetaDataMapper` class does not accept named parameters.                |
 | `MetaDataController.php`      | `show`         | Incompatible return type                                  | 81       | The `find` method should return an instance of `MetaData`, not an array.                            |
 | `MetaDataController.php`      | `create`       | Incompatible return type                                  | 114      | The `createFromArray` method should return an instance of `MetaData`, not an array.                 |
@@ -23,6 +27,8 @@
 | `OrganizationMapperTest.php`  | `testFind`, `testFindAll`, `testUpdateFromArray` | Errors due to methods that do not exist or are final/static | - | The tests for `OrganizationMapper` have issues related to methods that cannot be configured or do not exist. The problematic lines need to be commented out and addressed separately. |
 | `PublicationMapperTest.php`   | `testFind`, `testFindAll`, `testCreateFromArray`, `testUpdateFromArray` | Errors due to undefined methods and null references | - | The tests for `PublicationMapper` have issues related to undefined methods and null references. The problematic lines need to be commented out and addressed separately. |
 | `ListingMapperTest.php`       | `testFind`, `testFindAll`, `testUpdateFromArray` | Errors due to methods that do not exist or are final/static | - | The tests for `ListingMapper` have issues related to methods that cannot be configured or do not exist. The problematic lines need to be commented out and addressed separately. |
+| `DirectoryController.php`     | `index`        | Unknown named parameter `$filters`                        | 122      | The `findAll` method in the `ListingMapper` class does not accept named parameters. Update the method call to use positional parameters instead. |
+
 
 ## Mappers
 

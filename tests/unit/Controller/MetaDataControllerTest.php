@@ -5,12 +5,12 @@ namespace OCA\OpenCatalogi\Tests\Controller;
 use OCA\OpenCatalogi\Controller\MetaDataController;
 use OCA\OpenCatalogi\Db\MetaDataMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
+use OCP\IRequest;
+use OCP\IAppConfig;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IAppConfig;
-use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
-use Test\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class MetaDataControllerTest extends TestCase
 {
@@ -23,6 +23,9 @@ class MetaDataControllerTest extends TestCase
     /** @var MockObject|MetaDataMapper */
     private $metaDataMapper;
 
+    /** @var MockObject|ObjectService */
+    private $objectService;
+
     /** @var MetaDataController */
     private $controller;
 
@@ -31,101 +34,124 @@ class MetaDataControllerTest extends TestCase
         $this->request = $this->createMock(IRequest::class);
         $this->config = $this->createMock(IAppConfig::class);
         $this->metaDataMapper = $this->createMock(MetaDataMapper::class);
+        $this->objectService = $this->createMock(ObjectService::class);
         $this->controller = new MetaDataController('opencatalogi', $this->request, $this->config, $this->metaDataMapper);
-
-        $this->config->method('getValueString')
-            ->willReturn('http://localhost');
     }
 
     public function testPage()
     {
         $response = $this->controller->page('testParam');
-        // $this->assertInstanceOf(TemplateResponse::class, $response);
+        $this->assertInstanceOf(TemplateResponse::class, $response);
     }
 
-    public function testIndex()
+    public function testIndexWithMongoDBDisabled()
     {
-        $objectService = $this->createMock(ObjectService::class);
         $this->config->method('hasKey')->willReturn(false);
-        $this->metaDataMapper->method('findAll')
-            ->willReturn([['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1']]);
+        $this->metaDataMapper->method('findAll')->willReturn([]);
 
-        // $response = $this->controller->index($objectService);
+        // REQUEST FOR CHANGE Unknowen parameter $filters
+        // $response = $this->controller->index($this->objectService);
         // $this->assertInstanceOf(JSONResponse::class, $response);
-        // $this->assertEquals(['results' => [['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1']]], $response->getData());
+        // $this->assertEquals(['results' => []], $response->getData());
     }
 
-    public function testIndexWithInvalidFilters()
+    public function testIndexWithMongoDBEnabled()
     {
-        $objectService = $this->createMock(ObjectService::class);
         $this->config->method('hasKey')->willReturn(true);
-        $this->config->method('getValueString')->willReturnMap([
-            ['opencatalogi', 'mongodbLocation', '', 'http://localhost'],
-            ['opencatalogi', 'mongodbKey', '', 'someKey'],
-            ['opencatalogi', 'mongodbCluster', '', 'someCluster']
-        ]);
+        $this->config->method('getValueString')->willReturn('1');
+        $this->objectService->method('findObjects')->willReturn(['documents' => []]);
 
-        $objectService->method('findObjects')
-            ->willReturn(['documents' => [['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1']]]);
-
-        // $response = $this->controller->index($objectService);
-        // $this->assertInstanceOf(JSONResponse::class, $response);
-        // $this->assertEquals(['results' => [['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1']]], $response->getData());
+        $response = $this->controller->index($this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals(['results' => []], $response->getData());
     }
 
-    public function testShow()
+    public function testShowWithMongoDBDisabled()
     {
-        $objectService = $this->createMock(ObjectService::class);
-
+        $mockMetaData = $this->createMock(\OCA\OpenCatalogi\Db\MetaData::class);
         $this->config->method('hasKey')->willReturn(false);
-        // Commenting out the problematic line
-        // $this->metaDataMapper->method('find')->willReturn(['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1']);
+        $this->metaDataMapper->method('find')->willReturn($mockMetaData);
 
-        // $response = $this->controller->show('1', $objectService);
-        // $this->assertInstanceOf(JSONResponse::class, $response);
-        // $this->assertEquals(['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1'], $response->getData());
+        $response = $this->controller->show(1, $this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals($mockMetaData, $response->getData());
     }
 
-    public function testCreate()
+    public function testShowWithMongoDBEnabled()
     {
-        $objectService = $this->createMock(ObjectService::class);
+        $this->config->method('hasKey')->willReturn(true);
+        $this->config->method('getValueString')->willReturn('1');
+        $this->objectService->method('findObject')->willReturn([]);
 
-        $this->config->method('hasKey')->willReturn(false);
-        $this->request->method('getParams')->willReturn(['title' => 'MetaData test 1']);
-
-        // Commenting out the problematic line
-        // $this->metaDataMapper->method('createFromArray')->willReturn(['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1']);
-
-        $response = $this->controller->create($objectService);
-        // $this->assertInstanceOf(JSONResponse::class, $response);
-        // $this->assertEquals(['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1'], $response->getData());
+        $response = $this->controller->show(1, $this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
     }
 
-    public function testUpdate()
+    public function testCreateWithMongoDBDisabled()
     {
-        $objectService = $this->createMock(ObjectService::class);
-
+        $mockMetaData = $this->createMock(\OCA\OpenCatalogi\Db\MetaData::class);
         $this->config->method('hasKey')->willReturn(false);
-        $this->request->method('getParams')->willReturn(['title' => 'Updated title']);
+        $this->metaDataMapper->method('createFromArray')->willReturn($mockMetaData);
 
-        // Commenting out the problematic line
-        // $this->metaDataMapper->method('updateFromArray')->willReturn(['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'Updated title']);
-
-        $response = $this->controller->update('1', $objectService);
-        // $this->assertInstanceOf(JSONResponse::class, $response);
-        // $this->assertEquals(['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'Updated title'], $response->getData());
+        $response = $this->controller->create($this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals($mockMetaData, $response->getData());
     }
 
-    public function testDestroy()
+    public function testCreateWithMongoDBEnabled()
     {
-        $objectService = $this->createMock(ObjectService::class);
+        $this->config->method('hasKey')->willReturn(true);
+        $this->config->method('getValueString')->willReturn('1');
+        $this->objectService->method('saveObject')->willReturn([]);
 
+        $response = $this->controller->create($this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
+    }
+
+    public function testUpdateWithMongoDBDisabled()
+    {
+        $mockMetaData = $this->createMock(\OCA\OpenCatalogi\Db\MetaData::class);
         $this->config->method('hasKey')->willReturn(false);
-        // Commenting out the problematic line
-        // $this->metaDataMapper->method('find')->willReturn(['id' => '64996753-5109-4396-9f07-17040d7fb137', 'title' => 'MetaData test 1']);
+        $this->metaDataMapper->method('updateFromArray')->willReturn($mockMetaData);
 
-        $response = $this->controller->destroy('1', $objectService);
-        // $this->assertInstanceOf(JSONResponse::class, $response);
-        // $this->assertEquals([], $response->getData());
+        $response = $this->controller->update(1, $this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals($mockMetaData, $response->getData());
+    }
+
+    public function testUpdateWithMongoDBEnabled()
+    {
+        $this->config->method('hasKey')->willReturn(true);
+        $this->config->method('getValueString')->willReturn('1');
+        $this->objectService->method('updateObject')->willReturn([]);
+
+        $response = $this->controller->update(1, $this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
+    }
+
+    public function testDestroyWithMongoDBDisabled()
+    {
+        $this->config->method('hasKey')->willReturn(false);
+        $mockMetaData = $this->createMock(\OCA\OpenCatalogi\Db\MetaData::class);
+        $this->metaDataMapper->method('find')->willReturn($mockMetaData);
+        $this->metaDataMapper->expects($this->once())->method('delete');
+
+        $response = $this->controller->destroy(1, $this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
+    }
+
+    public function testDestroyWithMongoDBEnabled()
+    {
+        $this->config->method('hasKey')->willReturn(true);
+        $this->config->method('getValueString')->willReturn('1');
+        $this->objectService->method('deleteObject')->willReturn([]);
+
+        $response = $this->controller->destroy(1, $this->objectService);
+        $this->assertInstanceOf(JSONResponse::class, $response);
+        $this->assertEquals([], $response->getData());
     }
 }
