@@ -5,15 +5,15 @@ import { useConfigurationStore } from './configuration.js'
 
 describe(
     'Configuration Store', () => {
-    beforeEach(
-            () => {
-            setActivePinia(createPinia())
+        beforeEach(
+        () => {
+                setActivePinia(createPinia())
             }
-        )
+    )
 
     it(
         'sets configuration item correctly', () => {
-            const store = useConfigurationStore()
+        const store = useConfigurationStore()
 
             store.setConfigurationItem(mockConfiguration()[0])
 

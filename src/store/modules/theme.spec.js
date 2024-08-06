@@ -6,15 +6,15 @@ import { mockTheme, Theme } from '../../entities/index.js'
 
 describe(
     'Theme Store', () => {
-    beforeEach(
-            () => {
-            setActivePinia(createPinia())
+        beforeEach(
+        () => {
+                setActivePinia(createPinia())
             }
-        )
+    )
 
     it(
         'sets theme item correctly', () => {
-            const store = useThemeStore()
+        const store = useThemeStore()
 
             store.setThemeItem(mockTheme()[0])
 
@@ -38,7 +38,7 @@ describe(
 
     it(
         'sets theme list correctly', () => {
-            const store = useThemeStore()
+        const store = useThemeStore()
 
             store.setThemeList(mockTheme())
 
