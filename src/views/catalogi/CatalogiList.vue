@@ -15,6 +15,14 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
+					<NcActionButton
+						title="Bekijk de documentatie over catalogi"
+						@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/catalogi', '_blank')">
+						<template #icon>
+							<HelpCircleOutline :size="20" />
+						</template>
+						Help
+					</NcActionButton>
 					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
@@ -90,6 +98,7 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 import { debounce } from 'lodash'
 
 export default {
@@ -100,9 +109,11 @@ export default {
 		NcActionButton,
 		NcAppContentList,
 		NcTextField,
+		NcLoadingIcon,
+		// Icons
+		HelpCircleOutline,
 		DatabaseOutline,
 		Magnify,
-		NcLoadingIcon,
 		Refresh,
 		Plus,
 		Pencil,
@@ -145,6 +156,9 @@ export default {
 		debouncedFetchData: debounce(function(search) {
 			this.fetchData(search)
 		}, 500),
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>
