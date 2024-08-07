@@ -33,16 +33,16 @@ export const useThemeStore = defineStore(
             )
                 .then(
                     (response) => {
-                    response.json().then(
-                            (data) => {
-                            this.setThemeList(data.results)
+                        response.json().then(
+                        (data) => {
+                                this.setThemeList(data.results)
                             }
-                        )
+                    )
                     }
                 )
                 .catch(
                     (err) => {
-                    console.error(err)
+                        console.error(err)
                     }
                 )
         },
