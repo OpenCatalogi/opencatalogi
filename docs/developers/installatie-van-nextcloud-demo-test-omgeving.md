@@ -49,3 +49,16 @@ Volg deze eenvoudige stappen om de applicatie te starten:
 6. **Login**: Voor de standaardinstallatie werkt dit met admin als log **en** admin wachtwoord
 
 En dat is het! Volg deze stappen om de OpenCatalogi-app snel en soepel op te zetten.
+
+## Deinstaleren
+Het kan natuurlijk voorkomen dat je na een succesvolle demonstratie de toepassing wil deinstalleren, open daarvoor de docker desktop interface en
+
+- Vink onder `containers` alle containers aan en druk op 'delete'
+- Vink onder `images` alle images aan en druk op 'delete'
+- Vink onder `volumes` alle volumes aan en druk op 'delete'
+- Verwijder de folder met bestanden die in stap 3 van het installatie proces hebt aangemaakt
+
+![alt text](docker_desktop.png)
+
+## Bijwerken
+Vanuit de demo installatie route is er nog geen optie beschickbaar voor het bijwerken van de applicatie, die zal je moeten deinstaleren en instaleren. 
