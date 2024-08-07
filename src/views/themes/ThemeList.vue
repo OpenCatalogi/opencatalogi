@@ -116,17 +116,18 @@ export default {
 		HelpCircleOutline,
 	},
 	beforeRouteLeave(to, from, next) {
-		search = ''
+		this.search = ''
 		next()
 	},
 	props: {
-		search: {
+		searchQuery: {
 			type: String,
 			required: true,
 		},
 	},
 	data() {
 		return {
+			search: '',
 			loading: false,
 		}
 	},
@@ -139,9 +140,9 @@ export default {
 		},
 	},
 	watch: {
-		search: {
-			handler(search) {
-				this.debouncedFetchData(search)
+		searchQuery: {
+			handler(searchQuery) {
+				this.debouncedFetchData(searchQuery)
 			},
 		},
 	},

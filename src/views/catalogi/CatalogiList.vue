@@ -120,11 +120,11 @@ export default {
 		Delete,
 	},
 	beforeRouteLeave(to, from, next) {
-		search = ''
+		this.search = ''
 		next()
 	},
 	props: {
-		search: {
+		searchQuery: {
 			type: String,
 			required: true,
 		},
@@ -136,9 +136,9 @@ export default {
 		}
 	},
 	watch: {
-		search: {
-			handler(search) {
-				this.debouncedFetchData(search)
+		searchQuery: {
+			handler(searchQuery) {
+				this.debouncedFetchData(searchQuery)
 			},
 		},
 	},

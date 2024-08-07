@@ -68,28 +68,14 @@ import { navigationStore, themeStore } from '../../store/store.js'
 
 <script>
 // Components
-import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
-import VueApexCharts from 'vue-apexcharts'
+import { NcActionButton, NcActions, NcLoadingIcon } from '@nextcloud/vue'
 
 // Icons
-import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
-import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
-import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import Download from 'vue-material-design-icons/Download.vue'
-import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
-import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
-import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
-import LockOutline from 'vue-material-design-icons/LockOutline.vue'
-import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Publish from 'vue-material-design-icons/Publish.vue'
-import PublishOff from 'vue-material-design-icons/PublishOff.vue'
-import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
 
 export default {
 	name: 'ThemeDetail',
@@ -98,29 +84,11 @@ export default {
 		NcLoadingIcon,
 		NcActionButton,
 		NcActions,
-		NcButton,
-		NcListItem,
-		NcSelectTags,
-		NcNoteCard,
-		apexchart: VueApexCharts,
 		// Icons
-		CheckCircle,
-		ExclamationThick,
 		DotsHorizontal,
 		Pencil,
 		Delete,
-		Publish,
-		PublishOff,
-		OpenInApp,
-		FilePlusOutline,
-		FileTreeOutline,
-		CircleOutline,
 		ContentCopy,
-		TimelineQuestionOutline,
-		LockOutline,
-		LockOpenVariantOutline,
-		Download,
-		ArchivePlusOutline,
 		HelpCircleOutline,
 	},
 	props: {

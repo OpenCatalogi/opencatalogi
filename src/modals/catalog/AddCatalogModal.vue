@@ -34,6 +34,11 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					label="Beschrijving"
 					maxlength="255"
 					:value.sync="catalogi.description" />
+				<NcCheckboxRadioSwitch :disabled="loading"
+					label="Listed"
+					:checked.sync="catalogi.listed">
+					Listed
+				</NcCheckboxRadioSwitch>
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!catalogi.title || loading"
@@ -50,7 +55,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard, NcCheckboxRadioSwitch } from '@nextcloud/vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
@@ -61,6 +66,7 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
+		NcCheckboxRadioSwitch,
 		// Icons
 		Plus,
 	},
@@ -70,6 +76,7 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
+				listed: false,
 			},
 			loading: false,
 			success: null,
@@ -84,6 +91,7 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
+				listed: false,
 			}
 		},
 		addCatalog() {

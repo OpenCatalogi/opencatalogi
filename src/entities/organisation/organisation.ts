@@ -1,5 +1,5 @@
-import { SafeParseReturnType, z } from 'zod';
-import { TOrganisation } from './organisation.types';
+import { SafeParseReturnType, z } from 'zod'
+import { TOrganisation } from './organisation.types'
 
 export class Organisation implements TOrganisation {
 

@@ -32,13 +32,8 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 </template>
 <script>
 
-import { NcAppSidebar, NcAppSidebarTab, NcTextField, NcNoteCard, NcListItem, NcActionButton, NcEmptyContent, NcButton } from '@nextcloud/vue'
-import Magnify from 'vue-material-design-icons/Magnify.vue'
+import { NcAppSidebar, NcEmptyContent, NcButton } from '@nextcloud/vue'
 import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
-import FileOutline from 'vue-material-design-icons/FileOutline.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Publish from 'vue-material-design-icons/Publish.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
@@ -46,20 +41,10 @@ export default {
 	name: 'DirectorySideBar',
 	components: {
 		NcAppSidebar,
-		NcAppSidebarTab,
-		NcTextField,
-		NcNoteCard,
-		NcListItem,
-		NcActionButton,
 		NcEmptyContent,
 		NcButton,
 		// Icons
-		Magnify,
 		LayersOutline,
-		FileOutline,
-		Pencil,
-		Publish,
-		Delete,
 		Plus,
 		HelpCircleOutline,
 	},

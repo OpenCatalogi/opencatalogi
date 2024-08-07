@@ -4,35 +4,35 @@ import { Configuration, mockConfiguration } from '../../entities/index.js'
 import { useConfigurationStore } from './configuration.js'
 
 describe(
-    'Configuration Store', () => {
-    beforeEach(
-            () => {
-            setActivePinia(createPinia())
-            }
-        )
+	'Configuration Store', () => {
+		beforeEach(
+			() => {
+				setActivePinia(createPinia())
+			},
+		)
 
-    it(
-        'sets configuration item correctly', () => {
-            const store = useConfigurationStore()
+		it(
+			'sets configuration item correctly', () => {
+				const store = useConfigurationStore()
 
-            store.setConfigurationItem(mockConfiguration()[0])
+				store.setConfigurationItem(mockConfiguration()[0])
 
-            expect(store.configurationItem).toBeInstanceOf(Configuration)
-            expect(store.configurationItem).toEqual(mockConfiguration()[0])
-            expect(store.configurationItem.validate().success).toBe(true)
+				expect(store.configurationItem).toBeInstanceOf(Configuration)
+				expect(store.configurationItem).toEqual(mockConfiguration()[0])
+				expect(store.configurationItem.validate().success).toBe(true)
 
-            store.setConfigurationItem(mockConfiguration()[1])
+				store.setConfigurationItem(mockConfiguration()[1])
 
-            expect(store.configurationItem).toBeInstanceOf(Configuration)
-            expect(store.configurationItem).toEqual(mockConfiguration()[1])
-            expect(store.configurationItem.validate().success).toBe(true)
+				expect(store.configurationItem).toBeInstanceOf(Configuration)
+				expect(store.configurationItem).toEqual(mockConfiguration()[1])
+				expect(store.configurationItem.validate().success).toBe(true)
 
-            store.setConfigurationItem(mockConfiguration()[2])
+				store.setConfigurationItem(mockConfiguration()[2])
 
-            expect(store.configurationItem).toBeInstanceOf(Configuration)
-            expect(store.configurationItem).toEqual(mockConfiguration()[2])
-            expect(store.configurationItem.validate().success).toBe(false)
-        }
-    )
-    }
+				expect(store.configurationItem).toBeInstanceOf(Configuration)
+				expect(store.configurationItem).toEqual(mockConfiguration()[2])
+				expect(store.configurationItem.validate().success).toBe(false)
+			},
+		)
+	},
 )
