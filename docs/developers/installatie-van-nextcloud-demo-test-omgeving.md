@@ -21,14 +21,14 @@ Volg deze eenvoudige stappen om de applicatie te starten:
 3. **Code**: [Download](https://github.com/ConductionNL/opencatalogi/archive/refs/heads/master.zip) de code als zip bestand en pak deze uit.
 
 4. **(Optie 1, Start Docker via installer)**
-   * [Download](https://raw.githubusercontent.com/OpenCatalogi/.github/main/docs/assets/Start-docker.bat) het .bat bestand (rechter muisknop opslaan als, let op dat je het bestand opslaat als .bat)
+   * [Download](https://raw.githubusercontent.com/OpenCatalogi/.github/main/docs/assets/Start-docker.bat) het `.bat`-bestand. Dit doe je door de link op te slaan (rechter muisknop opslaan als, let op dat je het bestand opslaat als `.bat`)
 
    * Plaats het bestand als `.bat` in dezelfde folder als de code.
 
    * Klik met de rechtermuisknop op het bestand en selecteer uitvoeren
      **(Optie 2, via command line interface)**
 
-   * Type het volgende commando in de command prompt en druk op Enter:
+   * Type het volgende commando in de Command prompt en druk op Enter:
 
      `cd pad/naar/uitgepakte/map`
 
@@ -47,6 +47,8 @@ Volg deze eenvoudige stappen om de applicatie te starten:
 5. **Open de applicatie**: Open je webbrowser en ga naar <http://localhost:8080>
 
 6. **Login**: Voor de standaardinstallatie werkt dit met admin als log **en** admin wachtwoord
+
+Je hebt nu een werkende Nextcloud-test en demo-omgeving. Om OpenCatalogi the activeren, volg dan [deze stappen](https://github.com/ConductionNL/opencatalogi/blob/master/docs/developers/de-opencatalogi-app-toevoegen-aan-nextcloud.md)
 
 En dat is het! Volg deze stappen om de OpenCatalogi-app snel en soepel op te zetten.
 
