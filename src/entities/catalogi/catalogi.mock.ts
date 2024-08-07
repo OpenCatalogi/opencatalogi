@@ -1,5 +1,5 @@
-import { Catalogi } from './catalogi';
-import { TCatalogi } from './catalogi.types';
+import { Catalogi } from './catalogi'
+import { TCatalogi } from './catalogi.types'
 
 export const mockCatalogiData = (): TCatalogi[] => [
 	{

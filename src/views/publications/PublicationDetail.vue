@@ -368,8 +368,6 @@ import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
 import TrayArrowDown from 'vue-material-design-icons/TrayArrowDown.vue'
 
-
-
 export default {
 	name: 'PublicationDetail',
 	components: {
