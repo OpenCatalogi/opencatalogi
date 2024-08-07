@@ -1,5 +1,5 @@
-import { SafeParseReturnType, z } from 'zod';
-import { TCatalogi } from './catalogi.types';
+import { SafeParseReturnType, z } from 'zod'
+import { TCatalogi } from './catalogi.types'
 
 export class Catalogi implements TCatalogi {
 

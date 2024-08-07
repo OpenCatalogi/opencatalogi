@@ -22,15 +22,15 @@ const themeStore = useThemeStore(pinia)
 const configurationStore = useConfigurationStore(pinia)
 
 export {
-    // generic
-    navigationStore,
-    searchStore,
-    // feature-specific
-    catalogiStore,
-    directoryStore,
-    metadataStore,
-    publicationStore,
-    organisationStore,
-    themeStore,
-    configurationStore,
+	// generic
+	navigationStore,
+	searchStore,
+	// feature-specific
+	catalogiStore,
+	directoryStore,
+	metadataStore,
+	publicationStore,
+	organisationStore,
+	themeStore,
+	configurationStore,
 }

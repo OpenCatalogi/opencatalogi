@@ -14,9 +14,9 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 			<NcTextField class="searchField"
 				:value.sync="searchStore.search"
 				label="Zoeken" />
-            <NcNoteCard v-if="searchStore.searchError" type="error">
-                <p>{{ searchStore.searchError }}</p>
-            </NcNoteCard>
+			<NcNoteCard v-if="searchStore.searchError" type="error">
+				<p>{{ searchStore.searchError }}</p>
+			</NcNoteCard>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="settings-tab" name="Publicaties" :order="2">
 			<template #icon>

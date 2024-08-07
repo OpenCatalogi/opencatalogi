@@ -5,7 +5,7 @@ import { navigationStore, searchStore, metadataStore } from '../../store/store.j
 <template>
 	<NcAppContent>
 		<template #list>
-			<MetaDataList :search="searchStore.search" />
+			<MetaDataList :search-query="searchStore.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!metadataStore.metaDataItem || navigationStore.selected != 'metaData'"
