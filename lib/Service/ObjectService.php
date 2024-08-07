@@ -117,7 +117,7 @@ class ObjectService
 			associative: true
 		);
 
-		return ['document' => $result];
+		return $result['document'];
 	}
 
 

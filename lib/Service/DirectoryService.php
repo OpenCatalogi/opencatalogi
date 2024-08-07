@@ -140,6 +140,9 @@ class DirectoryService
 		if ($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
+			$filters['catalog_id'] = $filters['catalogId'];
+			unset($filters['catalogId']);
+
 			return $this->listingMapper->findAll(limit: $limit, offset: $offset, filters: $filters);
 		}
 		$filters['_schema'] = 'directory';
@@ -232,9 +235,9 @@ class DirectoryService
 				'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
 			];
 
-			$data['_schema'] = 'catalog';
+			$listing['_schema'] = 'directory';
 
-			$returnData = $this->objectService->saveObject($data, $dbConfig);
+			$returnData = $this->objectService->saveObject($listing, $dbConfig);
 			return $catalog;
 		} catch (\Exception $e) {
 			$catalog['listed'] = false;
