@@ -5,35 +5,59 @@ namespace OCA\OpenCatalogi\Controller;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\SearchService;
+use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
-
 class SearchController extends Controller
 {
-    const TEST_ARRAY = [
-        "d9e1467e-fc55-44c8-bf5c-bf139ac10eda" => [
-            "id" => "d9e1467e-fc55-44c8-bf5c-bf139ac10eda",
-            "name" => "Search one",
-            "summary" => "summary for one"
-        ],
-        "e9d0131b-06c4-4d20-aa17-3b2aaad186d7" => [
-            "id" => "e9d0131b-06c4-4d20-aa17-3b2aaad186d7",
-            "name" => "Search two",
-            "summary" => "summary for two"
-        ]
-    ];
 
     public function __construct(
         $appName,
         IRequest $request,
 		private readonly PublicationMapper $publicationMapper,
-        private readonly IAppConfig $config)
-    {
-        parent::__construct($appName, $request);
+        private readonly IAppConfig $config,
+		$corsMethods = 'PUT, POST, GET, DELETE, PATCH',
+		$corsAllowedHeaders = 'Authorization, Content-Type, Accept',
+		$corsMaxAge = 1728000
+	) {
+		parent::__construct($appName, $request);
+		$this->corsMethods = $corsMethods;
+		$this->corsAllowedHeaders = $corsAllowedHeaders;
+		$this->corsMaxAge = $corsMaxAge;
     }
+
+	/**
+	 * This method implements a preflighted cors response for you that you can
+	 * link to for the options request
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @PublicPage
+	 * @since 7.0.0
+	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
+	public function preflightedCors() {
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$origin = $this->request->server['HTTP_ORIGIN'];
+		} else {
+			$origin = '*';
+		}
+
+		$response = new Response();
+		$response->addHeader('Access-Control-Allow-Origin', $origin);
+		$response->addHeader('Access-Control-Allow-Methods', $this->corsMethods);
+		$response->addHeader('Access-Control-Max-Age', (string)$this->corsMaxAge);
+		$response->addHeader('Access-Control-Allow-Headers', $this->corsAllowedHeaders);
+		$response->addHeader('Access-Control-Allow-Credentials', 'false');
+		return $response;
+	}
 
     /**
      * @NoAdminRequired
@@ -51,10 +75,11 @@ class SearchController extends Controller
             []
         );
     }
-
+	
     /**
      * @PublicPage
 	 * @NoCSRFRequired
+	 * @CORS
      */
     public function index(SearchService $searchService): JSONResponse
     {
