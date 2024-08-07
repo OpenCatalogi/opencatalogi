@@ -5,6 +5,7 @@ namespace OCA\OpenCatalogi\Controller;
 use OCA\OpenCatalogi\Db\OrganisationMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
+use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
@@ -44,47 +45,24 @@ class OrganisationsController extends Controller
 	 *
 	 * @return JSONResponse
 	 */
-	public function index(ObjectService $objectService): JSONResponse
+	public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
 	{
-		
         $filters = $this->request->getParams();
-
-        $searchConditions = [];
-        $searchParams = [];
         $fieldsToSearch = ['title', 'description', 'summary'];
-
-        foreach ($filters as $key => $value) {
-            if ($key === '_search') {
-                // MongoDB
-                $searchRegex = ['$regex' => $value, '$options' => 'i'];
-                $filters['$or'] = [];
-
-                // MySQL
-                $searchParams['search'] = '%' . strtolower($value) . '%';
-
-                foreach ($fieldsToSearch as $field) {
-                    // MongoDB
-                    $filters['$or'][] = [$field => $searchRegex];
-
-                    // MySQL
-                    $searchConditions[] = "LOWER($field) LIKE :search";
-                }
-            }
-
-            if (str_starts_with($key, '_')) {
-                unset($filters[$key]);
-            }  
-        }
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-            // Unset mongodb filter
-            unset($filters['$or']);
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results' => $this->organisationMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+			return new JSONResponse(['results' => $this->organisationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
 		}
-        
+
+		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
+		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+
         try {
             $dbConfig = [
                 'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
