@@ -73,7 +73,6 @@ Het is goed om bij development kennnis te nemen/hebben van de volgende gebruikte
 * [Layout](https://docs.nextcloud.com/server/latest/developer_manual/design/layout.html)-
 * [Componenten](https://nextcloud-vue-components.netlify.app/)
 
-
 ## Kwaliteit, Stabiliteit en Veiligheid
 
 Als onderdeel van de CI/CD-straat voeren we een aantal tests uit, hiermee handhaven we zowel de code kwaliteiteisen van Nextcloud als die van onszelf. Deze testen worden geborgd in een workflow zodat je de resultaten zelf op iedere commit ziet. Let op! het falen van deze tests betekent dat de code niet naar master/main kan worden gemerged en dus niet in productie kan worden genomen.
