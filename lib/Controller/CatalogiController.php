@@ -45,15 +45,15 @@ class CatalogiController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$searchParams = $searchService->createMySQLSearchParams($filters, $fieldsToSearch);
-			$searchConditions = $searchService->createMySQLSearchConditions($filters, $fieldsToSearch);
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
 			$filters = $searchService->unsetSpecialQueryParams($filters);
 
-			return new JSONResponse(['results' => $this->catalogMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+			return new JSONResponse(['results' => $this->catalogMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
 		}
 
-		$filters = $searchService->createMongoDBSearchFilter($filters, $fieldsToSearch);
-		$filters = $searchService->unsetSpecialQueryParams($filters, $fieldsToSearch);
+		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
+		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
         try {
             $dbConfig = [
