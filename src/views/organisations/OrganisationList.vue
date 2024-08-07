@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, organisationStore } from '../../store/store.js';
+import { navigationStore, organisationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -17,7 +17,7 @@ import { navigationStore, organisationStore } from '../../store/store.js';
 				<NcActions>
 					<NcActionButton
 						title="Bekijk de documentatie over organisaties"
-						@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/organisaties')">
+						@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/organisaties')">
 						<template #icon>
 							<HelpCircleOutline :size="20" />
 						</template>
@@ -84,18 +84,18 @@ import { navigationStore, organisationStore } from '../../store/store.js';
 	</NcAppContentList>
 </template>
 <script>
-import { NcActionButton, NcActions, NcAppContentList, NcListItem, NcLoadingIcon, NcTextField } from '@nextcloud/vue';
-import { debounce } from 'lodash';
+import { NcActionButton, NcActions, NcAppContentList, NcListItem, NcLoadingIcon, NcTextField } from '@nextcloud/vue'
+import { debounce } from 'lodash'
 
 // Icons
-import ContentCopy from 'vue-material-design-icons/ContentCopy.vue';
-import Delete from 'vue-material-design-icons/Delete.vue';
-import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue';
-import Magnify from 'vue-material-design-icons/Magnify.vue';
-import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue';
-import Pencil from 'vue-material-design-icons/Pencil.vue';
-import Plus from 'vue-material-design-icons/Plus.vue';
-import Refresh from 'vue-material-design-icons/Refresh.vue';
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import Refresh from 'vue-material-design-icons/Refresh.vue'
 
 export default {
 	name: 'OrganisationList',
@@ -159,6 +159,9 @@ export default {
 		debouncedFetchData: debounce(function(search) {
 			this.fetchData(search)
 		}, 500),
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>

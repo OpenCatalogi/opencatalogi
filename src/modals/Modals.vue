@@ -37,7 +37,7 @@ import EditMetaDataPropertyModal from './metaData/EditMetaDataPropertyModal.vue'
 
 import AddCatalogModal from './catalog/AddCatalogModal.vue'
 import EditCatalogModal from './catalog/EditCatalogModal.vue'
-import AddListingModal from './directory/AddListingModal.vue'
+import AddListingModal from './directory/AddDirectoryModal.vue'
 import EditListingModal from './directory/EditListingModal.vue'
 import AddOrganisationModal from './organisation/AddOrganisationModal.vue'
 import EditOrganisatioModal from './organisation/EditOrganisationModal.vue'

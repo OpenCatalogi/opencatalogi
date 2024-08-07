@@ -43,7 +43,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcActionCaption name="Acties" />
 					<NcActionButton
 						title="Bekijk de documentatie over publicaties"
-						@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
+						@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
 						<template #icon>
 							<HelpCircleOutline :size="20" />
 						</template>
@@ -237,6 +237,9 @@ export default {
 		debouncedFetchData: debounce(function(search) {
 			this.fetchData(search)
 		}, 500),
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>
