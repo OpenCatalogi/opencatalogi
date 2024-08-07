@@ -7,7 +7,7 @@ import { searchStore } from '../../store/store.js'
 		<h2 class="pageHeader">
 			Directory
 		</h2>
-		<DirectoryList :search-query="searchStore.search" />
+		<DirectoryList :search="searchStore.search" />
 	</NcAppContent>
 </template>
 

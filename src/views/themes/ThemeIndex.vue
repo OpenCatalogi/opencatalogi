@@ -5,7 +5,7 @@ import { navigationStore, searchStore, themeStore } from '../../store/store.js'
 <template>
 	<NcAppContent>
 		<template #list>
-			<ThemeList :search-query="searchStore.search" />
+			<ThemeList :search="searchStore.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!themeStore.themeItem.id || navigationStore.selected != 'themes'"
