@@ -27,11 +27,12 @@ De Ontwikkelpartijen van [Core](https://documentatie.opencatalogi.nl/Docs/Projec
 ![alt text](feature_flow.png)
 
 ## Known issues
+
 Iedere applicatie heeft technical debt, hier open en eerlijk over zijn helpt developers die willen bijdragen. Op dit moment hebben wij de volgende aandachtspunten waar we aan werken
 
-- Test coverage frontend is te laag (is 70% zou 80%) moeten zijn
-- Test coverage backend is te laag (is 60% zou 80%) moeten zijn
-- Op de frontend bevaten de stores nog busnes logica die naar apparte services moet worden verplaats
+* Test coverage frontend is te laag (is 70% zou 80%) moeten zijn
+* Test coverage backend is te laag (is 60% zou 80%) moeten zijn
+* Op de frontend bevaten de stores nog busnes logica die naar apparte services moet worden verplaats
 
 ## Application development
 
@@ -46,6 +47,7 @@ Ook voor de documentatie wordt een linter gebruikt namelijk [remarklint](https:/
 De commando's om deze linter in de CLI te gebruiken zijn [hier te vinden](https://github.com/remarkjs/remark-lint?tab=readme-ov-file#what-is-this) voor een uitgebreide output in de terminal.
 
 ### Performance
+
 Voor een goede gebruikers ervaring voor zowel bezoekers als medewerkers is het belangrijk dat dat de applicatie snel reageerd, we streven daarbij naar een performance van rond de 100 miliseconde (1/10) van een seconde. Maar overall zou de performance odner de 200 miliseconde moeten blijven. Acties die langer dan een seconde duren zijn reden om een purrl request te weigeren.
 
 ## API Development
@@ -93,7 +95,7 @@ Voor frontend is dat:
 npm run lint
 ```
 
-![alt text](npm_lint.png) 
+![alt text](npm_lint.png)
 
 Voor de backend is dat:
 
@@ -112,6 +114,7 @@ Voor frontend is dat:
 ```cli
 npm run test-coverage
 ```
+
 ![alt text](image.png)
 ![alt text](npm_test.png)
 
@@ -147,4 +150,4 @@ composer audit
 
 ![alt text](composer_audit.png)
 
-Voor beide geldt dat het aantal acceptabele critical vulnerabilities in _production packadges_ 0 is.
+Voor beide geldt dat het aantal acceptabele critical vulnerabilities in *production packadges* 0 is.
