@@ -9,7 +9,7 @@ export const usePublicationStore = defineStore(
 			publicationList: [],
 			publicationDataKey: false,
 			attachmentItem: false,
-			publicationAttachments: [],
+			publicationAttachments: false,
 			conceptPublications: [],
 			conceptAttachments: [],
 		}),
