@@ -191,6 +191,8 @@ class ElasticSearchService
 		$return = ['results' => array_map(callback: [$this, 'formatResults'], array: $result['hits']['hits'])];
 		if(isset($result['aggregations']) === true) {
 			$return['facets'] = array_map([$this, 'mapAggregationResults'], $result['aggregations']);
+		} else {
+			$return['facets'] = [];
 		}
 
 		return $return;
