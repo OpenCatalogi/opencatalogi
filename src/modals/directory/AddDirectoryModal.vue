@@ -4,12 +4,13 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 
 <template>
 	<NcModal
-		v-if="navigationStore.modal === 'addListing'"
+		v-if="navigationStore.modal === 'addDirectory'"
 		ref="modalRef"
 		label-id="addListingModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
+			Je directory bevat alle bij jouw installatie bekende catalogi. Om nieuwe catalogi te ontdekken heb je de directory van een andere (externe) installatie nodig. Nadat deze is opgegeven zullen de twee installaties een federatief netwerk vormen en catalogi blijven uitwisselen.
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
 					<p>Listing succesvol toegevoegd</p>
@@ -25,18 +26,24 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<NcNoteCard v-if="validateUrlError" type="error">
 					<p>Er is geen valide URL ingevoerd.</p>
 				</NcNoteCard>
-				<NcTextField v-model="directory.url" label="Url" @input="validateUrl" />
+				<NcTextField v-model="directory.directory" label="Url" @input="validateUrl" />
 			</div>
 			<NcButton
 				v-if="success === null"
-				:disabled="!isUrlValid || loading || !directory.url"
+				:disabled="!isUrlValid || loading || !directory.directory"
 				type="primary"
 				@click="addDirectory">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
 				</template>
-				Submit
+				Toevoegen
+			</NcButton>
+			<NcButton @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory', '_blank')">
+				<template #icon>
+					<HelpCircleOutline :size="20" />
+				</template>
+				Meer informatie over de directory
 			</NcButton>
 		</div>
 	</NcModal>
@@ -44,33 +51,37 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
-	name: 'AddListingModal',
+	name: 'AddDirectoryModal',
 	components: {
 		NcModal,
 		NcTextField,
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
-		ContentSaveOutline,
+		// Icons
+		Plus,
+		HelpCircleOutline,
 	},
 	data() {
 		return {
 			directory: {
-				url: '',
+				directory: '',
 			},
 			loading: false,
 			success: null,
 			error: false,
 			validateUrlError: null,
-			urlPattern: /^(https?:\/\/)?(([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}$/i,
+			// eslint-disable-next-line no-useless-escape
+			urlPattern: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
 		}
 	},
 	computed: {
 		isUrlValid() {
-			return this.urlPattern.test(this.directory.url)
+			return this.urlPattern.test(this.directory.directory)
 		},
 	},
 	methods: {
@@ -82,16 +93,7 @@ export default {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					title: this.title,
-					summary: this.summary,
-					description: this.description,
-					search: this.search,
-					metadata: this.metadata,
-					status: this.status,
-					lastSync: this.lastSync,
-					default: this.defaultValue,
-				}),
+				body: JSON.stringify(this.directory),
 			})
 				.then((response) => {
 					this.loading = false
@@ -105,6 +107,10 @@ export default {
 						this.success = null
 						this.closeModal()
 					}, 2500)
+
+					this.directory = {
+						directory: '',
+					}
 				})
 				.catch((err) => {
 					this.error = err
@@ -115,12 +121,15 @@ export default {
 			navigationStore.setModal(false)
 		},
 		validateUrl(event) {
-			this.directory.url = event.target.value
+			this.directory.directory = event.target.value
 			if (!this.isUrlValid) {
 				this.validateUrlError = 'Er is geen valide URL ingevoerd.'
 			} else {
 				this.validateUrlError = null
 			}
+		},
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }
