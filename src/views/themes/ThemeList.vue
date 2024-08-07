@@ -17,7 +17,7 @@ import { navigationStore, themeStore } from '../../store/store.js'
 				<NcActions>
 					<NcActionButton
 						title="Bekijk de documentatie over themas"
-						@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/themas')">
+						@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/themas')">
 						<template #icon>
 							<HelpCircleOutline :size="20" />
 						</template>
@@ -116,17 +116,18 @@ export default {
 		HelpCircleOutline,
 	},
 	beforeRouteLeave(to, from, next) {
-		search = ''
+		this.search = ''
 		next()
 	},
 	props: {
-		search: {
+		searchQuery: {
 			type: String,
 			required: true,
 		},
 	},
 	data() {
 		return {
+			search: '',
 			loading: false,
 		}
 	},
@@ -139,9 +140,9 @@ export default {
 		},
 	},
 	watch: {
-		search: {
-			handler(search) {
-				this.debouncedFetchData(search)
+		searchQuery: {
+			handler(searchQuery) {
+				this.debouncedFetchData(searchQuery)
 			},
 		},
 	},
@@ -159,6 +160,9 @@ export default {
 		debouncedFetchData: debounce(function(search) {
 			this.fetchData(search)
 		}, 500),
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>

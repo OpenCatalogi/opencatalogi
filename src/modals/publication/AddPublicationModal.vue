@@ -89,9 +89,9 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				@click="addPublication()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
 				</template>
-				Opslaan
+				Toevoegen
 			</NcButton>
 		</div>
 	</NcModal>
@@ -109,7 +109,7 @@ import {
 	NcNoteCard,
 	NcDateTimePicker,
 } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'AddPublicationModal',
@@ -124,7 +124,7 @@ export default {
 		NcNoteCard,
 		NcDateTimePicker,
 		// Icons
-		ContentSaveOutline,
+		Plus,
 	},
 	data() {
 		return {

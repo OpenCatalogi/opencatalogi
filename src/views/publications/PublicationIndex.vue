@@ -5,7 +5,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 <template>
 	<NcAppContent>
 		<template #list>
-			<PublicationList :search="searchStore.search" />
+			<PublicationList :search-query="searchStore.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!publicationStore.publicationItem.id || navigationStore.selected != 'publication'"
