@@ -74,11 +74,11 @@ class SearchController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$searchParams = $searchService->createMySQLSearchParams($filters, $fieldsToSearch);
-			$searchConditions = $searchService->createMySQLSearchConditions($filters, $fieldsToSearch);
-			$filters = $searchService->unsetSpecialQueryParams($filters);
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results' => $this->publicationMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+			return new JSONResponse(['results' => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
 		}
 
 		//@TODO: find a better way to get query params. This fixes it for now.

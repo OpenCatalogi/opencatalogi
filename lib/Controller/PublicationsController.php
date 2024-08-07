@@ -107,15 +107,15 @@ class PublicationsController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$searchParams = $searchService->createMySQLSearchParams($filters, $fieldsToSearch);
-			$searchConditions = $searchService->createMySQLSearchConditions($filters, $fieldsToSearch);
-			$filters = $searchService->unsetSpecialQueryParams($filters, $fieldsToSearch);
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
 		}
 
-		$filters = $searchService->createMongoDBSearchFilter($filters, $fieldsToSearch);
-		$filters = $searchService->unsetSpecialQueryParams($filters, $fieldsToSearch);
+		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
+		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
