@@ -6,6 +6,11 @@ volumes:
   config:
 
 services:
+  frontend:
+    image: acatonl/woo-ui-develop
+    ports:
+    - "8081:80"
+
   db:
     image: mariadb:10.6
     restart: always

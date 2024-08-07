@@ -75,11 +75,10 @@ class SearchController extends Controller
             []
         );
     }
-	
+
     /**
      * @PublicPage
 	 * @NoCSRFRequired
-	 * @CORS
      */
     public function index(SearchService $searchService): JSONResponse
     {
