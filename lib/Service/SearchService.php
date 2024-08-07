@@ -102,7 +102,7 @@ class SearchService
 		foreach($directory as $instance) {
 			if(
 				$instance['default'] === false
-				&& isset($parameters['.catalogi']) === true
+				|| isset($parameters['.catalogi']) === true
 				&& in_array($instance['catalogId'], $parameters['.catalogi']) === false
 			) {
 				continue;
