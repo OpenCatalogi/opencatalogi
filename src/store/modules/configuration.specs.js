@@ -6,15 +6,15 @@ import { useConfigurationStore } from './configuration.js';
 
 describe(
     'Metadata Store', () => {
-    beforeEach(
-            () => {
-            setActivePinia(createPinia())
+        beforeEach(
+        () => {
+                setActivePinia(createPinia())
             }
-        )
+    )
 
     it(
         'sets configuration item correctly', () => {
-            const store = useConfigurationStore()
+        const store = useConfigurationStore()
 
             store.setConfigurationItem(testData[0])
 
@@ -38,7 +38,7 @@ describe(
 
     it(
         'sets configuration list correctly', () => {
-            const store = useConfigurationStore()
+        const store = useConfigurationStore()
 
             store.setConfigurationItem(testData)
 
