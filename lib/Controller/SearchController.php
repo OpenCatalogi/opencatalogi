@@ -76,7 +76,7 @@ class SearchController extends Controller
 		) {
 			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
 			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
-			$filters = $searchService->unsetSpecialQueryParams($filters);
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
 			return new JSONResponse(['results' => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
 		}
