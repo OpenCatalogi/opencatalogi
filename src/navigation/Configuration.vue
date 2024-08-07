@@ -6,7 +6,22 @@
 			</template>
 		</NcAppNavigationItem>
 		<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Applicatie instellingen">
-			<NcAppSettingsSection id="sharing" name="Opslag" doc-url="zaakafhandel.app">
+			<NcAppSettingsSection id="federation" name="Federatief stelsel" doc-url="https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory">
+				<template #icon>
+					<LanConnect :size="20" />
+				</template>
+				<NcCheckboxRadioSwitch :checked.sync="configuration.federationActive" type="switch">
+					{{ t('forms', 'Maak automatisch verbinding met federatief stelsel.') }}
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch :checked.sync="configuration.federationListed" type="switch">
+					{{ t('forms', 'Maak deze installatie vindbaar binnen het federatief stelsel.') }}
+				</NcCheckboxRadioSwitch>
+				<NcTextField id="federationLocation"
+					label="Internet locatie (url) van deze installatie"
+					:value.sync="configuration.federationLocation"
+					placeholder="https://" />
+			</NcAppSettingsSection>
+			<NcAppSettingsSection id="storadge" name="Opslag" doc-url="zaakafhandel.app">
 				<template #icon>
 					<Database :size="20" />
 				</template>
@@ -207,6 +222,7 @@ import Database from 'vue-material-design-icons/Database.vue'
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import AccountLockOpenOutline from 'vue-material-design-icons/AccountLockOpenOutline.vue'
 import ContentSave from 'vue-material-design-icons/ContentSave.vue'
+import LanConnect from 'vue-material-design-icons/LanConnect.vue'
 
 export default {
 	name: 'Configuration',
@@ -223,6 +239,7 @@ export default {
 		Database,
 		ContentSave,
 		AccountLockOpenOutline,
+		LanConnect,
 	},
 	data() {
 		return {
@@ -240,6 +257,9 @@ export default {
 			organisation_oin: '',
 			organisation_pki: '',
 			configuration: {
+				federationActive: true,
+				federationListed: false,
+				federationLocation: '',
 				external: false,
 				drcLocation: '',
 				drcKey: '',
