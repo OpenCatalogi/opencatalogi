@@ -26,11 +26,11 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<NcNoteCard v-if="validateUrlError" type="error">
 					<p>Er is geen valide URL ingevoerd.</p>
 				</NcNoteCard>
-				<NcTextField v-model="directory.url" label="Url" @input="validateUrl" />
+				<NcTextField v-model="directory.directory" label="Url" @input="validateUrl" />
 			</div>
 			<NcButton
 				v-if="success === null"
-				:disabled="!isUrlValid || loading || !directory.url"
+				:disabled="!isUrlValid || loading || !directory.directory"
 				type="primary"
 				@click="addDirectory">
 				<template #icon>
@@ -69,18 +69,19 @@ export default {
 	data() {
 		return {
 			directory: {
-				url: '',
+				directory: '',
 			},
 			loading: false,
 			success: null,
 			error: false,
 			validateUrlError: null,
-			urlPattern: /^(https?:\/\/)?(([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}$/i,
+			// eslint-disable-next-line no-useless-escape
+			urlPattern: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
 		}
 	},
 	computed: {
 		isUrlValid() {
-			return this.urlPattern.test(this.directory.url)
+			return this.urlPattern.test(this.directory.directory)
 		},
 	},
 	methods: {
@@ -92,16 +93,7 @@ export default {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					title: this.title,
-					summary: this.summary,
-					description: this.description,
-					search: this.search,
-					metadata: this.metadata,
-					status: this.status,
-					lastSync: this.lastSync,
-					default: this.defaultValue,
-				}),
+				body: JSON.stringify(this.directory),
 			})
 				.then((response) => {
 					this.loading = false
@@ -115,6 +107,10 @@ export default {
 						this.success = null
 						this.closeModal()
 					}, 2500)
+
+					this.directory = {
+						directory: '',
+					}
 				})
 				.catch((err) => {
 					this.error = err
@@ -125,7 +121,7 @@ export default {
 			navigationStore.setModal(false)
 		},
 		validateUrl(event) {
-			this.directory.url = event.target.value
+			this.directory.directory = event.target.value
 			if (!this.isUrlValid) {
 				this.validateUrlError = 'Er is geen valide URL ingevoerd.'
 			} else {
