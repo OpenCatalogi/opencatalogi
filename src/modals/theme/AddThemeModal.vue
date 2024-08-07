@@ -43,9 +43,9 @@ import { navigationStore, themeStore } from '../../store/store.js'
 				@click="addTheme()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
 				</template>
-				Opslaan
+				Toevoegen
 			</NcButton>
 		</div>
 	</NcModal>
@@ -60,7 +60,7 @@ import {
 	NcTextArea,
 	NcTextField,
 } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'AddThemeModal',
@@ -72,7 +72,7 @@ export default {
 		NcLoadingIcon,
 		NcNoteCard,
 		// Icons
-		ContentSaveOutline,
+		Plus,
 	},
 	data() {
 		return {

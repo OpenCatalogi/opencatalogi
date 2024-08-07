@@ -6,7 +6,22 @@
 			</template>
 		</NcAppNavigationItem>
 		<NcAppSettingsDialog :open.sync="settingsOpen" :show-navigation="true" name="Applicatie instellingen">
-			<NcAppSettingsSection id="sharing" name="Opslag" doc-url="zaakafhandel.app">
+			<NcAppSettingsSection id="federation" name="Federatief stelsel" doc-url="https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory">
+				<template #icon>
+					<LanConnect :size="20" />
+				</template>
+				<NcCheckboxRadioSwitch :checked.sync="configuration.federationActive" type="switch">
+					{{ t('forms', 'Maak automatisch verbinding met federatief stelsel.') }}
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch :checked.sync="configuration.federationListed" type="switch">
+					{{ t('forms', 'Maak deze installatie vindbaar binnen het federatief stelsel.') }}
+				</NcCheckboxRadioSwitch>
+				<NcTextField id="federationLocation"
+					label="Internet locatie (url) van deze installatie"
+					:value.sync="configuration.federationLocation"
+					placeholder="https://" />
+			</NcAppSettingsSection>
+			<NcAppSettingsSection id="storadge" name="Opslag" doc-url="zaakafhandel.app">
 				<template #icon>
 					<Database :size="20" />
 				</template>
@@ -27,14 +42,14 @@
 								<td class="row-name">
 									DRC
 								</td>
-								<td>Location</td>
+								<td>Locatie</td>
 								<td>
 									<NcTextField id="drcLocation"
 										:value.sync="configuration.drcLocation"
 										:label-outside="true"
 										placeholder="https://" />
 								</td>
-								<td>Key</td>
+								<td>Sleutel</td>
 								<td>
 									<NcTextField id="drcKey"
 										:value.sync="configuration.drcKey"
@@ -46,14 +61,14 @@
 								<td class="row-name">
 									ORC
 								</td>
-								<td>Location</td>
+								<td>Locatie</td>
 								<td>
 									<NcTextField id="orcLocation"
 										:value.sync="configuration.orcLocation"
 										:label-outside="true"
 										placeholder="https://" />
 								</td>
-								<td>Key</td>
+								<td>Sleutel</td>
 								<td>
 									<NcTextField id="orcKey"
 										:value.sync="configuration.orcKey"
@@ -65,14 +80,14 @@
 								<td class="row-name">
 									Elastic
 								</td>
-								<td>Location</td>
+								<td>Locatie</td>
 								<td>
 									<NcTextField id="elasticLocation"
 										:value.sync="configuration.elasticLocation"
 										:label-outside="true"
 										placeholder="https://" />
 								</td>
-								<td>Key</td>
+								<td>Sleutel</td>
 								<td>
 									<NcTextField id="elasticKey"
 										:value.sync="configuration.elasticKey"
@@ -91,21 +106,21 @@
 								<td class="row-name">
 									Mongo DB
 								</td>
-								<td>Location</td>
+								<td>Locatie</td>
 								<td>
 									<NcTextField id="mongodbLocation"
 										:value.sync="configuration.mongodbLocation"
 										:label-outside="true"
 										placeholder="https://" />
 								</td>
-								<td>Key</td>
+								<td>Sleutel</td>
 								<td>
 									<NcTextField id="mongodbKey"
 										:value.sync="configuration.mongodbKey"
 										:label-outside="true"
 										placeholder="***" />
 								</td>
-								<td>Cluster name</td>
+								<td>Cluster naam</td>
 								<td>
 									<NcTextField id="mongodbCluster"
 										:value.sync="configuration.mongodbCluster"
@@ -117,14 +132,14 @@
 								<td class="row-name">
 									Nextcloud Admin User
 								</td>
-								<td>Username</td>
+								<td>Gebruikersnaam</td>
 								<td>
 									<NcTextField id="mongodbLocation"
 										:value.sync="configuration.adminUsername"
 										:label-outside="true"
 										placeholder="admin" />
 								</td>
-								<td>Password</td>
+								<td>Wachwoord</td>
 								<td>
 									<NcTextField id="mongodbKey"
 										:value.sync="configuration.adminPassword"
@@ -197,6 +212,7 @@ import {
 	NcAppSettingsDialog,
 	NcAppSettingsSection,
 	NcAppNavigationItem,
+	NcCheckboxRadioSwitch,
 	NcTextField,
 	NcTextArea,
 	NcButton,
@@ -206,6 +222,7 @@ import Database from 'vue-material-design-icons/Database.vue'
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import AccountLockOpenOutline from 'vue-material-design-icons/AccountLockOpenOutline.vue'
 import ContentSave from 'vue-material-design-icons/ContentSave.vue'
+import LanConnect from 'vue-material-design-icons/LanConnect.vue'
 
 export default {
 	name: 'Configuration',
@@ -213,6 +230,7 @@ export default {
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcAppNavigationItem,
+		NcCheckboxRadioSwitch,
 		NcTextField,
 		NcTextArea,
 		NcButton,
@@ -221,6 +239,7 @@ export default {
 		Database,
 		ContentSave,
 		AccountLockOpenOutline,
+		LanConnect,
 	},
 	data() {
 		return {
@@ -238,6 +257,9 @@ export default {
 			organisation_oin: '',
 			organisation_pki: '',
 			configuration: {
+				federationActive: true,
+				federationListed: false,
+				federationLocation: '',
 				external: false,
 				drcLocation: '',
 				drcKey: '',
