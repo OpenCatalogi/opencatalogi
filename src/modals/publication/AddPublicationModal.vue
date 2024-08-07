@@ -32,7 +32,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					</div>
 					<!-- STAGE 2 -->
 					<div v-if="catalogi?.value?.id && !metaData?.value?.id">
-						<NcButton @click="catalogi = {}">
+						<NcButton @click="catalogi.value = null">
 							Terug naar Catalogi
 						</NcButton>
 						<NcSelect v-bind="metaData"
@@ -44,8 +44,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					</div>
 					<!-- STAGE 3 -->
 					<div v-if="catalogi.value?.id && metaData.value?.id">
-						<NcButton @click="catalogi = {}">
-							Terug naar Catalogi
+						<NcButton @click="metaData.value = null">
+							Terug naar Metadata
 						</NcButton>
 						<NcTextField :disabled="loading"
 							label="Titel *"
@@ -68,16 +68,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							label="Portaal"
 							:value.sync="publication.portal" />
 						<span>
-							<p>Published</p>
+							<p>Publicatie datum</p>
 							<NcDateTimePicker v-model="publication.published"
 								:disabled="loading"
 								label="Publicatie datum" />
-						</span>
-						<span>
-							<p>Modified</p>
-							<NcDateTimePicker v-model="publication.modified"
-								:disabled="loading"
-								label="Modified" />
 						</span>
 						<span class="APM-horizontal">
 							<NcCheckboxRadioSwitch :disabled="loading"
@@ -147,7 +141,6 @@ export default {
 				description: '',
 				reference: '',
 				license: '',
-				modified: new Date(),
 				featured: false,
 				portal: '',
 				category: '',
@@ -282,7 +275,6 @@ export default {
 							description: '',
 							reference: '',
 							license: '',
-							modified: new Date(),
 							featured: false,
 							portal: '',
 							category: '',
