@@ -4,6 +4,7 @@ namespace OCA\OpenCatalogi\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
+use OCP\IURLGenerator;
 use Symfony\Component\Uid\Uuid;
 
 class SearchService
@@ -18,6 +19,7 @@ class SearchService
 	public function __construct(
 		private readonly ElasticSearchService $elasticService,
 		private readonly DirectoryService $directoryService,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 		$this->client = new Client();
 	}
@@ -98,12 +100,14 @@ class SearchService
 
 		$searchEndpoints = [];
 
+
 		$promises = [];
 		foreach($directory as $instance) {
 			if(
 				$instance['default'] === false
 				|| isset($parameters['.catalogi']) === true
 				&& in_array($instance['catalogId'], $parameters['.catalogi']) === false
+				|| $instance['search'] = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute(routeName:"opencatalogi.directory.index"))
 			) {
 				continue;
 			}
