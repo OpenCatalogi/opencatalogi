@@ -23,13 +23,13 @@ jobs:
         run: phpcbf .
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}
 
-      - name: Commit code formatting changes
-        if: success() && github.ref != 'refs/heads/main'
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add src
-          git diff --cached --quiet || (git commit -m "Update src from PHP Codesniffer" && git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash && git push)
+      #- name: Commit code formatting changes
+      #  if: success() && github.ref != 'refs/heads/main'
+      #  run: |
+      #    git config user.name "GitHub Actions"
+      #    git config user.email "actions@github.com"
+      #    git add src
+      #    git diff --cached --quiet || (git commit -m "Update src from PHP Codesniffer" && git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase --autostash && git push)
 
       - name: Run phpcs
         run: phpcs -q --report=checkstyle src | cs2pr

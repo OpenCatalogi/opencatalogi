@@ -41,7 +41,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				@click="addCatalog">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
 				</template>
 				Toevoegen
 			</NcButton>
@@ -51,7 +51,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'AddCatalogModal',
@@ -62,7 +62,7 @@ export default {
 		NcLoadingIcon,
 		NcNoteCard,
 		// Icons
-		ContentSaveOutline,
+		Plus,
 	},
 	data() {
 		return {

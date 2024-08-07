@@ -25,7 +25,7 @@ import { navigationStore, themeStore } from '../../store/store.js'
 				</template>
 				<NcActionButton
 					title="Bekijk de documentatie over themas"
-					@click="linkToOtherWindow('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/themas')">
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/themas')">
 					<template #icon>
 						<HelpCircleOutline :size="20" />
 					</template>
@@ -196,8 +196,8 @@ export default {
 					console.error(err)
 				})
 		},
-		linkToOtherWindow(url) {
-			window.open(url, '_blank')
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }

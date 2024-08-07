@@ -125,11 +125,11 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 				</div>
 				<div>
 					<b>Gepubliceerd:</b>
-					<span>{{ publicationStore.publicationItem.published?.toLocaleDateString('en-nl') }}</span>
+					<span>{{ publicationStore.publicationItem.published }}</span>
 				</div>
 				<div>
 					<b>Gewijzigd:</b>
-					<span>{{ publicationStore.publicationItem.modified?.toLocaleDateString('en-nl') }}</span>
+					<span>{{ publicationStore.publicationItem.modified }}</span>
 				</div>
 				<div>
 					<b>Catalogi:</b>
