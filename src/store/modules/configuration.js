@@ -27,16 +27,16 @@ export const useConfigurationStore = defineStore(
             )
                 .then(
                     (response) => {
-                        response.json().then(
-                        (data) => {
-                                this.setConfigurationItem(data)
+                    response.json().then(
+                            (data) => {
+                            this.setConfigurationItem(data)
                             }
-                    )
+                        )
                     }
                 )
                 .catch(
                     (err) => {
-                        console.error(err)
+                    console.error(err)
                     }
                 )
         },
