@@ -21,19 +21,32 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			</div>
 			<div class="formContainer">
 				<div v-if="success === null" class="form-group">
-					<NcSelect v-bind="catalogi"
-						v-model="catalogi.value"
-						input-label="Catalogi *"
-						:loading="catalogiLoading"
-						:disabled="publicationLoading"
-						required />
-					<NcSelect v-bind="metaData"
-						v-model="metaData.value"
-						input-label="MetaData *"
-						:loading="metaDataLoading"
-						:disabled="publicationLoading"
-						required />
+					<!-- STAGE 1 -->
+					<div v-if="!catalogi?.value?.id">
+						<NcSelect v-bind="catalogi"
+							v-model="catalogi.value"
+							input-label="Catalogi *"
+							:loading="catalogiLoading"
+							:disabled="publicationLoading"
+							required />
+					</div>
+					<!-- STAGE 2 -->
+					<div v-if="catalogi?.value?.id && !metaData?.value?.id">
+						<NcButton @click="catalogi = {}">
+							Terug naar Catalogi
+						</NcButton>
+						<NcSelect v-bind="metaData"
+							v-model="metaData.value"
+							input-label="MetaData *"
+							:loading="metaDataLoading"
+							:disabled="publicationLoading"
+							required />
+					</div>
+					<!-- STAGE 3 -->
 					<div v-if="catalogi.value?.id && metaData.value?.id">
+						<NcButton @click="catalogi = {}">
+							Terug naar Catalogi
+						</NcButton>
 						<NcTextField :disabled="loading"
 							label="Titel *"
 							required
