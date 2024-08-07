@@ -23,7 +23,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField v-model="directory.directory" label="Url" />
+				<NcTextField :value.sync="directory.directory" label="Url" />
 			</div>
 			<NcButton
 				v-if="success === null"
