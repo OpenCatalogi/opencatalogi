@@ -53,7 +53,9 @@ class ConfigurationController extends Controller
 			'elasticIndex' => '',
 			'organisationName' => 'my-organisation',
 			'organisationOin' => '',
-			'organisationPki' => ''
+			'organisationPki' => '',
+			'adminUsername' => '',
+			'adminPassword' => ''
 		];
 
 		try {

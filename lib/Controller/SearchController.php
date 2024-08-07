@@ -3,6 +3,7 @@
 namespace OCA\OpenCatalogi\Controller;
 
 use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -25,7 +26,11 @@ class SearchController extends Controller
         ]
     ];
 
-    public function __construct($appName, IRequest $request, private readonly IAppConfig $config)
+    public function __construct(
+        $appName,
+        IRequest $request,
+		private readonly PublicationMapper $publicationMapper,
+        private readonly IAppConfig $config)
     {
         parent::__construct($appName, $request);
     }
@@ -64,6 +69,18 @@ class SearchController extends Controller
 		$filters = $this->request->getParams();
 		unset($filters['_route']);
 
+        $fieldsToSearch = ['title', 'description', 'summary'];
+
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+
+			return new JSONResponse(['results' => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
+		}
+
 		//@TODO: find a better way to get query params. This fixes it for now.
 		$keys   = array_keys(array: $filters);
 		$values = array_values(array: $filters);
@@ -72,6 +89,20 @@ class SearchController extends Controller
 
 		$filters = array_combine(keys: $keys, values: $values);
 
+        $requiredElasticConfig = ['location', 'key', 'index'];
+        $missingFields = null;
+        foreach ($requiredElasticConfig as $key) {
+            if (isset($elasticConfig[$key]) === false || empty($elasticConfig[$key])) {
+                $missingFields .= "$key, ";
+            }
+        }
+
+        if ($missingFields !== null) {
+            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+            $response = new JSONResponse(data: ['code' => 403, 'message' => $errorMessage], statusCode: 403);
+
+            return $response;
+        }
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 
@@ -93,6 +124,19 @@ class SearchController extends Controller
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$filters = ['_id' => (string) $id];
+
+        $requiredElasticConfig = ['location', 'key', 'index'];
+        $missingFields = null;
+        foreach ($requiredElasticConfig as $key) {
+            if (isset($elasticConfig[$key]) === false) {
+                $missingFields .= "$key ";
+            }
+        }
+
+        if ($missingFields !== null) {
+            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+            return new JSONResponse(['message' => $errorMessage], 403);
+        }
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 

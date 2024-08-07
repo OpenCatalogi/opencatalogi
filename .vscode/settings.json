@@ -1,11 +1,21 @@
 {
-  "files.autoSave": "afterDelay",
-"editor.defaultFormatter": "dbaeumer.vscode-eslint",
-"editor.formatOnSave": true,
-"cSpell.words": [
-    "Depubliceren",
-    "nextcloud",
-    "opencatalogi",
-    "pinia"
-]
+    "files.autoSave": "afterDelay",
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true,
+    "eslint.format.enable": true,
+    "cSpell.words": [
+        "depubliceren",
+        "Depubliceren",
+        "gedepubliceerd",
+        "Matadata",
+        "nextcloud",
+        "opencatalogi",
+        "organisation",
+        "Organisation",
+        "pinia",
+        "Toegangs"
+    ],
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
 }

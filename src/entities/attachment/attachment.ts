@@ -1,34 +1,34 @@
 import { TAttachment } from './attachment.types'
-import { z } from 'zod'
+import { SafeParseReturnType, z } from 'zod'
 
 export class Attachment implements TAttachment {
 
 	public id: string
-	public reference?: string
+	public reference: string
 	public title: string
 	public summary: string
-	public description?: string
-	public labels?: object[]
-	public accessURL?: string
-	public downloadURL?: string
-	public type?: string
-	public extension?: string
-	public size?: number
-	public anonymization?: {
-        anonymized?: string
-        results?: string
+	public description: string
+	public labels: string[]
+	public accessURL: string
+	public downloadURL: string
+	public type: string
+	public extension: string
+	public size: string
+	public anonymization: {
+        anonymized: boolean
+        results: string
     }
 
-	public language?: {
-        code?: string
-        level?: string
+	public language: {
+        code: string
+        level: string
     }
 
-	public versionOf?: string
-	public hash?: string
-	public published?: string
-	public modified?: string
-	public license?: string
+	public versionOf: string
+	public hash: string
+	public published: string | Date
+	public modified: string | Date
+	public license: string
 
 	constructor(data: TAttachment) {
 		this.hydrate(data)
@@ -46,9 +46,17 @@ export class Attachment implements TAttachment {
 		this.downloadURL = data.downloadURL || ''
 		this.type = data.type || ''
 		this.extension = data.extension || ''
-		this.size = data.size || 0
-		this.anonymization = (!Array.isArray(data.anonymization) && data.anonymization) || {}
-		this.language = (!Array.isArray(data.language) && data.language) || {}
+		this.size = data.size || ''
+		this.anonymization = (!Array.isArray(data.anonymization) && data.anonymization) || {
+			anonymized: false,
+			results: '',
+		}
+
+		this.language = (!Array.isArray(data.language) && data.language) || {
+			code: '',
+			level: '',
+		}
+
 		this.versionOf = data.versionOf || ''
 		this.hash = data.hash || ''
 		this.published = data.published || ''
@@ -57,43 +65,42 @@ export class Attachment implements TAttachment {
 	}
 
 	/* istanbul ignore next */
-	public validate(): boolean {
-		// https://conduction.stoplight.io/docs/open-catalogi/9zm7p6fnazuod-attachment
+	public validate(): SafeParseReturnType<TAttachment, unknown> {
+		// https://conduction.stoplight.io/docs/open-catalogi/lsigtx7cafbr7-create-attachment
 		const schema = z.object({
-			title: z.string().min(25).max(255), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
-			summary: z.string().min(50).max(2500),
-			description: z.string().max(2500).optional(),
-			reference: z.string().max(255).optional(),
-			labels: z.string().array().optional(),
-			accessURL: z.string().url().optional(),
-			downloadURL: z.string().url().optional(),
-			type: z.string().optional(),
-			extension: z.string().optional(),
-			size: z.number().optional(),
+			reference: z.string().max(255),
+			title: z.string().max(255), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
+			summary: z.string().max(255),
+			description: z.string().max(2555),
+			labels: z.string().array(),
+			accessURL: z.string().url().or(z.literal('')),
+			downloadURL: z.string().url().or(z.literal('')),
+			type: z.string(),
 			anonymization: z.object({
-				anonymized: z.boolean().optional(),
-				results: z.string().max(2500).optional(),
-			}).optional(),
+				anonymized: z.boolean(),
+				results: z.string().max(2500),
+			}),
 			language: z.object({
 				// this regex checks if the code has either 2 or 3 characters per group, and the -aaa after the first is optional
 				code: z.string()
 					.max(7)
 					.regex(/([a-z]{2,3})(-[a-z]{2,3})?/g, 'language code is not a valid ISO 639-1 code (e.g. en-us)')
-					.optional(),
-				title: z.string().min(1),
-			}).optional(),
+					.or(z.literal('')),
+				level: z.string()
+					.max(2)
+					.regex(/(A|B|C)(1|2)/g, 'language level is not a valid CEFRL level (e.g. A1)')
+					.or(z.literal('')),
+			}),
+			versionOf: z.string(),
+			published: z.string().datetime().or(z.literal('')),
+			license: z.string(),
 		})
 
 		const result = schema.safeParse({
-			id: this.id,
-			title: this.title,
-			description: this.description,
-			// version: this.version,
-			// required: this.required,
-			// properties: this.properties,
+			...this,
 		})
 
-		return result.success
+		return result
 	}
 
 }

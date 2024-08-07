@@ -42,7 +42,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].pattern" />
 
 				<NcTextField :disabled="loading"
-					label="Defaultwaarde"
+					label="Default waarde"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].default" />
 
 				<NcTextField :disabled="loading"

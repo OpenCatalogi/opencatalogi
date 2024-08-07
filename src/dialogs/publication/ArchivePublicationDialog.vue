@@ -8,7 +8,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		name="Publicatie archiveren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> archiveren? Dit betekend dat de publicatie wordt de gepubliseerd en niet langer vindbaar is. Bij de eerste volgende gelegendheid wordt de publicatie <b>automatisch</b> over gebracht naar het digitaal archief.
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> archiveren? Dit betekend dat de publicatie wordt de gepubliceerd en niet langer vindbaar is. Bij de eerste volgende gelegenheid wordt de publicatie <b>automatisch</b> over gebracht naar het digitaal archief.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Publicatie succesvol gearchiveerd</p>

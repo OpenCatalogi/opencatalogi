@@ -2,15 +2,51 @@
 import { defineStore } from 'pinia'
 import { Catalogi } from '../../entities/index.js'
 
-export const useCatalogiStore = defineStore('catalogi', {
-	state: () => ({
-		catalogiItem: false,
-		catalogiList: [],
-	}),
-	actions: {
-		setCatalogiItem(catalogiItem) {
-			this.catalogiItem = catalogiItem && new Catalogi(catalogiItem)
-			console.log('Active catalog item set to ' + catalogiItem && catalogiItem?.id)
+export const useCatalogiStore = defineStore(
+	'catalogi', {
+		state: () => ({
+			catalogiItem: false,
+			catalogiList: [],
+		}),
+		actions: {
+			setCatalogiItem(catalogiItem) {
+				this.catalogiItem = catalogiItem && new Catalogi(catalogiItem)
+				console.log('Active catalog item set to ' + catalogiItem && catalogiItem?.id)
+			},
+			setCatalogiList(catalogiList) {
+				this.catalogiList = catalogiList.map(
+					(catalogiItem) => new Catalogi(catalogiItem),
+				)
+				console.log('Catalogi list set to ' + catalogiList.length + ' item')
+			},
+			async refreshCatalogiList(search = null) {
+				// @todo this might belong in a service?
+				let endpoint = '/index.php/apps/opencatalogi/api/catalogi'
+				if (search !== null && search !== '') {
+					endpoint = endpoint + '?_search=' + search
+				}
+				return fetch(
+					endpoint, {
+						method: 'GET',
+					},
+				)
+					.then(
+						(response) => {
+							response.json().then(
+								(data) => {
+									this.catalogiList = data.results.map(
+										(catalogiItem) => new Catalogi(catalogiItem),
+									)
+								},
+							)
+						},
+					)
+					.catch(
+						(err) => {
+							console.error(err)
+						},
+					)
+			},
 		},
 		setCatalogiList(catalogiList) {
 			this.catalogiList = catalogiList.map(
@@ -18,12 +54,13 @@ export const useCatalogiStore = defineStore('catalogi', {
 			)
 			console.log('Catalogi list set to ' + catalogiList.length + ' item')
 		},
+		/* istanbul ignore next */ // ignore this for Jest until moved into a service
 		async refreshCatalogiList(search = null) {
 			// @todo this might belong in a service?
-            let endpoint = '/index.php/apps/opencatalogi/api/catalogi';
-            if (search !== null && search !== '') {
-                endpoint = endpoint + '?_search=' + search
-            }
+			let endpoint = '/index.php/apps/opencatalogi/api/catalogi'
+			if (search !== null && search !== '') {
+				endpoint = endpoint + '?_search=' + search
+			}
 			return fetch(endpoint, {
 				method: 'GET',
 			})
@@ -39,4 +76,4 @@ export const useCatalogiStore = defineStore('catalogi', {
 				})
 		},
 	},
-})
+)

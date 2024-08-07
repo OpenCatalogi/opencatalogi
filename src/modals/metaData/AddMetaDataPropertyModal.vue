@@ -17,7 +17,6 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 			</NcNoteCard>
 
 			<div v-if="!success" class="form-group">
-
 				<NcTextField :disabled="loading"
 					label="Eigenschap naam"
 					required
@@ -39,7 +38,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					:value.sync="properties.pattern" />
 
 				<NcTextField :disabled="loading"
-					label="Defaultwaarde"
+					label="Default waarde"
 					:value.sync="properties.default" />
 
 				<NcTextField :disabled="loading"

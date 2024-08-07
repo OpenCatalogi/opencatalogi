@@ -8,7 +8,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		name="Publicatie verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Publicatie succesvol verwijderd</p>

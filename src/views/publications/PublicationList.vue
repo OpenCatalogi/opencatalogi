@@ -15,6 +15,40 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
+					<NcActionCaption name="Zoeken" />
+					<NcActionCheckbox>
+						Concept
+					</NcActionCheckbox>
+					<NcActionCheckbox>
+						Gepubliceerd
+					</NcActionCheckbox>
+					<NcActionSeparator />
+					<NcActionCaption name="Sorteren" />
+					<NcActionInput
+						type="multiselect"
+						input-label="Eigenschap"
+						:options="['Apple', 'Banana', 'Cherry']">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Kies een eigenschap
+					</NcActionInput>
+					<NcActionRadio name="Richting" value="Asc">
+						Oplopend
+					</NcActionRadio>
+					<NcActionRadio name="Richting" value="Desc">
+						Aflopend
+					</NcActionRadio>
+					<NcActionSeparator />
+					<NcActionCaption name="Acties" />
+					<NcActionButton
+						title="Bekijk de documentatie over publicaties"
+						@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
+						<template #icon>
+							<HelpCircleOutline :size="20" />
+						</template>
+						Help
+					</NcActionButton>
 					<NcActionButton :disabled="loading" @click="fetchData">
 						<template #icon>
 							<Refresh :size="20" />
@@ -59,19 +93,19 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
-							Kopieren
+							Kopiëren
 						</NcActionButton>
 						<NcActionButton v-if="publication.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 							<template #icon>
 								<Publish :size="20" />
 							</template>
-							Publiseren
+							Publiceren
 						</NcActionButton>
 						<NcActionButton v-if="publication.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 							<template #icon>
 								<PublishOff :size="20" />
 							</template>
-							Depubliseren
+							Depubliceren
 						</NcActionButton>
 						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('archivePublication')">
 							<template #icon>
@@ -110,7 +144,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
+import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActionRadio, NcActionCheckbox, NcActionInput, NcActionCaption, NcActionSeparator, NcActions } from '@nextcloud/vue'
+import { debounce } from 'lodash'
+
+// Icons
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -125,7 +162,7 @@ import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
-import { debounce } from 'lodash';
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'PublicationList',
@@ -137,6 +174,11 @@ export default {
 		ListBoxOutline,
 		Magnify,
 		NcLoadingIcon,
+		NcActionRadio,
+		NcActionCheckbox,
+		NcActionInput,
+		NcActionCaption,
+		NcActionSeparator,
 		NcActions,
 		// Icons
 		Refresh,
@@ -149,17 +191,22 @@ export default {
 		Pencil,
 		Publish,
 		ArchivePlusOutline,
+		HelpCircleOutline,
+	},
+	beforeRouteLeave(to, from, next) {
+		this.search = ''
+		next()
 	},
 	props: {
-		search: {
+		searchQuery: {
 			type: String,
 			required: true,
 		},
 	},
 	data() {
 		return {
+			search: '',
 			loading: false,
-            search: '',
 		}
 	},
 	computed: {
@@ -171,9 +218,9 @@ export default {
 		},
 	},
 	watch: {
-		search: {
-			handler(search) {
-                this.debouncedFetchData(search);
+		searchQuery: {
+			handler(searchQuery) {
+				this.debouncedFetchData(searchQuery)
 			},
 		},
 	},
@@ -188,14 +235,13 @@ export default {
 					this.loading = false
 				})
 		},
-        debouncedFetchData: debounce(function(search) {
-            this.fetchData(search);
-        }, 500), 
+		debouncedFetchData: debounce(function(search) {
+			this.fetchData(search)
+		}, 500),
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
-    beforeRouteLeave(to, from, next) {
-        search = '';
-        next();
-    },
 }
 </script>
 <style>

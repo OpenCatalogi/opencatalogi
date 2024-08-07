@@ -32,7 +32,7 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
-				Submit
+				Bewerken
 			</NcButton>
 		</div>
 	</NcModal>

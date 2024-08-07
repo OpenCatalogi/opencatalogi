@@ -21,10 +21,12 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			</div>
 			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Titel"
+					label="Titel *"
+					required
 					:value.sync="publicationItem.title" />
 				<NcTextField :disabled="loading"
-					label="Samenvatting"
+					label="Samenvatting *"
+					required
 					:value.sync="publicationItem.summary" />
 				<NcTextArea :disabled="loading"
 					label="Beschrijving"
@@ -50,16 +52,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						:disabled="loading"
 						label="Modified" />
 				</span>
-				<NcTextField :disabled="loading"
-					label="Organization"
-					:value.sync="publicationItem.organization" />
-				<NcTextField :disabled="loading"
-					label="Schema"
-					:value.sync="publicationItem.schema" />
-				<NcTextField :disabled="loading"
-					label="Thema's (splits op ,)"
-					:value.sync="publicationItem.themes" />
-				<p>Featured</p>
 				<span class="EPM-horizontal">
 					<NcCheckboxRadioSwitch :disabled="loading"
 						label="Featured"
@@ -76,7 +68,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:value.sync="publicationItem.license" />
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="!publicationItem.title"
+				:disabled="!publicationItem.title || !publicationItem.summary"
 				type="primary"
 				@click="updatePublication()">
 				<template #icon>
@@ -92,13 +84,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 <script>
 import {
 	NcButton,
-	NcModal,
-	NcTextField,
-	NcTextArea,
-	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
 	NcDateTimePicker,
+	NcLoadingIcon,
+	NcModal,
 	NcNoteCard,
+	NcTextArea,
+	NcTextField,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
@@ -128,9 +120,6 @@ export default {
 				category: '',
 				portal: '',
 				featured: false,
-				organization: '',
-				schema: '',
-				themes: [''],
 				published: '',
 				modified: '',
 				license: '',
@@ -262,9 +251,6 @@ export default {
 					body: JSON.stringify({
 						...this.publicationItem,
 						id: this.publicationItem.id.toString(),
-						themes: Array.isArray(this.publicationItem.themes)
-							? this.publicationItem.themes
-							: this.publicationItem.themes.split(/, */g),
 					}),
 				},
 			)

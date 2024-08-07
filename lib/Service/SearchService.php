@@ -16,8 +16,8 @@ class SearchService
 	];
 
 	public function __construct(
-		private readonly ObjectService $objectService,
-		private readonly ElasticSearchService $elasticService
+		private readonly ElasticSearchService $elasticService,
+		private readonly DirectoryService $directoryService,
 	) {
 		$this->client = new Client();
 	}
@@ -78,11 +78,18 @@ class SearchService
 	public function search(array $parameters, array $elasticConfig, array $dbConfig, array $catalogi = []): array
 	{
 
-		$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
+		$localResults['results'] = [];
+		$localResults['facets'] = [];
 
-		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
+		if($elasticConfig['location'] !== '') {
+			$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
+		}
 
-		if(count($directory['documents']) === 0) {
+		$directory = $this->directoryService->listDirectory(limit: 1000);
+
+//		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
+
+		if(count($directory) === 0) {
 			return $localResults;
 		}
 
@@ -92,7 +99,7 @@ class SearchService
 		$searchEndpoints = [];
 
 		$promises = [];
-		foreach($directory['documents'] as $instance) {
+		foreach($directory as $instance) {
 			if(
 				$instance['default'] === false
 				&& isset($parameters['.catalogi']) === true
@@ -109,7 +116,7 @@ class SearchService
 			$parameters['_catalogi'] = $catalogi;
 
 
-			$promises[] = $client->getAsync($searchEndpoint, ['query' => $parameters]);
+			$promises[] = $this->client->getAsync($searchEndpoint, ['query' => $parameters]);
 		}
 
 		$responses = Utils::settle($promises)->wait();
@@ -173,6 +180,91 @@ class SearchService
 		}
 
 	}//end recursiveRequestQueryKey()
+
+	/**
+	 * This function creates a mongodb filter array.
+	 *
+	 * Also unsets _search in filters !
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 * @param array $fieldsToSearch Database field names to filter/search on.
+	 *
+	 * @return array $filters
+	 */
+	public function createMongoDBSearchFilter(array $filters, array $fieldsToSearch): array
+	{
+        if (isset($filters['_search']) === true) {
+			$searchRegex = ['$regex' => $filters['_search'], '$options' => 'i'];
+			$filters['$or'] = [];
+
+			foreach ($fieldsToSearch as $field) {
+				$filters['$or'][] = [$field => $searchRegex];
+			}
+
+			unset($filters['_search']);
+		}
+
+		return $filters;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates mysql search conditions based on given filters from request.
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 * @param array $fieldsToSearch Fields to search on in sql.
+	 *
+	 * @return array $searchConditions
+	 */
+	public function createMySQLSearchConditions(array $filters, array $fieldsToSearch): array
+	{
+		$searchConditions = [];
+		if (isset($filters['_search']) === true) {
+			foreach ($fieldsToSearch as $field) {
+				$searchConditions[] = "LOWER($field) LIKE :search";
+			}
+		}
+
+		return $searchConditions;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function unsets all keys starting with _ from filters.
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $filters
+	 */
+	public function unsetSpecialQueryParams(array $filters): array
+	{
+        foreach ($filters as $key => $value) {
+            if (str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            }
+        }
+
+		return $filters;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates mysql search parameters based on given filters from request.
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 *
+	 * @return array $searchParams
+	 */
+	public function createMySQLSearchParams(array $filters): array
+	{
+		$searchParams = [];
+		if (isset($filters['_search']) === true) {
+			$searchParams['search'] = '%' . strtolower($filters['_search']) . '%';
+		}
+
+		return $searchParams;
+
+	}//end createMongoDBSearchFilter()
 
 	/**
 	 * Parses the request query string and returns it as an array of queries.

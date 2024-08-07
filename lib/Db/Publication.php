@@ -18,7 +18,7 @@ class Publication extends Entity implements JsonSerializable
 	protected ?string $portal      		 = null;
 	protected ?string $catalogi    		 = null;
 	protected ?string $metaData    		 = null;
-	protected ?DateTime $published = null;
+	protected ?DateTime $published       = null;
 	protected ?DateTime $modified        = null;
 	protected ?string $featured          = null;
 	protected ?array $organization       = [];
@@ -72,10 +72,13 @@ class Publication extends Entity implements JsonSerializable
 		$jsonFields = $this->getJsonFields();
 
         $this->setStatus('concept');
+		$this->setAttachments(null);
+		$this->setOrganization(null);
+		$this->setData(null);
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
-				$value = null;
+				$value = [];
 			}
 
 			$method = 'set'.ucfirst($key);
@@ -87,7 +90,9 @@ class Publication extends Entity implements JsonSerializable
 			}
 		}
 
-		$this->setAttachmentCount(0);
+		$this->setSchema($this->getMetaData());
+
+		$this->setAttachmentCount('0');
 		if($this->attachments !== null) {
 			$this->setAttachmentCount(count($this->getAttachments()));
 		}
@@ -110,7 +115,7 @@ class Publication extends Entity implements JsonSerializable
 			'metaData' => $this->metaData,
 			'published' => $this->published->format('c'),
 			'modified'	=> $this->modified->format('c'),
-			'featured' => $this->featured,
+			'featured' => $this->featured !== null ? (bool) $this->featured : null,
 			'organization' => $this->organization,
 			'data' => $this->data,
 			'attachments' => $this->attachments,
