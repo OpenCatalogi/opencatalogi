@@ -33,16 +33,16 @@ export const useOrganisationStore = defineStore(
             )
                 .then(
                     (response) => {
-                        response.json().then(
-                        (data) => {
-                                this.setOrganisationList(data.results)
+                    response.json().then(
+                            (data) => {
+                            this.setOrganisationList(data.results)
                             }
-                    )
+                        )
                     }
                 )
                 .catch(
                     (err) => {
-                        console.error(err)
+                    console.error(err)
                     }
                 )
         },
