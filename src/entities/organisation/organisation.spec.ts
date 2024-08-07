@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { Organisation } from './organisation';
-import { mockOrganisation } from './organisation.mock';
+import { Organisation } from './organisation'
+import { mockOrganisation } from './organisation.mock'
 
 describe('Organisation Store', () => {
 	it('create Organisation entity with full data', () => {
