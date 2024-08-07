@@ -21,10 +21,12 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			</div>
 			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Titel"
+					label="Titel *"
+					required
 					:value.sync="publicationItem.title" />
 				<NcTextField :disabled="loading"
-					label="Samenvatting"
+					label="Samenvatting *"
+					required
 					:value.sync="publicationItem.summary" />
 				<NcTextArea :disabled="loading"
 					label="Beschrijving"
@@ -66,7 +68,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:value.sync="publicationItem.license" />
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="!publicationItem.title"
+				:disabled="!publicationItem.title || !publicationItem.summary"
 				type="primary"
 				@click="updatePublication()">
 				<template #icon>
@@ -82,13 +84,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 <script>
 import {
 	NcButton,
-	NcModal,
-	NcTextField,
-	NcTextArea,
-	NcLoadingIcon,
 	NcCheckboxRadioSwitch,
 	NcDateTimePicker,
+	NcLoadingIcon,
+	NcModal,
 	NcNoteCard,
+	NcTextArea,
+	NcTextField,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
