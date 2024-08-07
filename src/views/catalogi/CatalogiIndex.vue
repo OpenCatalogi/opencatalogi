@@ -5,7 +5,7 @@ import { catalogiStore, navigationStore, searchStore } from '../../store/store.j
 <template>
 	<NcAppContent>
 		<template #list>
-			<CatalogiList :search-query="searchStore.search" />
+			<CatalogiList :search="searchStore.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!catalogiStore.catalogiItem || navigationStore.selected != 'catalogi' "
