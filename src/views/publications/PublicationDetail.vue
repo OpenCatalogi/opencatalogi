@@ -210,8 +210,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								:bold="false"
 								:active="publicationStore.attachmentId === attachment.id"
 								:force-display-actions="true"
-								:details="attachment?.status"
-								@click="publicationStore.setAttachmentId(attachment.id)">
+								:details="attachment?.status">
 								<template #icon>
 									<CheckCircle v-if="attachment?.status === 'published'"
 										:class="attachment?.published && 'publishedIcon'"
@@ -226,37 +225,37 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 									{{ attachment?.description }}
 								</template>
 								<template #actions>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
+									<NcActionButton disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
 										<template #icon>
 											<Pencil :size="20" />
 										</template>
 										Bewerken
 									</NcActionButton>
-									<NcActionButton :disabled="disabled">
+									<NcActionButton disabled>
 										<template #icon>
 											<Download :size="20" />
 										</template>
 										Download
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status !== 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
+									<NcActionButton v-if="attachment.status !== 'published'" disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
 										</template>
 										Publiceren
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
+									<NcActionButton v-if="attachment.status === 'published'" disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
 										Depubliceren
 									</NcActionButton>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
+									<NcActionButton disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>
 										Kopiëren
 									</NcActionButton>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
+									<NcActionButton disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 										<template #icon>
 											<Delete :size="20" />
 										</template>
