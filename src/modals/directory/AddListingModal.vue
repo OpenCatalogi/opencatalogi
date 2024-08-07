@@ -65,7 +65,8 @@ export default {
 			success: null,
 			error: false,
 			validateUrlError: null,
-			urlPattern: /^(https?:\/\/)?(([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}$/i,
+			// eslint-disable-next-line no-useless-escape
+			urlPattern: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
 		}
 	},
 	computed: {
