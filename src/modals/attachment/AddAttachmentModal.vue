@@ -42,14 +42,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Download URL"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.downloadURL" />
-				<div>
+				<div class="addFileButtonGroup">
 					<NcButton v-if="success === null && !files"
 						:disabled="loading"
 						type="primary"
 						@click="openFileUpload()">
 						<template #icon>
-							<NcLoadingIcon v-if="loading" :size="20" />
-							<Plus v-if="!loading" :size="20" />
+							<Plus :size="20" />
 						</template>
 						Bestand toevoegen
 					</NcButton>
@@ -59,27 +58,22 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						type="primary"
 						@click="reset()">
 						<template #icon>
-							<NcLoadingIcon v-if="loading" :size="20" />
-							<Minus v-if="!loading" :size="20" />
+							<Minus :size="20" />
 						</template>
-						<span v-for="file of files" :key="file.name">
-							{{ file }}
-						</span>
+						<span v-for="file of files" :key="file.name">{{ file.name }}</span>
 					</NcButton>
-
-					<div>{{ files && Object.values(files)[0] }}</div>
 				</div>
+				<NcButton v-if="success === null"
+					:disabled="!publicationStore.attachmentItem.title || !files || loading"
+					type="primary"
+					@click="addAttachment()">
+					<template #icon>
+						<NcLoadingIcon v-if="loading" :size="20" />
+						<Plus v-if="!loading" :size="20" />
+					</template>
+					Toevoegen
+				</NcButton>
 			</div>
-			<NcButton v-if="success === null"
-				:disabled="!publicationStore.attachmentItem.title || loading"
-				type="primary"
-				@click="addAttachment()">
-				<template #icon>
-					<NcLoadingIcon v-if="loading" :size="20" />
-					<Plus v-if="!loading" :size="20" />
-				</template>
-				Toevoegen
-			</NcButton>
 		</div>
 	</NcModal>
 </template>
@@ -87,8 +81,11 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 <script>
 import { NcButton, NcLoadingIcon, NcModal, NcNoteCard, NcTextArea, NcTextField } from '@nextcloud/vue'
 import { useFileDialog } from '@vueuse/core'
+
 import Minus from 'vue-material-design-icons/Minus.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+
+import axios from 'axios'
 
 const { files, open: openFileUpload, reset } = useFileDialog()
 
@@ -118,49 +115,36 @@ export default {
 		closeModal() {
 			navigationStore.modal = false
 		},
-
-		test() {
-
-			console.log(JSON.stringify({
-				...(publicationStore.attachmentItem),
-				_file: Object.values(files)[0],
-			}))
-		},
 		addAttachment() {
 			this.loading = true
 			this.errorMessage = false
-			fetch(
-				'/index.php/apps/opencatalogi/api/attachments',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						...(publicationStore.attachmentItem),
-						_file: files,
-					}),
+
+			axios.post('/index.php/apps/opencatalogi/api/attachments', {
+				...(publicationStore.attachmentItem),
+				_file: files.value ? files.value[0] : '',
+			}, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
 				},
-			)
-				.then((response) => {
-					this.loading = false
-					this.success = response.ok
-					// Lets refresh the attachment list
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
-					}
-					// store.refreshCatalogiList()
-					response.json().then((data) => {
-						publicationStore.setAttachmentItem(data)
-					})
-					// Wait for the user to read the feedback then close the model
-					const self = this
-					setTimeout(function() {
-						self.success = null
-						navigationStore.setModal(false)
-					}, 2000)
-				})
+			}).then((response) => {
+				this.loading = false
+				this.success = true
+				// Lets refresh the attachment list
+				if (publicationStore.publicationItem?.id) {
+					publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
+					// @todo update the publication item
+				}
+				// store.refreshCatalogiList()
+
+				publicationStore.setAttachmentItem(response)
+
+				// Wait for the user to read the feedback then close the model
+				const self = this
+				setTimeout(function() {
+					self.success = null
+					navigationStore.setModal(false)
+				}, 2000)
+			})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
@@ -174,6 +158,10 @@ export default {
 .modal__content {
     margin: var(--OC-margin-50);
     text-align: center;
+}
+
+.addFileButtonGroup{
+	margin-block-end: var(--OC-margin-20);
 }
 
 .zaakDetailsContainer {

@@ -202,9 +202,9 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					</BTab>
 					<BTab title="Bijlagen">
 						<div
-							v-if="publicationStore.publicationAttachments.results?.length > 0"
+							v-if="publicationStore.publicationAttachments.length > 0"
 							class="tabPanel">
-							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments.results"
+							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments"
 								:key="`${attachment}${i}`"
 								:name="attachment.name ?? attachment.title"
 								:bold="false"
@@ -265,16 +265,15 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								</template>
 							</NcListItem>
 						</div>
-						<div v-else class="tabPanel">
-							<!-- <div>dropzone {{ isOverDropZone }}</div>
-							<div class="filesListDragDropNotice">
-								<div class="filesListDragDropNoticeWrapper">
-									<TrayArrowDown :size="48" />
-									<h3 class="filesListDragDropNoticeTitle">
-										Drag and drop files here to upload
-									</h3>
-								</div>
-							</div> -->
+						<div v-if="publicationStore.publicationAttachments.length === 0" class="tabPanel">
+							Geen bijlagen gevonden
+						</div>
+						<div v-if="publicationStore.publicationAttachments.length !== 0 && !publicationStore.publicationAttachments.length > 0" class="tabPanel">
+							<NcLoadingIcon
+								:size="64"
+								class="loadingIcon"
+								appearance="dark"
+								name="Bijlagen aan het laden" />
 						</div>
 					</BTab>
 					<BTab title="Logging">
@@ -343,7 +342,6 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 <script>
 // Components
 import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
-import { useDropZone, useFileDialog } from '@vueuse/core'
 import { BTab, BTabs } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 
@@ -366,7 +364,6 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
-import TrayArrowDown from 'vue-material-design-icons/TrayArrowDown.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -401,7 +398,6 @@ export default {
 		Download,
 		ArchivePlusOutline,
 		HelpCircleOutline,
-		TrayArrowDown,
 	},
 	props: {
 		publicationItem: {
