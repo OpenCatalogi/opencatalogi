@@ -23,12 +23,26 @@ export const usePublicationStore = defineStore(
 				this.publicationList = publicationList.map((publicationItem) => new Publication(publicationItem))
 				console.log('Active publication item set to ' + publicationList.length)
 			},
-			async refreshPublicationList(search = null) {
+			async refreshPublicationList(normalSearch = [], advancedSearch = null, sortField = null, sortDirection = null) {
 				// @todo this might belong in a service?
+				console.log(normalSearch)
 				let endpoint = '/index.php/apps/opencatalogi/api/publications'
-				if (search !== null && search !== '') {
-					endpoint = endpoint + '?_search=' + search
+				const params = new URLSearchParams()
+				for (const item of normalSearch) {
+					if (item.key && item.value !== undefined) {
+						params.append(item.key, item.value)
+					}
 				}
+				if (advancedSearch !== null && advancedSearch !== '') {
+					params.append('_search', advancedSearch)
+				}
+				if (sortField !== null && sortField.value !== null && sortDirection !== null && sortDirection !== '') {
+					params.append('_order[' + sortField.value + ']', sortDirection)
+				}
+				if (params.toString()) {
+					endpoint += '?' + params.toString()
+				}
+
 				return fetch(
 					endpoint,
 					{
