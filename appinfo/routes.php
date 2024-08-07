@@ -21,6 +21,7 @@ return [
 		['name' => 'directory#page', 'url' => '/directory', 'verb' => 'GET'],
 		['name' => 'directory#add', 'url' => '/api/directory/add', 'verb' => 'POST'],
         ['name' => 'configuration#index', 'url' => '/configuration', 'verb' => 'GET'],
-        ['name' => 'configuration#create', 'url' => '/configuration', 'verb' => 'POST']
+        ['name' => 'configuration#create', 'url' => '/configuration', 'verb' => 'POST'],
+		['name' => 'search#preflighted_cors', 'url' => '/api/{path}', 'verb' => 'OPTIONS', 'requirements' => ['path' => '.+']]
 	],
 ];
