@@ -6,15 +6,15 @@ import { useOrganisationStore } from './organisation.js';
 
 describe(
     'Organisation Store', () => {
-        beforeEach(
-        () => {
-                setActivePinia(createPinia())
+    beforeEach(
+            () => {
+            setActivePinia(createPinia())
             }
-    )
+        )
 
     it(
         'sets organisation item correctly', () => {
-        const store = useOrganisationStore()
+            const store = useOrganisationStore()
 
             store.setOrganisationItem(mockOrganisation()[0])
 
@@ -38,7 +38,7 @@ describe(
 
     it(
         'sets organisation list correctly', () => {
-        const store = useOrganisationStore()
+            const store = useOrganisationStore()
 
             store.setOrganisationList(mockOrganisation())
 
