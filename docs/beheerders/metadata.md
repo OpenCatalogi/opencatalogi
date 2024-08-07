@@ -24,10 +24,10 @@ Metadata definieerd objecten door de opgegeven properties, hiervoor wordt [json-
 
 De voornaamste manieren om een eigenschap te definiëren zijn:
 
-- **type** (verplicht) Het type van de waarde, bijvoorbeeld `string` of `url`
-- **format**: De indeling van de waarde Bijvoorbeeld `date-time` of `url`
-- **requered**: Of de waarde verplicht aanwezig moet zijn
-- **patern**: Een [regex](https://en.wikipedia.org/wiki/Regular_expression) definitie waar de waarde aan moet voldoen
+* **type** (verplicht) Het type van de waarde, bijvoorbeeld `string` of `url`
+* **format**: De indeling van de waarde Bijvoorbeeld `date-time` of `url`
+* **requered**: Of de waarde verplicht aanwezig moet zijn
+* **patern**: Een [regex](https://en.wikipedia.org/wiki/Regular_expression) definitie waar de waarde aan moet voldoen
 
 Voor alle waardes, mogelijke invullingen en gevolgen kan je het beste een kijkje nemen in het [property object](https://conduction.stoplight.io/docs/open-catalogi/d0ci97hdxnctp-property).
 
@@ -35,13 +35,13 @@ Voor alle waardes, mogelijke invullingen en gevolgen kan je het beste een kijkje
 
 Metadata objecten zijn vormend voor de bewaartermijn van objecten, hierin volgen we [MDTO](https://www.nationaalarchief.nl/archiveren/mdto/begrippenlijst-metagegevensschema#collapse-102681) en de [VNG](chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://vng.nl/sites/default/files/2020-02/selectielijst_20200214.pdf) selectie lijst. Met andere woorden:
 
-- Iedere metadata heeft een waardeerding B,V of N (standaard N)
-- Als de waardering V is dan moet het termijn zijn opgegeven als klasse
-- De definering van klasse is
-  - 1: 1 Jaar
-  - 2: 5 Jaar
-  - 3: 10 Jaar
-  - 4: 20 Jaar
-  - 5: 50 Jaar
+* Iedere metadata heeft een waardeerding B,V of N (standaard N)
+* Als de waardering V is dan moet het termijn zijn opgegeven als klasse
+* De definering van klasse is
+  * 1: 1 Jaar
+  * 2: 5 Jaar
+  * 3: 10 Jaar
+  * 4: 20 Jaar
+  * 5: 50 Jaar
 
 Bij het aanmaken van een publicatie wordt vervolgens de `archive.date` gezet op de `createDate` + doorlooptijd van de klasse.

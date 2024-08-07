@@ -10,19 +10,19 @@ De code voor de app staat er nu, maar in Nextcloud moeten apps geactiveerd worde
 
 In het volgende scherm, zie je aan de linkerzijde een navigatie menu. Klik op "Disabled apps". Je ziet een overzicht met de apps die in de "apps-extra"-directory zitten.
 
-![nextcloud uitgeschakelde apps](../assets/nc\_disabled\_apps.png)
+![nextcloud uitgeschakelde apps](../assets/nc_disabled_apps.png)
 
 Zodra je klikt op "enable" verschijnt deze links bovenin, naast het Nextcloud-logo. Dit zijn de shortcut-icoontjes voor de geactiveerde applicaties.
 
 Klik op het icoontje van OpenCatalogi en je zit in de app!
 
-![Nexcloud app menu](<../assets/nc\_app\_menu (1).png>)
+![Nexcloud app menu](<../assets/nc_app_menu (1).png>)
 
 ## De app configuren
 
 * Open de OpenCatalogi-app via de navigeerbalk links bovenin het scherm. Het zal het meest rechtse icoontje zijn.
 
-![OpenCatalogi instellingen](../assets/oc\_instellingen\_1.png)
+![OpenCatalogi instellingen](../assets/oc_instellingen_1.png)
 
 * Vul bij 'instellingen' -> 'configuratie' de benodigde gegevens in:
   * Een MongoDB API met sleutel en clusternaam.

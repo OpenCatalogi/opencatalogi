@@ -1,5 +1,5 @@
-import { TMetadata } from './metadata.types'
 import { SafeParseReturnType, z } from 'zod'
+import { TMetadata } from './metadata.types'
 
 export class Metadata implements TMetadata {
 

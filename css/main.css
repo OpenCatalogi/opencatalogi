@@ -4,6 +4,15 @@
   --OC-margin-50: 50px;
 }
 
+/* Pages */
+
+.pageHeader {
+	margin-block-start: var(--app-navigation-padding);
+    margin-inline-start: calc(var(--default-clickable-area) + var(--app-navigation-padding)* 2);
+    min-height: var(--default-clickable-area);
+    line-height: var(--default-clickable-area);
+}
+
 /* Lists */
 
 .listHeader {

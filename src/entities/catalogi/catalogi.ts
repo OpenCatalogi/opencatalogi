@@ -1,5 +1,5 @@
-import { TCatalogi } from './catalogi.types'
-import { SafeParseReturnType, z } from 'zod'
+import { SafeParseReturnType, z } from 'zod';
+import { TCatalogi } from './catalogi.types';
 
 export class Catalogi implements TCatalogi {
 
@@ -9,7 +9,7 @@ export class Catalogi implements TCatalogi {
 	public description: string
 	public image: string
 	public listed: boolean
-	public organization: {
+	public organisation: {
         id: string
         title: string
         summary: string
@@ -32,7 +32,7 @@ export class Catalogi implements TCatalogi {
 		this.description = data?.description || ''
 		this.image = data?.image || ''
 		this.listed = data?.listed || false
-		this.organization = data.organization || {
+		this.organisation = data.organisation || {
 			id: '',
 			title: '',
 			summary: '',
@@ -53,7 +53,7 @@ export class Catalogi implements TCatalogi {
 			description: z.string().max(2555),
 			image: z.string().max(255),
 			listed: z.boolean(),
-			organization: z.object({
+			organisation: z.object({
 				title: z.string(),
 				summary: z.string(),
 				description: z.string(),

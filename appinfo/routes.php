@@ -4,6 +4,8 @@ return [
     'resources' => [
         'metadata' => ['url' => '/api/metadata'],
         'publications' => ['url' => '/api/publications'],
+        'organisations' => ['url' => '/api/organisations'],
+        'themes' => ['url' => '/api/themes'],
         'attachments' => ['url' => '/api/attachments'],
         'catalogi' => ['url' => '/api/catalogi'],
         'directory' => ['url' => '/api/directory']

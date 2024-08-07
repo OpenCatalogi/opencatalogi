@@ -16,7 +16,7 @@ describe('Listing Store', () => {
 		const listing = new Listing(mockListings()[1])
 
 		expect(listing).toBeInstanceOf(Listing)
-		expect(listing).not.toBe(mockListings()[1])
+		expect(listing).toEqual(mockListings()[1])
 
 		expect(listing.validate().success).toBe(true)
 	})
