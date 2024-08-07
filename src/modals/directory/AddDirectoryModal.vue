@@ -23,14 +23,11 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcNoteCard v-if="validateUrlError" type="error">
-					<p>Er is geen valide URL ingevoerd.</p>
-				</NcNoteCard>
-				<NcTextField v-model="directory.directory" label="Url" @input="validateUrl" />
+				<NcTextField v-model="directory.directory" label="Url" />
 			</div>
 			<NcButton
 				v-if="success === null"
-				:disabled="!isUrlValid || loading || !directory.directory"
+				:disabled="loading || !directory.directory"
 				type="primary"
 				@click="addDirectory">
 				<template #icon>
@@ -74,15 +71,7 @@ export default {
 			loading: false,
 			success: null,
 			error: false,
-			validateUrlError: null,
-			// eslint-disable-next-line no-useless-escape
-			urlPattern: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
 		}
-	},
-	computed: {
-		isUrlValid() {
-			return this.urlPattern.test(this.directory.directory)
-		},
 	},
 	methods: {
 		addDirectory() {
@@ -119,14 +108,6 @@ export default {
 		},
 		closeModal() {
 			navigationStore.setModal(false)
-		},
-		validateUrl(event) {
-			this.directory.directory = event.target.value
-			if (!this.isUrlValid) {
-				this.validateUrlError = 'Er is geen valide URL ingevoerd.'
-			} else {
-				this.validateUrlError = null
-			}
 		},
 		openLink(url, type = '') {
 			window.open(url, type)
