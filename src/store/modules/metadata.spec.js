@@ -6,15 +6,15 @@ import { Metadata, mockMetadata } from '../../entities/index.js'
 
 describe(
     'Metadata Store', () => {
-        beforeEach(
-        () => {
-                setActivePinia(createPinia())
+    beforeEach(
+            () => {
+            setActivePinia(createPinia())
             }
-    )
+        )
 
     it(
         'sets metadata item correctly', () => {
-        const store = useMetadataStore()
+            const store = useMetadataStore()
 
             store.setMetaDataItem(mockMetadata()[0])
 
@@ -27,7 +27,7 @@ describe(
 
     it(
         'sets metadata item with string "properties" property', () => {
-        const store = useMetadataStore()
+            const store = useMetadataStore()
 
             // stringify json data
             const mockData = mockMetadata()[0]
@@ -44,7 +44,7 @@ describe(
 
     it(
         'sets metadata list correctly', () => {
-        const store = useMetadataStore()
+            const store = useMetadataStore()
 
             store.setMetaDataList(mockMetadata())
 
@@ -57,7 +57,7 @@ describe(
 
     it(
         'get metadata property from key', () => {
-        const store = useMetadataStore()
+            const store = useMetadataStore()
 
             store.setMetaDataItem(mockMetadata()[0])
             store.setMetadataDataKey('test')
