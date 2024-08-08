@@ -1,8 +1,9 @@
----
+***
+
 description: >-
-  Welkom bij de gebruikersdocumentatie voor de OpenCatalogi Nextcloud App. Veel
-  succes met het gebruik van de app.
----
+Welkom bij de gebruikersdocumentatie voor de OpenCatalogi Nextcloud App. Veel
+succes met het gebruik van de app.
+----------------------------------
 
 # Welkom
 
@@ -23,4 +24,4 @@ Deze documentatie is bedoeld voor diverse doelgroepen:
 
 Voor meer informatie over OpenCatalogi en onze gemeenschappelijke inspanningen, bezoek onze [documentatie-pagina](https://documentatie.opencatalogi.nl) of de officiële website op [OpenCatalogi.nl](https://opencatalogi.nl).
 
-Veel succes met het gebruik van de app. Voor vragen of bijdragen, neem gerust contact met ons op via [support@conduction.nl](mailto:support@conduction.nl).
+Veel succes met het gebruik van de app. Voor vragen of bijdragen, neem gerust contact met ons op via <support@conduction.nl>.
