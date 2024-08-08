@@ -28,8 +28,6 @@ Hieronder is een voorbeeld van een ingevulde modal voor het aanmaken van een Woo
 
 <figure><img src="../assets/oc_publicatie_toevoegen_form_1.png" alt="" width="371"><figcaption><p>Het eerste gedeelte - gegevens over de publicatie</p></figcaption></figure>
 
- 
-
 <figure><img src="../assets/Open-Catalogi-Nextcloud.png" alt="" width="374"><figcaption><p>het tweede gedeelte - het aanwijzen van de catalogi</p></figcaption></figure>
 
 </div>
