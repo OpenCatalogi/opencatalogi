@@ -36,8 +36,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						input-label="Eigenschap"
 						:options="[
 							{ label: 'Titel', value: 'title' },
-							{ label: 'Beschrijving', value: 'description' },
-							{ label: 'Samenvatting', value: 'summary' }
+							{ label: 'Datum gepubliceerd', value: 'published' },
+							{ label: 'Datum aangepast', value: 'modified' }
 						]">
 						<template #icon>
 							<Pencil :size="20" />
@@ -259,17 +259,15 @@ export default {
 			this.sortDirection = value
 		},
 		updateNormalSearch() {
-			console.log('test trigger')
 			this.normalSearch = []
 			if (this.conceptChecked) {
-				this.normalSearch.push({ key: 'concept', value: true })
+				this.normalSearch.push({ key: 'status', value: 'concept' })
 			}
 			if (this.gepubliceerdChecked) {
-				this.normalSearch.push({ key: 'published', value: true })
+				this.normalSearch.push({ key: 'status', value: 'published' })
 			}
 		},
 		handleCheckboxChange(key, event) {
-			console.log('Event:', event)
 			const checked = event.target.checked
 
 			if (key === 'concept') {
