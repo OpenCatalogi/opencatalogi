@@ -12,6 +12,8 @@ export const useNavigationStore = defineStore(
 			modal: false,
 			// The currently active dialog
 			dialog: false,
+			// Any data needed in various models, dialogs, views which cannot be transferred through normal means or without writing crappy/excessive code
+			transferData: null,
 		}),
 		actions: {
 			setSelected(selected) {
@@ -29,6 +31,14 @@ export const useNavigationStore = defineStore(
 			setDialog(dialog) {
 				this.dialog = dialog
 				console.log('Active dialog set to ' + dialog)
+			},
+			setTransferData(data) {
+				this.transferData = data
+			},
+			getTransferData() {
+				const tempData = this.transferData
+				this.transferData = null
+				return tempData
 			},
 		},
 	},
