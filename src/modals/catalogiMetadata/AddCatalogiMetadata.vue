@@ -28,7 +28,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					required />
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="!catalogi.title || loading"
+				:disabled="!metaData.value?.value?.id || loading"
 				type="primary"
 				@click="addCatalogMetadata">
 				<template #icon>
