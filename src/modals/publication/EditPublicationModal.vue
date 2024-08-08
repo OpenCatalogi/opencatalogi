@@ -41,16 +41,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Portaal"
 					:value.sync="publicationItem.portal" />
 				<span>
-					<p>Published</p>
+					<p>Publicatie datum</p>
 					<NcDateTimePicker v-model="publicationItem.published"
 						:disabled="loading"
 						label="Publicatie datum" />
-				</span>
-				<span>
-					<p>Modified</p>
-					<NcDateTimePicker v-model="publicationItem.modified"
-						:disabled="loading"
-						label="Modified" />
 				</span>
 				<span class="EPM-horizontal">
 					<NcCheckboxRadioSwitch :disabled="loading"
@@ -121,7 +115,6 @@ export default {
 				portal: '',
 				featured: false,
 				published: '',
-				modified: '',
 				license: '',
 				catalogi: '',
 				metaData: '',
@@ -154,9 +147,6 @@ export default {
 		if (navigationStore.modal === 'editPublication' && !this.hasUpdated) {
 			publicationStore.publicationItem && (this.publicationItem = publicationStore.publicationItem)
 			this.fetchData(publicationStore.publicationItem.id)
-			// just incase we decide we want to be able to change catalogi and metadata
-			// this.fetchCatalogi()
-			// this.fetchMetaData()
 			this.hasUpdated = true
 		}
 	},
@@ -172,71 +162,13 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
+						this.publicationItem = publicationStore.publicationItem
 					})
 					this.loading = false
 				})
 				.catch((err) => {
 					console.error(err)
 					this.loading = false
-				})
-		},
-		fetchCatalogi() {
-			this.catalogiLoading = true
-			fetch('/index.php/apps/opencatalogi/api/catalogi', {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-
-						const selectedCatalogi = data.results.find((catalogi) => catalogi.id.toString() === this.publicationItem.catalogi.toString())
-
-						this.catalogi = {
-							inputLabel: 'Catalogi',
-							options: data.results.map((catalog) => ({
-								id: catalog.id,
-								label: catalog.title,
-							})),
-							// FIXME: for some reason the NcSelect uses the id instead of the label when displaying
-							value: [{
-								id: selectedCatalogi.id ?? '',
-								label: selectedCatalogi.title ?? '',
-							}],
-						}
-					})
-					this.catalogiLoading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.catalogiLoading = false
-				})
-		},
-		fetchMetaData() {
-			this.metaDataLoading = true
-			fetch('/index.php/apps/opencatalogi/api/metadata', {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-						const selectedMetaData = data.results.find((metadata) => metadata.id.toString() === this.publicationItem.metaData.toString())
-
-						this.metaData = {
-							inputLabel: 'MetaData',
-							options: data.results.map((metaData) => ({
-								id: metaData.id,
-								label: metaData.title,
-							})),
-							// FIXME: for some reason the NcSelect uses the id instead of the label when displaying
-							value: {
-								id: selectedMetaData.id,
-								label: selectedMetaData.title,
-							},
-						}
-					})
-					this.metaDataLoading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.metaDataLoading = false
 				})
 		},
 		updatePublication() {

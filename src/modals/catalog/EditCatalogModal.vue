@@ -35,9 +35,9 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					maxlength="255"
 					:value.sync="catalogiStore.catalogiItem.description" />
 				<NcCheckboxRadioSwitch :disabled="loading"
-					label="Listed"
+					label="Publiek vindbaar"
 					:checked.sync="catalogiStore.catalogiItem.listed">
-					Listed
+					Publiek vindbaar
 				</NcCheckboxRadioSwitch>
 			</div>
 			<NcButton v-if="success === null"

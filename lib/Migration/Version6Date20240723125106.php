@@ -81,15 +81,15 @@ class Version6Date20240723125106 extends SimpleMigrationStep {
 			]
 			);
 			$table->addColumn(name: 'organization', typeName: TYPES::JSON, options: [
-				'default' => [],
+				'default' => 'a:0:{}',
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'data', typeName: TYPES::JSON, options: [
-				'default' => [],
+				'default' => 'a:0:{}',
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'attachments', typeName: TYPES::JSON, options: [
-				'default' => [],
+				'default' => 'a:0:{}',
 				'notnull' => false,
 			]);
 			$table->addColumn(name: 'attachment_count', typeName: TYPES::INTEGER);

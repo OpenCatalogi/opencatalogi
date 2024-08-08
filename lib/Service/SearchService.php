@@ -143,7 +143,15 @@ class SearchService
 			}
 		}
 
-		return ['results' => $results, 'facets' => $aggregations];
+		return [
+			'results' => $results,
+			'facets' => $aggregations,
+			'count' => count($results),
+			'limit' => 30,
+			'page' => 1,
+			'pages' => 1,
+			'total' => 10
+			];
 	}
 
 	/**

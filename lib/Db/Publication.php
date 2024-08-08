@@ -75,6 +75,12 @@ class Publication extends Entity implements JsonSerializable
 		$this->setAttachments(null);
 		$this->setOrganization(null);
 		$this->setData(null);
+		$this->setModified(new DateTime());
+
+
+		if(isset($object['published']) === false) {
+			$object['published'] = null;
+		}
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
@@ -114,8 +120,8 @@ class Publication extends Entity implements JsonSerializable
 			'portal' => $this->portal,
 			'catalogi' => $this->catalogi,
 			'metaData' => $this->metaData,
-			'published' => $this->published->format('c'),
-			'modified'	=> $this->modified->format('c'),
+			'published' => $this->published?->format('c'),
+			'modified'	=> $this->modified?->format('c'),
 			'featured' => $this->featured !== null ? (bool) $this->featured : null,
 			'organization' => $this->organization,
 			'data' => $this->data,
