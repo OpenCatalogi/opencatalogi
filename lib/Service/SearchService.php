@@ -301,6 +301,28 @@ class SearchService
 	}//end createSortArrayFromParams()
 
 	/**
+	 * This function creates an sort array based on given order param from request.
+	 *
+	 * @todo Not functional yet. Needs to be fixed (see PublicationsController->index).
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $sort
+	 */
+	public function createSortForMongoDB(array $filters): array
+	{
+		$sort = [];
+		if (isset($filters['_order']) && is_array($filters['_order'])) {
+			foreach ($filters['_order'] as $field => $direction) {
+				$sort[$field] = strtoupper($direction) === 'DESC' ? -1 : 1;
+			}
+		}
+
+		return $sort;
+
+	}//end createSortForMongoDB()
+
+	/**
 	 * Parses the request query string and returns it as an array of queries.
 	 *
 	 * @param string $queryString The input query string from the request.
