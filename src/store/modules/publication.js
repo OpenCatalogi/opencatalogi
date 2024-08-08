@@ -35,7 +35,7 @@ export const usePublicationStore = defineStore(
 				if (advancedSearch !== null && advancedSearch !== '') {
 					params.append('_search', advancedSearch)
 				}
-				if (sortField !== null && sortField !== null && sortDirection !== null && sortDirection !== '') {
+				if (sortField !== null && sortField !== '' && sortDirection !== null && sortDirection !== '') {
 					if (sortField === 'Titel') {
 						sortField = 'title'
 					}
