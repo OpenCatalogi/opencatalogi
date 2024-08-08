@@ -372,7 +372,9 @@ class AttachmentsController extends Controller
 		}
 
 		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
-//		$this->fileService->deleteFile(filePath: 'Attachments/' . $attachment['title'] . '.' . $attachment['extension']);
+//		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
+//			. $this->request->getHeader('Publication-Title');
+//		$this->fileService->deleteFile(filePath: "Attachments/$publicationFolder" . $attachment['title'] . '.' . $attachment['extension']);
 		$filePath = explode(separator: '/', string: $attachment['reference']);
 		array_shift(array: $filePath);
 		$filePath = implode(separator: '/', array: $filePath);
