@@ -7,36 +7,51 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="search"
+					:value.sync="advancedSearch"
 					label="Zoeken"
 					trailing-button-icon="close"
-					:show-trailing-button="search !== ''"
-					@trailing-button-click="search = ''">
+					:show-trailing-button="advancedSearch !== ''"
+					@trailing-button-click="advancedSearch = ''">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
 					<NcActionCaption name="Zoeken" />
-					<NcActionCheckbox>
+					<NcActionCheckbox
+						:checked="conceptChecked"
+						:value="'concept'"
+						@change="handleCheckboxChange('concept', $event)">
 						Concept
 					</NcActionCheckbox>
-					<NcActionCheckbox>
+					<NcActionCheckbox
+						:checked="gepubliceerdChecked"
+						:value="'gepubliceerd'"
+						@change="handleCheckboxChange('gepubliceerd', $event)">
 						Gepubliceerd
 					</NcActionCheckbox>
 					<NcActionSeparator />
 					<NcActionCaption name="Sorteren" />
 					<NcActionInput
+						v-model="sortField"
 						type="multiselect"
 						input-label="Eigenschap"
-						:options="['Apple', 'Banana', 'Cherry']">
+						:options="['Titel', 'Datum gepubliceerd', 'Datum aangepast']">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
 						Kies een eigenschap
 					</NcActionInput>
-					<NcActionRadio name="Richting" value="Asc">
+					<NcActionRadio
+						:checked="sortDirection === 'asc'"
+						name="sortDirection"
+						value="asc"
+						@update:checked="updateSortOrder('asc')">
 						Oplopend
 					</NcActionRadio>
-					<NcActionRadio name="Richting" value="Desc">
+					<NcActionRadio
+						:checked="sortDirection === 'desc'"
+						name="sortDirection"
+						value="desc"
+						@update:checked="updateSortOrder('desc')">
 						Aflopend
 					</NcActionRadio>
 					<NcActionSeparator />
@@ -194,18 +209,18 @@ export default {
 		HelpCircleOutline,
 	},
 	beforeRouteLeave(to, from, next) {
-		search = ''
+		this.advancedSearch = ''
 		next()
-	},
-	props: {
-		search: {
-			type: String,
-			required: true,
-		},
 	},
 	data() {
 		return {
 			loading: false,
+			sortField: '',
+			sortDirection: 'desc',
+			normalSearch: [],
+			advancedSearch: '',
+			conceptChecked: false,
+			gepubliceerdChecked: false,
 		}
 	},
 	computed: {
@@ -217,11 +232,10 @@ export default {
 		},
 	},
 	watch: {
-		search: {
-			handler(search) {
-				this.debouncedFetchData(search)
-			},
-		},
+		advancedSearch: 'debouncedFetchData',
+		sortField: 'fetchData',
+		sortDirection: 'fetchData',
+		normalSearch: 'fetchData',
 	},
 	mounted() {
 		this.fetchData()
@@ -233,16 +247,35 @@ export default {
 		},
 		fetchData(search = null) {
 			this.loading = true
-			publicationStore.refreshPublicationList(search)
+			publicationStore.refreshPublicationList(this.normalSearch, this.advancedSearch, this.sortField, this.sortDirection)
 				.then(() => {
 					this.loading = false
 				})
 		},
-		debouncedFetchData: debounce(function(search) {
-			this.fetchData(search)
+		debouncedFetchData: debounce(function() {
+			this.fetchData()
 		}, 500),
-		openLink(url, type = '') {
-			window.open(url, type)
+		updateSortOrder(value) {
+			this.sortDirection = value
+		},
+		updateNormalSearch() {
+			this.normalSearch = []
+			if (this.conceptChecked) {
+				this.normalSearch.push({ key: 'status', value: 'concept' })
+			}
+			if (this.gepubliceerdChecked) {
+				this.normalSearch.push({ key: 'status', value: 'published' })
+			}
+		},
+		handleCheckboxChange(key, event) {
+			const checked = event.target.checked
+
+			if (key === 'concept') {
+				this.conceptChecked = checked
+			} else if (key === 'gepubliceerd') {
+				this.gepubliceerdChecked = checked
+			}
+			this.updateNormalSearch()
 		},
 	},
 }
