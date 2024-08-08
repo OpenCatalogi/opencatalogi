@@ -11,6 +11,7 @@
 		<EditMetaDataPropertyModal />
 		<AddCatalogModal />
 		<EditCatalogModal />
+		<AddCatalogiMetadata />
 		<AddDirectoryModal />
 		<EditListingModal />
 		<AddPublicationDataModal />
@@ -37,6 +38,7 @@ import EditMetaDataPropertyModal from './metaData/EditMetaDataPropertyModal.vue'
 
 import AddCatalogModal from './catalog/AddCatalogModal.vue'
 import EditCatalogModal from './catalog/EditCatalogModal.vue'
+import AddCatalogiMetadata from './catalogiMetadata/AddCatalogiMetadata.vue'
 import AddDirectoryModal from './directory/AddDirectoryModal.vue'
 import EditListingModal from './directory/EditListingModal.vue'
 import AddOrganisationModal from './organisation/AddOrganisationModal.vue'
@@ -59,6 +61,7 @@ export default {
 		EditMetaDataPropertyModal,
 		AddCatalogModal,
 		EditCatalogModal,
+		AddCatalogiMetadata,
 		AddDirectoryModal,
 		EditListingModal,
 		AddPublicationDataModal,

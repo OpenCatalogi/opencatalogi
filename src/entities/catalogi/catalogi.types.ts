@@ -15,4 +15,5 @@ export type TCatalogi = {
         rsin: string
         pki: string
     }
+    metadata: string[]
 }

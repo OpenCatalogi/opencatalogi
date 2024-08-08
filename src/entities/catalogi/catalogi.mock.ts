@@ -19,6 +19,7 @@ export const mockCatalogiData = (): TCatalogi[] => [
 			rsin: '987654321',
 			pki: 'PKI-12345-67890',
 		},
+		metadata: ['1', '3'],
 	},
 	{
 		id: '2',
@@ -37,6 +38,7 @@ export const mockCatalogiData = (): TCatalogi[] => [
 			rsin: '987654321',
 			pki: 'PKI-12345-67890',
 		},
+		metadata: [],
 	},
 	{
 		id: '3',
@@ -56,6 +58,7 @@ export const mockCatalogiData = (): TCatalogi[] => [
 			rsin: '987654321',
 			pki: 'PKI-12345-67890',
 		},
+		metadata: ['1', '3'],
 	},
 ]
 
