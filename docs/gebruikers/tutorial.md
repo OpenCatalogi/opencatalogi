@@ -6,21 +6,21 @@
 
 Nadat de app succesvol is geconfigureerd, vind je deze terug in het app-menu van Nextcloud. Klik op het 'OpenCatalogi'-icoon om de app te openen. De tutorial gaat uit van een lege installatie.
 
-![app menu](<../assets/nc_app_menu (1).png>)
+![app menu](<../assets/nc\_app\_menu (1).png>)
 
 ## Directory
 
 Een OpenCatalogi-installatie is bedoeld om onderdeel te zijn van een federatief netwerk van catalogi. Deze kunt u terugvinden onder Instellingen -> Directory. In de directory staan alle bij deze installatie bekende catalogi die zich in andere installaties bevinden. OpenCatalogi-installaties wisselen onderling hun directory uit, dus om onderdeel te worden van het federatieve netwerk moet er minimaal één andere catalogus bekend zijn.
 
-![instellingen](../assets/oc_instellingen.png)
+![instellingen](../assets/oc\_instellingen.png)
 
 Is uw directory leeg? Druk dan op 'Listing toevoegen aan directory' achter de zoekbalk.
 
-![listing toevoegen](../assets/oc_listing_toevoegen.png)
+![listing toevoegen](../assets/oc\_listing\_toevoegen.png)
 
 Catalogi worden gedefinieerd aan de hand van de plek waar ze leven op het internet (URI). Geef in het formulier de volgende URI op: 'URL van uw eigen OpenCatalogi-installatie'.
 
-![directory toevoegen formulier](../assets/oc_directory_toevoegen_form.png)
+![directory toevoegen formulier](../assets/oc\_directory\_toevoegen\_form.png)
 
 ## Zoeken
 
@@ -36,26 +36,57 @@ Aan de linkerkant worden de gevonden publicaties weergegeven, terwijl aan de rec
 
 Publicaties worden in OpenCatalogi onderverdeeld in catalogi.
 
-Het aanmaken van een eigen catalogus kan eenvoudig door te navigeren naar `Instellingen` en te kiezen voor Catalogi. Aan de linkerzijde zie je de knop `Catalogi toevoegen`.\\
+Het aanmaken van een eigen catalogus kan eenvoudig door te navigeren naar `Instellingen` en te kiezen voor Catalogi. Aan de linkerzijde zie je de knop `Catalogi toevoegen`. Voor het aanmaken van een Catalogus is alleen een `titel` verplicht.&#x20;
 
 <div align="left">
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>Het overzicht voor Instellingen en de aanmaken-knop</p></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/Screenshot 2024-08-08 113242.png" alt=""><figcaption></figcaption></figure>
+ 
+
+<figure><img src="../.gitbook/assets/Screenshot 2024-08-08 113242.png" alt=""><figcaption><p>De modal voor metadata, zoals titel en samenvatting</p></figcaption></figure>
 
 </div>
 
-## Metadata (moet)
+## Metadatabeschrijving
 
-Stukje tekst met screenshots over het aanmaken van metadata.
+Metadata beschrijft een publicatie. Er wordt er informatie meegegeven over het publicatietype.&#x20;
 
-* Maak een metadatabeschrijving aan.
-* Voeg aan de metadatabeschrijving een aantal eigenschappen toe.
+Het aanmaken van een eigen catalogus kan eenvoudig door te navigeren naar `Instellingen` en te kiezen voor `Metadata`. Aan de linkerzijde zie je de knop `Metadatabeschrijving toevoegen`. Voor het aanmaken van `Metadata` is alleen een `titel` verplicht.
+
+<div>
+
+<figure><img src="../.gitbook/assets/metadata-settings.png" alt=""><figcaption></figcaption></figure>
+
+ 
+
+<figure><img src="../.gitbook/assets/Metadata_modal.png" alt=""><figcaption></figcaption></figure>
+
+</div>
 
 ## Publicatie (moet)
 
-Stukje tekst met screenshots over het aanmaken van publicaties. Stukje tekst met screenshots over het toevoegen van gegevens aan publicaties. Stukje tekst met screenshots over het toevoegen van bestanden aan publicaties.
+Stukje tekst met screenshots over het aanmaken van publicaties. Stukje tekst met screenshots over het toevoegen van gegevens aan publicaties. Stukje tekst met screenshots over het toevoegen van bestanden aan publicaties.\
+\
+Aan de linkerkant bevindt zich een navigatiebalk met verschillende menuopties. Bovenaan de navigatiebalk is een blauwe knop zichtbaar met de tekst "Publicatie Aanmaken".
+
+In het hoofdgedeelte van het scherm, aan de rechterkant, is er een melding die aangeeft dat er nog geen publicatie is geselecteerd, met de tekst "Geen publicatie". Onder deze melding staat een blauwe knop met de tekst "Publicatie toevoegen".
+
+Bovenaan het hoofdgedeelte is er een zoekbalk met een vergrootglas-icoon en een tekstveld om zoekopdrachten in te voeren. Rechts naast de zoekbalk is er een icoon met drie verticale puntjes.
+
+Het scherm is gebruiksvriendelijk ontworpen en biedt eenvoudige navigatie en duidelijke opties voor het aanmaken en toevoegen van publicaties.\
+\
+Bij het aanmaken van een publicatie zijn een aantal zaken van belang. Een publicatie behoort altijd tot een catalogus, dus die moet geselecteerd worden, net als metadata.
+
+<div>
+
+<figure><img src="../.gitbook/assets/publicatie_mogelijkheden.png" alt=""><figcaption><p>De drie manieren met een hoek </p></figcaption></figure>
+
+ 
+
+<figure><img src="../.gitbook/assets/publicatie_modal.png" alt=""><figcaption></figcaption></figure>
+
+</div>
 
 ## Delen (moet)
 
