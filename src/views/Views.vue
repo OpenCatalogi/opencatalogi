@@ -9,7 +9,6 @@ import { navigationStore, searchStore } from '../store/store.js'
 			<Catalogi v-if="navigationStore.selected === 'catalogi'" />
 			<Organisations v-if="navigationStore.selected === 'organisations'" />
 			<Themes v-if="navigationStore.selected === 'themes'" />
-			<Catalogi v-if="navigationStore.selected === 'catalogi'" />
 			<Dashboard v-if="navigationStore.selected === 'dashboard'" :search="searchStore.search" />
 			<Directory v-if="navigationStore.selected === 'directory'" />
 			<Publications v-if="navigationStore.selected === 'publication'" />
