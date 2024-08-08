@@ -52,14 +52,11 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 		<span>{{ catalogi.summary }}</span>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
-				<BTab title="Eigenschappen" active>
-					adsa
-				</BTab>
 				<BTab title="Toegang">
 					Publiek of alleen bepaalde rollen
 				</BTab>
 				<BTab title="Metadata">
-					adsa
+					Metadata list
 				</BTab>
 			</BTabs>
 		</div>
