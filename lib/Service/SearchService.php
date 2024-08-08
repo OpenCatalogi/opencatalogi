@@ -208,6 +208,15 @@ class SearchService
 			unset($filters['_search']);
 		}
 
+		foreach ($filters as $field => $value) {
+			if ($value === 'IS NOT NULL') {
+				$filters[$field] = ['$ne' => null];
+			}
+			if ($value === 'IS NULL') {
+				$filters[$field] = ['$eq' => null];
+			}
+		}
+
 		return $filters;
 
 	}//end createMongoDBSearchFilter()
