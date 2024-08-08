@@ -54,14 +54,14 @@ Onder is een voorbeeld van een publicatie en de Actie-mogelijkheden.
 
 ## Bijlagen
 
-In het merendeel van de gevallen wordt een publicatie opgemaakt om bestanden te delen (bijvoorbeeld vanuit een woo verzoek). Deze bestanden vormen de informatie in de publicaite en worden aan een publicatie gekoppels als bijlagen. Een bijlage kan zowel onderdeel zijn van de publicatie (er in worden geupload) als elders staan (er wordt naar verwezen). 
+In het merendeel van de gevallen wordt een publicatie opgemaakt om bestanden te delen (bijvoorbeeld vanuit een woo verzoek). Deze bestanden vormen de informatie in de publicaite en worden aan een publicatie gekoppels als bijlagen. Een bijlage kan zowel onderdeel zijn van de publicatie (er in worden geupload) als elders staan (er wordt naar verwezen).
 
-Naast een bestand kan een bijlage (per verwijzing) bijvoorbeeld ook een website of artikel op een website zijn. 
+Naast een bestand kan een bijlage (per verwijzing) bijvoorbeeld ook een website of artikel op een website zijn.
 
 ![alt text](image-3.png)
 
 ## Eigenschappen
 
-Een tweede manier om informatie op te nemen in een publicaite is via eigenschappen. Eigenschappen zijn voor gedefineerde opties (via [publicatie type](../beheerders/metadata.md)) waar een waarde aan kan worden toegekend. 
+Een tweede manier om informatie op te nemen in een publicaite is via eigenschappen. Eigenschappen zijn voor gedefineerde opties (via [publicatie type](../beheerders/metadata.md)) waar een waarde aan kan worden toegekend.
 
 ![alt text](image-2.png)
