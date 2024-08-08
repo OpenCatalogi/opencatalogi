@@ -87,19 +87,20 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<NcTextField :disabled="loading"
 							label="Licentie"
 							:value.sync="publication.license" />
+
+						<NcButton :disabled="(!publication.title || !catalogi?.value?.id || !metaData?.value?.id || !publication.summary) || loading"
+							class="apm-submit-button"
+							type="primary"
+							@click="addPublication()">
+							<template #icon>
+								<NcLoadingIcon v-if="loading" :size="20" />
+								<Plus v-if="!loading" :size="20" />
+							</template>
+							Toevoegen
+						</NcButton>
 					</div>
 				</div>
 			</div>
-			<NcButton v-if="success === null"
-				:disabled="(!publication.title || !catalogi?.value?.id || !metaData?.value?.id || !publication.summary) || loading"
-				type="primary"
-				@click="addPublication()">
-				<template #icon>
-					<NcLoadingIcon v-if="loading" :size="20" />
-					<Plus v-if="!loading" :size="20" />
-				</template>
-				Toevoegen
-			</NcButton>
 		</div>
 	</NcModal>
 </template>
@@ -191,13 +192,19 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
+						const selectedCatalogus = data.results.filter((catalogus) => catalogus.id.toString() === navigationStore.selectedCatalogus.toString())[0]
 
 						this.catalogi = {
 							options: Object.entries(data.results).map((catalog) => ({
 								id: catalog[1].id,
 								label: catalog[1].title,
 							})),
-
+							value: navigationStore.selectedCatalogus
+								? {
+									id: selectedCatalogus.id,
+									label: selectedCatalogus.title,
+								}
+								: null,
 						}
 					})
 					this.catalogiLoading = false
@@ -328,5 +335,9 @@ export default {
     gap: 4px;
     flex-direction: row;
     align-items: center;
+}
+
+.apm-submit-button {
+    margin-block-start: 1rem
 }
 </style>
