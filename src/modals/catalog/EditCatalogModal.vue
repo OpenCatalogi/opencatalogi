@@ -39,10 +39,15 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					:checked.sync="catalogiStore.catalogiItem.listed">
 					Publiek vindbaar
 				</NcCheckboxRadioSwitch>
+				<NcSelect v-bind="organisations"
+					v-model="organisations.value"
+					input-label="Organisatie"
+					:loading="organisationsLoading" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="loading"
 				type="primary"
+				class="ecm-submit-button"
 				@click="editCatalog()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
@@ -55,7 +60,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon, NcCheckboxRadioSwitch, NcSelect } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
@@ -67,19 +72,96 @@ export default {
 		NcNoteCard,
 		NcLoadingIcon,
 		NcCheckboxRadioSwitch,
+		NcSelect,
 		// Icons
 		ContentSaveOutline,
 	},
 	data() {
 		return {
+			catalogiItem: {
+				title: '',
+				summary: '',
+				description: '',
+				image: '',
+				listed: false,
+				organisation: '',
+			},
 			loading: false,
 			success: null,
 			error: false,
+			organisations: {},
+			organisationsLoading: false,
+			hasUpdated: false,
+		}
+	},
+	mounted() {
+		// catalogiStore.catalogiItem can be false, so only assign catalogiStore.catalogiItem to catalogiItem if its NOT false
+		catalogiStore.catalogiItem && (this.catalogiItem = catalogiStore.catalogiItem)
+	},
+	updated() {
+		if (navigationStore.modal === 'editCatalog' && this.hasUpdated) {
+			if (this.catalogiItem.id === catalogiStore.catalogiItem.id) return
+			this.hasUpdated = false
+		}
+		if (navigationStore.modal === 'editCatalog' && !this.hasUpdated) {
+			catalogiStore.catalogiItem && (this.catalogiItem = catalogiStore.catalogiItem)
+			this.fetchData(catalogiStore.catalogiItem.id)
+			this.fetchOrganisations()
+			this.hasUpdated = true
 		}
 	},
 	methods: {
 		closeModal() {
 			navigationStore.modal = false
+		},
+		fetchData(id) {
+			this.loading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/catalogi/${id}`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						catalogiStore.setCatalogiItem(data)
+						this.catalogiItem = catalogiStore.catalogiItem
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.loading = false
+				})
+		},
+		fetchOrganisations() {
+			this.organisationsLoading = true
+			fetch('/index.php/apps/opencatalogi/api/organisations', {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						const selectedOrganisation = data.results.filter((org) => org?.id === catalogiStore.catalogiItem?.organisation?.id) || null
+
+						this.organisations = {
+							options: data.results.map((organisation) => ({
+								id: organisation.id,
+								label: organisation.title,
+							})),
+							value: selectedOrganisation[0]
+								? {
+									id: selectedOrganisation?.id,
+									label: selectedOrganisation?.title,
+								}
+								: null,
+						}
+					})
+					this.organisationsLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.organisationsLoading = false
+				})
 		},
 		editCatalog() {
 			this.loading = true
@@ -91,7 +173,10 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(catalogiStore.catalogiItem),
+					body: JSON.stringify({
+						...catalogiStore.catalogiItem,
+						organisation: this.organisations?.value?.id,
+					}),
 				},
 			)
 				.then((response) => {
@@ -132,5 +217,9 @@ export default {
 
 .success {
     color: green;
+}
+
+.ecm-submit-button {
+    margin-block-start: 1rem;
 }
 </style>

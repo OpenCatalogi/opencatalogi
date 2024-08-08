@@ -19,61 +19,27 @@ export const useCatalogiStore = defineStore(
 				)
 				console.log('Catalogi list set to ' + catalogiList.length + ' item')
 			},
+			/* istanbul ignore next */ // ignore this for Jest until moved into a service
 			async refreshCatalogiList(search = null) {
 				// @todo this might belong in a service?
 				let endpoint = '/index.php/apps/opencatalogi/api/catalogi'
 				if (search !== null && search !== '') {
 					endpoint = endpoint + '?_search=' + search
 				}
-				return fetch(
-					endpoint, {
-						method: 'GET',
-					},
-				)
-					.then(
-						(response) => {
-							response.json().then(
-								(data) => {
-									this.catalogiList = data.results.map(
-										(catalogiItem) => new Catalogi(catalogiItem),
-									)
-								},
+				return fetch(endpoint, {
+					method: 'GET',
+				})
+					.then((response) => {
+						response.json().then((data) => {
+							this.catalogiList = data.results.map(
+								(catalogiItem) => new Catalogi(catalogiItem),
 							)
-						},
-					)
-					.catch(
-						(err) => {
-							console.error(err)
-						},
-					)
-			},
-		},
-		setCatalogiList(catalogiList) {
-			this.catalogiList = catalogiList.map(
-				(catalogiItem) => new Catalogi(catalogiItem),
-			)
-			console.log('Catalogi list set to ' + catalogiList.length + ' item')
-		},
-		/* istanbul ignore next */ // ignore this for Jest until moved into a service
-		async refreshCatalogiList(search = null) {
-			// @todo this might belong in a service?
-			let endpoint = '/index.php/apps/opencatalogi/api/catalogi'
-			if (search !== null && search !== '') {
-				endpoint = endpoint + '?_search=' + search
-			}
-			return fetch(endpoint, {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-						this.catalogiList = data.results.map(
-							(catalogiItem) => new Catalogi(catalogiItem),
-						)
+						})
 					})
-				})
-				.catch((err) => {
-					console.error(err)
-				})
+					.catch((err) => {
+						console.error(err)
+					})
+			},
 		},
 	},
 )
