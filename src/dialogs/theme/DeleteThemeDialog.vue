@@ -23,6 +23,12 @@ import { navigationStore, themeStore } from '../../store/store.js'
 				</template>
 				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
+			<NcButton :disabled="loading" icon="" @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/themas', '_blank')">
+				<template #icon>
+					<HelpCircleOutline :size="20" />
+				</template>
+				Help
+			</NcButton>
 			<NcButton
 				v-if="!succes"
 				:disabled="loading"
@@ -44,6 +50,7 @@ import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'DeleteThemeDialog',
@@ -55,6 +62,7 @@ export default {
 		// Icons
 		Cancel,
 		Delete,
+		HelpCircleOutline,
 	},
 	data() {
 		return {
@@ -93,6 +101,9 @@ export default {
 					this.error = err
 					this.loading = false
 				})
+		},
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }
