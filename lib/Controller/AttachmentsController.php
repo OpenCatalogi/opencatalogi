@@ -177,8 +177,11 @@ class AttachmentsController extends Controller
 			return new JSONResponse(data: ['validation_errors' => $errorMsg], statusCode: 400);
 		}
 
+		// Create the Attachments folder and the Publication specific folder.
 		$this->fileService->createFolder(folderPath: 'Attachments');
-		$this->fileService->uploadFile(
+		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
+			. $this->request->getHeader('Publication-Title');
+		$this->fileService->createFolder(folderPath: "Attachments/$publicationFolder");
 
 		// Save the uploaded file
 		$filePath = "Attachments/$publicationFolder/" . $uploadedFile['name']; // Add a file version to the file name?

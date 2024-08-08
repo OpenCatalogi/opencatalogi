@@ -125,6 +125,10 @@ export default {
 			}, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
+					// These headers are used to pass along some publication info to use as name for a Folder,
+					// to store (attachments/) files in for that specific publication,
+					'Publication-Id': publicationStore.publicationItem.id,
+					'Publication-Title': publicationStore.publicationItem.title,
 				},
 			}).then((response) => {
 				this.loading = false

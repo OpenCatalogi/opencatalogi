@@ -136,9 +136,10 @@ class FileService
 			$this->logger->warning("File $filePath already exists.");
 			return false;
 
-		} catch(\OCP\Files\NotPermittedException $e) {
+		} catch(\OCP\Files\NotPermittedException|\OCP\Files\GenericFileException|\OCP\Lock\LockedException $e) {
 			$this->logger->error("Can't create file $filePath: " . $e->getMessage());
-			throw new Exception('Can\'t write to file');
+
+			throw new Exception("Can't write to file $filePath");
 		}
 	}
 
@@ -171,9 +172,10 @@ class FileService
 
 				return false;
 			}
-		} catch(\OCP\Files\NotPermittedException $e) {
+		} catch(\OCP\Files\NotPermittedException|\OCP\Files\InvalidPathException $e) {
 			$this->logger->error("Can't delete file $filePath: " . $e->getMessage());
-			throw new Exception('Can\'t delete file');
+
+			throw new Exception("Can't delete file $filePath");
 		}
 	}
 
@@ -209,7 +211,8 @@ class FileService
 
 		} catch(\OCP\Files\NotPermittedException $e) {
 			$this->logger->error("Can't create folder $folderPath: " . $e->getMessage());
-			throw new Exception('Can\'t create folder');
+
+			throw new Exception("Can\'t create folder $folderPath");
 		}
 	}
 
