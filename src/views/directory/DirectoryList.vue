@@ -42,8 +42,6 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				:key="`${listing}${i}`"
 				:name="listing.name ?? listing.title"
 				:active="directoryStore.listingItem?.id === listing?.id"
-				:details="'1h'"
-				:counter-number="45"
 				@click="directoryStore.setListingItem(listing)">
 				<template #icon>
 					<LayersOutline :class="directoryStore.listingItem?.id === listing?.id && 'selectedIcon'"
@@ -51,21 +49,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 						:size="44" />
 				</template>
 				<template #subname>
-					{{ listing?.title }}
-				</template>
-				<template #actions>
-					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
-						<template #icon>
-							<Delete :size="20" />
-						</template>
-						Verwijderen
-					</NcActionButton>
+					{{ listing?.summary }}
 				</template>
 			</NcListItem>
 		</div>
