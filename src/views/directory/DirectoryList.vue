@@ -86,17 +86,15 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 	</ul>
 </template>
 <script>
+import { debounce } from 'lodash'
 import { NcListItem, NcActionButton, NcTextField, NcLoadingIcon, NcActions, NcEmptyContent, NcButton } from '@nextcloud/vue'
-// eslint-disable-next-line n/no-missing-import
-import Magnify from 'vue-material-design-icons/Magnify'
-// eslint-disable-next-line n/no-missing-import
-import LayersOutline from 'vue-material-design-icons/LayersOutline'
+
+// Icons
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
-import { debounce } from 'lodash'
 
 export default {
 	name: 'DirectoryList',
@@ -114,8 +112,6 @@ export default {
 		HelpCircleOutline,
 		Refresh,
 		Plus,
-		Pencil,
-		Delete,
 	},
 	beforeRouteLeave(to, from, next) {
 		search = ''
@@ -144,7 +140,7 @@ export default {
 	},
 	methods: {
 		refresh(e) {
-		e.preventDefault()
+			e.preventDefault()
 			this.fetchData()
 		},
 		fetchData(search = null) {
