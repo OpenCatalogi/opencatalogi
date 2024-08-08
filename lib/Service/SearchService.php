@@ -286,7 +286,7 @@ class SearchService
 	 *
 	 * @return array $sort
 	 */
-	public function createSortArrayFromParams(array $filters): array
+	public function createSortForMySQL(array $filters): array
 	{
 		$sort = [];
 		if (isset($filters['_order']) && is_array($filters['_order'])) {

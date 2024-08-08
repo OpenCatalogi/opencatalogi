@@ -104,20 +104,22 @@ class PublicationsController extends Controller
         $filters = $this->request->getParams();
         $fieldsToSearch = ['title', 'description', 'summary'];
 
-		$sort = $searchService->createSortArrayFromParams($filters);
-
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
 			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
 			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
 			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+			$sort = $searchService->createSortForMySQL(filters: $filters);
 
 			return new JSONResponse(['results'  => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams, sort: $sort)]);
 		}
 
 		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
 		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+
+		// @todo Fix mongodb sort
+		// $sort = $searchService->createSortForMongoDB(filters: $filters);
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
