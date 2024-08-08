@@ -28,7 +28,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					required />
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="!metaData.value?.value?.id || loading"
+				:disabled="!metaData?.value?.id || loading"
 				type="primary"
 				@click="addCatalogMetadata">
 				<template #icon>
@@ -98,6 +98,26 @@ export default {
 				listed: false,
 			}
 		},
+		fetchData(id) {
+			this.loading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/catalogi/${id}`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					response.json().then((data) => {
+						catalogiStore.setCatalogiItem(data)
+						this.catalogiItem = catalogiStore.catalogiItem
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.loading = false
+				})
+		},
 		fetchMetaData(metadataList) {
 			this.metaDataLoading = true
 			fetch('/index.php/apps/opencatalogi/api/metadata', {
@@ -105,7 +125,8 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						const filteredData = data.results.filter((meta) => !metadataList.includes(meta?.id))
+						const metadataListAsString = metadataList.map(String)
+						const filteredData = data.results.filter((meta) => !metadataListAsString.includes(meta?.id.toString()))
 
 						this.metaData = {
 							options: filteredData.map((metaData) => ({
@@ -124,16 +145,19 @@ export default {
 		addCatalogMetadata() {
 			this.loading = true
 			this.error = false
+
+			this.catalogiItem.metadata.push(this.metaData.value.id)
+
 			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogi.id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogiItem.id}`,
 				{
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						...this.catalogi,
-						metadata: this.catalogi.metadata.push(this.metaData.value.id),
+						...this.catalogiItem,
+						metadata: this.catalogiItem.metadata,
 					}),
 				},
 			)

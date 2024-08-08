@@ -44,7 +44,7 @@ export class Catalogi implements TCatalogi {
 			rsin: '',
 			pki: '',
 		}
-		this.metadata = data.metadata || []
+		this.metadata = (Array.isArray(data.metadata) && data.metadata) || []
 	}
 
 	/* istanbul ignore next */
