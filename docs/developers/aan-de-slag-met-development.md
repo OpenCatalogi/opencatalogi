@@ -114,6 +114,7 @@ Voor frontend is dat:
 ```cli
 npm run test-coverage
 ```
+
 ![alt text](npm_test.png)
 
 Voor de backend is dat:

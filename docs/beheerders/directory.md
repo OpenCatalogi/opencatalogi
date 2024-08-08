@@ -18,8 +18,8 @@ Het is ook mogenlijk om handmatig externe directories (dus de direcotry van een 
 
 Bij een listing kan je de volgende zaken aanpassen.
 
-- Of de directory beschickbaar is voor zoek opdrachten
-- Of de directory standaard moet mee worden genomen in zoek resultaten, dit is met name handig als er spraken is van een samenwerkings verband waarover je woo plichtig bent als overheid
+* Of de directory beschickbaar is voor zoek opdrachten
+* Of de directory standaard moet mee worden genomen in zoek resultaten, dit is met name handig als er spraken is van een samenwerkings verband waarover je woo plichtig bent als overheid
 
 ![alt text](directory_configuratie.png)
 
