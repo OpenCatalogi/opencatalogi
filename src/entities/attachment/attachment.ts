@@ -9,8 +9,8 @@ export class Attachment implements TAttachment {
 	public summary: string
 	public description: string
 	public labels: string[]
-	public accessURL: string
-	public downloadURL: string
+	public accessUrl: string
+	public downloadUrl: string
 	public type: string
 	public extension: string
 	public size: string
@@ -42,8 +42,8 @@ export class Attachment implements TAttachment {
 		this.summary = data.summary || ''
 		this.description = data.description || ''
 		this.labels = data.labels || []
-		this.accessURL = data.accessURL || ''
-		this.downloadURL = data.downloadURL || ''
+		this.accessUrl = data.accessUrl || ''
+		this.downloadUrl = data.downloadUrl || ''
 		this.type = data.type || ''
 		this.extension = data.extension || ''
 		this.size = data.size || ''
@@ -73,8 +73,8 @@ export class Attachment implements TAttachment {
 			summary: z.string().max(255),
 			description: z.string().max(2555),
 			labels: z.string().array(),
-			accessURL: z.string().url().or(z.literal('')),
-			downloadURL: z.string().url().or(z.literal('')),
+			accessUrl: z.string().url().or(z.literal('')),
+			downloadUrl: z.string().url().or(z.literal('')),
 			type: z.string(),
 			anonymization: z.object({
 				anonymized: z.boolean(),

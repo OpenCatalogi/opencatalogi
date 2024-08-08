@@ -84,7 +84,7 @@ class Publication extends Entity implements JsonSerializable
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
-				$value = [];
+				$value = null;
 			}
 
 			$method = 'set'.ucfirst($key);
@@ -96,6 +96,7 @@ class Publication extends Entity implements JsonSerializable
 			}
 		}
 
+		// Todo: MetaData is depricated, we should use Schema instead. But this needs front-end changes as well.
 		$this->setSchema($this->getMetaData());
 
 		$this->setAttachmentCount('0');

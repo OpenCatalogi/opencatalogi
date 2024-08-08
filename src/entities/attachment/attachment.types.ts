@@ -5,8 +5,8 @@ export type TAttachment = {
 	summary: string
 	description: string
 	labels: string[]
-	accessURL: string
-	downloadURL: string
+	accessUrl: string
+	downloadUrl: string
 	type: string
 	extension: string
 	size: string

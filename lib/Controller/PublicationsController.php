@@ -165,6 +165,8 @@ class PublicationsController extends Controller
     {
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
@@ -219,13 +221,12 @@ class PublicationsController extends Controller
 
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
 			}
-		}
-		if (isset($data['id'])) {
-			unset( $data['id']);
 		}
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
