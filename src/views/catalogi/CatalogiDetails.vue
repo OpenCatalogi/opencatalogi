@@ -41,6 +41,12 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					</template>
 					Catalogus bekijken
 				</NcActionButton>
+				<NcActionButton @click="navigationStore.setModal('addCatalogiMetadata')">
+					<template #icon>
+						<Plus :size="20" />
+					</template>
+					Metadata toevoegen
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
 						<Delete :size="20" />
@@ -76,6 +82,7 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'CatalogiDetails',

@@ -20,6 +20,8 @@ export class Catalogi implements TCatalogi {
         pki: string
     }
 
+	public metadata: string[]
+
 	constructor(data: TCatalogi) {
 		this.hydrate(data)
 	}
@@ -42,6 +44,7 @@ export class Catalogi implements TCatalogi {
 			rsin: '',
 			pki: '',
 		}
+		this.metadata = data.metadata || []
 	}
 
 	/* istanbul ignore next */
@@ -62,6 +65,7 @@ export class Catalogi implements TCatalogi {
 				rsin: z.string(),
 				pki: z.string(),
 			}),
+			metadata: z.string().array(),
 		})
 
 		const result = schema.safeParse({
