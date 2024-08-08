@@ -365,14 +365,22 @@ class AttachmentsController extends Controller
     public function destroy(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		$attachment = $this->show(id: $id, objectService: $objectService)->getData();
-
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
 			$attachment = $attachment->jsonSerialize();
+		}
 
-			// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
-			$this->fileService->deleteFile(filePath: 'Attachments/' . $attachment['title'] . '.' . $attachment['extension']);
+		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
+//		$this->fileService->deleteFile(filePath: 'Attachments/' . $attachment['title'] . '.' . $attachment['extension']);
+		$filePath = explode(separator: '/', string: $attachment['reference']);
+		array_shift(array: $filePath);
+		$filePath = implode(separator: '/', array: $filePath);
+		$this->fileService->deleteFile(filePath: $filePath);
+
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
+		) {
 			$this->attachmentMapper->delete(entity: $this->attachmentMapper->find(id: (int) $id));
 
 			return new JSONResponse([]);
@@ -381,9 +389,6 @@ class AttachmentsController extends Controller
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
-		$this->fileService->deleteFile(filePath: 'Attachments/' . $attachment['title'] . '.' . $attachment['extension']);
 
 		$filters['_id'] = (string) $id;
 		$returnData = $objectService->deleteObject(
