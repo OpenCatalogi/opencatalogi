@@ -75,6 +75,7 @@ class Publication extends Entity implements JsonSerializable
 		$this->setAttachments(null);
 		$this->setOrganization(null);
 		$this->setData(null);
+		$this->setModified(new DateTime());
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
