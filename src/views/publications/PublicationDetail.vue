@@ -169,36 +169,41 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
-						<NcListItem v-for="(value, key, i) in publicationStore.publicationItem?.data"
-							:key="`${key}${i}`"
-							:name="key"
-							:bold="false"
-							:force-display-actions="true"
-							@click="publicationStore.setPublicationDataKey(key)
-							">
-							<template #icon>
-								<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
-									disable-menu
-									:size="44" />
-							</template>
-							<template #subname>
-								{{ value }}
-							</template>
-							<template #actions>
-								<NcActionButton @click="editPublicationDataItem(key)">
-									<template #icon>
-										<Pencil :size="20" />
-									</template>
-									Bewerken
-								</NcActionButton>
-								<NcActionButton @click="deletePublicationDataItem(key)">
-									<template #icon>
-										<Delete :size="20" />
-									</template>
-									Verwijderen
-								</NcActionButton>
-							</template>
-						</NcListItem>
+						<div v-if="publicationStore.publicationItem?.data.length > 0">
+							<NcListItem v-for="(value, key, i) in publicationStore.publicationItem?.data"
+								:key="`${key}${i}`"
+								:name="key"
+								:bold="false"
+								:force-display-actions="true"
+								@click="publicationStore.setPublicationDataKey(key)
+								">
+								<template #icon>
+									<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
+										disable-menu
+										:size="44" />
+								</template>
+								<template #subname>
+									{{ value }}
+								</template>
+								<template #actions>
+									<NcActionButton @click="editPublicationDataItem(key)">
+										<template #icon>
+											<Pencil :size="20" />
+										</template>
+										Bewerken
+									</NcActionButton>
+									<NcActionButton @click="deletePublicationDataItem(key)">
+										<template #icon>
+											<Delete :size="20" />
+										</template>
+										Verwijderen
+									</NcActionButton>
+								</template>
+							</NcListItem>
+						</div>
+						<div v-if="publicationStore.publicationItem?.data.length === 0" class="tabPanel">
+							Geen Eigenschappen gevonden
+						</div>
 					</BTab>
 					<BTab title="Bijlagen">
 						<div
