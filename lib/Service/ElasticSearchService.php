@@ -125,10 +125,14 @@ class ElasticSearchService
 		}
 
 		if(isset($filters['.limit']) === true) {
+			$body['size'] = $filters['.limit'];
 			unset($filters['.limit']);
 		}
 
 		if(isset($filters['.page']) === true) {
+			if(isset($body['size']) === true) {
+				$body['from'] = $body['size'] * ($filters['.page'] - 1);
+			}
 			unset($filters['.page']);
 		}
 
