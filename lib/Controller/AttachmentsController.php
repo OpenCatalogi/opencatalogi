@@ -14,7 +14,6 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
 use OCP\IUserSession;
-use OCP\Share\IShare;
 use Symfony\Component\Uid\Uuid;
 
 class AttachmentsController extends Controller
