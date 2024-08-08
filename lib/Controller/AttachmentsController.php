@@ -2,6 +2,7 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use OCA\OpenCatalogi\Db\AttachmentMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
@@ -145,7 +146,7 @@ class AttachmentsController extends Controller
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 * @throws GuzzleException In case the file upload to NextCloud fails.
+	 * @throws Exception|GuzzleException In case the file upload to NextCloud fails. Or if creating the share link fails.
 	 */
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
@@ -214,26 +215,6 @@ class AttachmentsController extends Controller
     public function update(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		$data = $this->request->getParams();
-
-		// Todo: $uploadedFile is empty when doing a PUT...
-		$uploadedFile = $this->request->getUploadedFile(key: '_file');
-
-		// Save the uploaded file
-		$this->fileService->createFolder(folderPath: 'Attachments');
-		$this->fileService->uploadFile(
-			content: file_get_contents(filename: $uploadedFile['tmp_name']),
-			filePath: 'Attachments/'.$uploadedFile['name'],
-			update: true
-		);
-
-		// Update Attachment data
-		// Todo: when should we create a new share link?
-//		$data['downloadUrl'] = $this->fileService->createShareLink(path: 'Attachments/'.$uploadedFile['name']);
-		$data['type'] = $uploadedFile['type'];
-		$data['size'] = $uploadedFile['size'];
-		$explodedName = explode(separator: '.', string: $uploadedFile['name']);
-		$data['title'] = $explodedName[0];
-		$data['extension'] = end(array: $explodedName);
 
 		// Remove fields we should never post
 		unset($data['id']);

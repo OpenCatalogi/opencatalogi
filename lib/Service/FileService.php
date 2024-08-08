@@ -5,8 +5,10 @@ namespace OCA\OpenCatalogi\Service;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use OCP\Files\IRootFolder;
 use OCP\IAppConfig;
 use OCP\IUserSession;
+use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
 class FileService
@@ -17,7 +19,9 @@ class FileService
 	public function __construct(
 		private readonly IUserSession $userSession,
 		private readonly LoggerInterface $logger,
-		private readonly IAppConfig $config
+		private readonly IAppConfig $config,
+		private readonly IRootFolder $rootFolder,
+		private readonly IShare $share
 	) {
 		$this->client = new Client();
 	}
@@ -117,38 +121,40 @@ class FileService
 	 * Uploads a file to NextCloud. Will overwrite a file if it already exists and create a new one if it doesn't exist.
 	 *
 	 * @param mixed $content The content of the file.
-	 * @param string|null $filePath Path (from root) where to save the file. NOTE: this should include the name and extension/format of the file as well! (example.pdf)
-	 * @param bool|null $update If set to true, the response status code 204 will also be seen as a success result. (NextCloud will return 204 when successfully updating a file)
+	 * @param string $filePath Path (from root) where to save the file. NOTE: this should include the name and extension/format of the file as well! (example.pdf)
 	 *
 	 * @return bool True if successful.
-	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
+	 * @throws Exception In case we can't write to file because it is not permitted.
 	 */
-	public function uploadFile(mixed $content, ?string $filePath = '', ?bool $update = false): bool
+	public function uploadFile(mixed $content, string $filePath): bool
 	{
-		// Get the admin username & password for auth & get the current username
-		$userInfo = $this->getUserInfo();
+		$filePath = trim(string: $filePath, characters: '/');
 
-		// API endpoint to upload the file
-		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
-			. $userInfo['currentUsername'] . '/' . trim(string: $filePath, characters: '/');
+		// Get the current user.
+		$currentUser = $this->userSession->getUser();
+		$userFolder = $this->rootFolder->getUserFolder(userId: $currentUser ? $currentUser->getUID() : 'Guest');
 
+		// Check if file exists and create it if not.
 		try {
-			$response = $this->client->request(method: 'PUT', uri: $url, options: [
-				'auth' => [$userInfo['username'], $userInfo['password']],
-				'body' => $content
-			]);
+			try {
+				$userFolder->get(path: $filePath);
+			} catch(\OCP\Files\NotFoundException $e) {
+				$userFolder->newFile(path: $filePath);
+				$file = $userFolder->get(path: $filePath);
 
-			// 201 Created indicates that the file was created, 204 No Content indicates that the file was updated.
-			if ($response->getStatusCode() === 201 || ($update === true && $response->getStatusCode() === 204)) {
+				$file->putContent(data: $content);
+
 				return true;
 			}
-		} catch (Exception $e) {
-			$str = $update === true ? 'update' : 'upload';
-			$this->logger->error("File $str failed: " . $e->getMessage());
-			throw $e;
-		}
 
-		return false;
+			// File already exists.
+			$this->logger->warning("File $filePath already exists.");
+			return false;
+
+		} catch(\OCP\Files\NotPermittedException $e) {
+			$this->logger->error("Can't create file $filePath: " . $e->getMessage());
+			throw new Exception('Can\'t write to file');
+		}
 	}
 
 	/**
@@ -157,101 +163,68 @@ class FileService
 	 * @param string $filePath Path (from root) to the file you want to delete.
 	 *
 	 * @return bool True if successful.
-	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
+	 * @throws Exception In case deleting the file is not permitted.
 	 */
 	public function deleteFile(string $filePath): bool
 	{
-		// Get the admin username & password for auth & get the current username
-		$userInfo = $this->getUserInfo();
+		$filePath = trim(string: $filePath, characters: '/');
 
-		// API endpoint to delete the file
-		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
-			. $userInfo['currentUsername'] . '/' . trim(string: $filePath, characters: '/');
+		// Get the current user.
+		$currentUser = $this->userSession->getUser();
+		$userFolder = $this->rootFolder->getUserFolder(userId: $currentUser ? $currentUser->getUID() : 'Guest');
 
+		// Check if file exists and delete it if it does.
 		try {
-			$response = $this->client->request(method: 'DELETE', uri: $url, options: [
-				'auth' => [$userInfo['username'], $userInfo['password']],
-			]);
+			try {
+				$file = $userFolder->get(path: $filePath);
+				$file->delete();
 
-			if ($response->getStatusCode() === 204) { // 204 No Content indicates the file was deleted.
 				return true;
-			}
-		} catch (Exception $e) {
-			$this->logger->error('File deletion failed: ' . $e->getMessage());
-			throw $e;
-		}
+			} catch(\OCP\Files\NotFoundException $e) {
+				// File does not exist.
+				$this->logger->warning("File $filePath does not exist.");
 
-		return false;
-	}
-
-	/**
-	 * Checks if a folder exists in NextCloud.
-	 *
-	 * @param string $folderPath Path (from root) to a folder you want to check if exists.
-	 *
-	 * @return bool True if the folder exists.
-	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
-	 */
-	public function folderExists(string $folderPath): bool
-	{
-		// Get the admin username & password for auth & get the current username
-		$userInfo = $this->getUserInfo();
-
-		// API endpoint to check if a folder exists
-		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
-			. $userInfo['currentUsername'] . '/' . trim(string: $folderPath, characters: '/');
-
-		try {
-			$response = $this->client->request(method: 'PROPFIND', uri: $url, options: [
-				'auth' => [$userInfo['username'], $userInfo['password']],
-				'headers' => [
-					'Depth' => '1',
-				],
-				'body' => '<?xml version="1.0" encoding="UTF-8"?><d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/></d:prop></d:propfind>',
-			]);
-
-			return $response->getStatusCode() === 207; // Multi-Status indicates the folder exists.
-		} catch (Exception $e) {
-			if ($e->getCode() === 404) {
 				return false;
 			}
-
-			$this->logger->error('Folder existence check failed: ' . $e->getMessage());
-			throw $e;
+		} catch(\OCP\Files\NotPermittedException $e) {
+			$this->logger->error("Can't delete file $filePath: " . $e->getMessage());
+			throw new Exception('Can\'t delete file');
 		}
 	}
 
 	/**
 	 * Creates a new folder in NextCloud, unless it already exists.
 	 *
-	 * @param string $folderPath Path (from root) to where you want to create a folder. NOTE: this should include the name of the folder as well! (/Media/exampleFolder)
+	 * @param string $folderPath Path (from root) to where you want to create a folder, include the name of the folder. (/Media/exampleFolder)
 	 *
 	 * @return bool True if successfully created a new folder.
-	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
+	 * @throws Exception In case we can't create the folder because it is not permitted.
 	 */
 	public function createFolder(string $folderPath): bool
 	{
-		if ($this->folderExists(folderPath: $folderPath) === true) {
-			$this->logger->info('Folder creation failed: Folder already exists');
-			return false;
-		}
+		$folderPath = trim(string: $folderPath, characters: '/');
 
-		// Get the admin username & password for auth & get the current username
-		$userInfo = $this->getUserInfo();
+		// Get the current user.
+		$currentUser = $this->userSession->getUser();
+		$userFolder = $this->rootFolder->getUserFolder(userId: $currentUser ? $currentUser->getUID() : 'Guest');
 
-		// API endpoint to create a folder
-		$url = $this->getCurrentDomain() . '/remote.php/dav/files/'
-			. $userInfo['currentUsername'] . '/' . trim(string: $folderPath, characters: '/');
-
+		// Check if folder exists and if not create it.
 		try {
-			$response = $this->client->request(method: 'MKCOL', uri: $url, options: [
-				'auth' => [$userInfo['username'], $userInfo['password']],
-			]);
+			try {
+				$userFolder->get(path: $folderPath);
+			} catch(\OCP\Files\NotFoundException $e) {
+				$userFolder->newFolder(path: $folderPath);
 
-			return $response->getStatusCode() === 201; // 201 Created indicates the folder was created.
-		} catch (\Exception $e) {
-			$this->logger->error('Folder creation failed: ' . $e->getMessage());
-			throw $e;
+				return true;
+			}
+
+			// Folder already exists.
+			$this->logger->info("This folder already exits $folderPath");
+			return false;
+
+		} catch(\OCP\Files\NotPermittedException $e) {
+			$this->logger->error("Can't create folder $folderPath: " . $e->getMessage());
+			throw new Exception('Can\'t create folder');
 		}
 	}
 
