@@ -13,6 +13,8 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
+use OCP\IUserSession;
+use OCP\Share\IShare;
 use Symfony\Component\Uid\Uuid;
 
 class AttachmentsController extends Controller
@@ -24,11 +26,11 @@ class AttachmentsController extends Controller
 		IRequest $request,
 		private readonly IAppConfig $config,
 		private readonly AttachmentMapper $attachmentMapper,
-		private readonly FileService $fileService
+		private readonly FileService $fileService,
+		private readonly IUserSession $userSession,
 	)
     {
         parent::__construct($appName, $request);
-		$this->fileService->setAppName($appName);
     }
 
 	private function insertNestedObjects(array $object, ObjectService $objectService, array $config): array
@@ -146,7 +148,8 @@ class AttachmentsController extends Controller
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 * @throws Exception|GuzzleException In case the file upload to NextCloud fails. Or if creating the share link fails.
+	 * @throws Exception In case the file upload to NextCloud fails. Or if creating the share link fails.
+	 * @throws GuzzleException In case saving the Attachment to MongoDB fails.
 	 */
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
@@ -163,20 +166,47 @@ class AttachmentsController extends Controller
 			return new JSONResponse(data: ['error' => 'File upload error: '.$uploadedFile['error']], statusCode: 400);
 		}
 
-		// Save the uploaded file
+		$errorMsg = [];
+		if (empty($data['accessUrl']) === false && filter_var($data['accessUrl'], FILTER_VALIDATE_URL) === false) {
+			$errorMsg[] = "accessUrl is not a valid url";
+		}
+		if (empty($data['downloadUrl']) === false && filter_var($data['downloadUrl'], FILTER_VALIDATE_URL) === false) {
+			$errorMsg[] = "downloadUrl is not a valid url";
+		}
+		if (empty($errorMsg) === false) {
+			return new JSONResponse(data: ['validation_errors' => $errorMsg], statusCode: 400);
+		}
+
 		$this->fileService->createFolder(folderPath: 'Attachments');
 		$this->fileService->uploadFile(
+
+		// Save the uploaded file
+		$filePath = "Attachments/$publicationFolder/" . $uploadedFile['name']; // Add a file version to the file name?
+		$created = $this->fileService->uploadFile(
 			content: file_get_contents(filename: $uploadedFile['tmp_name']),
-			filePath: 'Attachments/'.$uploadedFile['name']
+			filePath: $filePath
 		);
 
+		if ($created === false) {
+			return new JSONResponse(data: ['error' => "Failed to upload file. This file: $filePath might already exist"], statusCode: 400);
+		}
+
 		// Update Attachment data
-		$data['downloadUrl'] = $this->fileService->createShareLink(path: 'Attachments/'.$uploadedFile['name']);
+		$currentUser = $this->userSession->getUser();
+		$userId = $currentUser ? $currentUser->getUID() : 'Guest';
+		$data['reference'] = "$userId/$filePath";
 		$data['type'] = $uploadedFile['type'];
 		$data['size'] = $uploadedFile['size'];
 		$explodedName = explode(separator: '.', string: $uploadedFile['name']);
 		$data['title'] = $explodedName[0];
 		$data['extension'] = end(array: $explodedName);
+
+		// Create ShareLink
+		$shareLink = $this->fileService->createShareLink(path: $filePath);
+		if (empty($data['accessUrl']) === true) {
+			$data['accessUrl'] = $shareLink;
+		}
+		$data['downloadUrl'] =  "$shareLink/download";
 
 		// Remove fields we should never post
 		unset($data['id']);

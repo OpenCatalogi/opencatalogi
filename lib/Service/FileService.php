@@ -2,40 +2,21 @@
 
 namespace OCA\OpenCatalogi\Service;
 
+use DateTime;
 use Exception;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use OCP\Files\IRootFolder;
-use OCP\IAppConfig;
 use OCP\IUserSession;
-use OCP\Share\IShare;
+use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 
 class FileService
 {
-	protected string $appName = 'opencatalogi';
-	private Client $client;
-
 	public function __construct(
 		private readonly IUserSession $userSession,
 		private readonly LoggerInterface $logger,
-		private readonly IAppConfig $config,
 		private readonly IRootFolder $rootFolder,
-		private readonly IShare $share
-	) {
-		$this->client = new Client();
-	}
-
-	/**
-	 * Sets the appName used for getting configuration, this should be set after creating this service!
-	 *
-	 * @param string $appName The appName to set.
-	 * @return void
-	 */
-	public function setAppName(string $appName): void
-	{
-		$this->appName = $appName;
-	}
+		private readonly IManager $shareManager
+	) {}
 
 	/**
 	 * Gets and returns the current host / domain with correct protocol.
@@ -56,24 +37,6 @@ class FileService
 	}
 
 	/**
-	 * Gets and returns an array with information about the current user.
-	 * TODO: Username and password used for auth are currently set in config, this should (/could) be dynamic.
-	 *
-	 * @return array An array containing 'username', 'password' for auth and the 'currentUsername'.
-	 */
-	private function getUserInfo(): array
-	{
-		// Get the current user
-		$currentUser = $this->userSession->getUser();
-
-		return [
-			'username' => $this->config->getValueString(app: $this->appName, key: 'adminUsername', default: 'admin'),
-			'password' => $this->config->getValueString(app: $this->appName, key: 'adminPassword', default: 'admin'),
-			'currentUsername' => $currentUser ? $currentUser->getUID() : 'Guest'
-		];
-	}
-
-	/**
 	 * Creates and returns a share link for a file (or folder).
 	 * (https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html#create-a-new-share)
 	 *
@@ -82,38 +45,60 @@ class FileService
 	 * @param int|null $permissions 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
 	 *
 	 * @return string The share link.
-	 * @throws GuzzleException|Exception In case the Guzzle call returns an exception.
+	 * @throws Exception In case the Guzzle call returns an exception.
 	 */
 	public function createShareLink(string $path, ?int $shareType = 3, ?int $permissions = null): string
 	{
-		// API endpoint to create a share
-		$url = "{$this->getCurrentDomain()}/ocs/v2.php/apps/files_sharing/api/v1/shares";
+		if ($permissions === null) {
+			$permissions = 31;
+			if ($shareType === 3) {
+				$permissions = 1;
+			}
+		}
 
-		// Get the admin username & password for auth & get the current username
-		$userInfo = $this->getUserInfo();
+		$path = trim(string: $path, characters: '/');
 
-		// Data for the POST request
-		$options = [
-			'auth' => [$userInfo['username'], $userInfo['password']],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-				'Content-Type' => 'application/x-www-form-urlencoded'
-			],
-			'form_params' => [
-				'path' => $path,
-				'shareType' => $shareType,
-				'permissions' => $permissions,
-				'shareWith' => $userInfo['currentUsername']
-			]
-		];
+		// Get the current user.
+		$currentUser = $this->userSession->getUser();
+		$userId = $currentUser ? $currentUser->getUID() : 'Guest';
+		try {
+			$userFolder = $this->rootFolder->getUserFolder(userId: $userId);
+		} catch(\OCP\Files\NotPermittedException) {
+			$this->logger->error("Can't create share link for $path because user (folder) couldn't be found");
+
+			return "User (folder) couldn't be found";
+		}
 
 		try {
-			$response = $this->client->post(uri: $url, options: $options);
-			$data = json_decode($response->getBody()->getContents(), true);
-			return $data['ocs']['data']['url'] ?? '';
-		} catch (Exception $e) {
-			$this->logger->error('Failed to create share link: ' . $e->getMessage());
-			throw $e;
+			// Note: if we ever want to create share links for folders instead of files, just remove this try catch and only use setTarget, not setNodeId.
+			$file = $userFolder->get(path: $path);
+		} catch(\OCP\Files\NotFoundException $e) {
+			$this->logger->error("Can't create share link for $path because file doesn't exist");
+
+			return 'File not found at '.$path;
+		}
+
+		$share = $this->shareManager->newShare();
+		$share->setTarget(target: "/$path");
+		$share->setNodeId(fileId: $file->getId());
+		$share->setNodeType(type: 'file');
+		$share->setShareType(shareType: $shareType);
+		if ($permissions !== null) {
+			$share->setPermissions(permissions: $permissions);
+		}
+		$share->setSharedBy(sharedBy: $userId);
+		$share->setShareOwner(shareOwner: $userId);
+		$share->setShareTime(shareTime: new DateTime());
+		$share->setStatus(status: $share::STATUS_ACCEPTED);
+
+		try
+		{
+			$share = $this->shareManager->createShare(share: $share);
+			return $this->getCurrentDomain() . '/index.php/s/' . $share->getToken();
+		} catch (Exception $exception) {
+			$this->logger->error("Can't create share link for $path: " . $exception->getMessage());
+
+			throw new Exception('Can\'t create share link');
 		}
 	}
 
