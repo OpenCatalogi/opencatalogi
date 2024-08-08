@@ -124,6 +124,14 @@ class ElasticSearchService
 			];
 		}
 
+		if(isset($filters['.limit']) === true) {
+			unset($filters['.limit']);
+		}
+
+		if(isset($filters['.page']) === true) {
+			unset($filters['.page']);
+		}
+
 		unset($filters['.search'], $filters['.queries'], $filters['.catalogi']);
 
 		foreach ($filters as $name => $filter) {

@@ -95,14 +95,28 @@ class SearchController extends Controller
 
         $fieldsToSearch = ['title', 'description', 'summary'];
 
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		if($this->config->hasKey($this->appName, 'elasticLocation') === false
+			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
 		) {
 			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
 			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+
+			$limit = null;
+			$offset = null;
+
+			if(isset($filters['_limit']) === true) {
+				$limit = $filters['_limit'];
+			}
+
+			if(isset($filters['_page']) === true) {
+				$offset = ($limit * ($filters['_page'] - 1));
+			}
+
 			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results' => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
+
+
+			return new JSONResponse(['results' => $this->publicationMapper->findAll(limit: $limit, offset: $offset, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
 		}
 
 		//@TODO: find a better way to get query params. This fixes it for now.
