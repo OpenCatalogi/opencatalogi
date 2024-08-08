@@ -32,7 +32,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					</div>
 					<!-- STAGE 2 -->
 					<div v-if="catalogi?.value?.id && !metaData?.value?.id">
-						<NcButton @click="catalogi.value = null">
+						<NcButton :disabled="loading"
+							@click="catalogi.value = null">
 							Terug naar Catalogi
 						</NcButton>
 						<NcSelect v-bind="metaData"
@@ -44,7 +45,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					</div>
 					<!-- STAGE 3 -->
 					<div v-if="catalogi.value?.id && metaData.value?.id">
-						<NcButton @click="metaData.value = null">
+						<NcButton :disabled="loading"
+							@click="metaData.value = null">
 							Terug naar Metadata
 						</NcButton>
 						<NcTextField :disabled="loading"
