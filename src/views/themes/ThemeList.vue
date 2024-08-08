@@ -23,7 +23,7 @@ import { navigationStore, themeStore } from '../../store/store.js'
 						</template>
 						Help
 					</NcActionButton>
-					<NcActionButton :disabled="loading" @click="fetchData">
+					<NcActionButton :disabled="loading" @click="refresh">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
@@ -149,6 +149,10 @@ export default {
 		this.fetchData()
 	},
 	methods: {
+		refresh(e) {
+			e.preventDefault()
+			this.fetchData()
+		},
 		fetchData(search = null) {
 			this.loading = true
 			themeStore.refreshThemeList(search)

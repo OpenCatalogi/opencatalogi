@@ -22,7 +22,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 					</template>
 					Help
 				</NcActionButton>
-				<NcActionButton :disabled="loading" @click="fetchData">
+				<NcActionButton :disabled="loading" @click="refresh">
 					<template #icon>
 						<Refresh :size="20" />
 					</template>
@@ -42,8 +42,6 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				:key="`${listing}${i}`"
 				:name="listing.name ?? listing.title"
 				:active="directoryStore.listingItem?.id === listing?.id"
-				:details="'1h'"
-				:counter-number="45"
 				@click="directoryStore.setListingItem(listing)">
 				<template #icon>
 					<LayersOutline :class="directoryStore.listingItem?.id === listing?.id && 'selectedIcon'"
@@ -51,21 +49,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 						:size="44" />
 				</template>
 				<template #subname>
-					{{ listing?.title }}
-				</template>
-				<template #actions>
-					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setDialog('deleteListing')">
-						<template #icon>
-							<Delete :size="20" />
-						</template>
-						Verwijderen
-					</NcActionButton>
+					{{ listing?.summary }}
 				</template>
 			</NcListItem>
 		</div>
@@ -102,17 +86,15 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 	</ul>
 </template>
 <script>
+import { debounce } from 'lodash'
 import { NcListItem, NcActionButton, NcTextField, NcLoadingIcon, NcActions, NcEmptyContent, NcButton } from '@nextcloud/vue'
-// eslint-disable-next-line n/no-missing-import
-import Magnify from 'vue-material-design-icons/Magnify'
-// eslint-disable-next-line n/no-missing-import
-import LayersOutline from 'vue-material-design-icons/LayersOutline'
+
+// Icons
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
-import { debounce } from 'lodash'
 
 export default {
 	name: 'DirectoryList',
@@ -130,8 +112,6 @@ export default {
 		HelpCircleOutline,
 		Refresh,
 		Plus,
-		Pencil,
-		Delete,
 	},
 	beforeRouteLeave(to, from, next) {
 		search = ''
@@ -159,6 +139,10 @@ export default {
 		this.fetchData()
 	},
 	methods: {
+		refresh(e) {
+			e.preventDefault()
+			this.fetchData()
+		},
 		fetchData(search = null) {
 			this.loading = true
 			directoryStore.refreshListingList(search)
