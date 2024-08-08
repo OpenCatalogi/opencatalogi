@@ -28,7 +28,7 @@ export const mockCatalogiData = (): TCatalogi[] => [
 		image: 'string',
 		// @ts-expect-error -- listed needs to be a boolean
 		listed: 0.2,
-		organisation: '23'
+		organisation: '23',
 	},
 ]
 
