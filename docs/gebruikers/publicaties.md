@@ -1,22 +1,22 @@
 # Publicaties
 
-> Publicaties zijn onderdeel van de (Open Catalogi Standaard)\[] en gebaseerd op het [publication object](https://conduction.stoplight.io/docs/open-catalogi/9bebd6bf4fe35-publication). Publicaties kennen eigenschappen zo als gedefineerd in een publicaite type en kunnen worden gekopeld aan bijlagen
+> Publicaties zijn onderdeel van de (Open Catalogi Standaard)\[] en gebaseerd op het [publication object](https://conduction.stoplight.io/docs/open-catalogi/9bebd6bf4fe35-publication). Publicaties kennen eigenschappen zo als gedefineerd in een publicatietype en kunnen worden gekoppeld aan bijlagen
 
 ## Publicaties toevoegen
 
 Publicaties kunnen worden toegevoegd via:
 
-* De publicatie toeveogen knop boven aan het hoofd menu (links)
-* Een catalogus geselecteerd in het hoofd menu (via het hamburger menu achter de zoekbalk)
-* Een catalogus detail pagina
+* De publicatie toevoegen knop boven aan het hoofd menu (links)
+* Een catalogus geselecteerd in het hoofdmenu (via het hamburgermenu achter de zoekbalk)
+* Een catalogus detailpagina
 
-Een publicatie leeft altijd binnen één catalogus en word gedefineerd door één publicatie type. Omdat catalogi bepalen welke publicatie typen beschickbaar zijn voor die catalogi moet er eerst een catalogus worden gekozen voordat er een metadata type kan worden gekozen. Daarmee word de volgorde bij het aanmaken van een publicatie:
+Een publicatie leeft altijd binnen één catalogus en wordt gedefinieerd door één publicatietype. Omdat catalogi bepalen welke publicatietypen beschikbaar zijn voor die catalogi moet er eerst een catalogus worden gekozen voordat er een metadatatype kan worden gekozen. Daarmee wordt de volgorde bij het aanmaken van een publicatie:
 
 1. Catalogus kiezen (indien niet opgestart vanuit een specifieke catalogus)
 2. Publicatietype kiezen
-3. Publicatie detalis aanvullen
+3. Publicatiedetails aanvullen
 
-Eigenschapen en bijlagen kunnen worden toegevoegd nadat de publicatie is toegevoegd.
+Eigenschappen en bijlagen kunnen worden toegevoegd nadat de publicatie is toegevoegd.
 
 ## Publicaties beheren
 
@@ -27,6 +27,8 @@ Hieronder is een voorbeeld van een ingevulde modal voor het aanmaken van een Woo
 <div align="left">
 
 <figure><img src="../assets/oc_publicatie_toevoegen_form_1.png" alt="" width="371"><figcaption><p>Het eerste gedeelte - gegevens over de publicatie</p></figcaption></figure>
+
+ 
 
 <figure><img src="../assets/Open-Catalogi-Nextcloud.png" alt="" width="374"><figcaption><p>het tweede gedeelte - het aanwijzen van de catalogi</p></figcaption></figure>
 
@@ -42,6 +44,6 @@ Onder is een voorbeeld van een publicatie en de Actie-mogelijkheden.
 
 @todo
 
-## Bijlengen
+## Bijlagen
 
 @todo
