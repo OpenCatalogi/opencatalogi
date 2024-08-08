@@ -43,7 +43,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcActionCaption name="Acties" />
 					<NcActionButton
 						title="Bekijk de documentatie over publicaties"
-						@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties')">
+						@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
 						<template #icon>
 							<HelpCircleOutline :size="20" />
 						</template>
