@@ -17,7 +17,7 @@ class Catalog extends Entity implements JsonSerializable
 
 	protected bool    $listed       = false;
 	protected ?string $organisation = null;
-	protected array   $metadata     = [];
+	protected ?array   $metadata    = null;
 
 	public function __construct() {
 		$this->addType(fieldName: 'title', type: 'string');
@@ -42,11 +42,17 @@ class Catalog extends Entity implements JsonSerializable
 
 	public function hydrate(array $object): self
 	{
+
+
+		if(isset($object['metadata']) === false) {
+			$object['metadata'] = [];
+		}
+
 		$jsonFields = $this->getJsonFields();
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
-				$value = null;
+				$value = [];
 			}
 
 			$method = 'set'.ucfirst($key);
@@ -71,6 +77,8 @@ class Catalog extends Entity implements JsonSerializable
 			'image' => $this->image,
 			'search' => $this->search,
 			'listed' => $this->listed,
+			'metadata' => $this->metadata,
+			'organisation'=> $this->organisation,
 
 		];
 
