@@ -122,6 +122,7 @@ class AttachmentsController extends Controller
         return new JSONResponse($results);
     }
 
+
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
@@ -146,17 +147,15 @@ class AttachmentsController extends Controller
 
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @throws Exception In case the file upload to NextCloud fails. Or if creating the share link fails.
-	 * @throws GuzzleException In case saving the Attachment to MongoDB fails.
+	 * Gets info about the uploaded file from the request body, looks specifically for the field '_file'.
+	 * If there is no file or there is an error loading it this will return an error response.
+	 *
+	 * @return JSONResponse|array An error response or an array containing the info about the uploaded file.
 	 */
-    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
-    {
-		$data = $this->request->getParams();
-
-		// Check if a file was uploaded
+	private function checkUploadedFile(): JSONResponse|array
+	{
 		$uploadedFile = $this->request->getUploadedFile(key: '_file');
+
 		if (empty($uploadedFile) === true) {
 			return new JSONResponse(data: ['error' => 'No file uploaded for key "_file"'], statusCode: 400);
 		}
@@ -166,17 +165,46 @@ class AttachmentsController extends Controller
 			return new JSONResponse(data: ['error' => 'File upload error: '.$uploadedFile['error']], statusCode: 400);
 		}
 
+		return $uploadedFile;
+	}
+
+	/**
+	 * Gets all params from the request body and then validates if the URL fields are actual valid urls (or null).
+	 *
+	 * @return JSONResponse|array An error response if there are validation errors or an array containing all request body params.
+	 */
+	private function checkRequestBody(): JSONResponse|array
+	{
+		$data = $this->request->getParams();
+
 		$errorMsg = [];
-		if (empty($data['accessUrl']) === false && filter_var($data['accessUrl'], FILTER_VALIDATE_URL) === false) {
+		if (empty($data['accessUrl']) === false && filter_var(value: $data['accessUrl'], filter: FILTER_VALIDATE_URL) === false) {
 			$errorMsg[] = "accessUrl is not a valid url";
 		}
-		if (empty($data['downloadUrl']) === false && filter_var($data['downloadUrl'], FILTER_VALIDATE_URL) === false) {
+
+		if (empty($data['downloadUrl']) === false && filter_var(value: $data['downloadUrl'], filter: FILTER_VALIDATE_URL) === false) {
 			$errorMsg[] = "downloadUrl is not a valid url";
 		}
+
 		if (empty($errorMsg) === false) {
 			return new JSONResponse(data: ['validation_errors' => $errorMsg], statusCode: 400);
 		}
 
+		return $data;
+	}
+
+	/**
+	 * If it does not already exist creates a folder for the publication the new Attachment belongs to in NextCloud,
+	 * so that the uploaded file(s) for that publication can be saved there. After that saves the uploaded file in that folder.
+	 * If the file is created without error this will return the full path to the file from the root/user folder.
+	 *
+	 * @param array $uploadedFile Information about the uploaded file from the request body.
+	 *
+	 * @return JSONResponse|string An error response if creating the file in NextCloud failed or a string path to the created file.
+	 * @throws Exception In case creating a folder or new file fails.
+	 */
+	private function handleFile(array $uploadedFile): JSONResponse|string
+	{
 		// Create the Attachments folder and the Publication specific folder.
 		$this->fileService->createFolder(folderPath: 'Attachments');
 		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
@@ -194,6 +222,22 @@ class AttachmentsController extends Controller
 			return new JSONResponse(data: ['error' => "Failed to upload file. This file: $filePath might already exist"], statusCode: 400);
 		}
 
+		return $filePath;
+	}
+
+
+	/**
+	 * Adds information about the uploaded file to the appropriate Attachment fields. And removes fields we do not want to post.
+	 *
+	 * @param array $data The form-data fields and their values (/request body) that we are going to update before posting the Attachment.
+	 * @param array $uploadedFile Information about the uploaded file from the request body.
+	 * @param string $filePath The full file path to where the file is stored in NextCloud.
+	 *
+	 * @return array The updated $data array
+	 * @throws Exception In case creating the share(link) fails.
+	 */
+	private function AddFileInfoToData(array $data, array $uploadedFile, string $filePath): array
+	{
 		// Update Attachment data
 		$currentUser = $this->userSession->getUser();
 		$userId = $currentUser ? $currentUser->getUID() : 'Guest';
@@ -218,6 +262,39 @@ class AttachmentsController extends Controller
 				unset($data[$key]);
 			}
 		}
+
+		return $data;
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @throws Exception In case creating a new folder, the file upload to NextCloud, or creating the share link fails.
+	 * @throws GuzzleException In case saving the Attachment to MongoDB fails.
+	 */
+    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    {
+		// Check if a file was uploaded
+		$uploadedFile = $this->checkUploadedFile();
+		if ($uploadedFile instanceof JSONResponse) {
+			return $uploadedFile;
+		}
+
+		// Get form-data field/request body.
+		$data = $this->checkRequestBody();
+		if ($data instanceof JSONResponse) {
+			return $data;
+		}
+
+		// Handle saving the uploaded file in NextCloud
+		$filePath = $this->handleFile(uploadedFile: $uploadedFile);
+		if ($filePath instanceof JSONResponse) {
+			return $filePath;
+		}
+
+		// Update Attachment data
+		$data = $this->AddFileInfoToData(data: $data, uploadedFile: $uploadedFile, filePath: $filePath);
 
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'

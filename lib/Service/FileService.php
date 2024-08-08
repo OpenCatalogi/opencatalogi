@@ -45,7 +45,7 @@ class FileService
 	 * @param int|null $permissions 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
 	 *
 	 * @return string The share link.
-	 * @throws Exception In case the Guzzle call returns an exception.
+	 * @throws Exception In case creating the share(link) fails.
 	 */
 	public function createShareLink(string $path, ?int $shareType = 3, ?int $permissions = null): string
 	{
