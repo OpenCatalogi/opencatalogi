@@ -39,7 +39,6 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					:checked.sync="catalogi.listed">
 					Publiek vindbaar
 				</NcCheckboxRadioSwitch>
-
 				<NcSelect v-bind="organisations"
 					v-model="organisations.value"
 					input-label="Organisatie"
@@ -48,6 +47,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			<NcButton v-if="success === null"
 				:disabled="!catalogi.title || loading"
 				type="primary"
+				class="acm-submit-button"
 				@click="addCatalog">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
@@ -186,5 +186,9 @@ export default {
 
 .success {
     color: green;
+}
+
+.acm-submit-button {
+    margin-block-start: 1rem;
 }
 </style>
