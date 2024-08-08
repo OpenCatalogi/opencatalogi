@@ -38,7 +38,13 @@ class CatalogMapper extends QBMapper
 			->setFirstResult($offset);
 
         foreach($filters as $filter => $value) {
-            $qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
+			if ($value === 'IS NOT NULL') {
+				$qb->andWhere($qb->expr()->isNotNull($filter));
+			} elseif ($value === 'IS NULL') {
+				$qb->andWhere($qb->expr()->isNull($filter));
+			} else {
+				$qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
+			}
         }
 
         if (!empty($searchConditions)) {
