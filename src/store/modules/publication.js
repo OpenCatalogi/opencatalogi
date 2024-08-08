@@ -25,7 +25,6 @@ export const usePublicationStore = defineStore(
 			},
 			async refreshPublicationList(normalSearch = [], advancedSearch = null, sortField = null, sortDirection = null) {
 				// @todo this might belong in a service?
-				console.log(normalSearch)
 				let endpoint = '/index.php/apps/opencatalogi/api/publications'
 				const params = new URLSearchParams()
 				for (const item of normalSearch) {
@@ -36,8 +35,17 @@ export const usePublicationStore = defineStore(
 				if (advancedSearch !== null && advancedSearch !== '') {
 					params.append('_search', advancedSearch)
 				}
-				if (sortField !== null && sortField.value !== null && sortDirection !== null && sortDirection !== '') {
-					params.append('_order[' + sortField.value + ']', sortDirection)
+				if (sortField !== null && sortField !== null && sortDirection !== null && sortDirection !== '') {
+					if (sortField === 'Titel') {
+						sortField = 'title'
+					}
+					if (sortField === 'Datum gepubliceerd') {
+						sortField = 'published'
+					}
+					if (sortField === 'Datum aangepast') {
+						sortField = 'modified'
+					}
+					params.append('_order[' + sortField + ']', sortDirection)
 				}
 				if (params.toString()) {
 					endpoint += '?' + params.toString()

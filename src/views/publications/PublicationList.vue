@@ -34,11 +34,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						v-model="sortField"
 						type="multiselect"
 						input-label="Eigenschap"
-						:options="[
-							{ label: 'Titel', value: 'title' },
-							{ label: 'Datum gepubliceerd', value: 'published' },
-							{ label: 'Datum aangepast', value: 'modified' }
-						]">
+						:options="['Titel', 'Datum gepubliceerd', 'Datum aangepast']">
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
@@ -219,7 +215,7 @@ export default {
 	data() {
 		return {
 			loading: false,
-			sortField: null,
+			sortField: '',
 			sortDirection: 'desc',
 			normalSearch: [],
 			advancedSearch: '',
