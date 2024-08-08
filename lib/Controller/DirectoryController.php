@@ -71,13 +71,6 @@ class DirectoryController extends Controller
         );
     }
 
-	public function add(?string $url, DirectoryService $directoryService): JSONResponse
-	{
-
-
-		return new JSONResponse($listing);
-	}
-
 
 	/**
 	 * @PublicPage
@@ -91,15 +84,15 @@ class DirectoryController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			$searchParams = $searchService->createMySQLSearchParams($filters, $fieldsToSearch);
-			$searchConditions = $searchService->createMySQLSearchConditions($filters, $fieldsToSearch);
-			$filters = $searchService->unsetSpecialQueryParams($filters, $fieldsToSearch);
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results' => $this->listingMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+			return new JSONResponse(['results' => $this->listingMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
 		}
 
-		$filters = $searchService->createMongoDBSearchFilter($filters, $fieldsToSearch);
-		$filters = $searchService->unsetSpecialQueryParams($filters, $fieldsToSearch);
+		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
+		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -137,42 +130,15 @@ class DirectoryController extends Controller
 
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
-	public function create(ObjectService $objectService, DirectoryService $directoryService): JSONResponse
+	public function create(string $directory, DirectoryService $directoryService): JSONResponse
 	{
-		$data = $this->request->getParams();
+		$directories = [];
+		$directoryService->registerToExternalDirectory(url: $directory, externalDirectories: $directories);
 
-		// Remove fields we should never post
-		unset($data['id']);
-		foreach($data as $key => $value) {
-			if(str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
-
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			return new JSONResponse($this->listingMapper->createFromArray(object: $data));
-		}
-
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$data['_schema'] = 'directory';
-
-		$returnData = $objectService->saveObject(
-			data: $data,
-			config: $dbConfig
-		);
-
-		$directoryService->registerToExternalDirectory(newDirectory: $data);
-
-		// get post from requests
-		return new JSONResponse($returnData);
+		return new JSONResponse(['results' => $directories]);
 	}
 
 	/**

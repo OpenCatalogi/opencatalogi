@@ -16,7 +16,7 @@ describe('Metadata entity', () => {
 		const metadata = new Metadata(mockMetadata()[1])
 
 		expect(metadata).toBeInstanceOf(Metadata)
-		expect(metadata).not.toBe(mockMetadata()[1])
+		expect(metadata).toEqual(mockMetadata()[1])
 
 		expect(metadata.validate().success).toBe(true)
 	})
