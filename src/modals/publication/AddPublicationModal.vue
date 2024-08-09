@@ -6,6 +6,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		ref="modalRef"
 		label-id="addPublicationModal"
 		@close="closeModal">
+		<template #actions>
+			<NcButton :disabled="(!publication.title || !catalogi?.value?.id || !metaData?.value?.id || !publication.summary) || loading"
+				class="apm-submit-button"
+				type="primary"
+				@click="addPublication()">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
+				</template>
+				Toevoegen
+			</NcButton>
+		</template>
 		<div class="modal__content">
 			<h2>Publicatie toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -89,17 +101,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<NcTextField :disabled="loading"
 							label="Licentie"
 							:value.sync="publication.license" />
-
-						<NcButton :disabled="(!publication.title || !catalogi?.value?.id || !metaData?.value?.id || !publication.summary) || loading"
-							class="apm-submit-button"
-							type="primary"
-							@click="addPublication()">
-							<template #icon>
-								<NcLoadingIcon v-if="loading" :size="20" />
-								<Plus v-if="!loading" :size="20" />
-							</template>
-							Toevoegen
-						</NcButton>
 					</div>
 				</div>
 			</div>
