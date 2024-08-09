@@ -18,9 +18,7 @@ export class Publication implements TPublication {
 	public attachments: TAttachment[]
 	public attachmentCount: number
 	public themes: string[]
-	public data: {
-        type: string
-    }
+	public data: Record<string, object>
 
 	public anonymization: {
         anonymized: boolean
@@ -71,9 +69,7 @@ export class Publication implements TPublication {
 		this.attachments = data.attachments || []
 		this.attachmentCount = this.attachmentCount || data.attachments?.length || 0
 		this.themes = data.themes || []
-		this.data = data.data || {
-			type: '',
-		}
+		this.data = (!Array.isArray(data.data) && data.data) || {}
 
 		this.anonymization = data.anonymization || {
 			anonymized: false,
@@ -121,9 +117,7 @@ export class Publication implements TPublication {
 			attachments: z.object({}).array(),
 			attachmentCount: z.number(),
 			themes: z.string().array(),
-			data: z.object({
-				type: z.string(),
-			}),
+			data: z.record(z.string(), z.any()),
 			anonymization: z.object({
 				anonymized: z.boolean(),
 				results: z.string().max(2500),

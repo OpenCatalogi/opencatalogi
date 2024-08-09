@@ -89,9 +89,6 @@ export default {
 		AddPublicatieEigenschap() {
 			this.loading = true
 			const bodyData = publicationStore.publicationItem
-			if (Object.keys(bodyData.data).length < 1) {
-                bodyData.data = {}
-            }
 			bodyData.data[this.key] = this.value
 			delete bodyData.publicationDate
 			fetch(
