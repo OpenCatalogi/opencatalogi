@@ -5,7 +5,6 @@ namespace OCA\OpenCatalogi\Db;
 use DateTime;
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
-use OCA\OpenCatalogi\Db\Organisation;
 
 class Listing extends Entity implements JsonSerializable
 {
