@@ -4,16 +4,16 @@ We gaan er voor deze stap vanuit dat je reeds een werkende lokale Nextcloud-omge
 
 ## Bijdragen
 
-Als Nextcloud-app volgen we sowieso de [Nextcloud publishing guidelines](https://docs.nextcloud.com/server/19/developer_manual/app/publishing.html#app-guidelines).
+Als Nextcloud-app volgen we sowieso de [Nextcloud publishing guidelines](https://docs.nextcloud.com/server/19/developer\_manual/app/publishing.html#app-guidelines).
 
 Daarbovenop hanteren we een aantal extra spelregels:
 
 * **Features moeten zijn voorzien van gebruikersdocumentatie**
-* **Backend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html).
-* **Backend code moet zuiver zijn**: Code mag *géén* linting errors bevatten
+* **Backend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html).
+* **Backend code moet zuiver zijn**: Code mag _géén_ linting errors bevatten
 * **Frontend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd
-* **Frontend code moet zuiver zijn**: Code mag *géén* linting errors bevatten
-* **Seperation of concerns**: Voor zowel backend als frontend moet business logica zijn opgenomen in Services. Dat betekent dat Controllers, Templates, Views, Componenten en Store *géén* business logica mogen bevatten.
+* **Frontend code moet zuiver zijn**: Code mag _géén_ linting errors bevatten
+* **Seperation of concerns**: Voor zowel backend als frontend moet business logica zijn opgenomen in Services. Dat betekent dat Controllers, Templates, Views, Componenten en Store _géén_ business logica mogen bevatten.
 * **Vier ogen-principe**: Pull requests moeten zijn beoordeeld door een andere developer dan de maker voordat ze worden geaccepteerd
 * **Automatische test**: Code mag alleen naar master/main als alle automatische tests goed gaan
 * **Vraag gestuurde development**: Code wordt alleen geaccepteerd als deze is gekoppeld aan een door de PO goedgekeurde user story ([regel](https://github.com/OpenCatalogi/.github/issues/new/choose))
@@ -24,11 +24,11 @@ In de meeste gevallen zal een wijzigingsvoorstel voor de OpenCatalogi Nextcloud 
 
 De Ontwikkelpartijen van [Core](https://documentatie.opencatalogi.nl/Docs/Projecten/) fungeren tevens als beheerpartijen voor de code base.
 
-![alt text](feature_flow.png)
+![alt text](feature\_flow.png)
 
 ## Application development
 
-Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het *documentation-first* principe gehanteerd, waarbij de ontwikkelaars eerst de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer_manual/index.html) hebben geraadpleegd.
+Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het _documentation-first_ principe gehanteerd, waarbij de ontwikkelaars eerst de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) hebben geraadpleegd.
 
 ## Kwaliteit, Stabiliteit en Veiligheid
 
@@ -36,43 +36,50 @@ Als onderdeel van de CI/CD-straat voeren we een aantal tests uit, hiermee handha
 
 ### Voor de kwaliteit van de code maken we gebruik van linters
 
-Voor frontend is dat:
+Voorzowel de frontend als de backend geldt dat het aantal acceptabele errors 0 is.
+
+#### Frontend&#x20;
+
+Voor frontend gebruiken we ESLint, de installatiehandleiding is [hier](https://www.npmjs.com/package/eslint) te vinden. Het commando om ESLint uit te voeren. ESLint is voornamelijk een linter, met enige format-functionaliteit.&#x20;
 
 ```cli
 npm run lint
 ```
 
-![alt text](npm_lint.png)
+![alt text](npm\_lint.png)
 
-Voor de backend is dat:
+#### Backend
+
+Voor de backend gebruiken we PHP Code Sniffer. [Zie hier](https://dev.to/xxzeroxx/phpcs-php-code-sniffer-59f4) de handleiding voor de installatiemogelijkheden. PHP-code sniffer bestaat uit een linter ( `phpcs)` en een formatter(`phpcbf`). De formatter werkt hetzelfde als de linter en kan soms aardig wat errors wegwerken. De regels voor zowel de linter als de formatter zijn te vinden in `phpcs.xml` in de root van de applicatie.&#x20;
 
 ```cli
 phpcs [filename]
+phpcbf [filename]
 ```
 
-Hiervoor moet php code sniffer geïnstalleerd zijn. [Zie hier](https://dev.to/xxzeroxx/phpcs-php-code-sniffer-59f4) de handleiding ervoor
+## Voor stabiliteit gebruiken we unit tests
 
-Voor beide geldt dat het aantal acceptabele errors 0 is.
+Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele errors 0.
 
-## Voor stabilliteit gebruiken we unit tests
+#### Frontend
 
-Voor frontend is dat:
+Voor het uitvoeren van de unit tests gebruiken we aan de frontend Jest. Indien je deze nog moet installeren of meer erover wilt weten, kijk dat [hier](https://www.npmjs.com/package/jest). Het uit te voeren commando is:
 
 ```cli
 npm run test-coverage
 ```
 
-![alt text](npm_test.png)
+![alt text](npm\_test.png)
 
-Voor de backend is dat:
+#### Backend:
+
+Voor het uitvoeren van de unit tests gebruiken we aan de backend PHPunit. Indien je deze nog moet installeren of meer erover wilt weten, kijk dan [hier](https://docs.phpunit.de/en/11.3/). Het uit te voeren commando is:
 
 ```cli
 phpunit 
 ```
 
-Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele errors 0.
-
-> **NOTE 1** We volgen de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html) en de juist configuratie van `phpunit.xml`en de `bootstrap.php`. Een voorbeeld van deze files zijn te vinden in de `root` van de applicatie (`phpunit.xml`) en de `/tests/unit`(`bootstrap.php`). Er zijn veel mogelijkheden om het jezelf makkelijk te maken, zoals een percentageoverzicht in de terminal. Het commando dat wij gebruiken is :
+> **NOTE 1** We volgen de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html) en de juist configuratie van `phpunit.xml`en de `bootstrap.php`. Een voorbeeld van deze files zijn te vinden in de `root` van de applicatie (`phpunit.xml`) en de `/tests/unit`(`bootstrap.php`). Er zijn veel mogelijkheden om het jezelf makkelijk te maken, zoals een percentageoverzicht in de terminal. Het commando dat wij gebruiken is :
 
 `XDEBUG_MODE=coverage phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml --coverage-html ./coverage --coverage-text | tee coverage.txt`
 
@@ -80,21 +87,21 @@ Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele er
 
 ## Voor veiligheid gebruiken we dependency scanning
 
-Voor frontend is dat:
+#### Frontend:
 
 ```cli
 npm audit
 ```
 
-![alt text](npm_audit.png)
+![alt text](npm\_audit.png)
 
-Voor de backend is dat:
+#### Backend
 
 ```cli
 composer audit
 ```
 
-![alt text](composer_audit.png)
+![alt text](composer\_audit.png)
 
 Voor beide geldt dat het aantal acceptabele critical vulnerabilities 0 is.
 
@@ -108,7 +115,7 @@ De commando's om deze linter in de CLI te gebruiken zijn [hier te vinden](https:
 
 ## API Development
 
-De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.io](https://stoplight.io/), die automatisch een [OpenAPI Specificatie (OAS)](https://www.noraonline.nl/wiki/FS:Openapi-specification#:~:text=Een%20OpenAPI%20Specification%20\(OAS\)%20beschrijft,er%20achter%20de%20API%20schuilgaat.) genereert uit de documentatie. De Stoplight voor OpenCatalogi is [hier](https://conduction.stoplight.io/docs/open-catalogi/6yuj08rgf7w44-open-catalogi-api) te vinden.
+De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.io](https://stoplight.io/), die automatisch een [OpenAPI Specificatie (OAS)](https://www.noraonline.nl/wiki/FS:Openapi-specification) genereert uit de documentatie. De Stoplight voor OpenCatalogi is [hier](https://conduction.stoplight.io/docs/open-catalogi/6yuj08rgf7w44-open-catalogi-api) te vinden.
 
 ## Frontend Development
 
@@ -136,5 +143,5 @@ Daarnaast gebruiken we Typescript voor het definiëren van entities.
 Het is goed om bij development kennnis te nemen/hebben van de volgende gebruikte Nextcloud onderdelen:
 
 * [Icons](https://pictogrammers.com/library/mdi/)
-* [Layout](https://docs.nextcloud.com/server/latest/developer_manual/design/layout.html)-
+* [Layout](https://docs.nextcloud.com/server/latest/developer\_manual/design/layout.html)-
 * [Componenten](https://nextcloud-vue-components.netlify.app/)
