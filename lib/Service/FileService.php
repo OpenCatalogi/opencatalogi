@@ -19,6 +19,19 @@ class FileService
 	) {}
 
 	/**
+	 * Get the name for the folder used for storing files of the given publication.
+	 *
+	 * @param string $publicationId The id of the Publication.
+	 * @param string $publicationTitle The title of the Publication.
+	 *
+	 * @return string The name the folder for this publication should have.
+	 */
+	public function getPublicationFolderName(string $publicationId, string $publicationTitle): string
+	{
+		return "($publicationId) $publicationTitle";
+	}
+
+	/**
 	 * Gets and returns the current host / domain with correct protocol.
 	 *
 	 * @return string The current http/https domain url.

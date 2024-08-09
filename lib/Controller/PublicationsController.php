@@ -2,11 +2,15 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use Mpdf\MpdfException;
+use Mpdf\Output\Destination;
 use OCA\OpenCatalogi\Db\AttachmentMapper;
 use OCA\opencatalogi\lib\Db\Publication;
 use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Service\FileService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
@@ -15,7 +19,14 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
+use OCP\IUserSession;
 use Symfony\Component\Uid\Uuid;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig\Loader\FilesystemLoader;
+use Mpdf\Mpdf;
 
 class PublicationsController extends Controller
 {
@@ -26,7 +37,9 @@ class PublicationsController extends Controller
 		IRequest $request,
 		private readonly PublicationMapper $publicationMapper,
 		private readonly AttachmentMapper $attachmentMapper,
-		private readonly IAppConfig $config
+		private readonly IAppConfig $config,
+		private readonly FileService $fileService,
+		private readonly IUserSession $userSession
 	)
     {
         parent::__construct($appName, $request);
@@ -249,6 +262,9 @@ class PublicationsController extends Controller
 			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
 
 		}
+
+		$this->createPublicationFile(objectService: $objectService, publication: $returnData);
+
         // get post from requests
         return new JSONResponse($returnData);
     }
@@ -357,4 +373,69 @@ class PublicationsController extends Controller
 		// get post from requests
 		return new JSONResponse($returnData);
     }
+
+	/**
+	 * TODO
+	 *
+	 * @param ObjectService $objectService
+	 * @param array|null $publication
+	 * @param null|string|int $id
+	 *
+	 * @return bool
+	 * @throws LoaderError|RuntimeError|SyntaxError|MpdfException|Exception
+	 */
+	public function createPublicationFile(ObjectService $objectService, ?array $publication = null, null|string|int $id = null): bool
+	{
+		if (empty($publication) === true) {
+			if ($id === null) {
+				return false;
+			}
+
+			$publication = $this->show(id: $id, objectService: $objectService)->getData();
+			if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+				|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
+			) {
+				$publication = $publication->jsonSerialize();
+			}
+		}
+
+		// Initialize Twig
+		$loader = new FilesystemLoader('lib/Templates');
+		$twig = new Environment($loader);
+
+		// Render the Twig template
+		$html = $twig->render('publication.html.twig', ['publication' => $publication]);
+
+		// Initialize mPDF
+		$mpdf = new Mpdf();
+
+		// Write HTML to PDF
+		$mpdf->WriteHTML($html);
+
+		// Output to a file or directly to the browser
+		$filename = "{$publication['title']}.pdf";
+		$mpdf->Output($filename, Destination::FILE);
+
+		// Create the Publicaties folder and the Publication specific folder.
+		$this->fileService->createFolder(folderPath: 'Publicaties');
+		$publicationFolder = $this->fileService->getPublicationFolderName(
+			publicationId: $publication['id'],
+			publicationTitle: $publication['title']
+		);
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder");
+
+		// Save the uploaded file
+		$filePath = "Publicaties/$publicationFolder/$filename";
+		$created = $this->fileService->uploadFile(
+			content: file_get_contents(filename: $filename),
+			filePath: $filePath
+		);
+
+		if ($created === false) {
+//			return new JSONResponse(data: ['error' => "Failed to upload file. This file: $filePath might already exist"], statusCode: 400);
+			return false;
+		}
+
+		return true;
+	}
 }

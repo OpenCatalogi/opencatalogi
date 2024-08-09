@@ -209,14 +209,17 @@ class AttachmentsController extends Controller
 	 */
 	private function handleFile(array $uploadedFile): JSONResponse|string
 	{
-		// Create the Attachments folder and the Publication specific folder.
-		$this->fileService->createFolder(folderPath: 'Attachments');
-		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
-			. $this->request->getHeader('Publication-Title');
-		$this->fileService->createFolder(folderPath: "Attachments/$publicationFolder");
+		// Create the Publicaties folder, the Publication specific folder and the Bijlagen folder in that.
+		$this->fileService->createFolder(folderPath: 'Publicaties');
+		$publicationFolder = $this->fileService->getPublicationFolderName(
+			publicationId: $this->request->getHeader('Publication-Id'),
+			publicationTitle: $this->request->getHeader('Publication-Title')
+		);
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder");
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder/Bijlagen");
 
 		// Save the uploaded file
-		$filePath = "Attachments/$publicationFolder/" . $uploadedFile['name']; // Add a file version to the file name?
+		$filePath = "Publicaties/$publicationFolder/Bijlagen/" . $uploadedFile['name']; // Add a file version to the file name?
 		$created = $this->fileService->uploadFile(
 			content: file_get_contents(filename: $uploadedFile['tmp_name']),
 			filePath: $filePath
@@ -385,8 +388,10 @@ class AttachmentsController extends Controller
 		}
 
 		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
-//		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
-//			. $this->request->getHeader('Publication-Title');
+//		$publicationFolder = $this->fileService->getPublicationFolderName(
+//			publicationId: $this->request->getHeader('Publication-Id'),
+//			publicationTitle: $this->request->getHeader('Publication-Title')
+//		);
 //		$this->fileService->deleteFile(filePath: "Attachments/$publicationFolder" . $attachment['title'] . '.' . $attachment['extension']);
 		$filePath = explode(separator: '/', string: $attachment['reference']);
 		array_shift(array: $filePath);
