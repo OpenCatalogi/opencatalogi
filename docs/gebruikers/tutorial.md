@@ -6,21 +6,21 @@
 
 Nadat de app succesvol is geconfigureerd, vind je deze terug in het app-menu van Nextcloud. Klik op het 'OpenCatalogi'-icoon om de app te openen. De tutorial gaat uit van een lege installatie.
 
-![OpenCatalogi-logo in het app menu](<../assets/nc_app_menu (1).png>)
+![OpenCatalogi-logo in het app menu](<../assets/nc\_app\_menu (1).png>)
 
 ## Directory
 
 Een OpenCatalogi-installatie is bedoeld om onderdeel te zijn van een federatief netwerk van catalogi. Deze kunt u terugvinden onder Instellingen -> Directory. In de directory staan alle bij deze installatie bekende catalogi die zich in andere installaties bevinden. OpenCatalogi-installaties wisselen onderling hun directory uit, dus om onderdeel te worden van het federatieve netwerk moet er minimaal één andere catalogus bekend zijn.
 
-![instellingen](../assets/oc_instellingen.png)
+![instellingen](../assets/oc\_instellingen.png)
 
 Is uw directory leeg? Druk dan op 'Listing toevoegen aan directory' achter de zoekbalk.
 
-![listing toevoegen](../assets/oc_listing_toevoegen.png)
+![listing toevoegen](../assets/oc\_listing\_toevoegen.png)
 
 Catalogi worden gedefinieerd aan de hand van de plek waar ze leven op het internet (URI). Geef in het formulier de volgende URI op: 'URL van uw eigen OpenCatalogi-installatie'.
 
-![directory toevoegen formulier](../assets/oc_directory_toevoegen_form.png)
+![directory toevoegen formulier](../assets/oc\_directory\_toevoegen\_form.png)
 
 ## Zoeken
 
@@ -42,6 +42,8 @@ Het aanmaken van een eigen catalogus kan eenvoudig door te navigeren naar `Inste
 
 <figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption><p>Het overzicht voor Instellingen en de aanmaken-knop</p></figcaption></figure>
 
+ 
+
 <figure><img src="../.gitbook/assets/Screenshot 2024-08-08 113242.png" alt=""><figcaption><p>De modal voor metadata, zoals titel en samenvatting</p></figcaption></figure>
 
 </div>
@@ -55,6 +57,8 @@ Het aanmaken van een eigen catalogus kan eenvoudig door te navigeren naar `Inste
 <div>
 
 <figure><img src="../.gitbook/assets/metadata-settings.png" alt=""><figcaption><p>Selecteren van Metadata onder "Instellingen"</p></figcaption></figure>
+
+ 
 
 <figure><img src="../.gitbook/assets/Metadata_modal.png" alt=""><figcaption><p>Modal voor het toevoegen van Metadatabeschrijvingen</p></figcaption></figure>
 
@@ -76,6 +80,8 @@ Bij het aanmaken van een publicatie zijn een aantal zaken van belang. Een public
 
 <figure><img src="../.gitbook/assets/publicatie_mogelijkheden.png" alt=""><figcaption><p>De drie manieren met een hoek </p></figcaption></figure>
 
+ 
+
 <figure><img src="../.gitbook/assets/publicatie_modal.png" alt=""><figcaption><p>Modal voor het oevoegen van publicaties</p></figcaption></figure>
 
 </div>
@@ -87,6 +93,8 @@ Sommige publicaites hebben een bijlagen, zoals bijvoorbeeld voor covenanten het 
 <div>
 
 <figure><img src="../.gitbook/assets/bijlage_toevoegen.png" alt="" width="375"><figcaption><p>Overzicht actie-knop publicaties</p></figcaption></figure>
+
+ 
 
 <figure><img src="../.gitbook/assets/bijlage_toevoegen_modal.png" alt="" width="301"><figcaption><p>Modal voor het toevoegen van bijlagen</p></figcaption></figure>
 

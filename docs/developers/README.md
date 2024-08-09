@@ -1,10 +1,9 @@
-***
-
+---
 description: >-
-De rol van een "Developer" binnen het publicatieplatform is voornamelijk
-gericht om bij te dragen aan de ontwikkeling aan de codebase of om
-aanpassingen te kunnen testen of demonstreren.
-----------------------------------------------
+  De rol van een "Developer" binnen het publicatieplatform is voornamelijk
+  gericht om bij te dragen aan de ontwikkeling aan de codebase of om
+  aanpassingen te kunnen testen of demonstreren.
+---
 
 # Developers
 

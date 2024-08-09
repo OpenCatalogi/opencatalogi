@@ -1,10 +1,9 @@
-***
-
+---
 description: >-
-Een "Gebruiker" binnen het Publicatieplatform heeft de primaire taak om
-publicaties te creëren en te bewerken. De rol van de gebruiker omvat de
-volgende verantwoordelijkheden en mogelijkheden:
-------------------------------------------------
+  Een "Gebruiker" binnen het Publicatieplatform heeft de primaire taak om
+  publicaties te creëren en te bewerken. De rol van de gebruiker omvat de
+  volgende verantwoordelijkheden en mogelijkheden:
+---
 
 # Gebruikers
 

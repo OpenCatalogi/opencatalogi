@@ -21,7 +21,7 @@
   * [Installatie-instructies Nextcloud](installatie/instructies.md)
   * [Audit en logging](installatie/logging.md)
   * [Rollen en Rechten](installatie/rollen-en-rechten.md)
-  * [SAAS](installatie/saas.md)
+  * [SaaS](installatie/saas.md)
   * [On-Prem server](installatie/on-prem-server.md)
   * [Systeemeisen voor Nextcloud](installatie/systeemeisen-voor-nextcloud.md)
 * [Veel gestelde vragen](veel-gestelde-vragen.md)
