@@ -60,7 +60,8 @@ class PublicationMapper extends QBMapper
 	{
 		foreach($filters as $key => $filter) {
 			if(is_array($filter) === false) {
-				$queryBuilder->andWhere($queryBuilder->expr()->eq($filter, $queryBuilder->createNamedParameter($filter)));
+				$queryBuilder->andWhere($queryBuilder->expr()->eq($key, $queryBuilder->createNamedParameter($key)));
+				$queryBuilder->setParameter($key, $filter);
 				continue;
 			}
 
