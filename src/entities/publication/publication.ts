@@ -69,7 +69,7 @@ export class Publication implements TPublication {
 		this.schema = data.schema || ''
 		this.status = data.status || 'Concept'
 		this.attachments = data.attachments || []
-		this.attachmentCount = this.attachmentCount || data.attachments.length || 0
+		this.attachmentCount = this.attachmentCount || data.attachments?.length || 0
 		this.themes = data.themes || []
 		this.data = data.data || {
 			type: '',
