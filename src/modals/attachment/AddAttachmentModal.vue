@@ -115,11 +115,7 @@ export default {
 		closeModal() {
 			navigationStore.modal = false
 		},
-		// test() {
-		// 	if (!publicationStore.attachmentItem.downloadUrl && !publicationStore.attachmentItem.title && (Array.isArray(files.value) && files.value.lenght > 0)) return true
-		// 	if (!files && (publicationStore.attachmentItem.downloadUrl && publicationStore.attachmentItem.title && true)) return true
-		// 	return false
-		// },
+
 		checkIfDisabled() {
 			if (publicationStore.attachmentItem.downloadUrl || publicationStore.attachmentItem.title) return true
 			return false
