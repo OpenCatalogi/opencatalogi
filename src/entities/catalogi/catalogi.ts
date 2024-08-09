@@ -11,6 +11,8 @@ export class Catalogi implements TCatalogi {
 	public listed: boolean
 	public organisation: string
 
+	public metadata: string[]
+
 	constructor(data: TCatalogi) {
 		this.hydrate(data)
 	}
@@ -24,6 +26,7 @@ export class Catalogi implements TCatalogi {
 		this.image = data?.image || ''
 		this.listed = data?.listed || false
 		this.organisation = data.organisation || ''
+		this.metadata = (Array.isArray(data.metadata) && data.metadata) || []
 	}
 
 	/* istanbul ignore next */
@@ -36,6 +39,7 @@ export class Catalogi implements TCatalogi {
 			image: z.string().max(255),
 			listed: z.boolean(),
 			organisation: z.string(),
+			metadata: z.string().array(),
 		})
 
 		const result = schema.safeParse({

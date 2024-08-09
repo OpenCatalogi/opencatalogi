@@ -42,9 +42,7 @@ class ConfigurationControllerTest extends TestCase
             'elasticIndex' => '',
             'organisationName' => 'my-organisation',
             'organisationOin' => '',
-            'organisationPki' => '',
-			'adminUsername' => '',
-			'adminPassword' => ''
+            'organisationPki' => ''
         ];
 
         $this->config->method('getValueString')

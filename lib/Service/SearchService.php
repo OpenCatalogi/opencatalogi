@@ -143,7 +143,15 @@ class SearchService
 			}
 		}
 
-		return ['results' => $results, 'facets' => $aggregations];
+		return [
+			'results' => $results,
+			'facets' => $aggregations,
+			'count' => count($results),
+			'limit' => 30,
+			'page' => 1,
+			'pages' => 1,
+			'total' => 10
+			];
 	}
 
 	/**
@@ -208,6 +216,15 @@ class SearchService
 			unset($filters['_search']);
 		}
 
+		foreach ($filters as $field => $value) {
+			if ($value === 'IS NOT NULL') {
+				$filters[$field] = ['$ne' => null];
+			}
+			if ($value === 'IS NULL') {
+				$filters[$field] = ['$eq' => null];
+			}
+		}
+
 		return $filters;
 
 	}//end createMongoDBSearchFilter()
@@ -269,6 +286,49 @@ class SearchService
 		return $searchParams;
 
 	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates an sort array based on given order param from request.
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $sort
+	 */
+	public function createSortForMySQL(array $filters): array
+	{
+		$sort = [];
+		if (isset($filters['_order']) && is_array($filters['_order'])) {
+			foreach ($filters['_order'] as $field => $direction) {
+				$direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+				$sort[$field] = $direction;
+			}
+		}
+
+		return $sort;
+
+	}//end createSortArrayFromParams()
+
+	/**
+	 * This function creates an sort array based on given order param from request.
+	 *
+	 * @todo Not functional yet. Needs to be fixed (see PublicationsController->index).
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $sort
+	 */
+	public function createSortForMongoDB(array $filters): array
+	{
+		$sort = [];
+		if (isset($filters['_order']) && is_array($filters['_order'])) {
+			foreach ($filters['_order'] as $field => $direction) {
+				$sort[$field] = strtoupper($direction) === 'DESC' ? -1 : 1;
+			}
+		}
+
+		return $sort;
+
+	}//end createSortForMongoDB()
 
 	/**
 	 * Parses the request query string and returns it as an array of queries.

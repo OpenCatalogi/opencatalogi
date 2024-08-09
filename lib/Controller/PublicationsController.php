@@ -109,13 +109,17 @@ class PublicationsController extends Controller
 		) {
 			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
 			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+			$sort = $searchService->createSortForMySQL(filters: $filters);
 			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams, sort: $sort)]);
 		}
 
 		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
 		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+
+		// @todo Fix mongodb sort
+		// $sort = $searchService->createSortForMongoDB(filters: $filters);
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -161,6 +165,8 @@ class PublicationsController extends Controller
     {
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
@@ -215,13 +221,12 @@ class PublicationsController extends Controller
 
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
 			}
-		}
-		if (isset($data['id'])) {
-			unset( $data['id']);
 		}
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false

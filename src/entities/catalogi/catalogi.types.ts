@@ -6,4 +6,5 @@ export type TCatalogi = {
     image: string
     listed: boolean
     organisation: string
+    metadata: string[]
 }

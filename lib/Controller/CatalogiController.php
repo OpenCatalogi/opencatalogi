@@ -109,6 +109,8 @@ class CatalogiController extends Controller
     {
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach ($data as $key => $value) {
 			if (str_starts_with($key, '_')) {
 				unset($data[$key]);
