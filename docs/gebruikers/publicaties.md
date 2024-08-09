@@ -46,8 +46,6 @@ Publicaties hebben vaak bijlagen, zoals een verslag of een besluit. Deze zijn ee
 
 <figure><img src="../.gitbook/assets/bijlage_toevoegen_drie_bolletjes.png" alt=""><figcaption><p>bijlage toevoegen via drie bolletjes</p></figcaption></figure>
 
- 
-
 <figure><img src="../.gitbook/assets/bijlage_toevoegen_actieknop.png" alt=""><figcaption><p>bijlage toevoegen via de actie-knop</p></figcaption></figure>
 
 </div>

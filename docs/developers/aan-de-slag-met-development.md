@@ -4,16 +4,16 @@ We gaan er voor deze stap vanuit dat je reeds een werkende lokale Nextcloud-omge
 
 ## Bijdragen
 
-Als Nextcloud-app volgen we sowieso de [Nextcloud publishing guidelines](https://docs.nextcloud.com/server/19/developer\_manual/app/publishing.html#app-guidelines).
+Als Nextcloud-app volgen we sowieso de [Nextcloud publishing guidelines](https://docs.nextcloud.com/server/19/developer_manual/app/publishing.html#app-guidelines).
 
 Daarbovenop hanteren we een aantal extra spelregels:
 
 * **Features moeten zijn voorzien van gebruikersdocumentatie**
-* **Backend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html).
-* **Backend code moet zuiver zijn**: Code mag _géén_ linting errors bevatten
+* **Backend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd, zie ook [PHP-unit testing](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html).
+* **Backend code moet zuiver zijn**: Code mag *géén* linting errors bevatten
 * **Frontend code moet zijn voorzien van automatische tests**: Code die coverage van het project verlaagd wordt niet geaccepteerd
-* **Frontend code moet zuiver zijn**: Code mag _géén_ linting errors bevatten
-* **Seperation of concerns**: Voor zowel backend als frontend moet business logica zijn opgenomen in Services. Dat betekent dat Controllers, Templates, Views, Componenten en Store _géén_ business logica mogen bevatten.
+* **Frontend code moet zuiver zijn**: Code mag *géén* linting errors bevatten
+* **Seperation of concerns**: Voor zowel backend als frontend moet business logica zijn opgenomen in Services. Dat betekent dat Controllers, Templates, Views, Componenten en Store *géén* business logica mogen bevatten.
 * **Vier ogen-principe**: Pull requests moeten zijn beoordeeld door een andere developer dan de maker voordat ze worden geaccepteerd
 * **Automatische test**: Code mag alleen naar master/main als alle automatische tests goed gaan
 * **Vraag gestuurde development**: Code wordt alleen geaccepteerd als deze is gekoppeld aan een door de PO goedgekeurde user story ([regel](https://github.com/OpenCatalogi/.github/issues/new/choose))
@@ -24,11 +24,11 @@ In de meeste gevallen zal een wijzigingsvoorstel voor de OpenCatalogi Nextcloud 
 
 De Ontwikkelpartijen van [Core](https://documentatie.opencatalogi.nl/Docs/Projecten/) fungeren tevens als beheerpartijen voor de code base.
 
-![alt text](feature\_flow.png)
+![alt text](feature_flow.png)
 
 ## Application development
 
-Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het _documentation-first_ principe gehanteerd, waarbij de ontwikkelaars eerst de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer\_manual/index.html) hebben geraadpleegd.
+Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het *documentation-first* principe gehanteerd, waarbij de ontwikkelaars eerst de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer_manual/index.html) hebben geraadpleegd.
 
 ## Kwaliteit, Stabiliteit en Veiligheid
 
@@ -46,7 +46,7 @@ Voor frontend gebruiken we ESLint, de installatiehandleiding is [hier](https://w
 npm run lint
 ```
 
-![alt text](npm\_lint.png)
+![alt text](npm_lint.png)
 
 #### Backend
 
@@ -69,7 +69,7 @@ Voor het uitvoeren van de unit tests gebruiken we aan de frontend Jest. Indien j
 npm run test-coverage
 ```
 
-![alt text](npm\_test.png)
+![alt text](npm_test.png)
 
 #### Backend:
 
@@ -79,7 +79,7 @@ Voor het uitvoeren van de unit tests gebruiken we aan de backend PHPunit. Indien
 phpunit 
 ```
 
-> **NOTE 1** We volgen de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer\_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html) en de juist configuratie van `phpunit.xml`en de `bootstrap.php`. Een voorbeeld van deze files zijn te vinden in de `root` van de applicatie (`phpunit.xml`) en de `/tests/unit`(`bootstrap.php`). Er zijn veel mogelijkheden om het jezelf makkelijk te maken, zoals een percentageoverzicht in de terminal. Het commando dat wij gebruiken is :
+> **NOTE 1** We volgen de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html) en de juist configuratie van `phpunit.xml`en de `bootstrap.php`. Een voorbeeld van deze files zijn te vinden in de `root` van de applicatie (`phpunit.xml`) en de `/tests/unit`(`bootstrap.php`). Er zijn veel mogelijkheden om het jezelf makkelijk te maken, zoals een percentageoverzicht in de terminal. Het commando dat wij gebruiken is :
 
 `XDEBUG_MODE=coverage phpunit --bootstrap ./tests/bootstrap.php --configuration phpunit.xml --coverage-html ./coverage --coverage-text | tee coverage.txt`
 
@@ -93,7 +93,7 @@ phpunit
 npm audit
 ```
 
-![alt text](npm\_audit.png)
+![alt text](npm_audit.png)
 
 #### Backend
 
@@ -101,7 +101,7 @@ npm audit
 composer audit
 ```
 
-![alt text](composer\_audit.png)
+![alt text](composer_audit.png)
 
 Voor beide geldt dat het aantal acceptabele critical vulnerabilities 0 is.
 
@@ -143,5 +143,5 @@ Daarnaast gebruiken we Typescript voor het definiëren van entities.
 Het is goed om bij development kennnis te nemen/hebben van de volgende gebruikte Nextcloud onderdelen:
 
 * [Icons](https://pictogrammers.com/library/mdi/)
-* [Layout](https://docs.nextcloud.com/server/latest/developer\_manual/design/layout.html)-
+* [Layout](https://docs.nextcloud.com/server/latest/developer_manual/design/layout.html)-
 * [Componenten](https://nextcloud-vue-components.netlify.app/)
