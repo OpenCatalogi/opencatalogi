@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<NcAppNavigationItem name="Configuration" @click="settingsOpen = true">
+		<NcAppNavigationItem name="Configuratie" @click="settingsOpen = true">
 			<template #icon>
 				<CogOutline :size="20" />
 			</template>
@@ -13,12 +13,14 @@
 				<NcCheckboxRadioSwitch :checked.sync="configuration.federationActive" type="switch">
 					{{ t('forms', 'Maak automatisch verbinding met federatief stelsel.') }}
 				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch :checked.sync="configuration.federationActive" type="switch">
+					{{ t('forms', 'Werk catalogi automatisch bij.') }}
+				</NcCheckboxRadioSwitch>
 				<NcCheckboxRadioSwitch :checked.sync="configuration.federationListed" type="switch">
 					{{ t('forms', 'Maak deze installatie vindbaar binnen het federatief stelsel.') }}
 				</NcCheckboxRadioSwitch>
 				<NcTextField id="federationLocation"
 					label="Internet locatie (url) van deze installatie"
-					:value.sync="configuration.federationLocation"
 					placeholder="https://" />
 			</NcAppSettingsSection>
 			<NcAppSettingsSection id="storadge" name="Opslag" doc-url="zaakafhandel.app">

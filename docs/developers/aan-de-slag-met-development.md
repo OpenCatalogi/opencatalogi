@@ -115,7 +115,6 @@ Voor frontend is dat:
 npm run test-coverage
 ```
 
-![alt text](image.png)
 ![alt text](npm_test.png)
 
 Voor de backend is dat:
