@@ -2,6 +2,7 @@
 
 | **File**                      | **Method**     | **Issue**                                                | **Line** | **Description**                                                                                     |
 |-------------------------------|----------------|----------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------|
+
 # Changes Required
 
 | `MetaDataController.php`      | `index`        | Unknown named parameter `$filters`                        | 84       | The `findAll` method in the `MetaDataMapper` class does not accept named parameters.                |
@@ -26,8 +27,6 @@
 | `PublicationMapperTest.php`   | `testFind`, `testFindAll`, `testCreateFromArray`, `testUpdateFromArray` | Errors due to undefined methods and null references | - | The tests for `PublicationMapper` have issues related to undefined methods and null references. The problematic lines need to be commented out and addressed separately. |
 | `ListingMapperTest.php`       | `testFind`, `testFindAll`, `testUpdateFromArray` | Errors due to methods that do not exist or are final/static | - | The tests for `ListingMapper` have issues related to methods that cannot be configured or do not exist. The problematic lines need to be commented out and addressed separately. |
 | `DirectoryController.php`     | `index`        | Unknown named parameter `$filters`                        | 122      | The `findAll` method in the `ListingMapper` class does not accept named parameters. Update the method call to use positional parameters instead. |
-
-
 
 ## Mappers
 
@@ -54,11 +53,6 @@
 | `ObjectService.php` | `findObject`   | Inconsistent return type and error handling              | -        | Ensure `findObject` method returns an array and includes proper error handling.                    |
 | `ObjectService.php` | `updateObject` | Inconsistent return type and error handling              | -        | Ensure `updateObject` method returns an array and includes proper error handling.                  |
 | `ObjectService.php` | `deleteObject` | Inconsistent return type and error handling              | -        | Ensure `deleteObject` method returns an array and includes proper error handling.                  |
-
-
-
-
-
 
 # Explanation for Elasticsearch Tests Needing a Wrapper
 
