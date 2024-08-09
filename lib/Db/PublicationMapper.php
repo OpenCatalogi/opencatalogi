@@ -28,6 +28,31 @@ class PublicationMapper extends QBMapper
 		return $this->findEntity(query: $qb);
 	}
 
+	public function count(?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): int
+	{
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->selectAlias($qb->createFunction('COUNT(*)'), 'count')
+			->from('publications');
+
+		foreach($filters as $filter => $value) {
+			$qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
+		}
+
+		if (!empty($searchConditions)) {
+			$qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
+			foreach ($searchParams as $param => $value) {
+				$qb->setParameter($param, $value);
+			}
+		}
+
+		$cursor = $qb->execute();
+		$row = $cursor->fetch();
+		$cursor->closeCursor();
+
+		return $row['count'];
+	}
+
 	public function findAll(?int $limit = null, ?int $offset = null, ?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): array
 	{
 		$qb = $this->db->getQueryBuilder();

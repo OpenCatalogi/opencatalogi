@@ -96,13 +96,14 @@ class SearchService
 //		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
 
 		if(count($directory) === 0) {
+			$pages   = (int) ceil($totalResults / $limit);
 			return [
 				'results' => $localResults['results'],
 				'facets' => $localResults['facets'],
 				'count' => count($localResults['results']),
 				'limit' => $limit,
 				'page' => $page,
-				'pages' => ceil($totalResults / $limit),
+				'pages' => $pages === 0 ? 1 : $pages,
 				'total' => $totalResults
 			];
 		}
@@ -155,13 +156,15 @@ class SearchService
 			}
 		}
 
+		$pages   = (int) ceil($totalResults / $limit);
+
 		return [
 			'results' => $results,
 			'facets' => $aggregations,
 			'count' => count($results),
 			'limit' => $limit,
 			'page' => $page,
-			'pages' => ceil($totalResults / $limit),
+			'pages' => $pages === 0 ? 1 : $pages,
 			'total' => $totalResults
 			];
 	}
