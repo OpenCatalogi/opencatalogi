@@ -83,8 +83,12 @@ class SearchService
 		$localResults['results'] = [];
 		$localResults['facets'] = [];
 
+		$totalResults = 0;
+		$limit = isset($parameters['.limit']) === true ? $parameters['.limit'] : 30;
+		$page = isset($parameters['.page']) === true ? $parameters['.page'] : 1;
+
 		if($elasticConfig['location'] !== '') {
-			$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
+			$localResults = $this->elasticService->searchObject(filters: $parameters, config: $elasticConfig, totalResults: $totalResults,);
 		}
 
 		$directory = $this->directoryService->listDirectory(limit: 1000);
@@ -92,7 +96,15 @@ class SearchService
 //		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
 
 		if(count($directory) === 0) {
-			return $localResults;
+			return [
+				'results' => $localResults['results'],
+				'facets' => $localResults['facets'],
+				'count' => count($localResults['results']),
+				'limit' => $limit,
+				'page' => $page,
+				'pages' => ceil($totalResults / $limit),
+				'total' => $totalResults
+			];
 		}
 
 		$results = $localResults['results'];
@@ -147,10 +159,10 @@ class SearchService
 			'results' => $results,
 			'facets' => $aggregations,
 			'count' => count($results),
-			'limit' => 30,
-			'page' => 1,
-			'pages' => 1,
-			'total' => 10
+			'limit' => $limit,
+			'page' => $page,
+			'pages' => ceil($totalResults / $limit),
+			'total' => $totalResults
 			];
 	}
 
