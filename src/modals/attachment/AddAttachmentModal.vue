@@ -21,7 +21,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
+				<NcTextField :disabled="(files && true) || loading"
 					label="Titel"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.title"
@@ -38,13 +38,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Toegangs URL"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.accessUrl" />
-				<NcTextField :disabled="loading"
+				<NcTextField :disabled="(files && true) || loading"
 					label="Download URL"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.downloadUrl" />
 				<div class="addFileButtonGroup">
 					<NcButton v-if="success === null && !files"
-						:disabled="loading"
+						:disabled="checkIfDisabled() || loading"
 						type="primary"
 						@click="openFileUpload()">
 						<template #icon>
@@ -54,7 +54,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					</NcButton>
 
 					<NcButton v-if="success === null && files"
-						:disabled="loading"
+						:disabled="checkIfDisabled() || loading"
 						type="primary"
 						@click="reset()">
 						<template #icon>
@@ -64,7 +64,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					</NcButton>
 				</div>
 				<NcButton v-if="success === null"
-					:disabled="!publicationStore.attachmentItem.title || !files || loading"
+					:disabled="loading"
 					type="primary"
 					@click="addAttachment()">
 					<template #icon>
@@ -115,6 +115,15 @@ export default {
 		closeModal() {
 			navigationStore.modal = false
 		},
+		// test() {
+		// 	if (!publicationStore.attachmentItem.downloadUrl && !publicationStore.attachmentItem.title && (Array.isArray(files.value) && files.value.lenght > 0)) return true
+		// 	if (!files && (publicationStore.attachmentItem.downloadUrl && publicationStore.attachmentItem.title && true)) return true
+		// 	return false
+		// },
+		checkIfDisabled() {
+			if (publicationStore.attachmentItem.downloadUrl || publicationStore.attachmentItem.title) return true
+			return false
+		},
 		addAttachment() {
 			this.loading = true
 			this.errorMessage = false
@@ -131,13 +140,35 @@ export default {
 					'Publication-Title': publicationStore.publicationItem.title,
 				},
 			}).then((response) => {
-				this.loading = false
+
 				this.success = true
+				reset()
 				// Lets refresh the attachment list
 				if (publicationStore.publicationItem?.id) {
 					publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
 					// @todo update the publication item
 				}
+
+				fetch(
+					`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
+					{
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							...publicationStore.publicationItem,
+							attachments: [...publicationStore.publicationItem.attachments, response.data.id],
+						}),
+					},
+				)
+					.then(() => {
+						this.loading = false
+					})
+					.catch((err) => {
+						this.error = err
+						this.loading = false
+					})
 				// store.refreshCatalogiList()
 
 				publicationStore.setAttachmentItem(response)
@@ -150,7 +181,7 @@ export default {
 				}, 2000)
 			})
 				.catch((err) => {
-					this.error = err
+					this.error = err.response?.data?.error ?? err
 					this.loading = false
 				})
 		},
