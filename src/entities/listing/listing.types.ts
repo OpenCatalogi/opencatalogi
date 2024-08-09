@@ -1,3 +1,5 @@
+import { TOrganisation } from "../organisation"
+
 export type TListing = {
     id: string
     catalogusId: string
@@ -12,4 +14,5 @@ export type TListing = {
 	lastSync: string | Date
 	available: boolean
 	default: boolean
+	organisation: string|TOrganisation
 }

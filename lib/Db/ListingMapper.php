@@ -20,13 +20,41 @@ class ListingMapper extends QBMapper
 	{
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('*')
-			->from('listings')
-			->where(
-				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
-			);
+        $qb->select(
+            'l.*', 
+            'o.id AS organisation_id', 
+            'o.title AS organisation_title', 
+            'o.summary AS organisation_summary',
+            'o.description AS organisation_description',
+            'o.image AS organisation_image', 
+            'o.oin AS organisation_oin', 
+            'o.tooi AS organisation_tooi', 
+            'o.rsin AS organisation_rsin', 
+            'o.pki AS organisation_pki'
+        )
+        ->from('listings', 'l')
+        ->leftJoin('l', 'organizations', 'o', 'l.organisation = o.id')
+        ->where(
+            $qb->expr()->eq('l.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+        );
 
-		return $this->findEntity(query: $qb);
+		return $this->findEntityCustom(query: $qb);
+	}
+
+	/**
+	 * Returns an db result and throws exceptions when there are more or less
+	 * results CUSTOM FOR JOINS
+	 *
+	 * @param IQueryBuilder $query
+	 * @return Entity the entity
+	 * @psalm-return T the entity
+	 * @throws Exception
+	 * @throws MultipleObjectsReturnedException if more than one item exist
+	 * @throws DoesNotExistException if the item does not exist
+	 * @since 14.0.0
+	 */
+	protected function findEntityCustom(IQueryBuilder $query): Entity {
+		return $this->mapRowToEntityCustom($this->findOneQuery($query));
 	}
 
     /**
@@ -52,11 +80,14 @@ class ListingMapper extends QBMapper
         foreach ($organisationData as $key => $value) {
             if ($value !== null) {
                 $organisationIsEmpty = false;
-                break;
+            }
+
+            if (array_key_exists("organisation_$key", $row) === true) {
+                unset($row["organisation_$key"]);
             }
         }
 
-        $row['organisation'] = $organisationIsEmpty === true ? null : Organisation::fromRow($organisationData);
+        $row['organisation'] = $organisationIsEmpty === true ? null : json_encode(Organisation::fromRow($organisationData)->jsonSerialize());
 
 		return \call_user_func($this->entityClass .'::fromRow', $row);
 	}
