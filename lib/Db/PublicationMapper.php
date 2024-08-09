@@ -28,14 +28,77 @@ class PublicationMapper extends QBMapper
 		return $this->findEntity(query: $qb);
 	}
 
-	public function findAll(
-		?int $limit = null,
-		?int $offset = null,
-		?array $filters = [],
-		?array $searchConditions = [],
-		?array $searchParams = [],
-    	?array $sort = []
-	): array {
+	private function parseComplexFilter(IQueryBuilder $queryBuilder, array $filter, string $name): IQueryBuilder
+	{
+		foreach($filter as $key => $value) {
+			switch($key) {
+				case '>=':
+				case 'after':
+					$queryBuilder->andWhere($queryBuilder->expr()->gte($name, $queryBuilder->createNamedParameter($value)));
+					break;
+				case '>':
+				case 'strictly_after':
+					$queryBuilder->andWhere($queryBuilder->expr()->gt($name, $queryBuilder->createNamedParameter($value)));
+					break;
+				case '<=':
+				case 'before':
+					$queryBuilder->andWhere($queryBuilder->expr()->lte($name, $queryBuilder->createNamedParameter($value)));
+					break;
+				case '<':
+				case 'strictly_before':
+					$queryBuilder->andWhere($queryBuilder->expr()->lt($name, $queryBuilder->createNamedParameter($value)));
+					break;
+				default:
+					$queryBuilder->andWhere($queryBuilder->expr()->eq($name, $queryBuilder->createNamedParameter($filter)));
+			}
+		}
+
+		return $queryBuilder;
+	}
+
+	private function addFilters(IQueryBuilder $queryBuilder, array $filters): IQueryBuilder
+	{
+		foreach($filters as $key => $filter) {
+			if(is_array($filter) === false) {
+				$queryBuilder->andWhere($queryBuilder->expr()->eq($filter, $queryBuilder->createNamedParameter($filter)));
+				continue;
+			}
+
+			$queryBuilder = $this->parseComplexFilter(queryBuilder: $queryBuilder, filter: $filter, name: $key);
+		}
+
+		return $queryBuilder;
+	}
+
+	public function count(?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): int
+	{
+
+
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->selectAlias($qb->createFunction('COUNT(*)'), 'count')
+			->from('publications');
+
+
+		$qb = $this->addFilters(queryBuilder: $qb, filters: $filters);
+
+
+		if (!empty($searchConditions)) {
+			$qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
+			foreach ($searchParams as $param => $value) {
+				$qb->setParameter($param, $value);
+			}
+		}
+
+		$cursor = $qb->execute();
+		$row = $cursor->fetch();
+		$cursor->closeCursor();
+
+		return $row['count'];
+	}
+
+	public function findAll(?int $limit = null, ?int $offset = null, ?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): array
+	{
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -43,15 +106,7 @@ class PublicationMapper extends QBMapper
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
-        foreach($filters as $filter => $value) {
-			if ($value === 'IS NOT NULL') {
-				$qb->andWhere($qb->expr()->isNotNull($filter));
-			} elseif ($value === 'IS NULL') {
-				$qb->andWhere($qb->expr()->isNull($filter));
-			} else {
-				$qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
-			}
-        }
+		$qb = $this->addFilters(queryBuilder: $qb, filters: $filters);
 
         if (empty($searchConditions) === false) {
             $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
