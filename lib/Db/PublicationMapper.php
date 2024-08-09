@@ -122,7 +122,7 @@ class PublicationMapper extends QBMapper
 				$qb->addOrderBy($field, $direction);
 			}
 		}
-		
+
 		return $this->findEntities(query: $qb);
 	}
 

@@ -2,7 +2,6 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use Elastic\Elasticsearch\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use OCA\OpenCatalogi\Db\AttachmentMapper;
 use OCA\opencatalogi\lib\Db\Publication;
@@ -115,7 +114,7 @@ class PublicationsController extends Controller
 			$sort = $searchService->createSortForMySQL(filters: $filters);
 			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams, sort: $sort)]);
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams, sort: $sort)]);
 		}
 
 		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
