@@ -100,7 +100,7 @@ class AttachmentsController extends Controller
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results' =>$this->attachmentMapper->findAll()]);
+			return new JSONResponse(['results' => $this->attachmentMapper->findAll()]);
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
