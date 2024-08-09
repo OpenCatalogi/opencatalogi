@@ -3,7 +3,10 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'editListing'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'editListing'"
+		ref="modalRef"
+		label-id="editListingModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory bewerken</h2>
 			<div v-if="success !== null || error">
@@ -29,7 +32,7 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentSaveOutline v-if="!loading" :size="20" />
 				</template>
-				Submit
+				Bewerken
 			</NcButton>
 		</div>
 	</NcModal>

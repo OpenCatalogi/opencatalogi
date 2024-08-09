@@ -1,8 +1,12 @@
+<script setup>
+import { searchStore } from '../../store/store.js'
+</script>
+
 <template>
 	<NcAppContent>
-		<div class="dashboardContainer">
-			<h2>Dashboard</h2>
-		</div>
+		<h2 class="pageHeader">
+			Dashboard
+		</h2>
 		<b>Aantal zoekopdrachten afgelopen maand</B>
 		<apexchart
 			width="500"
@@ -23,6 +27,12 @@ export default {
 		NcAppContent,
 		apexchart: VueApexCharts,
 	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
+	},
 	data() {
 		return {
 			options: {
@@ -39,12 +49,15 @@ export default {
 			}],
 		}
 	},
+	watch: {
+		search: {
+			handler(search) {
+				searchStore.getSearchResults()
+			},
+		},
+	},
+	mounted() {
+		searchStore.getSearchResults()
+	},
 }
 </script>
-
-<style>
-.dashboardContainer {
-    margin-inline-start: 65px;
-    margin-block-start: 20px
-}
-</style>

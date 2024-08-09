@@ -8,7 +8,7 @@ import { directoryStore, navigationStore } from '../../store/store.js'
 		name="Listing verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ directoryStore.listingItem.name ?? directoryStore.listingItem.title }}</b> definitef verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ directoryStore.listingItem.name ?? directoryStore.listingItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Listing succesvol verwijderd</p>

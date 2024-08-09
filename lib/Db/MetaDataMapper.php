@@ -28,7 +28,7 @@ class MetaDataMapper extends QBMapper
 		return $this->findEntity(query: $qb);
 	}
 
-	public function findAll($limit = null, $offset = null): array
+	public function findAll(?int $limit = null, ?int $offset = null, ?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): array
 	{
 		$qb = $this->db->getQueryBuilder();
 
@@ -36,6 +36,23 @@ class MetaDataMapper extends QBMapper
 			->from('metadata')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
+
+        foreach($filters as $filter => $value) {
+			if ($value === 'IS NOT NULL') {
+				$qb->andWhere($qb->expr()->isNotNull($filter));
+			} elseif ($value === 'IS NULL') {
+				$qb->andWhere($qb->expr()->isNull($filter));
+			} else {
+				$qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
+			}
+        }
+
+        if (!empty($searchConditions)) {
+            $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
+            foreach ($searchParams as $param => $value) {
+                $qb->setParameter($param, $value);
+            }
+        }
 
 		return $this->findEntities(query: $qb);
 	}

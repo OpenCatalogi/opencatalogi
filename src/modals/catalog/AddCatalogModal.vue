@@ -3,7 +3,10 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'addCatalog'" ref="modalRef" @close="closeModal">
+	<NcModal v-if="navigationStore.modal === 'addCatalog'"
+		ref="modalRef"
+		label-id="addCatalogModal"
+		@close="closeModal">
 		<div class="modal__content">
 			<h2>Catalogus toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -31,14 +34,11 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					label="Beschrijving"
 					maxlength="255"
 					:value.sync="catalogi.description" />
-				<NcTextField :disabled="loading"
-					label="Image"
-					maxlength="255"
-					:value.sync="catalogi.image" />
-				<NcTextField :disabled="loading"
-					label="Search"
-					maxlength="255"
-					:value.sync="catalogi.search" />
+				<NcCheckboxRadioSwitch :disabled="loading"
+					label="Publiek vindbaar"
+					:checked.sync="catalogi.listed">
+					Publiek vindbaar
+				</NcCheckboxRadioSwitch>
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!catalogi.title || loading"
@@ -46,7 +46,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				@click="addCatalog">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
 				</template>
 				Toevoegen
 			</NcButton>
@@ -55,8 +55,8 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'AddCatalogModal',
@@ -66,8 +66,9 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
+		NcCheckboxRadioSwitch,
 		// Icons
-		ContentSaveOutline,
+		Plus,
 	},
 	data() {
 		return {
@@ -75,8 +76,7 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
-				image: '',
-				search: '',
+				listed: false,
 			},
 			loading: false,
 			success: null,
@@ -91,8 +91,7 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
-				image: '',
-				search: '',
+				listed: false,
 			}
 		},
 		addCatalog() {
@@ -120,7 +119,7 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.success = null
-						this.closeModal()
+						self.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {

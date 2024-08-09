@@ -13,12 +13,12 @@ class Attachment extends Entity implements JsonSerializable
 	protected ?string $title        = null;
 	protected ?string $summary      = null;
 	protected ?string $description  = null;
-	protected array $labels         = [];
+	protected ?array $labels        = null;
 	protected ?string $accessUrl    = null;
 	protected ?string $downloadUrl  = null;
 	protected ?string $type         = null;
 	protected ?string $extension    = null;
-	protected int $size			    = 0;
+	protected ?int $size			= null;
 	protected ?array $anonymization = null;
 	protected ?array $language      = null;
 	protected ?string $versionOf	= null;

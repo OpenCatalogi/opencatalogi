@@ -1,152 +1,93 @@
 <script setup>
-import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
+import { navigationStore, directoryStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcAppSidebar
-		name="Snelle start"
-		subname="Schakel snel naar waar u nodig bent">
-		<NcAppSidebarTab id="search-tab" name="Zoeken" :order="1">
+		name="Listing"
+		subname="Listing Summery">
+		<NcEmptyContent v-if="!directoryStore.listingItem.id || navigationStore.selected != 'directory'"
+			class="detailContainer"
+			name="Geen listing"
+			description="Nog geen listing geselecteerd, listings kan je ontdekken via (externe) directories.">
 			<template #icon>
-				<Magnify :size="20" />
+				<LayersOutline />
 			</template>
-			Zoek snel in het voor uw beschickbare federatieve netwerk
-			<NcTextField class="searchField"
-				:value.sync="searchStore.search"
-				label="Search" />
+			<template #action>
+				<NcButton type="primary" @click="navigationStore.setModal('addDirectory')">
+					<template #icon>
+						<Plus :size="20" />
+					</template>
+					Directory inlezen
+				</NcButton>
+				<NcButton @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory', '_blank')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Meer informatie over de directory
+				</NcButton>
+			</template>
+		</NcEmptyContent>
+		<NcAppSidebarTab v-if="directoryStore.listingItem.id && navigationStore.selected === 'directory'"
+			id="settings-tab"
+			name="Configuratie"
+			:order="1">
+			<template #icon>
+				<CogOutline :size="20" />
+			</template>
+			<NcCheckboxRadioSwitch type="switch">
+				Beschickbaar maken voor mijn zoek opdrachten
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch type="switch">
+				Standaard mee nemen in de beantwoording van mijn zoekopdrachten
+			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
-		<NcAppSidebarTab id="settings-tab" name="Publicaties" :order="2">
+		<NcAppSidebarTab v-if="directoryStore.listingItem.id && navigationStore.selected === 'directory'"
+			id="metdata-tab"
+			name="Metadata"
+			:order="2">
 			<template #icon>
-				<ListBoxOutline :size="20" />
+				<FileTreeOutline :size="20" />
 			</template>
-			Welke publicaties vereisen uw aandacht?
-			<NcListItem v-for="(publication, i) in publicationStore.conceptPublications.results"
-				:key="`${publication}${i}`"
-				:name="publication.name ?? publication.title"
-				:bold="false"
-				:force-display-actions="true"
-				:active="publicationStore.publicationItem.id === publication.id"
-				:details="publication?.status">
-				<template #icon>
-					<ListBoxOutline :class="publicationStore.publicationItem.id === publication.id && 'selectedZaakIcon'"
-						disable-menu
-						:size="44" />
-				</template>
-				<template #subname>
-					{{ publication?.description }} wdsfdf
-				</template>
-				<template #actions>
-					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setSelected('publication');">
-						<template #icon>
-							<ListBoxOutline :size="20" />
-						</template>
-						Bekijken
-					</NcActionButton>
-					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('editPublication')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
-						<template #icon>
-							<Publish :size="20" />
-						</template>
-						Publiseren
-					</NcActionButton>
-					<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('deletePublication')">
-						<template #icon>
-							<Delete :size="20" />
-						</template>
-						Verwijderen
-					</NcActionButton>
-				</template>
-			</NcListItem>
-		</NcAppSidebarTab>
-		<NcAppSidebarTab id="share-tab" name="Bijlagen" :order="3">
-			<template #icon>
-				<FileOutline :size="20" />
-			</template>
-			Welke bijlagen vereisen uw aandacht?
-			<NcListItem v-for="(attachment, i) in publicationStore.conceptAttachments.results"
-				:key="`${attachment}${i}`"
-				:name="attachment.name ?? attachment.title"
-				:bold="false"
-				:force-display-actions="true"
-				:active="publicationStore.attachmentItem.id === attachment.id"
-				:details="attachment?.status">
-				<template #icon>
-					<ListBoxOutline :class="publicationStore.publicationItem.id === attachment.id && 'selectedZaakIcon'"
-						disable-menu
-						:size="44" />
-				</template>
-				<template #subname>
-					{{ publication?.description }}
-				</template>
-				<template #actions>
-					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('editAttachment')">
-						<template #icon>
-							<Pencil :size="20" />
-						</template>
-						Bewerken
-					</NcActionButton>
-					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
-						<template #icon>
-							<Publish :size="20" />
-						</template>
-						Publiseren
-					</NcActionButton>
-					<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
-						<template #icon>
-							<Delete :size="20" />
-						</template>
-						Verwijderen
-					</NcActionButton>
-				</template>
-			</NcListItem>
-			<NcNoteCard type="success">
-				<p>Er zijn op dit moment geen bijlagen die uw aandacht vereisen</p>
-			</NcNoteCard>
+			Welke meta data typen zou u uit deze catalogus willen overnemen?
+			<NcCheckboxRadioSwitch type="switch">
+				Metedata type 1
+			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
 <script>
 
-import { NcAppSidebar, NcAppSidebarTab, NcTextField, NcNoteCard, NcListItem, NcActionButton } from '@nextcloud/vue'
-import Magnify from 'vue-material-design-icons/Magnify.vue'
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
-import FileOutline from 'vue-material-design-icons/FileOutline.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Publish from 'vue-material-design-icons/Publish.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
+import { NcAppSidebar, NcEmptyContent, NcButton, NcAppSidebarTab, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import CogOutline from 'vue-material-design-icons/CogOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 
 export default {
 	name: 'DirectorySideBar',
 	components: {
 		NcAppSidebar,
 		NcAppSidebarTab,
-		NcTextField,
-		NcNoteCard,
-		NcListItem,
-		NcActionButton,
+		NcEmptyContent,
+		NcButton,
+		NcCheckboxRadioSwitch,
 		// Icons
-		Magnify,
-		ListBoxOutline,
-		FileOutline,
-		Pencil,
-		Publish,
-		Delete,
+		LayersOutline,
+		Plus,
+		HelpCircleOutline,
+		CogOutline,
+		FileTreeOutline,
 	},
 	data() {
 		return {
-
-			publications: false,
-			attachments: false,
 		}
 	},
-	mounted() {
-		publicationStore.getConceptPublications()
-		publicationStore.getConceptAttachments()
+	methods: {
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>

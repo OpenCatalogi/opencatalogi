@@ -8,7 +8,10 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			<h1 class="h1">
 				{{ listing.title }}
 			</h1>
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+			<NcActions :disabled="loading"
+				:primary="true"
+				:inline="1"
+				:menu-name="loading ? 'Laden...' : 'Acties'">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
@@ -17,6 +20,14 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over directories"
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory', '_blank')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Help
+				</NcActionButton>
 				<NcActionButton @click="directoryStore.setListingItem(listing); navigationStore.setModal('editListing')">
 					<template #icon>
 						<Pencil :size="20" />
@@ -33,7 +44,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 		</div>
 		<div>
 			<div>
-				<h4>Sammenvatting:</h4>
+				<h4>Samenvatting:</h4>
 				<p>{{ listing.summary }}</p>
 			</div>
 			<div>
@@ -74,6 +85,7 @@ import {
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'ListingDetails',
@@ -128,6 +140,9 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+		},
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }
@@ -195,5 +210,10 @@ h4 {
   max-height: 100%;
   height: 100%;
   overflow: auto;
+}
+
+.flex-hor {
+    display: flex;
+    gap: 4px;
 }
 </style>

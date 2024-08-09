@@ -8,10 +8,10 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		name="Metadata kopieren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ metadataStore.metaDataItem.title ?? metadataStore.metaDataItem.name }}</b> kopieren?
+			Wil je <b>{{ metadataStore.metaDataItem.title ?? metadataStore.metaDataItem.name }}</b> kopiëren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Metadata succesvol gekopierd</p>
+			<p>Metadata succesvol gekopieerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -32,7 +32,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentCopy v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Kopiëren
 			</NcButton>
 		</template>
 	</NcDialog>

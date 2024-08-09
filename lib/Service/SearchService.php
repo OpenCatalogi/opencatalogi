@@ -4,6 +4,7 @@ namespace OCA\OpenCatalogi\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
+use OCP\IURLGenerator;
 use Symfony\Component\Uid\Uuid;
 
 class SearchService
@@ -16,8 +17,9 @@ class SearchService
 	];
 
 	public function __construct(
-		private readonly ObjectService $objectService,
-		private readonly ElasticSearchService $elasticService
+		private readonly ElasticSearchService $elasticService,
+		private readonly DirectoryService $directoryService,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 		$this->client = new Client();
 	}
@@ -77,11 +79,19 @@ class SearchService
 	 */
 	public function search(array $parameters, array $elasticConfig, array $dbConfig, array $catalogi = []): array
 	{
-		$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
 
-		$directory = $this->objectService->findObjects(['_schema' => 'directory'], $dbConfig);
+		$localResults['results'] = [];
+		$localResults['facets'] = [];
 
-		if(count($directory['documents']) === 0) {
+		if($elasticConfig['location'] !== '') {
+			$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
+		}
+
+		$directory = $this->directoryService->listDirectory(limit: 1000);
+
+//		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
+
+		if(count($directory) === 0) {
 			return $localResults;
 		}
 
@@ -89,13 +99,15 @@ class SearchService
 		$aggregations = $localResults['facets'];
 
 		$searchEndpoints = [];
-		$promises = [];
 
-		foreach($directory['documents'] as $instance) {
+
+		$promises = [];
+		foreach($directory as $instance) {
 			if(
 				$instance['default'] === false
-				&& isset($parameters['.catalogi']) === true
+				|| isset($parameters['.catalogi']) === true
 				&& in_array($instance['catalogId'], $parameters['.catalogi']) === false
+				|| $instance['search'] = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute(routeName:"opencatalogi.directory.index"))
 			) {
 				continue;
 			}
@@ -106,6 +118,8 @@ class SearchService
 
 		foreach($searchEndpoints as $searchEndpoint => $catalogi) {
 			$parameters['_catalogi'] = $catalogi;
+
+
 			$promises[] = $this->client->getAsync($searchEndpoint, ['query' => $parameters]);
 		}
 
@@ -124,7 +138,15 @@ class SearchService
 			}
 		}
 
-		return ['results' => $results, 'facets' => $aggregations];
+		return [
+			'results' => $results,
+			'facets' => $aggregations,
+			'count' => count($results),
+			'limit' => 30,
+			'page' => 1,
+			'pages' => 1,
+			'total' => 10
+			];
 	}
 
 	/**
@@ -165,6 +187,143 @@ class SearchService
 		}
 
 	}//end recursiveRequestQueryKey()
+
+	/**
+	 * This function creates a mongodb filter array.
+	 *
+	 * Also unsets _search in filters !
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 * @param array $fieldsToSearch Database field names to filter/search on.
+	 *
+	 * @return array $filters
+	 */
+	public function createMongoDBSearchFilter(array $filters, array $fieldsToSearch): array
+	{
+        if (isset($filters['_search']) === true) {
+			$searchRegex = ['$regex' => $filters['_search'], '$options' => 'i'];
+			$filters['$or'] = [];
+
+			foreach ($fieldsToSearch as $field) {
+				$filters['$or'][] = [$field => $searchRegex];
+			}
+
+			unset($filters['_search']);
+		}
+
+		foreach ($filters as $field => $value) {
+			if ($value === 'IS NOT NULL') {
+				$filters[$field] = ['$ne' => null];
+			}
+			if ($value === 'IS NULL') {
+				$filters[$field] = ['$eq' => null];
+			}
+		}
+
+		return $filters;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates mysql search conditions based on given filters from request.
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 * @param array $fieldsToSearch Fields to search on in sql.
+	 *
+	 * @return array $searchConditions
+	 */
+	public function createMySQLSearchConditions(array $filters, array $fieldsToSearch): array
+	{
+		$searchConditions = [];
+		if (isset($filters['_search']) === true) {
+			foreach ($fieldsToSearch as $field) {
+				$searchConditions[] = "LOWER($field) LIKE :search";
+			}
+		}
+
+		return $searchConditions;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function unsets all keys starting with _ from filters.
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $filters
+	 */
+	public function unsetSpecialQueryParams(array $filters): array
+	{
+        foreach ($filters as $key => $value) {
+            if (str_starts_with($key, '_')) {
+                unset($filters[$key]);
+            }
+        }
+
+		return $filters;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates mysql search parameters based on given filters from request.
+	 *
+	 * @param array $filters 	    Query parameters from request.
+	 *
+	 * @return array $searchParams
+	 */
+	public function createMySQLSearchParams(array $filters): array
+	{
+		$searchParams = [];
+		if (isset($filters['_search']) === true) {
+			$searchParams['search'] = '%' . strtolower($filters['_search']) . '%';
+		}
+
+		return $searchParams;
+
+	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates an sort array based on given order param from request.
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $sort
+	 */
+	public function createSortForMySQL(array $filters): array
+	{
+		$sort = [];
+		if (isset($filters['_order']) && is_array($filters['_order'])) {
+			foreach ($filters['_order'] as $field => $direction) {
+				$direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+				$sort[$field] = $direction;
+			}
+		}
+
+		return $sort;
+
+	}//end createSortArrayFromParams()
+
+	/**
+	 * This function creates an sort array based on given order param from request.
+	 *
+	 * @todo Not functional yet. Needs to be fixed (see PublicationsController->index).
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $sort
+	 */
+	public function createSortForMongoDB(array $filters): array
+	{
+		$sort = [];
+		if (isset($filters['_order']) && is_array($filters['_order'])) {
+			foreach ($filters['_order'] as $field => $direction) {
+				$sort[$field] = strtoupper($direction) === 'DESC' ? -1 : 1;
+			}
+		}
+
+		return $sort;
+
+	}//end createSortForMongoDB()
 
 	/**
 	 * Parses the request query string and returns it as an array of queries.

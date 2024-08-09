@@ -3,32 +3,61 @@
 namespace OCA\OpenCatalogi\Controller;
 
 use OCA\OpenCatalogi\Service\ElasticSearchService;
+use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\SearchService;
+use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
-
 class SearchController extends Controller
 {
-    const TEST_ARRAY = [
-        "d9e1467e-fc55-44c8-bf5c-bf139ac10eda" => [
-            "id" => "d9e1467e-fc55-44c8-bf5c-bf139ac10eda",
-            "name" => "Search one",
-            "summary" => "summary for one"
-        ],
-        "e9d0131b-06c4-4d20-aa17-3b2aaad186d7" => [
-            "id" => "e9d0131b-06c4-4d20-aa17-3b2aaad186d7",
-            "name" => "Search two",
-            "summary" => "summary for two"
-        ]
-    ];
 
-    public function __construct($appName, IRequest $request, private readonly IAppConfig $config)
-    {
-        parent::__construct($appName, $request);
+    public function __construct(
+        $appName,
+        IRequest $request,
+		private readonly PublicationMapper $publicationMapper,
+        private readonly IAppConfig $config,
+		$corsMethods = 'PUT, POST, GET, DELETE, PATCH',
+		$corsAllowedHeaders = 'Authorization, Content-Type, Accept',
+		$corsMaxAge = 1728000
+	) {
+		parent::__construct($appName, $request);
+		$this->corsMethods = $corsMethods;
+		$this->corsAllowedHeaders = $corsAllowedHeaders;
+		$this->corsMaxAge = $corsMaxAge;
     }
+
+	/**
+	 * This method implements a preflighted cors response for you that you can
+	 * link to for the options request
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @PublicPage
+	 * @since 7.0.0
+	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
+	public function preflightedCors() {
+		if (isset($this->request->server['HTTP_ORIGIN'])) {
+			$origin = $this->request->server['HTTP_ORIGIN'];
+		} else {
+			$origin = '*';
+		}
+
+		$response = new Response();
+		$response->addHeader('Access-Control-Allow-Origin', $origin);
+		$response->addHeader('Access-Control-Allow-Methods', $this->corsMethods);
+		$response->addHeader('Access-Control-Max-Age', (string)$this->corsMaxAge);
+		$response->addHeader('Access-Control-Allow-Headers', $this->corsAllowedHeaders);
+		$response->addHeader('Access-Control-Allow-Credentials', 'false');
+		return $response;
+	}
 
     /**
      * @NoAdminRequired
@@ -64,6 +93,32 @@ class SearchController extends Controller
 		$filters = $this->request->getParams();
 		unset($filters['_route']);
 
+        $fieldsToSearch = ['title', 'description', 'summary'];
+
+		if($this->config->hasKey($this->appName, 'elasticLocation') === false
+			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
+		) {
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+
+			$limit = null;
+			$offset = null;
+
+			if(isset($filters['_limit']) === true) {
+				$limit = $filters['_limit'];
+			}
+
+			if(isset($filters['_page']) === true) {
+				$offset = ($limit * ($filters['_page'] - 1));
+			}
+
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+
+
+
+			return new JSONResponse(['results' => $this->publicationMapper->findAll(limit: $limit, offset: $offset, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
+		}
+
 		//@TODO: find a better way to get query params. This fixes it for now.
 		$keys   = array_keys(array: $filters);
 		$values = array_values(array: $filters);
@@ -72,6 +127,20 @@ class SearchController extends Controller
 
 		$filters = array_combine(keys: $keys, values: $values);
 
+        $requiredElasticConfig = ['location', 'key', 'index'];
+        $missingFields = null;
+        foreach ($requiredElasticConfig as $key) {
+            if (isset($elasticConfig[$key]) === false || empty($elasticConfig[$key])) {
+                $missingFields .= "$key, ";
+            }
+        }
+
+        if ($missingFields !== null) {
+            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+            $response = new JSONResponse(data: ['code' => 403, 'message' => $errorMessage], statusCode: 403);
+
+            return $response;
+        }
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 
@@ -93,6 +162,19 @@ class SearchController extends Controller
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$filters = ['_id' => (string) $id];
+
+        $requiredElasticConfig = ['location', 'key', 'index'];
+        $missingFields = null;
+        foreach ($requiredElasticConfig as $key) {
+            if (isset($elasticConfig[$key]) === false) {
+                $missingFields .= "$key ";
+            }
+        }
+
+        if ($missingFields !== null) {
+            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+            return new JSONResponse(['message' => $errorMessage], 403);
+        }
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 

@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, searchStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,15 +7,64 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="searchStore.search"
+					:value.sync="advancedSearch"
 					label="Zoeken"
 					trailing-button-icon="close"
-					:show-trailing-button="search !== ''"
-					@trailing-button-click="searchStore.setSearch('')">
+					:show-trailing-button="advancedSearch !== ''"
+					@trailing-button-click="advancedSearch = ''">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
-					<NcActionButton @click="fetchData">
+					<NcActionCaption name="Zoeken" />
+					<NcActionCheckbox
+						:checked="conceptChecked"
+						:value="'concept'"
+						@change="handleCheckboxChange('concept', $event)">
+						Concept
+					</NcActionCheckbox>
+					<NcActionCheckbox
+						:checked="gepubliceerdChecked"
+						:value="'gepubliceerd'"
+						@change="handleCheckboxChange('gepubliceerd', $event)">
+						Gepubliceerd
+					</NcActionCheckbox>
+					<NcActionSeparator />
+					<NcActionCaption name="Sorteren" />
+					<NcActionInput
+						v-model="sortField"
+						type="multiselect"
+						input-label="Eigenschap"
+						:options="['Titel', 'Datum gepubliceerd', 'Datum aangepast']">
+						<template #icon>
+							<Pencil :size="20" />
+						</template>
+						Kies een eigenschap
+					</NcActionInput>
+					<NcActionRadio
+						:checked="sortDirection === 'asc'"
+						name="sortDirection"
+						value="asc"
+						@update:checked="updateSortOrder('asc')">
+						Oplopend
+					</NcActionRadio>
+					<NcActionRadio
+						:checked="sortDirection === 'desc'"
+						name="sortDirection"
+						value="desc"
+						@update:checked="updateSortOrder('desc')">
+						Aflopend
+					</NcActionRadio>
+					<NcActionSeparator />
+					<NcActionCaption name="Acties" />
+					<NcActionButton
+						title="Bekijk de documentatie over publicaties"
+						@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
+						<template #icon>
+							<HelpCircleOutline :size="20" />
+						</template>
+						Help
+					</NcActionButton>
+					<NcActionButton :disabled="loading" @click="refresh">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
@@ -37,7 +86,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					:force-display-actions="true"
 					:active="publicationStore.publicationItem.id === publication.id"
 					:details="publication?.status"
-					:counter-number="1"
+					:counter-number="publication?.attachmentCount.toString()"
 					@click="publicationStore.setPublicationItem(publication)">
 					<template #icon>
 						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
@@ -46,7 +95,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 						<AlertOutline v-if="publication.status === 'retracted'" :size="44" />
 					</template>
 					<template #subname>
-						{{ publication?.description }}
+						{{ publication?.summary }}
 					</template>
 					<template #actions>
 						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('editPublication')">
@@ -59,19 +108,19 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
-							Kopieren
+							Kopiëren
 						</NcActionButton>
 						<NcActionButton v-if="publication.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 							<template #icon>
 								<Publish :size="20" />
 							</template>
-							Publiseren
+							Publiceren
 						</NcActionButton>
 						<NcActionButton v-if="publication.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 							<template #icon>
 								<PublishOff :size="20" />
 							</template>
-							Depubliseren
+							Depubliceren
 						</NcActionButton>
 						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('archivePublication')">
 							<template #icon>
@@ -105,12 +154,15 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 				:size="64"
 				class="loadingIcon"
 				appearance="dark"
-				name="Zaken aan het laden" />
+				name="Publicaties aan het laden" />
 		</ul>
 	</NcAppContentList>
 </template>
 <script>
-import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActions } from '@nextcloud/vue'
+import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActionRadio, NcActionCheckbox, NcActionInput, NcActionCaption, NcActionSeparator, NcActions } from '@nextcloud/vue'
+import { debounce } from 'lodash'
+
+// Icons
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Refresh from 'vue-material-design-icons/Refresh.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -125,6 +177,7 @@ import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
 	name: 'PublicationList',
@@ -136,6 +189,11 @@ export default {
 		ListBoxOutline,
 		Magnify,
 		NcLoadingIcon,
+		NcActionRadio,
+		NcActionCheckbox,
+		NcActionInput,
+		NcActionCaption,
+		NcActionSeparator,
 		NcActions,
 		// Icons
 		Refresh,
@@ -148,42 +206,76 @@ export default {
 		Pencil,
 		Publish,
 		ArchivePlusOutline,
+		HelpCircleOutline,
 	},
-	props: {
-		search: {
-			type: String,
-			required: true,
-		},
+	beforeRouteLeave(to, from, next) {
+		this.advancedSearch = ''
+		next()
 	},
 	data() {
 		return {
-
 			loading: false,
+			sortField: '',
+			sortDirection: 'desc',
+			normalSearch: [],
+			advancedSearch: '',
+			conceptChecked: false,
+			gepubliceerdChecked: false,
 		}
 	},
 	computed: {
 		filteredPublications() {
 			if (!publicationStore?.publicationList) return []
 			return publicationStore.publicationList.filter((publication) => {
-				return parseInt(publication.catalogi) === navigationStore.selectedCatalogus
+				return publication.catalogi.toString() === navigationStore.selectedCatalogus.toString()
 			})
 		},
 	},
 	watch: {
-		search: {
-			handler(search) {
-				this.fetchData()
-			},
-		},
+		advancedSearch: 'debouncedFetchData',
+		sortField: 'fetchData',
+		sortDirection: 'fetchData',
+		normalSearch: 'fetchData',
 	},
 	mounted() {
 		this.fetchData()
 	},
 	methods: {
-		fetchData() {
+		refresh(e) {
+			e.preventDefault()
+			this.fetchData()
+		},
+		fetchData(search = null) {
 			this.loading = true
-			publicationStore.refreshPublicationList()
-			this.loading = false
+			publicationStore.refreshPublicationList(this.normalSearch, this.advancedSearch, this.sortField, this.sortDirection)
+				.then(() => {
+					this.loading = false
+				})
+		},
+		debouncedFetchData: debounce(function() {
+			this.fetchData()
+		}, 500),
+		updateSortOrder(value) {
+			this.sortDirection = value
+		},
+		updateNormalSearch() {
+			this.normalSearch = []
+			if (this.conceptChecked) {
+				this.normalSearch.push({ key: 'status', value: 'concept' })
+			}
+			if (this.gepubliceerdChecked) {
+				this.normalSearch.push({ key: 'status', value: 'published' })
+			}
+		},
+		handleCheckboxChange(key, event) {
+			const checked = event.target.checked
+
+			if (key === 'concept') {
+				this.conceptChecked = checked
+			} else if (key === 'gepubliceerd') {
+				this.gepubliceerdChecked = checked
+			}
+			this.updateNormalSearch()
 		},
 	},
 }
@@ -204,5 +296,9 @@ export default {
 }
 .active.publicationDetails-actionsDelete button {
     color: #EBEBEB !important;
+}
+
+.loadingIcon {
+    margin-block-start: var(--OC-margin-20);
 }
 </style>

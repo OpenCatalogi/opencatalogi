@@ -8,10 +8,10 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 		name="Bijlage publiseren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> publiseren?
+			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> publiceren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Bijlage succesvol gepubliseerd</p>
+			<p>Bijlage succesvol gepubliceerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -35,7 +35,7 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<Publish v-if="!loading" :size="20" />
 				</template>
-				Publiseren
+				Publiceren
 			</NcButton>
 		</template>
 	</NcDialog>

@@ -3,7 +3,10 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'editCatalog'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'editCatalog'"
+		ref="modalRef"
+		label-id="editCatalogModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Catalogus bewerken</h2>
 			<div v-if="success !== null || error">
@@ -31,14 +34,11 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					label="Beschrijving"
 					maxlength="255"
 					:value.sync="catalogiStore.catalogiItem.description" />
-				<NcTextField :disabled="loading"
-					label="Image"
-					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.image" />
-				<NcTextField :disabled="loading"
-					label="Search"
-					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.search" />
+				<NcCheckboxRadioSwitch :disabled="loading"
+					label="Publiek vindbaar"
+					:checked.sync="catalogiStore.catalogiItem.listed">
+					Publiek vindbaar
+				</NcCheckboxRadioSwitch>
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="loading"
@@ -55,7 +55,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon, NcCheckboxRadioSwitch } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
@@ -66,6 +66,7 @@ export default {
 		NcButton,
 		NcNoteCard,
 		NcLoadingIcon,
+		NcCheckboxRadioSwitch,
 		// Icons
 		ContentSaveOutline,
 	},

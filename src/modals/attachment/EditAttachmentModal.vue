@@ -3,7 +3,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'EditAttachment'" ref="modalRef" @close="navigationStore.setModal(false)">
+	<NcModal v-if="navigationStore.modal === 'EditAttachment'"
+		ref="modalRef"
+		label-id="EditAttachmentModal"
+		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bijlage bewerken</h2>
 			<div v-if="success !== null || error">
@@ -32,13 +35,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.description" />
 				<NcTextField :disabled="loading"
-					label="Toegangs url"
+					label="Toegangs URL"
 					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.accessURL" />
+					:value.sync="publicationStore.attachmentItem.accessUrl" />
 				<NcTextField :disabled="loading"
 					label="Download URL"
 					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.downloadURL" />
+					:value.sync="publicationStore.attachmentItem.downloadUrl" />
 			</div>
 			<NcButton
 				v-if="success === null"

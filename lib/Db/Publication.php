@@ -18,7 +18,7 @@ class Publication extends Entity implements JsonSerializable
 	protected ?string $portal      		 = null;
 	protected ?string $catalogi    		 = null;
 	protected ?string $metaData    		 = null;
-	protected ?DateTime $published = null;
+	protected ?DateTime $published       = null;
 	protected ?DateTime $modified        = null;
 	// I changed this to a boolean, according to the documentation 
 	protected ?bool $featured          = false;
@@ -73,6 +73,15 @@ class Publication extends Entity implements JsonSerializable
 		$jsonFields = $this->getJsonFields();
 
         $this->setStatus('concept');
+		$this->setAttachments(null);
+		$this->setOrganization(null);
+		$this->setData(null);
+		$this->setModified(new DateTime());
+
+
+		if(isset($object['published']) === false) {
+			$object['published'] = null;
+		}
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
@@ -88,7 +97,10 @@ class Publication extends Entity implements JsonSerializable
 			}
 		}
 
-		$this->setAttachmentCount(0);
+		// Todo: MetaData is depricated, we should use Schema instead. But this needs front-end changes as well.
+		$this->setSchema($this->getMetaData());
+
+		$this->setAttachmentCount('0');
 		if($this->attachments !== null) {
 			$this->setAttachmentCount(count($this->getAttachments()));
 		}
@@ -109,9 +121,9 @@ class Publication extends Entity implements JsonSerializable
 			'portal' => $this->portal,
 			'catalogi' => $this->catalogi,
 			'metaData' => $this->metaData,
-			'published' => $this->published->format('c'),
-			'modified'	=> $this->modified->format('c'),
-			'featured' => $this->featured,
+			'published' => $this->published?->format('c'),
+			'modified'	=> $this->modified?->format('c'),
+			'featured' => $this->featured !== null ? (bool) $this->featured : null,
 			'organization' => $this->organization,
 			'data' => $this->data,
 			'attachments' => $this->attachments,

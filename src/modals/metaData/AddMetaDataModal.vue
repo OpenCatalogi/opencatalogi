@@ -3,9 +3,9 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal
-		v-if="navigationStore.modal === 'addMetaData'"
+	<NcModal v-if="navigationStore.modal === 'addMetaData'"
 		ref="modalRef"
+		label-id="addMetaDataModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>MetaData toevoegen</h2>
@@ -24,7 +24,6 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
 				<NcTextField label="Versie" :value.sync="metaData.version" />
 				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metaData.description" />
-				<NcTextField label="vereisten (splits op ,)" :value.sync="metaData.required" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!metaData.title || loading"
@@ -32,7 +31,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				@click="addMetaData">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
 				</template>
 				Toevoegen
 			</NcButton>
@@ -42,7 +41,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 
 <script>
 import { NcButton, NcModal, NcTextField, NcTextArea, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'AddMetaDataModal',
@@ -54,7 +53,7 @@ export default {
 		NcLoadingIcon,
 		NcNoteCard,
 		// Icons
-		ContentSaveOutline,
+		Plus,
 	},
 	data() {
 		return {
@@ -83,7 +82,6 @@ export default {
 					},
 					body: JSON.stringify({
 						...this.metaData,
-						required: this.metaData.required.split(/, */g), // split on , to make an array of strings
 					}),
 				},
 			)

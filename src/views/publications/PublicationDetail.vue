@@ -1,14 +1,20 @@
 <script setup>
-import { navigationStore, publicationStore } from '../../store/store.js'
+import { catalogiStore, metadataStore, navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ publication.title }}
+				{{ publicationStore.publicationItem.title }}
 			</h1>
-			<NcActions :disabled="loading" :primary="true" :menu-name="loading ? 'Laden...' : 'Acties'">
+
+			<NcActions
+				:disabled="loading"
+				:primary="true"
+				:menu-name="loading ? 'Laden...' : 'Acties'"
+				:inline="1"
+				title="Acties die je kan uitvoeren op deze publicatie">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading"
@@ -17,6 +23,14 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
+				<NcActionButton
+					title="Bekijk de documentatie over publicaties"
+					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
+					<template #icon>
+						<HelpCircleOutline :size="20" />
+					</template>
+					Help
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setModal('editPublication')">
 					<template #icon>
 						<Pencil :size="20" />
@@ -27,19 +41,19 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
-					Kopieren
+					Kopiëren
 				</NcActionButton>
 				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 					<template #icon>
 						<Publish :size="20" />
 					</template>
-					Publiseren
+					Publiceren
 				</NcActionButton>
 				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
-					Depubliseren
+					Depubliceren
 				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('archivePublication')">
 					<template #icon>
@@ -71,69 +85,65 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			<div class="detailGrid">
 				<div>
 					<b>Referentie:</b>
-					<span>{{ publication?.data?.reference }}</span>
+					<span>{{ publicationStore.publicationItem.reference }}</span>
 				</div>
 				<div>
 					<b>Samenvatting:</b>
-					<span>{{ publication?.data?.summary }}</span>
+					<span>{{ publicationStore.publicationItem.summary }}</span>
 				</div>
 				<div>
 					<b>Beschrijving:</b>
-					<span>{{ publication.description }}</span>
+					<span>{{ publicationStore.publicationItem.description }}</span>
 				</div>
 				<div>
 					<b>Categorie:</b>
-					<span>{{ publication.category }}</span>
+					<span>{{ publicationStore.publicationItem.category }}</span>
 				</div>
 				<div>
 					<b>Portal:</b>
-					<span><a target="_blank" :href="publication.portal">{{ publication.portal }}</a></span>
+					<span><a target="_blank" :href="publicationStore.publicationItem.portal">{{ publicationStore.publicationItem.portal }}</a></span>
 				</div>
 				<div>
 					<b>Foto:</b>
-					<span>{{ publication.image }}</span>
+					<span>{{ publicationStore.publicationItem.image }}</span>
 				</div>
 				<div>
-					<b>Themas:</b>
-					<ul>
-						<li v-for="(theme, index) in publication?.data?.themes" :key="index">
-							{{ theme }}
-						</li>
-					</ul>
+					<b>Thema's:</b>
+					<span>{{ publicationStore.publicationItem.themes.join(", ") }}</span>
 				</div>
 				<div>
 					<b>Featured:</b>
-					<span>{{ publication?.data?.featured }}</span>
+					<span>{{ publicationStore.publicationItem.featured ? "Yes" : "No" }}</span>
 				</div>
 				<div>
 					<b>Licentie:</b>
-					<span>{{ publication.license }}</span>
+					<span>{{ publicationStore.publicationItem.license }}</span>
 				</div>
 				<div>
 					<b>Status:</b>
-					<span>{{ publication.status }}</span>
+					<span>{{ publicationStore.publicationItem.status }}</span>
 				</div>
 				<div>
 					<b>Gepubliceerd:</b>
-					<span>{{ publication.published }}</span>
+					<span>{{ publicationStore.publicationItem.published }}</span>
 				</div>
 				<div>
-					<b>Gemodificeerd:</b>
-					<span>{{ publication.modified }}</span>
+					<b>Gewijzigd:</b>
+					<span>{{ publicationStore.publicationItem.modified }}</span>
 				</div>
 				<div>
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
-						<span>{{ catalogi.name }}</span>
+						<span>{{ catalogi.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${catalogi.name}`"
-								:name="catalogi.name"
-								@click="goToCatalogi(catalogi._id)">
+							<NcActionLink :aria-label="`got to ${catalogi.title}`"
+								:name="catalogi.title"
+								@click="goToCatalogi()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ catalogi.name }}
+								{{ catalogi.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -146,7 +156,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<NcActions>
 							<NcActionLink :aria-label="`got to ${metadata.title}`"
 								:name="metadata.title"
-								@click="goToMetadata(metadata)">
+								@click="goToMetadata()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
@@ -159,49 +169,53 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
-						<NcListItem v-for="(value, key, i) in publication?.data"
-							:key="`${key}${i}`"
-							:name="key"
-							:bold="false"
-							:force-display-actions="true"
-							@click="publicationStore.setPublicationDataKey(key)
-							">
-							<template #icon>
-								<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
-									disable-menu
-									:size="44" />
-							</template>
-							<template #subname>
-								{{ value }}
-							</template>
-							<template #actions>
-								<NcActionButton @click="editPublicationDataItem(key)">
-									<template #icon>
-										<Pencil :size="20" />
-									</template>
-									Bewerken
-								</NcActionButton>
-								<NcActionButton @click="deletePublicationDataItem(key)">
-									<template #icon>
-										<Delete :size="20" />
-									</template>
-									Verwijderen
-								</NcActionButton>
-							</template>
-						</NcListItem>
+						<div v-if="publicationStore.publicationItem?.data.length > 0">
+							<NcListItem v-for="(value, key, i) in publicationStore.publicationItem?.data"
+								:key="`${key}${i}`"
+								:name="key"
+								:bold="false"
+								:force-display-actions="true"
+								@click="publicationStore.setPublicationDataKey(key)
+								">
+								<template #icon>
+									<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
+										disable-menu
+										:size="44" />
+								</template>
+								<template #subname>
+									{{ value }}
+								</template>
+								<template #actions>
+									<NcActionButton @click="editPublicationDataItem(key)">
+										<template #icon>
+											<Pencil :size="20" />
+										</template>
+										Bewerken
+									</NcActionButton>
+									<NcActionButton @click="deletePublicationDataItem(key)">
+										<template #icon>
+											<Delete :size="20" />
+										</template>
+										Verwijderen
+									</NcActionButton>
+								</template>
+							</NcListItem>
+						</div>
+						<div v-if="publicationStore.publicationItem?.data.length === 0" class="tabPanel">
+							Geen Eigenschappen gevonden
+						</div>
 					</BTab>
 					<BTab title="Bijlagen">
 						<div
-							v-if="publicationStore.publicationAttachments.results?.length > 0"
+							v-if="publicationStore.publicationAttachments.length > 0"
 							class="tabPanel">
-							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments.results"
+							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments"
 								:key="`${attachment}${i}`"
 								:name="attachment.name ?? attachment.title"
 								:bold="false"
 								:active="publicationStore.attachmentId === attachment.id"
 								:force-display-actions="true"
-								:details="attachment?.status"
-								@click="publicationStore.setAttachmentId(attachment.id)">
+								:details="attachment?.status">
 								<template #icon>
 									<CheckCircle v-if="attachment?.status === 'published'"
 										:class="attachment?.published && 'publishedIcon'"
@@ -216,37 +230,37 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 									{{ attachment?.description }}
 								</template>
 								<template #actions>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
+									<NcActionButton disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
 										<template #icon>
 											<Pencil :size="20" />
 										</template>
 										Bewerken
 									</NcActionButton>
-									<NcActionButton :disabled="disabled">
+									<NcActionButton disabled>
 										<template #icon>
 											<Download :size="20" />
 										</template>
 										Download
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status !== 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
+									<NcActionButton v-if="attachment.status !== 'published'" disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
 										</template>
-										Publiseren
+										Publiceren
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
+									<NcActionButton v-if="attachment.status === 'published'" disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
-										Depubliseren
+										Depubliceren
 									</NcActionButton>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
+									<NcActionButton disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
 										<template #icon>
 											<ContentCopy :size="20" />
 										</template>
-										Kopieren
+										Kopiëren
 									</NcActionButton>
-									<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
+									<NcActionButton disabled @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 										<template #icon>
 											<Delete :size="20" />
 										</template>
@@ -255,14 +269,21 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 								</template>
 							</NcListItem>
 						</div>
-						<div v-else class="tabPanel">
+						<div v-if="publicationStore.publicationAttachments.length === 0" class="tabPanel">
 							Geen bijlagen gevonden
 						</div>
+						<div v-if="publicationStore.publicationAttachments.length !== 0 && !publicationStore.publicationAttachments.length > 0" class="tabPanel">
+							<NcLoadingIcon
+								:size="64"
+								class="loadingIcon"
+								appearance="dark"
+								name="Bijlagen aan het laden" />
+						</div>
 					</BTab>
-					<BTab title="Loging">
+					<BTab title="Logging">
 						<table width="100%">
 							<tr>
-								<th><b>Tijstip</b></th>
+								<th><b>Tijdstip</b></th>
 								<th><b>Gebruiker</b></th>
 								<th><b>Actie</b></th>
 								<th><b>Details</b></th>
@@ -286,7 +307,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<BTab title="Rechten">
 						<table width="100%">
 							<tr>
-								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankenlijk</td>
+								<td>Deze publicatie is <b v-if="prive">NIET</b> openbaar toegankelijk</td>
 								<td>
 									<NcButton @click="prive = !prive">
 										<template #icon>
@@ -295,25 +316,25 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 											<LockOutline v-if="prive"
 												:size="20" />
 										</template>
-										<span v-if="!prive">Prive maken</span>
+										<span v-if="!prive">Privé maken</span>
 										<span v-if="prive">Openbaar maken</span>
 									</NcButton>
 								</td>
 							</tr>
 							<tr v-if="prive">
 								<td>Gebruikersgroepen</td>
-								<td><NcSelectTags v-model="userGroups" :multiple="true" /></td>
+								<td><NcSelectTags v-model="userGroups" input-label="gebruikers groepen" :multiple="true" /></td>
 							</tr>
 						</table>
 					</BTab>
-					<BTab title="Statestieken">
+					<BTab title="Statistieken">
 						<apexchart v-if="publication.status === 'published'"
 							width="100%"
 							type="line"
 							:options="chart.options"
 							:series="chart.series" />
 						<NcNoteCard type="info">
-							<p>Er zijn nog geen statestieken over deze publicatie bekend</p>
+							<p>Er zijn nog geen statistieken over deze publicatie bekend</p>
 						</NcNoteCard>
 					</BTab>
 				</BTabs>
@@ -324,28 +345,29 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcButton, NcListItem, NcActionLink, NcSelectTags, NcNoteCard } from '@nextcloud/vue'
-import { BTabs, BTab } from 'bootstrap-vue'
+import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
+import { BTab, BTabs } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 
 // Icons
+import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
-import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import Publish from 'vue-material-design-icons/Publish.vue'
-import PublishOff from 'vue-material-design-icons/PublishOff.vue'
-import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
-import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
-import LockOutline from 'vue-material-design-icons/LockOutline.vue'
-import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Download from 'vue-material-design-icons/Download.vue'
-import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
+import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import LockOutline from 'vue-material-design-icons/LockOutline.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Publish from 'vue-material-design-icons/Publish.vue'
+import PublishOff from 'vue-material-design-icons/PublishOff.vue'
+import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -358,6 +380,8 @@ export default {
 		NcListItem,
 		NcSelectTags,
 		NcNoteCard,
+		BTab,
+		BTabs,
 		apexchart: VueApexCharts,
 		// Icons
 		CheckCircle,
@@ -377,10 +401,11 @@ export default {
 		LockOpenVariantOutline,
 		Download,
 		ArchivePlusOutline,
+		HelpCircleOutline,
 	},
 	props: {
 		publicationItem: {
-			type: String,
+			type: Object,
 			required: true,
 		},
 	},
@@ -513,13 +538,16 @@ export default {
 			publicationStore.setPublicationDataKey(key)
 			navigationStore.setModal('editPublicationDataModal')
 		},
-		goToMetadata(metadata) {
-			publicationStore.setMetaDataItem(metadata)
+		goToMetadata() {
+			metadataStore.setMetaDataItem(this.metadata)
 			navigationStore.setSelected('metaData')
 		},
-		goToCatalogi(id) {
-			publicationStore.setCatalogiId(id)
+		goToCatalogi() {
+			catalogiStore.setCatalogiItem(this.catalogi)
 			navigationStore.setSelected('catalogi')
+		},
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }
@@ -569,6 +597,11 @@ h4 {
 .buttonLinkContainer{
 	display: flex;
     align-items: center;
+}
+
+.flex-hor {
+    display: flex;
+    gap: 4px;
 }
 
 .float-right {

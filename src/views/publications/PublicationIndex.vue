@@ -21,7 +21,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<PublicationDetails v-if="publicationStore.publicationItem.id && navigationStore.selected === 'publication'" :publication-item="publicationStore.publicationItem.id " />
+			<PublicationDetails v-if="publicationStore.publicationItem.id && navigationStore.selected === 'publication'" :publication-item="publicationStore.publicationItem" />
 		</template>
 	</NcAppContent>
 </template>

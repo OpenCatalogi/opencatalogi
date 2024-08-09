@@ -5,13 +5,13 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 <template>
 	<NcDialog
 		v-if="navigationStore.dialog === 'copyAttachment'"
-		name="Bijlage kopieren"
+		name="Bijlage kopiëren"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> kopieren?
+			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> kopiëren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Bijlage succesvol gekopierd</p>
+			<p>Bijlage succesvol gekopieerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -35,7 +35,7 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<ContentCopy v-if="!loading" :size="20" />
 				</template>
-				Kopieren
+				Kopiëren
 			</NcButton>
 		</template>
 	</NcDialog>

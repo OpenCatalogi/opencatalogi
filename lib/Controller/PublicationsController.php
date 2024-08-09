@@ -8,6 +8,7 @@ use OCA\opencatalogi\lib\Db\Publication;
 use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
+use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
@@ -17,18 +18,6 @@ use Symfony\Component\Uid\Uuid;
 
 class PublicationsController extends Controller
 {
-    const TEST_ARRAY = [
-        "354980e5-c967-4ba5-989b-65c2b0cd2ff4" => [
-            "id" => "354980e5-c967-4ba5-989b-65c2b0cd2ff4",
-            "name" => "Input voor OpenCatalogi",
-            "summary" => "Dit is een selectie van high-value datasets in DCAT-AP 2.0 standaard x"
-        ],
-        "2ab0011e-9b4c-4c50-a50d-a16fc0be0178" => [
-            "id" => "2ab0011e-9b4c-4c50-a50d-a16fc0be0178",
-            "title" => "Publication two",
-            "description" => "summary for two"
-        ]
-    ];
 
     public function __construct
 	(
@@ -110,50 +99,32 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function index(ObjectService $objectService): JSONResponse
+    public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
     {
         $filters = $this->request->getParams();
-
-        $searchConditions = [];
-        $searchParams = [];
         $fieldsToSearch = ['title', 'description', 'summary'];
-
-        foreach ($filters as $key => $value) {
-            if ($key === '_search') {
-                // MongoDB
-                $searchRegex = ['$regex' => $value, '$options' => 'i'];
-                $filters['$or'] = [];
-
-                // MySQL
-                $searchParams['search'] = '%' . strtolower($value) . '%';
-
-                foreach ($fieldsToSearch as $field) {
-                    // MongoDB
-                    $filters['$or'][] = [$field => $searchRegex];
-
-                    // MySQL
-                    $searchConditions[] = "LOWER($field) LIKE :search";
-                }
-            }
-
-            if (str_starts_with($key, '_')) {
-                unset($filters[$key]);
-            } 
-        }
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-            // Unset mongodb filter
-            unset($filters['$or']);
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+			$sort = $searchService->createSortForMySQL(filters: $filters);
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters, searchParams: $searchParams, searchConditions: $searchConditions)]);
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams, sort: $sort)]);
 		}
+
+		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
+		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+
+		// @todo Fix mongodb sort
+		// $sort = $searchService->createSortForMongoDB(filters: $filters);
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-        
+
 		$filters['_schema'] = 'publication';
 
 		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
@@ -194,6 +165,8 @@ class PublicationsController extends Controller
     {
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
@@ -248,13 +221,12 @@ class PublicationsController extends Controller
 
 		$data = $this->request->getParams();
 
+		// Remove fields we should never post
+		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
 			}
-		}
-		if (isset($data['id'])) {
-			unset( $data['id']);
 		}
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
