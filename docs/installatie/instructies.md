@@ -9,9 +9,11 @@ Volg deze stappen om Nextcloud eenvoudig te installeren en te gebruiken:
    * Bij het starten van de app kan er gekozen worden tussen een server en het aanmaken van een account. Maak een account aan als je deze nog niet hebt.
    * We hebben gekozen voor TheGoodCloud, zonder enige voorkeur.
    * Je ontvangt een activatiemail, dit kan tot 6 uur duren. Zoals altijd, check ook de spambox.
-   * Eenmaal ingelogd ziet het scherm er zo uit:
+   *   Eenmaal ingelogd ziet het scherm er zo uit:\
+       \
 
-     ![img](../.gitbook/assets/nc_welkom_to_the_good_cloud.png)
+
+       <figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>the good cloud welkom</p></figcaption></figure>
 2. **Nextcloud-app installeren via de appstore**:
 
 Let op! Je hebt hier een admin-account voor nodig. Dit werkt mogelijk niet met trail-versies.
@@ -19,11 +21,13 @@ Let op! Je hebt hier een admin-account voor nodig. Dit werkt mogelijk niet met t
 * Navigeer naar jouw profiel log, rechts in de Nextcloud app. Klik erop en kies "Apps" .
 
 \
-![](<../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png>)
+
+
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption><p>App-menu</p></figcaption></figure>
 
 3. **OpenCatalogi installeren**:
 
-* Nadat je bent ingelogd in de Nextcloud-app, ga naar de app store binnen de Nextcloud-omgeving.
+* Nadat je bent ingelogd in de Nextcloud-app, ga naar de appstore binnen de Nextcloud-omgeving.
 * Zoek naar "OpenCatalogi" en installeer de app.
 * Volg de instructies om OpenCatalogi te configureren en te gebruiken.
 
