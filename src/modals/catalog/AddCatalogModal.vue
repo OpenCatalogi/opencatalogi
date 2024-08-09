@@ -39,10 +39,16 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					:checked.sync="catalogi.listed">
 					Publiek vindbaar
 				</NcCheckboxRadioSwitch>
+				<NcSelect v-bind="organisations"
+					v-model="organisations.value"
+					input-label="Organisatie"
+					:loading="organisationsLoading"
+					:disabled="loading" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!catalogi.title || loading"
 				type="primary"
+				class="acm-submit-button"
 				@click="addCatalog">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
@@ -55,7 +61,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard, NcCheckboxRadioSwitch, NcSelect } from '@nextcloud/vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
 export default {
@@ -67,6 +73,7 @@ export default {
 		NcLoadingIcon,
 		NcNoteCard,
 		NcCheckboxRadioSwitch,
+		NcSelect,
 		// Icons
 		Plus,
 	},
@@ -82,6 +89,15 @@ export default {
 			success: null,
 			error: false,
 			errorCode: '',
+			organisations: {},
+			organisationsLoading: false,
+			hasUpdated: false,
+		}
+	},
+	updated() {
+		if (navigationStore.modal === 'addCatalog' && !this.hasUpdated) {
+			this.fetchOrganisations()
+			this.hasUpdated = true
 		}
 	},
 	methods: {
@@ -94,6 +110,27 @@ export default {
 				listed: false,
 			}
 		},
+		fetchOrganisations() {
+			this.organisationsLoading = true
+			fetch('/index.php/apps/opencatalogi/api/organisations', {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.organisations = {
+							options: data.results.map((organisation) => ({
+								id: organisation.id,
+								label: organisation.title,
+							})),
+						}
+					})
+					this.organisationsLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.organisationsLoading = false
+				})
+		},
 		addCatalog() {
 			this.loading = true
 			this.error = false
@@ -104,7 +141,10 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(this.catalogi),
+					body: JSON.stringify({
+						...this.catalogi,
+						organisation: this.organisations.value?.id,
+					}),
 				},
 			)
 				.then((response) => {
@@ -119,12 +159,14 @@ export default {
 					const self = this
 					setTimeout(function() {
 						self.success = null
+						self.hasUpdated = false
 						self.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
+					this.hasUpdated = false
 				})
 		},
 	},
@@ -145,5 +187,9 @@ export default {
 
 .success {
     color: green;
+}
+
+.acm-submit-button {
+    margin-block-start: 1rem;
 }
 </style>

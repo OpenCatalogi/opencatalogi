@@ -5,7 +5,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 	<NcModal v-if="navigationStore.modal === 'publicationAdd'"
 		ref="modalRef"
 		label-id="addPublicationModal"
-		@close="navigationStore.setModal(false)">
+		@close="closeModal">
 		<div class="modal__content">
 			<h2>Publicatie toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -194,14 +194,16 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						const selectedCatalogus = data.results.filter((catalogus) => catalogus.id.toString() === navigationStore.selectedCatalogus.toString())[0]
+						const selectedCatalogus = navigationStore.getTransferData() !== 'ignore selectedCatalogus'
+							? data.results.filter((catalogus) => catalogus.id.toString() === navigationStore.selectedCatalogus.toString())[0]
+							: null
 
 						this.catalogi = {
 							options: Object.entries(data.results).map((catalog) => ({
 								id: catalog[1].id,
 								label: catalog[1].title,
 							})),
-							value: navigationStore.selectedCatalogus
+							value: selectedCatalogus
 								? {
 									id: selectedCatalogus.id,
 									label: selectedCatalogus.title,
@@ -271,36 +273,41 @@ export default {
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
+						navigationStore.setSelectedCatalogus(data?.catalogi)
 					})
 					navigationStore.setSelected('publication')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.success = null
-						navigationStore.setModal(false)
-						self.publication = {
-							title: '',
-							summary: '',
-							description: '',
-							reference: '',
-							license: '',
-							featured: false,
-							portal: '',
-							category: '',
-							published: new Date(),
-							image: '',
-							data: {},
-						}
-						self.catalogi = {}
-						self.metaData = {}
-						self.hasUpdated = false
+						self.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
-					self.hasUpdated = false
+					this.hasUpdated = false
 				})
+		},
+		closeModal() {
+			this.success = null
+			navigationStore.selectedCatalogus && navigationStore.setSelected('publication')
+			navigationStore.setModal(false)
+			this.publication = {
+				title: '',
+				summary: '',
+				description: '',
+				reference: '',
+				license: '',
+				featured: false,
+				portal: '',
+				category: '',
+				published: new Date(),
+				image: '',
+				data: {},
+			}
+			this.catalogi = {}
+			this.metaData = {}
+			this.hasUpdated = false
 		},
 	},
 }

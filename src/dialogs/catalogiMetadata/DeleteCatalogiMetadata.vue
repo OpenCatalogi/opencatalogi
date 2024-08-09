@@ -1,17 +1,17 @@
 <script setup>
-import { navigationStore, themeStore } from '../../store/store.js'
+import { navigationStore, catalogiStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
 	<NcDialog
-		v-if="navigationStore.dialog === 'deleteTheme'"
-		name="Thema verwijderen"
+		v-if="navigationStore.dialog === 'deleteCatalogiMetadata'"
+		name="Catalogi Metadata verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ themeStore.themeItem.name ?? themeStore.themeItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ metadataStore.metaDataItem?.title }}</b> verwijderen van <b>{{ catalogiStore.catalogiItem?.title }}</b>?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Thema succesvol verwijderd</p>
+			<p>Metadata succesvol verwijderd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
@@ -23,18 +23,12 @@ import { navigationStore, themeStore } from '../../store/store.js'
 				</template>
 				{{ succes ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
-			<NcButton :disabled="loading" icon="" @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/themas', '_blank')">
-				<template #icon>
-					<HelpCircleOutline :size="20" />
-				</template>
-				Help
-			</NcButton>
 			<NcButton
 				v-if="!succes"
 				:disabled="loading"
 				icon="Delete"
 				type="error"
-				@click="DeleteCatalog()">
+				@click="DeleteCatalogiMetadata()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<Delete v-if="!loading" :size="20" />
@@ -50,10 +44,9 @@ import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
-import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
-	name: 'DeleteThemeDialog',
+	name: 'DeleteCatalogiMetadata',
 	components: {
 		NcDialog,
 		NcButton,
@@ -62,7 +55,6 @@ export default {
 		// Icons
 		Cancel,
 		Delete,
-		HelpCircleOutline,
 	},
 	data() {
 		return {
@@ -73,23 +65,33 @@ export default {
 		}
 	},
 	methods: {
-		DeleteCatalog() {
+		DeleteCatalogiMetadata() {
+			const metadataArray = catalogiStore.catalogiItem?.metadata
+			    .filter((metaId) => metaId.toString() !== metadataStore.metaDataItem?.id.toString())
+
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/themes/${themeStore.themeItem.id}`,
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
 				{
-					method: 'DELETE',
+					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
 					},
+					body: JSON.stringify({
+						...catalogiStore.catalogiItem,
+						metadata: metadataArray,
+					}),
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the catalogiList
-					themeStore.refreshThemeList()
-					themeStore.setThemeItem(false)
+					catalogiStore.refreshCatalogiList()
+					response.json().then((data) => {
+						catalogiStore.setCatalogiItem(data)
+					})
+					navigationStore.setSelected('catalogi')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
@@ -101,9 +103,6 @@ export default {
 					this.error = err
 					this.loading = false
 				})
-		},
-		openLink(url, type = '') {
-			window.open(url, type)
 		},
 	},
 }

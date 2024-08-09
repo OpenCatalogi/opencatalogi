@@ -35,13 +35,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.description" />
 				<NcTextField :disabled="loading"
-					label="Toegangs url"
+					label="Toegangs URL"
 					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.accessURL" />
+					:value.sync="publicationStore.attachmentItem.accessUrl" />
 				<NcTextField :disabled="loading"
 					label="Download URL"
 					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.downloadURL" />
+					:value.sync="publicationStore.attachmentItem.downloadUrl" />
 				<div class="addFileButtonGroup">
 					<NcButton v-if="success === null && !files"
 						:disabled="loading"
@@ -125,6 +125,10 @@ export default {
 			}, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
+					// These headers are used to pass along some publication info to use as name for a Folder,
+					// to store (attachments/) files in for that specific publication,
+					'Publication-Id': publicationStore.publicationItem.id,
+					'Publication-Title': publicationStore.publicationItem.title,
 				},
 			}).then((response) => {
 				this.loading = false

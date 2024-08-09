@@ -108,13 +108,20 @@ class PublicationMapper extends QBMapper
 
 		$qb = $this->addFilters(queryBuilder: $qb, filters: $filters);
 
-        if (!empty($searchConditions)) {
+        if (empty($searchConditions) === false) {
             $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
             foreach ($searchParams as $param => $value) {
                 $qb->setParameter($param, $value);
             }
         }
 
+		if (empty($sort) === false) {
+			foreach ($sort as $field => $direction) {
+				$direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+				$qb->addOrderBy($field, $direction);
+			}
+		}
+		
 		return $this->findEntities(query: $qb);
 	}
 
