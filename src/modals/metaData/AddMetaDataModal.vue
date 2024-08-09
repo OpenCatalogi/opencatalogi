@@ -6,7 +6,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 	<NcModal v-if="navigationStore.modal === 'addMetaData'"
 		ref="modalRef"
 		label-id="addMetaDataModal"
-		@close="navigationStore.setModal(false)">
+		@close="closeModal">
 		<div class="modal__content">
 			<h2>MetaData toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -71,6 +71,16 @@ export default {
 		}
 	},
 	methods: {
+		closeModal() {
+			this.success = null
+			this.metaData = {
+				title: '',
+				version: '',
+				description: '',
+				required: '',
+			}
+			navigationStore.setModal(false)
+		},
 		addMetaData() {
 			this.loading = true
 			fetch(
@@ -98,14 +108,7 @@ export default {
 					// Update the list
 					const self = this
 					setTimeout(function() {
-						self.success = null
-						this.metaData = {
-							title: '',
-							version: '',
-							description: '',
-							required: '',
-						}
-						navigationStore.setModal(false)
+						self.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {
