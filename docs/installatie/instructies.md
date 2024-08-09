@@ -10,9 +10,8 @@ Volg deze stappen om Nextcloud eenvoudig te installeren en te gebruiken:
    * We hebben gekozen voor TheGoodCloud, zonder enige voorkeur.
    * Je ontvangt een activatiemail, dit kan tot 6 uur duren. Zoals altijd, check ook de spambox.
    * Eenmaal ingelogd ziet het scherm er zo uit:
-     
-     ![img](<../.gitbook/assets/nc_welkom_to_the_good_cloud.png>)
-     
+
+     ![img](../.gitbook/assets/nc_welkom_to_the_good_cloud.png)
 2. **Nextcloud-app installeren via de appstore**:
 
 Let op! Je hebt hier een admin-account voor nodig. Dit werkt mogelijk niet met trail-versies.
