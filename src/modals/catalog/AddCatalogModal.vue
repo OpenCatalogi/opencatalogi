@@ -42,7 +42,8 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				<NcSelect v-bind="organisations"
 					v-model="organisations.value"
 					input-label="Organisatie"
-					:loading="organisationsLoading" />
+					:loading="organisationsLoading"
+					:disabled="loading" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!catalogi.title || loading"

@@ -42,7 +42,8 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				<NcSelect v-bind="organisations"
 					v-model="organisations.value"
 					input-label="Organisatie"
-					:loading="organisationsLoading" />
+					:loading="organisationsLoading"
+					:disabled="loading" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="loading"
@@ -141,14 +142,14 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						const selectedOrganisation = data.results.filter((org) => org?.id === catalogiStore.catalogiItem?.organisation?.id) || null
+						const selectedOrganisation = data.results.filter((org) => org?.id.toString() === catalogiStore.catalogiItem?.organisation.toString())[0] || null
 
 						this.organisations = {
 							options: data.results.map((organisation) => ({
 								id: organisation.id,
 								label: organisation.title,
 							})),
-							value: selectedOrganisation[0]
+							value: selectedOrganisation
 								? {
 									id: selectedOrganisation?.id,
 									label: selectedOrganisation?.title,
