@@ -57,7 +57,7 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="navigationStore.selected === 'metaData'" name="MetaData" @click="navigationStore.setSelected('metaData')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'metaData'" name="Publicatie typen" @click="navigationStore.setSelected('metaData')">
 				<template #icon>
 					<FileTreeOutline :size="20" />
 				</template>

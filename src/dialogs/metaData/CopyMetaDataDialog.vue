@@ -5,13 +5,13 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 <template>
 	<NcDialog
 		v-if="navigationStore.dialog === 'copyMetaData'"
-		name="Metadata kopieren"
+		name="Publicatie type kopieren"
 		:can-close="false">
 		<p v-if="!succes">
 			Wil je <b>{{ metadataStore.metaDataItem.title ?? metadataStore.metaDataItem.name }}</b> kopiëren?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Metadata succesvol gekopieerd</p>
+			<p>Publicatie type succesvol gekopieerd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>

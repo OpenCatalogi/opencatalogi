@@ -149,7 +149,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					</div>
 				</div>
 				<div>
-					<b>Metadata:</b>
+					<b>Publicatie type:</b>
 					<span v-if="metaDataLoading">Loading...</span>
 					<div v-if="!metaDataLoading" class="buttonLinkContainer">
 						<span>{{ metadata.title }}</span>
