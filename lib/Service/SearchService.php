@@ -74,6 +74,7 @@ class SearchService
 		return $a['_score'] <=> $b['_score'];
 	}
 
+
 	/**
 	 *
 	 */
