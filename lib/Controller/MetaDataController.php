@@ -6,6 +6,7 @@ use OCA\OpenCatalogi\Db\MetaDataMapper;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
@@ -84,7 +85,11 @@ class MetaDataController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->metaDataMapper->find(id: (int) $id));
+			try {
+				return new JSONResponse($this->metaDataMapper->find(id: (int) $id));
+			} catch (DoesNotExistException $exception) {
+				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+			}
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');

@@ -28,6 +28,17 @@ class AttachmentMapper extends QBMapper
 		return $this->findEntity(query: $qb);
 	}
 
+	public function findMultiple(array $ids): array
+	{
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from('attachments')
+			->where($qb->expr()->in('id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		return $this->findEntities(query: $qb);
+	}
+
 	public function findAll($limit = null, $offset = null): array
 	{
 		$qb = $this->db->getQueryBuilder();

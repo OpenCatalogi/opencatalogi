@@ -9,6 +9,7 @@ use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\FileService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
@@ -99,7 +100,7 @@ class AttachmentsController extends Controller
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results' =>$this->attachmentMapper->findAll()]);
+			return new JSONResponse(['results' => $this->attachmentMapper->findAll()]);
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -131,7 +132,11 @@ class AttachmentsController extends Controller
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->attachmentMapper->find(id: (int) $id));
+			try {
+				return new JSONResponse($this->attachmentMapper->find(id: (int) $id));
+			} catch (DoesNotExistException $exception) {
+				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+			}
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
