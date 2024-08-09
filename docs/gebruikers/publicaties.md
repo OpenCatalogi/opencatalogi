@@ -1,6 +1,6 @@
 # Publicaties
 
-> Publicaties zijn onderdeel van de (Open Catalogi Standaard)\[] en gebaseerd op het [publication object](https://conduction.stoplight.io/docs/open-catalogi/9bebd6bf4fe35-publication). Publicaties kennen eigenschappen zo als gedefineerd in een publicatietype en kunnen worden gekoppeld aan bijlagen
+Publicaties zijn onderdeel van de [Open Catalogi Standaard](https://github.com/OpenCatalogi/.github/blob/main/docs/Standaard.md) en gebaseerd op het [publication object](https://conduction.stoplight.io/docs/open-catalogi/9bebd6bf4fe35-publication). Publicaties kennen eigenschappen zoals gedefinieerd in een publicatietype en kunnen worden gekoppeld aan bijlagen
 
 ## Publicaties toevoegen
 
@@ -20,15 +20,13 @@ Eigenschappen en bijlagen kunnen worden toegevoegd nadat de publicatie is toegev
 
 ## Publicaties beheren
 
-De gebruikersbeheerinterface werkt intuïtief. Aan de linkerkant van de pagina bevindt zich een overzicht van catalogi. Met de blauwe knop bovenaan kun je een publicatie aanmaken. Dit opent een modal genaamd "Publicatie toevoegen".
+De gebruikersbeheerinterface werkt intuïtief. Aan de linkerkant van de pagina bevindt zich een overzicht van catalogi. Met de blauwe knop bovenaan kun je een publicatie aanmaken. Dit opent een modal genaamd "Publicatie toevoegen". Er wordt eerst gevraagd aan welke catalogus deze behoort en welke publicatietype het heeft (metadata)
 
 Hieronder is een voorbeeld van een ingevulde modal voor het aanmaken van een Woo-publicatie.
 
-<div align="left">
+<div align="center">
 
-<figure><img src="../assets/oc_publicatie_toevoegen_form_1.png" alt="" width="371"><figcaption><p>Het eerste gedeelte - gegevens over de publicatie</p></figcaption></figure>
-
-<figure><img src="../assets/Open-Catalogi-Nextcloud.png" alt="" width="374"><figcaption><p>het tweede gedeelte - het aanwijzen van de catalogi</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/publicatie_toevoegen_modal.png" alt="" width="300"><figcaption><p>De publicatiemodal</p></figcaption></figure>
 
 </div>
 
@@ -36,12 +34,24 @@ Na het opslaan van de publicatie, is deze zichtbaar onder de catalogi "Woo". Om 
 
 Onder is een voorbeeld van een publicatie en de Actie-mogelijkheden.
 
-<figure><img src="../.assets/oc_publicatie_acties.png" alt="" width="375"><figcaption></figcaption></figure>
-
 ## Eigenschappen
 
 @todo
 
 ## Bijlagen
 
-@todo
+Publicaties hebben vaak bijlagen, zoals een verslag of een besluit. Deze zijn eenvoudig toe te voegen door op de Actie-knop te klikken bij een geselecteerde publicatie, of de drie bolletjes naast een publicatie. Dit opent de Bijlage toevoegen modal.
+
+<div>
+
+<figure><img src="../.gitbook/assets/bijlage_toevoegen_drie_bolletjes.png" alt=""><figcaption><p>bijlage toevoegen via drie bolletjes</p></figcaption></figure>
+
+ 
+
+<figure><img src="../.gitbook/assets/bijlage_toevoegen_actieknop.png" alt=""><figcaption><p>bijlage toevoegen via de actie-knop</p></figcaption></figure>
+
+</div>
+
+In de `Bijlage toevoegen`-modal worden er gevraagd om een aantal velden. Er zijn twee mogelijkheden een bijlage toe te voegen. De eerste manier is via een  `Toegangs URL`. Dit zorgt ervoor dat het bestand vanuit een andere plek automatisch gedownload wordt.  Een `Titel` is dan verplicht.&#x20;
+
+De tweede manier is door zelf een bestand up te loaden. De bestandsnaam wordt dan meegegeven.&#x20;

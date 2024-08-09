@@ -1,9 +1,8 @@
-***
-
+---
 description: >-
-Deze handleiding gaat ervan uit dat de gebruiker beschikt tot een werkende
-OpenCatalogi-Nextcloud app
---------------------------
+  Deze handleiding gaat ervan uit dat de gebruiker beschikt tot een werkende
+  OpenCatalogi-Nextcloud app
+---
 
 # Dashboard
 
@@ -19,7 +18,7 @@ Op het dashboard van OpenCatalogi vindt u handige informatie die je meteen verde
 2. **Metadata** De verdeling over metadata-types van jouw publicaties
 3. **Status** De verdeling over statustypes van jouw publicaties
 
-![app menu](../assets/oc_dashboard.png)
+![app menu](../assets/oc\_dashboard.png)
 
 ### Sidebar
 
