@@ -169,7 +169,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
-						<div v-if="publicationStore.publicationItem?.data.length > 0">
+						<div v-if="Object.keys(publicationStore.publicationItem?.data).length > 0">
 							<NcListItem v-for="(value, key, i) in publicationStore.publicationItem?.data"
 								:key="`${key}${i}`"
 								:name="key"
@@ -202,7 +202,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 							</NcListItem>
 						</div>
 						<div v-if="publicationStore.publicationItem?.data.length === 0" class="tabPanel">
-							Geen Eigenschappen gevonden
+							Geen eigenschappen gevonden
 						</div>
 					</BTab>
 					<BTab title="Bijlagen">
