@@ -226,16 +226,17 @@ class ElasticSearchService
 
 	}//end mapAggregationResults()
 
-	public function searchObject(array $filters, array $config): array
+	public function searchObject(array $filters, array $config, int &$totalResults = 0): array
 	{
 		$body = $this->parseFilters(filters: $filters);
 
 		$client = $this->getClient(config: $config);
-
 		$result = $client->search(params: [
 			'index' => $config['index'],
 			'body'  => $body
 		]);
+
+		$totalResults = $result['hits']['total']['value'];
 
 		$return = ['results' => array_map(callback: [$this, 'formatResults'], array: $result['hits']['hits'])];
 		if(isset($result['aggregations']) === true) {
