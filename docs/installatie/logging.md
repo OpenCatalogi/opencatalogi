@@ -1,6 +1,6 @@
 # Audit en logging
 
-Voor logging maken we gebruik van de ingebouwde admin\_audit systematiek van next cloud, meer daarover kan je [hier](https://docs.nextcloud.com/server/29/admin\_manual/configuration\_server/logging\_configuration.html#admin-audit-log) vinden.
+Voor logging maken we gebruik van de ingebouwde admin\_audit systematiek van next cloud, meer daarover kan je [hier](https://docs.nextcloud.com/server/29/admin_manual/configuration_server/logging_configuration.html#admin-audit-log) vinden.
 
 ## System logging
 
