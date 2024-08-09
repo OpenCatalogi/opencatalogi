@@ -27,11 +27,11 @@ import { searchStore } from '../../store/store.js'
 				Catalogi naam
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
-		<NcAppSidebarTab id="share-tab" name="Metadata" :order="3">
+		<NcAppSidebarTab id="share-tab" name="Publicatie typen" :order="3">
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
-			Metadata tab content
+			Publicatie type tab content
 		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
