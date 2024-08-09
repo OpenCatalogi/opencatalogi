@@ -1,9 +1,5 @@
 <?php
 
-//$this->create('myapp_api_publication_attachments', '/api/publications/{id}/attachments')
-//	->get()
-//	->action([\OCA\OpenCatalogi\Controller\PublicationsController::class, 'getAttachments']);
-
 return [
     'resources' => [
         'metadata' => ['url' => '/api/metadata'],
