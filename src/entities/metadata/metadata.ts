@@ -52,6 +52,33 @@ export class Metadata implements TMetadata {
 			valuation: 'n',
 			class: 1,
 		}
+
+		// changed null to default values within these properties
+		const ensureDefaults = (obj: TMetadata['properties']) => {
+			const defaultValues: Partial<TMetadata['properties'][0]> = {
+				minimum: 0,
+				maximum: 0,
+				multipleOf: 0,
+				minItems: 0,
+				maxItems: 0,
+				minLength: 0,
+				maxLength: 0,
+			}
+
+			for (const key in obj) {
+				// eslint-disable-next-line no-prototype-builtins
+				if (obj.hasOwnProperty(key)) {
+					if (obj[key].minimum === null) obj[key].minimum = defaultValues.minimum!
+					if (obj[key].maximum === null) obj[key].maximum = defaultValues.maximum!
+					if (obj[key].multipleOf === null) obj[key].multipleOf = defaultValues.multipleOf!
+					if (obj[key].minItems === null) obj[key].minItems = defaultValues.minItems!
+					if (obj[key].maxItems === null) obj[key].maxItems = defaultValues.maxItems!
+					if (obj[key].minLength === null) obj[key].minLength = defaultValues.minLength!
+					if (obj[key].maxLength === null) obj[key].maxLength = defaultValues.maxLength!
+				}
+			}
+		}
+		ensureDefaults(this.properties)
 	}
 
 	/* istanbul ignore next */
