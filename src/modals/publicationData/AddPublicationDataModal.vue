@@ -87,9 +87,9 @@ export default {
 	},
 	methods: {
 		AddPublicatieEigenschap() {
-			publicationStore.publicationItem.data[this.key] = this.value
 			this.loading = true
 			const bodyData = publicationStore.publicationItem
+			bodyData.data[this.key] = this.value
 			delete bodyData.publicationDate
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
