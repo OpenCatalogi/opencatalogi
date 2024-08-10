@@ -63,6 +63,7 @@ Naast een bestand kan een bijlage (per verwijzing) bijvoorbeeld ook een website 
 Een tweede manier om informatie op te nemen in een publicaite is via eigenschappen. Eigenschappen zijn voor gedefineerde opties (via [publicatie type](../beheerders/metadata.md)) waar een waarde aan kan worden toegekend.
 
 ## Bijlagen
+
 ![alt text](image-2.png)
 
 Publicaties hebben vaak bijlagen, zoals een verslag of een besluit. Deze zijn eenvoudig toe te voegen door op de Actie-knop te klikken bij een geselecteerde publicatie, of de drie bolletjes naast een publicatie. Dit opent de Bijlage toevoegen modal.
