@@ -17,6 +17,7 @@
 		<PublishPublicationDialog />
 		<DepublishPublicationDialog />
 		<DeleteCatalogDialog />
+		<DeleteCatalogiMetadata />
 		<DepublishPublicationDialog />
 		<ArchivePublicationDialog />
 		<ViewLogDialog />
@@ -33,6 +34,7 @@ import DeleteAttachmentDialog from './attachment/DeleteAttachmentDialog.vue'
 import DepublishAttachmentDialog from './attachment/DepublishAttachmentDialog.vue'
 import PublishAttachmentDialog from './attachment/PublishAttachmentDialog.vue'
 import DeleteCatalogDialog from './catalog/DeleteCatalogDialog.vue'
+import DeleteCatalogiMetadata from './catalogiMetadata/DeleteCatalogiMetadata.vue'
 import DeleteListingDialog from './listing/DeleteListingDialog.vue'
 import ViewLogDialog from './logs/ViewLogDialog.vue'
 import CopyMetaDataDialog from './metaData/CopyMetaDataDialog.vue'
@@ -54,6 +56,7 @@ export default {
 	name: 'Dialogs',
 	components: {
 		DeleteCatalogDialog,
+		DeleteCatalogiMetadata,
 		DeleteAttachmentDialog,
 		PublishAttachmentDialog,
 		DepublishAttachmentDialog,

@@ -24,8 +24,8 @@
 			"type": "application/json",
 			"published": "29-12-2020",
 			"modified": "30 december 2020, 17:09 (UTC+01:00)",
-			"accessURL": "https://services.arcgis.com/zP1tGdLpGvt2qNJ6/arcgis/rest/services/Voorlopige_Energielabels_BAG/FeatureServer",
-			"downloadURL": "https://services.arcgis.com/zP1tGdLpGvt2qNJ6/arcgis/rest/services/Voorlopige_Energielabels_BAG/FeatureServer"
+			"accessUrl": "https://services.arcgis.com/zP1tGdLpGvt2qNJ6/arcgis/rest/services/Voorlopige_Energielabels_BAG/FeatureServer",
+			"downloadUrl": "https://services.arcgis.com/zP1tGdLpGvt2qNJ6/arcgis/rest/services/Voorlopige_Energielabels_BAG/FeatureServer"
 		},
 		{
 			"title": "voorlopige energielabels met BAG-kenmerken ",
@@ -34,8 +34,8 @@
 			"type": "application/geopackage+sqlite3",
 			"published": "29-12-2020",
 			"modified": "30 december 2020, 17:10 (UTC+01:00)",
-			"accessURL": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GPKG/Voorlopige-labels-december-2019.gpkg",
-			"downloadURL": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\GPKG\\Voorlopige-labels-december-2019.gpkg"
+			"accessUrl": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GPKG/Voorlopige-labels-december-2019.gpkg",
+			"downloadUrl": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\GPKG\\Voorlopige-labels-december-2019.gpkg"
 		},
 		{
 			"title": "voorlopige energielabels met BAG-kenmerken ",
@@ -44,8 +44,8 @@
 			"type": "application/vnd.esri.filegdb",
 			"published": "29-12-2020",
 			"modified": "30 december 2020, 17:11 (UTC+01:00)",
-			"accessURL": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GDB/Voorlopige-labels-december-2019.gdb",
-			"downloadURL": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\GDB\\Voorlopige-labels-december-2019.gdb"
+			"accessUrl": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GDB/Voorlopige-labels-december-2019.gdb",
+			"downloadUrl": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\GDB\\Voorlopige-labels-december-2019.gdb"
 		},
 		{
 			"title": "voorlopige energielabels met BAG-kenmerken ",
@@ -54,8 +54,8 @@
 			"type": "application/x-shapefile",
 			"published": "29-12-2020",
 			"modified": "30 december 2020, 17:11 (UTC+01:00)",
-			"accessURL": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GDB/Voorlopige-labels-december-2019.gdb",
-			"downloadURL": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\SHP\\*.shp"
+			"accessUrl": "file:///P:/Geo_Data/SO/SODA/Data/Energielabels/Data/VoorlopigeLabels/GDB/Voorlopige-labels-december-2019.gdb",
+			"downloadUrl": "P:\\Geo_Data\\SO\\SODA\\Data\\Energielabels\\Data\\VoorlopigeLabels\\SHP\\*.shp"
 		},
 		{
 			"title": "productbeschrijving: voorlopige energielabels met BAG kenmerken",
@@ -64,8 +64,8 @@
 			"type": "text/html",
 			"published": "7-4-2020",
 			"modified": "30 december 2020, 17:12 (UTC+01:00)",
-			"accessURL": "https://rio.rotterdam.nl/Project/SODAStadsOntwikkelingData/Pages/ThoZIFnen0KbY6eBjPvh-A",
-			"downloadURL": "https://rio.rotterdam.nl/Project/SODAStadsOntwikkelingData/Pages/ThoZIFnen0KbY6eBjPvh-A"
+			"accessUrl": "https://rio.rotterdam.nl/Project/SODAStadsOntwikkelingData/Pages/ThoZIFnen0KbY6eBjPvh-A",
+			"downloadUrl": "https://rio.rotterdam.nl/Project/SODAStadsOntwikkelingData/Pages/ThoZIFnen0KbY6eBjPvh-A"
 		}
 	],
 	"attachment_count": 5,

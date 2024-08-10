@@ -17,9 +17,7 @@ export type TPublication = {
     attachments: TAttachment[]
     attachmentCount: number
     themes: string[]
-    data: {
-        type: string
-    }
+    data: Record<string, any>
     anonymization: {
         anonymized: boolean
         results: string

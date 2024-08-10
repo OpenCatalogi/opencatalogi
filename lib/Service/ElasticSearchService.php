@@ -91,6 +91,42 @@ class ElasticSearchService
 		}
 	}
 
+	public function parseFilter(string $name, array $filter): array
+	{
+
+		if(is_array($filter) === false) {
+			return ['match' => [$name => $filter]];
+		}
+
+		foreach($filter as $key => $value) {
+			switch($key) {
+				case 'regexp':
+				case 'like':
+					if(preg_match("/^\/.+\/[a-z]*$/i", $value) !== false) {
+						return ['regexp' => [$name => strtolower($value)]];
+					} else {
+						return ['match' => [$name => $value]];
+					}
+				case '>=':
+				case 'after':
+					return ['range' => [$key => ['gte' => $value]]];
+				case '>':
+				case 'strictly_after':
+					return ['range' => [$key => ['gt' => $value]]];
+				case '<=':
+				case 'before':
+					return ['range' => [$key => ['lte' => $value]]];
+				case '<':
+				case 'strictly_before':
+					return ['range' => [$key => ['lt' => $value]]];
+				default:
+					return ['match' => [$name => $value]];
+			}
+		}
+
+		return ['match' => [$name => $filter]];
+	}
+
 	public function parseFilters (array $filters): array
 	{
 		$body = [
@@ -124,10 +160,23 @@ class ElasticSearchService
 			];
 		}
 
+		if(isset($filters['.limit']) === true) {
+			$body['size'] = (int) $filters['.limit'];
+			unset($filters['.limit']);
+		}
+
+		if(isset($filters['.page']) === true) {
+			if(isset($body['size']) === true) {
+				$body['from'] = $body['size'] * ($filters['.page'] - 1);
+			}
+			unset($filters['.page']);
+		}
+
 		unset($filters['.search'], $filters['.queries'], $filters['.catalogi']);
 
 		foreach ($filters as $name => $filter) {
-			$body['query']['bool']['must'][] = ['match' => [$name => $filter]];
+
+			$body['query']['bool']['must'][] = $this->parseFilter($name, $filter);
 		}
 
 		return $body;
@@ -177,20 +226,23 @@ class ElasticSearchService
 
 	}//end mapAggregationResults()
 
-	public function searchObject(array $filters, array $config): array
+	public function searchObject(array $filters, array $config, int &$totalResults = 0): array
 	{
 		$body = $this->parseFilters(filters: $filters);
 
 		$client = $this->getClient(config: $config);
-
 		$result = $client->search(params: [
 			'index' => $config['index'],
 			'body'  => $body
 		]);
 
+		$totalResults = $result['hits']['total']['value'];
+
 		$return = ['results' => array_map(callback: [$this, 'formatResults'], array: $result['hits']['hits'])];
 		if(isset($result['aggregations']) === true) {
 			$return['facets'] = array_map([$this, 'mapAggregationResults'], $result['aggregations']);
+		} else {
+			$return['facets'] = [];
 		}
 
 		return $return;

@@ -1,5 +1,5 @@
 <script setup>
-import { catalogiStore, navigationStore } from '../../store/store.js'
+import { catalogiStore, metadataStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -41,6 +41,12 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					</template>
 					Catalogus bekijken
 				</NcActionButton>
+				<NcActionButton @click="navigationStore.setModal('addCatalogiMetadata')">
+					<template #icon>
+						<Plus :size="20" />
+					</template>
+					Metadata toevoegen
+				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
 						<Delete :size="20" />
@@ -52,14 +58,42 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 		<span>{{ catalogi.summary }}</span>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
-				<BTab title="Eigenschappen" active>
-					adsa
-				</BTab>
 				<BTab title="Toegang">
 					Publiek of alleen bepaalde rollen
 				</BTab>
 				<BTab title="Metadata">
-					adsa
+					<div v-if="catalogiStore.catalogiItem?.metadata.length > 0 && !metadataLoading">
+						<NcListItem v-for="(value) in catalogiStore.catalogiItem?.metadata"
+							:key="`${value}`"
+							:name="filteredMetadata(value)?.title || 'loading...'"
+							:bold="false"
+							:force-display-actions="true">
+							<template #icon>
+								<FileTreeOutline disable-menu
+									:size="44" />
+							</template>
+							<template #subname>
+								{{ filteredMetadata(value)?.description }}
+							</template>
+							<template #actions>
+								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setSelected('metaData')">
+									<template #icon>
+										<OpenInApp :size="20" />
+									</template>
+									Bekijk Metadata
+								</NcActionButton>
+								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setDialog('deleteCatalogiMetadata')">
+									<template #icon>
+										<Delete :size="20" />
+									</template>
+									Verwijderen
+								</NcActionButton>
+							</template>
+						</NcListItem>
+					</div>
+					<div v-if="catalogiStore.catalogiItem?.metadata.length === 0">
+						Geen Metadata gevonden
+					</div>
 				</BTab>
 			</BTabs>
 		</div>
@@ -71,6 +105,7 @@ import {
 	NcActions,
 	NcActionButton,
 	NcLoadingIcon,
+	NcListItem,
 } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
@@ -79,6 +114,8 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 
 export default {
 	name: 'CatalogiDetails',
@@ -86,6 +123,7 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcLoadingIcon,
+		NcListItem,
 	},
 	props: {
 		catalogiItem: {
@@ -98,6 +136,7 @@ export default {
 			catalogi: false,
 			loading: false,
 			upToDate: false,
+			metadataLoading: false,
 		}
 	},
 	watch: {
@@ -119,6 +158,12 @@ export default {
 		this.catalogi = catalogiStore.catalogiItem
 		// check if catalogiItem is not false
 		catalogiStore.catalogiItem && this.fetchData(catalogiStore.catalogiItem?.id)
+
+		this.metadataLoading = true
+		metadataStore.refreshMetaDataList()
+			.then(() => {
+				this.metadataLoading = false
+			})
 	},
 	methods: {
 		fetchData(catalogId) {
@@ -140,6 +185,10 @@ export default {
 					console.error(err)
 					this.loading = false
 				})
+		},
+		filteredMetadata(id) {
+			if (this.metadataLoading) return null
+			return metadataStore.metaDataList.filter((metadata) => metadata?.id.toString() === id.toString())[0]
 		},
 		openLink(url, type = '') {
 			window.open(url, type)
