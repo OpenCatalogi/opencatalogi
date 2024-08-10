@@ -6,6 +6,7 @@ use DateTime;
 use GuzzleHttp\Client;
 use OCA\OpenCatalogi\Db\Catalog;
 use OCA\OpenCatalogi\Db\CatalogMapper;
+use OCA\OpenCatalogi\Db\Listing;
 use OCA\OpenCatalogi\Db\ListingMapper;
 use OCP\IAppConfig;
 use OCP\IURLGenerator;
@@ -52,21 +53,26 @@ class DirectoryService
 
 
 		if($this->config->getValueString($this->appName, 'mongoStorage') !== '1') {
-			$catalogi = $this->catalogMapper->findAll();
+			$catalogi = $this->listingMapper->findAll();
 		} else {
 			$dbConfig['base_uri'] = $this->config->getValueString('opencatalogi', 'mongodbLocation');
 			$dbConfig['headers']['api-key'] = $this->config->getValueString('opencatalogi', 'mongodbKey');
 			$dbConfig['mongodbCluster'] = $this->config->getValueString('opencatalogi', 'mongodbCluster');
 
-			$catalogi = $this->objectService->findObjects(filters: ['_schema' => 'catalog'], config: $dbConfig)['documents'];
+			$catalogi = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig)['documents'];
 		}
 
 		foreach($catalogi as $catalog) {
-			if($catalog instanceof Catalog) {
+			if($catalog instanceof Listing) {
 				$catalog = $catalog->jsonSerialize();
 			}
-			$directory = $this->getDirectoryEntry($catalog['id']);
-			$result = $this->client->post(uri: $url, options: ['json' => $directory, 'http_errors' => false]);
+			unset($catalog['_id'], $catalog['id'], $catalog['_schema']);
+
+			if($catalog['directory'] !== $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute(routeName:"opencatalogi.directory.index"))) {
+				continue;
+			}
+
+			$result = $this->client->post(uri: $url, options: ['json' => $catalog, 'http_errors' => false]);
 		}
 
 		$externalDirectories = $this->fetchFromExternalDirectory(url: $url);
@@ -107,8 +113,6 @@ class DirectoryService
 			$this->listingMapper->createFromArray($result);
 		}
 
-		$this->registerToExternalDirectory(newDirectory: $result);
-
 		return $returnData;
 	}
 
@@ -140,6 +144,9 @@ class DirectoryService
 		if ($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
+			$filters['catalog_id'] = $filters['catalogId'];
+			unset($filters['catalogId']);
+
 			return $this->listingMapper->findAll(limit: $limit, offset: $offset, filters: $filters);
 		}
 		$filters['_schema'] = 'directory';
@@ -232,9 +239,9 @@ class DirectoryService
 				'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
 			];
 
-			$data['_schema'] = 'catalog';
+			$listing['_schema'] = 'directory';
 
-			$returnData = $this->objectService->saveObject($data, $dbConfig);
+			$returnData = $this->objectService->saveObject($listing, $dbConfig);
 			return $catalog;
 		} catch (\Exception $e) {
 			$catalog['listed'] = false;

@@ -78,6 +78,11 @@ class ObjectService
 		$object['dataSource'] = $config['mongodbCluster'];
 		$object['filter']     = $filters;
 
+		// @todo Fix mongodb sort
+		// if (empty($sort) === false) {
+		// 	$object['filter'][] = ['$sort' => $sort];
+		// }
+
 		$returnData = $client->post(
 			uri: 'action/find',
 			options: ['json' => $object]
@@ -117,7 +122,7 @@ class ObjectService
 			associative: true
 		);
 
-		return ['document' => $result];
+		return $result['document'];
 	}
 
 

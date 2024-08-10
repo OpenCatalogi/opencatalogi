@@ -169,49 +169,53 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 			<div class="tabContainer">
 				<BTabs content-class="mt-3" justified>
 					<BTab title="Eigenschappen" active>
-						<NcListItem v-for="(value, key, i) in publicationStore.publicationItem?.data"
-							:key="`${key}${i}`"
-							:name="key"
-							:bold="false"
-							:force-display-actions="true"
-							@click="publicationStore.setPublicationDataKey(key)
-							">
-							<template #icon>
-								<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
-									disable-menu
-									:size="44" />
-							</template>
-							<template #subname>
-								{{ value }}
-							</template>
-							<template #actions>
-								<NcActionButton @click="editPublicationDataItem(key)">
-									<template #icon>
-										<Pencil :size="20" />
-									</template>
-									Bewerken
-								</NcActionButton>
-								<NcActionButton @click="deletePublicationDataItem(key)">
-									<template #icon>
-										<Delete :size="20" />
-									</template>
-									Verwijderen
-								</NcActionButton>
-							</template>
-						</NcListItem>
+						<div v-if="Object.keys(publicationStore.publicationItem?.data).length > 0">
+							<NcListItem v-for="(value, key, i) in publicationStore.publicationItem?.data"
+								:key="`${key}${i}`"
+								:name="key"
+								:bold="false"
+								:force-display-actions="true"
+								@click="publicationStore.setPublicationDataKey(key)
+								">
+								<template #icon>
+									<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
+										disable-menu
+										:size="44" />
+								</template>
+								<template #subname>
+									{{ value }}
+								</template>
+								<template #actions>
+									<NcActionButton @click="editPublicationDataItem(key)">
+										<template #icon>
+											<Pencil :size="20" />
+										</template>
+										Bewerken
+									</NcActionButton>
+									<NcActionButton @click="deletePublicationDataItem(key)">
+										<template #icon>
+											<Delete :size="20" />
+										</template>
+										Verwijderen
+									</NcActionButton>
+								</template>
+							</NcListItem>
+						</div>
+						<div v-if="publicationStore.publicationItem?.data.length === 0" class="tabPanel">
+							Geen eigenschappen gevonden
+						</div>
 					</BTab>
 					<BTab title="Bijlagen">
 						<div
-							v-if="publicationStore.publicationAttachments.results?.length > 0"
+							v-if="publicationStore.publicationAttachments.length > 0"
 							class="tabPanel">
-							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments.results"
+							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments"
 								:key="`${attachment}${i}`"
 								:name="attachment.name ?? attachment.title"
 								:bold="false"
 								:active="publicationStore.attachmentId === attachment.id"
 								:force-display-actions="true"
-								:details="attachment?.status"
-								@click="publicationStore.setAttachmentId(attachment.id)">
+								:details="attachment?.status">
 								<template #icon>
 									<CheckCircle v-if="attachment?.status === 'published'"
 										:class="attachment?.published && 'publishedIcon'"
@@ -232,7 +236,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 										</template>
 										Bewerken
 									</NcActionButton>
-									<NcActionButton :disabled="disabled">
+									<NcActionButton @click="openLink(attachment?.downloadUrl, '_blank')">
 										<template #icon>
 											<Download :size="20" />
 										</template>
@@ -265,8 +269,15 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								</template>
 							</NcListItem>
 						</div>
-						<div v-else class="tabPanel">
+						<div v-if="publicationStore.publicationAttachments.length === 0" class="tabPanel">
 							Geen bijlagen gevonden
+						</div>
+						<div v-if="publicationStore.publicationAttachments.length !== 0 && !publicationStore.publicationAttachments.length > 0" class="tabPanel">
+							<NcLoadingIcon
+								:size="64"
+								class="loadingIcon"
+								appearance="dark"
+								name="Bijlagen aan het laden" />
 						</div>
 					</BTab>
 					<BTab title="Logging">
@@ -334,29 +345,29 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 
 <script>
 // Components
-import { NcLoadingIcon, NcActions, NcActionButton, NcButton, NcListItem, NcActionLink, NcSelectTags, NcNoteCard } from '@nextcloud/vue'
-import { BTabs, BTab } from 'bootstrap-vue'
+import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
+import { BTab, BTabs } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 
 // Icons
+import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
-import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import Publish from 'vue-material-design-icons/Publish.vue'
-import PublishOff from 'vue-material-design-icons/PublishOff.vue'
-import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
-import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
-import LockOutline from 'vue-material-design-icons/LockOutline.vue'
-import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Download from 'vue-material-design-icons/Download.vue'
-import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
+import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
+import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import LockOpenVariantOutline from 'vue-material-design-icons/LockOpenVariantOutline.vue'
+import LockOutline from 'vue-material-design-icons/LockOutline.vue'
+import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Publish from 'vue-material-design-icons/Publish.vue'
+import PublishOff from 'vue-material-design-icons/PublishOff.vue'
+import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
 
 export default {
 	name: 'PublicationDetail',
@@ -369,6 +380,8 @@ export default {
 		NcListItem,
 		NcSelectTags,
 		NcNoteCard,
+		BTab,
+		BTabs,
 		apexchart: VueApexCharts,
 		// Icons
 		CheckCircle,

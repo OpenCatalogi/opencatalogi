@@ -23,7 +23,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 						</template>
 						Help
 					</NcActionButton>
-					<NcActionButton :disabled="loading" @click="fetchData">
+					<NcActionButton :disabled="loading" @click="refresh">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
@@ -67,6 +67,12 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 								<OpenInApp :size="20" />
 							</template>
 							Catalogus bekijken
+						</NcActionButton>
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setModal('addCatalogiMetadata')">
+							<template #icon>
+								<Plus :size="20" />
+							</template>
+							Metadata toevoegen
 						</NcActionButton>
 						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setDialog('deleteCatalog')">
 							<template #icon>
@@ -120,11 +126,11 @@ export default {
 		Delete,
 	},
 	beforeRouteLeave(to, from, next) {
-		this.search = ''
+		search = ''
 		next()
 	},
 	props: {
-		searchQuery: {
+		search: {
 			type: String,
 			required: true,
 		},
@@ -136,9 +142,9 @@ export default {
 		}
 	},
 	watch: {
-		searchQuery: {
-			handler(searchQuery) {
-				this.debouncedFetchData(searchQuery)
+		search: {
+			handler(search) {
+				this.debouncedFetchData(search)
 			},
 		},
 	},
@@ -146,6 +152,10 @@ export default {
 		this.fetchData()
 	},
 	methods: {
+		refresh(e) {
+			e.preventDefault()
+			this.fetchData()
+		},
 		fetchData(search = null) {
 			this.loading = true
 			catalogiStore.refreshCatalogiList(search)

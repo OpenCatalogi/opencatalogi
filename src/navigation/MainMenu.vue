@@ -5,7 +5,7 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 <template>
 	<NcAppNavigation>
 		<NcAppNavigationList>
-			<NcAppNavigationNew text="Publicatie Aanmaken" @click="navigationStore.setModal('publicationAdd')">
+			<NcAppNavigationNew text="Publicatie Aanmaken" @click="navigationStore.setModal('publicationAdd'); navigationStore.setTransferData('ignore selectedCatalogus')">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
@@ -145,8 +145,6 @@ export default {
 				organisationName: '',
 				organisationOin: '',
 				organisationPki: '',
-				adminUsername: '',
-				adminPassword: '',
 			},
 			configurationSuccess: -1,
 			feedbackPosition: '',

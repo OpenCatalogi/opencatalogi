@@ -9,16 +9,9 @@ export class Catalogi implements TCatalogi {
 	public description: string
 	public image: string
 	public listed: boolean
-	public organisation: {
-        id: string
-        title: string
-        summary: string
-        description: string
-        oin: string
-        tooi: string
-        rsin: string
-        pki: string
-    }
+	public organisation: string
+
+	public metadata: string[]
 
 	constructor(data: TCatalogi) {
 		this.hydrate(data)
@@ -32,36 +25,21 @@ export class Catalogi implements TCatalogi {
 		this.description = data?.description || ''
 		this.image = data?.image || ''
 		this.listed = data?.listed || false
-		this.organisation = data.organisation || {
-			id: '',
-			title: '',
-			summary: '',
-			description: '',
-			oin: '',
-			tooi: '',
-			rsin: '',
-			pki: '',
-		}
+		this.organisation = data.organisation || ''
+		this.metadata = (Array.isArray(data.metadata) && data.metadata) || []
 	}
 
 	/* istanbul ignore next */
 	public validate(): SafeParseReturnType<TCatalogi, unknown> {
-		// https://conduction.stoplight.io/docs/open-catalogi/8azwyic71djee-create-listing
+		// https://conduction.stoplight.io/docs/open-catalogi/l89lv7ocvq848-create-catalog
 		const schema = z.object({
 			title: z.string().min(1).max(255), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
 			summary: z.string().min(1).max(255),
 			description: z.string().max(2555),
 			image: z.string().max(255),
 			listed: z.boolean(),
-			organisation: z.object({
-				title: z.string(),
-				summary: z.string(),
-				description: z.string(),
-				oin: z.string(),
-				tooi: z.string(),
-				rsin: z.string(),
-				pki: z.string(),
-			}),
+			organisation: z.string(),
+			metadata: z.string().array(),
 		})
 
 		const result = schema.safeParse({

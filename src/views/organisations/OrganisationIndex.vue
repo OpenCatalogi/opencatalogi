@@ -5,7 +5,7 @@ import { navigationStore, organisationStore, searchStore } from '../../store/sto
 <template>
 	<NcAppContent>
 		<template #list>
-			<OrganisationList :search-query="searchStore.search" />
+			<OrganisationList :search="searchStore.search" />
 		</template>
 		<template #default>
 			<NcEmptyContent v-if="!organisationStore.organisationItem.id || navigationStore.selected != 'organisations'"

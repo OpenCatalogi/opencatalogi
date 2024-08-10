@@ -23,7 +23,7 @@ import { navigationStore, organisationStore } from '../../store/store.js'
 						</template>
 						Help
 					</NcActionButton>
-					<NcActionButton :disabled="loading" @click="fetchData">
+					<NcActionButton :disabled="loading" @click="refresh">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
@@ -116,11 +116,11 @@ export default {
 		HelpCircleOutline,
 	},
 	beforeRouteLeave(to, from, next) {
-		this.search = ''
+		search = ''
 		next()
 	},
 	props: {
-		searchQuery: {
+		search: {
 			type: String,
 			required: true,
 		},
@@ -139,9 +139,9 @@ export default {
 		},
 	},
 	watch: {
-		searchQuery: {
-			handler(searchQuery) {
-				this.debouncedFetchData(searchQuery)
+		search: {
+			handler(search) {
+				this.debouncedFetchData(search)
 			},
 		},
 	},
@@ -149,6 +149,10 @@ export default {
 		this.fetchData()
 	},
 	methods: {
+		refresh(e) {
+			e.preventDefault()
+			this.fetchData()
+		},
 		fetchData(search = null) {
 			this.loading = true
 			organisationStore.refreshOrganisationList(search)

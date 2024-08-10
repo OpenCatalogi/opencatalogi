@@ -17,7 +17,12 @@ export const mockPublicationsData = (): TPublication[] => [
 		modified: '2024-01-02',
 		featured: true,
 		data: {
-			type: '',
+			key: 'anyvalue',
+			streetNumber: 1,
+			object: {
+                blabla: 'bla'
+            },
+            array: ['appel', 'peer', 0, [], {}]
 		},
 		attachments: [],
 		attachmentCount: 1,

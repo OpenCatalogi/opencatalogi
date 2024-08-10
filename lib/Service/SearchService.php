@@ -4,6 +4,7 @@ namespace OCA\OpenCatalogi\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
+use OCP\IURLGenerator;
 use Symfony\Component\Uid\Uuid;
 
 class SearchService
@@ -18,6 +19,7 @@ class SearchService
 	public function __construct(
 		private readonly ElasticSearchService $elasticService,
 		private readonly DirectoryService $directoryService,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 		$this->client = new Client();
 	}
@@ -81,8 +83,12 @@ class SearchService
 		$localResults['results'] = [];
 		$localResults['facets'] = [];
 
+		$totalResults = 0;
+		$limit = isset($parameters['.limit']) === true ? $parameters['.limit'] : 30;
+		$page = isset($parameters['.page']) === true ? $parameters['.page'] : 1;
+
 		if($elasticConfig['location'] !== '') {
-			$localResults = $this->elasticService->searchObject($parameters, $elasticConfig);
+			$localResults = $this->elasticService->searchObject(filters: $parameters, config: $elasticConfig, totalResults: $totalResults,);
 		}
 
 		$directory = $this->directoryService->listDirectory(limit: 1000);
@@ -90,7 +96,15 @@ class SearchService
 //		$directory = $this->objectService->findObjects(filters: ['_schema' => 'directory'], config: $dbConfig);
 
 		if(count($directory) === 0) {
-			return $localResults;
+			return [
+				'results' => $localResults['results'],
+				'facets' => $localResults['facets'],
+				'count' => count($localResults['results']),
+				'limit' => $limit,
+				'page' => $page,
+				'pages' => ceil($totalResults / $limit),
+				'total' => $totalResults
+			];
 		}
 
 		$results = $localResults['results'];
@@ -98,12 +112,14 @@ class SearchService
 
 		$searchEndpoints = [];
 
+
 		$promises = [];
 		foreach($directory as $instance) {
 			if(
 				$instance['default'] === false
-				&& isset($parameters['.catalogi']) === true
+				|| isset($parameters['.catalogi']) === true
 				&& in_array($instance['catalogId'], $parameters['.catalogi']) === false
+				|| $instance['search'] = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute(routeName:"opencatalogi.directory.index"))
 			) {
 				continue;
 			}
@@ -139,7 +155,15 @@ class SearchService
 			}
 		}
 
-		return ['results' => $results, 'facets' => $aggregations];
+		return [
+			'results' => $results,
+			'facets' => $aggregations,
+			'count' => count($results),
+			'limit' => $limit,
+			'page' => $page,
+			'pages' => ceil($totalResults / $limit),
+			'total' => $totalResults
+			];
 	}
 
 	/**
@@ -204,6 +228,15 @@ class SearchService
 			unset($filters['_search']);
 		}
 
+		foreach ($filters as $field => $value) {
+			if ($value === 'IS NOT NULL') {
+				$filters[$field] = ['$ne' => null];
+			}
+			if ($value === 'IS NULL') {
+				$filters[$field] = ['$eq' => null];
+			}
+		}
+
 		return $filters;
 
 	}//end createMongoDBSearchFilter()
@@ -265,6 +298,49 @@ class SearchService
 		return $searchParams;
 
 	}//end createMongoDBSearchFilter()
+
+	/**
+	 * This function creates an sort array based on given order param from request.
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $sort
+	 */
+	public function createSortForMySQL(array $filters): array
+	{
+		$sort = [];
+		if (isset($filters['_order']) && is_array($filters['_order'])) {
+			foreach ($filters['_order'] as $field => $direction) {
+				$direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+				$sort[$field] = $direction;
+			}
+		}
+
+		return $sort;
+
+	}//end createSortArrayFromParams()
+
+	/**
+	 * This function creates an sort array based on given order param from request.
+	 *
+	 * @todo Not functional yet. Needs to be fixed (see PublicationsController->index).
+	 *
+	 * @param array $filters Query parameters from request.
+	 *
+	 * @return array $sort
+	 */
+	public function createSortForMongoDB(array $filters): array
+	{
+		$sort = [];
+		if (isset($filters['_order']) && is_array($filters['_order'])) {
+			foreach ($filters['_order'] as $field => $direction) {
+				$sort[$field] = strtoupper($direction) === 'DESC' ? -1 : 1;
+			}
+		}
+
+		return $sort;
+
+	}//end createSortForMongoDB()
 
 	/**
 	 * Parses the request query string and returns it as an array of queries.
