@@ -41,6 +41,7 @@ import { NcAppSidebar, NcAppSidebarTab, NcTextField, NcNoteCard, NcCheckboxRadio
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import { debounce } from 'lodash'
 
 export default {
 	name: 'SearchSideBar',
@@ -66,11 +67,12 @@ export default {
 		}
 	},
 	watch: {
-		search: {
-			handler(search) {
-				searchStore.getSearchResults()
-			},
-		},
+		search: 'debouncedSearch',
+	},
+	methods: {
+		debouncedSearch: debounce(function() {
+			searchStore.getSearchResults()
+		}, 500),
 	},
 }
 </script>
