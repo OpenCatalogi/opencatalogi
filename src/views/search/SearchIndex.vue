@@ -7,47 +7,29 @@ import { searchStore } from '../../store/store.js'
 		<h2 class="pageHeader">
 			Resultaten
 		</h2>
-		<ul>
-			<NcListItem
-				v-for="(result, i) in searchStore.searchResults.results"
-				:key="`${result}${i}`"
-				:name="result.title"
-				:subname="result.summary"
-				:details="result.metaData.title"
-				:bold="false"
-				:force-display-actions="true"
-				:counter-number="result.attachment_count">
-				<template #icon>
-					<ListBoxOutline :size="44" />
-				</template>
-				<template #actions>
-					<NcActionButton @click="goToLink(result.portal)">
-						<template #icon>
-							<LinkIcon :size="20" />
-						</template>
-						Open portal page
-					</NcActionButton>
-				</template>
-			</NcListItem>
-		</ul>
+		<NcNoteCard v-if="!searchStore.searchResults?.results?.length > 0 || !searchStore.searchResults" type="info">
+			<p>Er zijn op dit moment geen publicaties die aan uw zoekopdracht voldoen</p>
+		</NcNoteCard>
+		<NcLoadingIcon v-if="!searchStore.searchResults"
+			:size="64"
+			class="loadingIcon"
+			appearance="dark"
+			name="Publicaties aan het laden" />
+		<SearchList v-if="searchStore.searchResults?.results?.length > 0" />
 	</NcAppContent>
 </template>
 
 <script>
-import { NcAppContent, NcListItem, NcActionButton } from '@nextcloud/vue'
-
-import ListBoxOutline from 'vue-material-design-icons/ListBoxOutline.vue'
-import LinkIcon from 'vue-material-design-icons/Link.vue'
+import { NcAppContent, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
+import SearchList from './SearchList.vue'
 
 export default {
 	name: 'SearchIndex',
 	components: {
 		NcAppContent,
-		NcListItem,
-		NcActionButton,
-		// Icons
-		ListBoxOutline,
-		LinkIcon,
+		NcNoteCard,
+		NcLoadingIcon,
+		SearchList,
 	},
 	props: {
 		search: {
