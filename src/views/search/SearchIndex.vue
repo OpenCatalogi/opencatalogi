@@ -31,29 +31,11 @@ export default {
 		NcLoadingIcon,
 		SearchList,
 	},
-	props: {
-		search: {
-			type: String,
-			required: true,
-		},
-	},
 	data() {
 		return {}
 	},
-	watch: {
-		search: {
-			handler(search) {
-				searchStore.getSearchResults()
-			},
-		},
-	},
 	mounted() {
 		searchStore.getSearchResults()
-	},
-	methods: {
-		goToLink(link) {
-			//
-		},
 	},
 }
 </script>

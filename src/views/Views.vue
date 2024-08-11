@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, searchStore } from '../store/store.js'
+import { navigationStore } from '../store/store.js'
 </script>
 
 <template>
@@ -9,11 +9,11 @@ import { navigationStore, searchStore } from '../store/store.js'
 			<Catalogi v-if="navigationStore.selected === 'catalogi'" />
 			<Organisations v-if="navigationStore.selected === 'organisations'" />
 			<Themes v-if="navigationStore.selected === 'themes'" />
-			<Dashboard v-if="navigationStore.selected === 'dashboard'" :search="searchStore.search" />
+			<Dashboard v-if="navigationStore.selected === 'dashboard'"/>
 			<Directory v-if="navigationStore.selected === 'directory'" />
 			<Publications v-if="navigationStore.selected === 'publication'" />
 			<Matadata v-if="navigationStore.selected === 'metaData'" />
-			<Search v-if="navigationStore.selected === 'search'" :search="searchStore.search" />
+			<Search v-if="navigationStore.selected === 'search'" />
 		</template>
 	</NcAppContent>
 </template>

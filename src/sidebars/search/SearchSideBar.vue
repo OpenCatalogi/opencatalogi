@@ -54,11 +54,23 @@ export default {
 		DatabaseOutline,
 		FileTreeOutline,
 	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
+	},
 	data() {
 		return {
-
 			starred: false,
 		}
+	},
+	watch: {
+		search: {
+			handler(search) {
+				searchStore.getSearchResults()
+			},
+		},
 	},
 }
 </script>
