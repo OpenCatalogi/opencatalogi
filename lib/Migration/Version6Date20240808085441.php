@@ -53,13 +53,13 @@ class Version6Date20240808085441 extends SimpleMigrationStep {
 					]);
 			}
 			if($table->hasColumn(name: 'metadata') === false) {
-				$table->addColumn(
+				$metadata = $table->addColumn(
 					name: 'metadata',
 					typeName: Types::JSON,
 					options: [
 						'notNull' => false,
-						'default' => 'a:0:{}'
 					]);
+				$metadata->setDefault('{}');
 			}
 
 		}
