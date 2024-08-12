@@ -330,6 +330,8 @@ class PublicationsController extends Controller
 
 		}
 
+		$this->createPublicationFile(objectService: $objectService, publication: $returnData);
+
 		// get post from requests
 		return new JSONResponse($returnData);
     }
@@ -439,10 +441,14 @@ class PublicationsController extends Controller
 
 		// Save the uploaded file
 		$filePath = "Publicaties/$publicationFolder/$filename";
+		$this->fileService->deleteFile(filePath: $filePath);
 		$created = $this->fileService->uploadFile(
 			content: file_get_contents(filename: $filename),
 			filePath: $filePath
 		);
+
+		// Todo:
+//		return $this->fileService->createShareLink(path: $filePath);
 
 		if ($created === false) {
 //			return new JSONResponse(data: ['error' => "Failed to upload file. This file: $filePath might already exist"], statusCode: 400);

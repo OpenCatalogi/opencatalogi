@@ -447,8 +447,8 @@ export default {
 			handler(newPublicationItem, oldPublicationItem) {
 				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
 					this.publication = publicationStore.publicationItem
-					this.fetchCatalogi(publicationStore.publicationItem.catalogi?.id)
-					this.fetchMetaData(publicationStore.publicationItem.metaData?.id)
+					this.fetchCatalogi(this.publication.catalogi?.id)
+					this.fetchMetaData(this.publication.metaData?.id)
 					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
@@ -460,8 +460,8 @@ export default {
 
 		this.publication = publicationStore.publicationItem
 
-		this.fetchCatalogi(publicationStore.publicationItem.catalogi?.id, true)
-		this.fetchMetaData(publicationStore.publicationItem.metaData?.id, true)
+		this.fetchCatalogi(this.publication.catalogi?.id, true)
+		this.fetchMetaData(this.publication.metaData?.id, true)
 		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},

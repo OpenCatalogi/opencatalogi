@@ -4,7 +4,14 @@
 <p>Referentie: {{ publication.reference }}</p>
 <p>Samenvatting: {{ publication.summary }}</p>
 <p>Beschrijving: {{ publication.description }}</p>
-<table>
+
+<style>
+	table.tb { border-collapse: collapse; width:300px; }
+	.tb th, .tb td { padding: 5px; border: solid 1px #777; }
+	.tb th { background-color: lightblue;}
+</style>
+<h2>Publicatie Data</h2>
+<table class="tb" title="Publicatie Data">
 	<tr>
 		<th>Key</th>
 		<th>Value</th>

@@ -67,6 +67,9 @@ export default {
 	methods: {
 		DeleteProperty() {
 			const publication = publicationStore.publicationItem
+			publication.catalogi = publication.catalogi?.id?.toString()
+			publication.metaData = publication.metaData?.id?.toString()
+
 			delete publication?.data[publicationStore.publicationDataKey]
 
 			this.loading = true
