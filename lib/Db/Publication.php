@@ -78,8 +78,13 @@ class Publication extends Entity implements JsonSerializable
 		$this->setModified(new DateTime());
 
 
-		if(isset($object['published']) === false) {
+		if (isset($object['published']) === false) {
 			$object['published'] = null;
+		}
+
+		// Todo: MetaData is depricated, we should use Schema instead. But this needs front-end changes as well.
+		if (empty($object['schema']) === true) {
+			$object['schema'] = $object['metaData'] ?? $this->getMetaData();
 		}
 
 		foreach($object as $key => $value) {
@@ -95,9 +100,6 @@ class Publication extends Entity implements JsonSerializable
 //				var_dump("Error writing $key");
 			}
 		}
-
-		// Todo: MetaData is depricated, we should use Schema instead. But this needs front-end changes as well.
-		$this->setSchema($this->getMetaData());
 
 		$this->setAttachmentCount('0');
 		if($this->attachments !== null) {
@@ -127,7 +129,7 @@ class Publication extends Entity implements JsonSerializable
 			'data' => $this->data,
 			'attachments' => $this->attachments,
 			'attachmentCount' => $this->attachmentCount,
-			'schema' => $this->schema,
+			'schema' => json_decode($this->schema, true),
 			'status' => $this->status,
 			'license' => $this->license,
 			'themes' => $this->themes,
