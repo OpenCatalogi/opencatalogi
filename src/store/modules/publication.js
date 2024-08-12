@@ -85,11 +85,35 @@ export const usePublicationStore = defineStore(
 						(response) => {
 							response.json().then(
 								(data) => {
-									this.publicationAttachments = Object.values(data.results.map(
+									this.publicationAttachments = data.results.map(
 										(attachmentItem) => new Attachment(attachmentItem),
-									)).filter((attachment) => {
-										return publication.attachments?.includes(parseInt(attachment.id))
-									})
+									)
+									return data
+								},
+							)
+						},
+					)
+					.catch(
+						(err) => {
+							console.error(err)
+							return err
+						},
+					)
+			},
+			getPublicationAttachmentsById(publication) { // @todo this might belong in a service?
+				fetch(
+					`/index.php/apps/opencatalogi/api/publications/${publication.id}/attachments`,
+					{
+						method: 'GET',
+					},
+				)
+					.then(
+						(response) => {
+							response.json().then(
+								(data) => {
+									this.publicationAttachments = data.results.map(
+										(attachmentItem) => new Attachment(attachmentItem),
+									)
 									return data
 								},
 							)

@@ -413,6 +413,7 @@ export default {
 	data() {
 		return {
 			publication: [],
+			attachments: [],
 			catalogi: [],
 			metadata: [],
 			prive: false,
@@ -477,7 +478,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
-						publicationStore.getPublicationAttachments(data)
+						publicationStore.getPublicationAttachmentsById(data)
 						// this.loading = false
 					})
 				})
