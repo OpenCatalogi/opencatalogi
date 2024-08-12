@@ -2,65 +2,69 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="navigationStore.modal === 'editPublication'"
-		ref="modalRef"
-		label-id="editPublicationModal"
-		@close="navigationStore.setModal(false)">
-		<div class="modal__content">
-			<h2>Edit publication</h2>
-			<div v-if="success !== null || error">
-				<NcNoteCard v-if="success" type="success">
-					<p>Publicatie succesvol bewerkt</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="error" type="error">
-					<p>{{ error }}</p>
-				</NcNoteCard>
-			</div>
-			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
-					label="Titel *"
-					required
-					:value.sync="publicationItem.title" />
-				<NcTextField :disabled="loading"
-					label="Samenvatting *"
-					required
-					:value.sync="publicationItem.summary" />
-				<NcTextArea :disabled="loading"
-					label="Beschrijving"
-					:value.sync="publicationItem.description" />
-				<NcTextField :disabled="loading"
-					label="Reference"
-					:value.sync="publicationItem.reference" />
-				<NcTextField :disabled="loading"
-					label="Categorie"
-					:value.sync="publicationItem.category" />
-				<NcTextField :disabled="loading"
-					label="Portaal"
-					:value.sync="publicationItem.portal" />
-				<span>
-					<p>Publicatie datum</p>
-					<NcDateTimePicker v-model="publicationItem.published"
-						:disabled="loading"
-						label="Publicatie datum" />
-				</span>
-				<span class="EPM-horizontal">
-					<NcCheckboxRadioSwitch :disabled="loading"
-						label="Featured"
-						:checked.sync="publicationItem.featured">
-						Featured
-					</NcCheckboxRadioSwitch>
-				</span>
-				<NcTextField :disabled="loading"
-					label="Image"
-					:value.sync="publicationItem.image" />
-				<b>Juridisch</b>
-				<NcTextField :disabled="loading"
-					label="Licentie"
-					:value.sync="publicationItem.license" />
-			</div>
+	<NcDialog v-if="navigationStore.modal === 'editPublication'"
+		name="Bewerk Publicatie"
+		size="normal"
+		:can-close="false">
+		<div v-if="success !== null || error">
+			<NcNoteCard v-if="success" type="success">
+				<p>Publicatie succesvol bewerkt</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="!success" type="error">
+				<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+		</div>
+		<div v-if="success === null" class="wrapper">
+			<NcTextField :disabled="loading"
+				label="Titel *"
+				required
+				:value.sync="publicationItem.title" />
+			<NcTextField :disabled="loading"
+				label="Samenvatting *"
+				required
+				:value.sync="publicationItem.summary" />
+			<NcTextArea :disabled="loading"
+				label="Beschrijving"
+				:value.sync="publicationItem.description" />
+			<NcTextField :disabled="loading"
+				label="Kenmerk"
+				:value.sync="publicationItem.reference" />
+			<NcTextField :disabled="loading"
+				label="Categorie"
+				:value.sync="publicationItem.category" />
+			<NcTextField :disabled="loading"
+				label="Portaal"
+				:value.sync="publicationItem.portal" />
+			<p>Publicatie datum</p>
+			<NcDateTimePicker v-model="publicationItem.published"
+				:disabled="loading"
+				label="Publicatie datum" />
+			<NcCheckboxRadioSwitch :disabled="loading"
+				label="Featured"
+				:checked.sync="publicationItem.featured">
+				Featured
+			</NcCheckboxRadioSwitch>
+			<NcTextField :disabled="loading"
+				label="Image"
+				:value.sync="publicationItem.image" />
+			<b>Juridisch</b>
+			<NcTextField :disabled="loading"
+				label="Licentie"
+				:value.sync="publicationItem.license" />
+		</div>
+		<template #actions>
+			<NcButton
+				:disabled="loading"
+				icon=""
+				@click="navigationStore.setModal(false)">
+				<template #icon>
+					<Cancel :size="20" />
+				</template>
+				{{ succes ? 'Sluiten' : 'Annuleer' }}
+			</NcButton>
 			<NcButton v-if="success === null"
 				:disabled="!publicationItem.title || !publicationItem.summary"
 				type="primary"
@@ -71,8 +75,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</template>
 				Opslaan
 			</NcButton>
-		</div>
-	</NcModal>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -81,17 +85,18 @@ import {
 	NcCheckboxRadioSwitch,
 	NcDateTimePicker,
 	NcLoadingIcon,
-	NcModal,
+	NcDialog,
 	NcNoteCard,
 	NcTextArea,
 	NcTextField,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Cancel from 'vue-material-design-icons/Cancel.vue'
 
 export default {
 	name: 'EditPublicationModal',
 	components: {
-		NcModal,
+		NcDialog,
 		NcTextField,
 		NcTextArea,
 		NcCheckboxRadioSwitch,
@@ -101,6 +106,7 @@ export default {
 		NcNoteCard,
 		// Icons
 		ContentSaveOutline,
+		Cancel,
 	},
 	data() {
 		return {
@@ -228,9 +234,16 @@ export default {
 }
 
 .EPM-horizontal {
-    display: flex;
-    gap: 4px;
-    flex-direction: row;
-    align-items: center;
+	display: flex;
+	gap: 4px;
+	align-items: flex-end;
+	flex-wrap: wrap;
+}
+
+.wrapper {
+	display: flex;
+	gap: 4px;
+	align-items: flex-end;
+	flex-wrap: wrap;
 }
 </style>

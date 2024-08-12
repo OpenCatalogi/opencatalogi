@@ -1,7 +1,3 @@
-<script setup>
-import { searchStore } from '../../store/store.js'
-</script>
-
 <template>
 	<NcAppContent>
 		<h2 class="pageHeader">
@@ -27,12 +23,6 @@ export default {
 		NcAppContent,
 		apexchart: VueApexCharts,
 	},
-	props: {
-		search: {
-			type: String,
-			required: true,
-		},
-	},
 	data() {
 		return {
 			options: {
@@ -48,16 +38,6 @@ export default {
 				data: [30, 40, 45, 50, 49, 60, 55],
 			}],
 		}
-	},
-	watch: {
-		search: {
-			handler(search) {
-				searchStore.getSearchResults()
-			},
-		},
-	},
-	mounted() {
-		searchStore.getSearchResults()
 	},
 }
 </script>
