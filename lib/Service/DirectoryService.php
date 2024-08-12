@@ -222,7 +222,9 @@ class DirectoryService
 
 		$listing = $this->getDirectoryEntry(catalogId: $catalogId);
 
-		$listing['title'] = $catalog['title'];
+		$listing['title']        = $catalog['title'];
+		$listing['organisation'] = $catalog['organisation'];
+		$listing['metaData']     = $catalog['metaData'];
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'

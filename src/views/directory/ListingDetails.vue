@@ -52,7 +52,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<span>{{ listing.search }}</span>
 			</div>
 			<div>
-				<h4>MetaData:</h4>
+				<h4>Publicatie typen:</h4>
 				<span>{{ listing.metadata }}</span>
 			</div>
 			<div>
