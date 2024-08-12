@@ -35,7 +35,10 @@ export const useDirectoryStore = defineStore(
 							response.json().then(
 								(data) => {
 									this.listingList = data.results.map(
-										(listingItem) => new Listing(listingItem),
+										(listingItem) => {
+                                            listingItem.organisation = listingItem?.organisation ? JSON.parse(listingItem.organisation): null;
+                                            return new Listing(listingItem)
+                                        },
 									)
 								},
 							)
