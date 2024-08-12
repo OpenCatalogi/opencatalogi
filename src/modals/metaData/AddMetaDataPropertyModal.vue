@@ -213,8 +213,6 @@ export default {
 	},
 	methods: {
 		AddMetadata() {
-			metadataStore.metaDataItem.properties[this.properties.title] = this.properties
-
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem.id}`,
@@ -223,7 +221,23 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(metadataStore.metaDataItem),
+					body: JSON.stringify({
+						...metadataStore.metaDataItem,
+						properties: { // due to bad (no) support for number fields inside nextcloud/vue, parse the text to a number
+							...metadataStore.metaDataItem.properties,
+							[this.properties.title]: {
+								...this.properties,
+								pattern: parseFloat(this.properties.pattern) || 0,
+								minLength: parseFloat(this.properties.minLength) || null,
+								maxLength: parseFloat(this.properties.maxLength) || null,
+								minimum: parseFloat(this.properties.minimum) || null,
+								maximum: parseFloat(this.properties.maximum) || null,
+								multipleOf: parseFloat(this.properties.multipleOf) || null,
+								minItems: parseFloat(this.properties.minItems) || null,
+								maxItems: parseFloat(this.properties.maxItems) || null,
+							},
+						},
+					}),
 				},
 			)
 				.then((response) => {
