@@ -164,9 +164,9 @@ class ListingMapper extends QBMapper
 		$listing = new Listing();
 		$listing->hydrate(object: $object);
 
-//		var_dump($listing->getTitle());
+		$listing = $this->insert(entity: $listing);
 
-		return $this->insert(entity: $listing);
+		return $this->find($listing->getId());
 	}
 
 	public function updateFromArray(int $id, array $object): Listing
@@ -174,6 +174,8 @@ class ListingMapper extends QBMapper
 		$listing = $this->find($id);
 		$listing->hydrate($object);
 
-		return $this->update($listing);
+		$listing =  $this->update($listing);
+
+		return $this->find($listing->getId());
 	}
 }

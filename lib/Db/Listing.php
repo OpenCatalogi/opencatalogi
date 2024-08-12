@@ -83,7 +83,7 @@ class Listing extends Entity implements JsonSerializable
 			'lastSync' 	  => $this->lastSync->format('c'),
 			'default' 	  => $this->default,
 			'available'   => $this->available,
-			'organisation'=> $this->organisation,
+			'organisation'=> json_decode($this->organisation, true),
 		];
 
 		$jsonFields = $this->getJsonFields();

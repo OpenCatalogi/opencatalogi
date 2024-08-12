@@ -447,8 +447,8 @@ export default {
 			handler(newPublicationItem, oldPublicationItem) {
 				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
 					this.publication = publicationStore.publicationItem
-					this.fetchCatalogi(publicationStore.publicationItem.catalogi)
-					this.fetchMetaData(publicationStore.publicationItem.metaData)
+					this.fetchCatalogi(publicationStore.publicationItem.catalogi?.id)
+					this.fetchMetaData(publicationStore.publicationItem.metaData?.id)
 					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
@@ -460,8 +460,8 @@ export default {
 
 		this.publication = publicationStore.publicationItem
 
-		this.fetchCatalogi(publicationStore.publicationItem.catalogi, true)
-		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
+		this.fetchCatalogi(publicationStore.publicationItem.catalogi?.id, true)
+		this.fetchMetaData(publicationStore.publicationItem.metaData?.id, true)
 		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
@@ -475,8 +475,8 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						// this.oldZaakId = id
-						this.fetchCatalogi(data.catalogi)
-						this.fetchMetaData(data.metaData)
+						this.fetchCatalogi(data.catalogi?.id)
+						this.fetchMetaData(data.metaData?.id)
 						publicationStore.getPublicationAttachments()
 						// this.loading = false
 					})

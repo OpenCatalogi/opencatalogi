@@ -23,12 +23,23 @@ class PublicationMapper extends QBMapper
 			'p.*',
 					'c.id AS catalogi_id',
 					'c.title AS catalogi_title',
+					'c.summary AS catalogi_summary',
+					'c.description AS catalogi_description',
+					'c.image AS catalogi_image',
+					'c.search AS catalogi_search',
+					'c.listed AS catalogi_listed',
+					'c.organisation AS catalogi_organisation',
+					'c.metadata AS catalogi_metadata',
 					'm.id AS metadata_id',
-					'm.title AS metadata_title'
+					'm.title AS metadata_title',
+					'm.version AS metadata_version',
+					'm.description AS metadata_description',
+					'm.required AS metadata_required',
+					'm.properties AS metadata_properties',
 			)
 			->from('publications', 'p')
 			->leftJoin('p', 'catalogi', 'c', 'p.catalogi = c.id')
-			->leftJoin('p', 'metadata', 'm', 'p.metaData = m.id')
+			->leftJoin('p', 'metadata', 'm', 'p.meta_data = m.id')
 			->where(
 				$qb->expr()->eq('p.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
@@ -62,6 +73,13 @@ class PublicationMapper extends QBMapper
 		$catalogiData = [
 			'id' => $row['catalogi_id'] ?? null,
 			'title' => $row['catalogi_title'] ?? null,
+			'summary' => $row['catalogi_summary'] ?? null,
+			'description' => $row['catalogi_description'] ?? null,
+			'image' => $row['catalogi_image'] ?? null,
+			'search' => $row['catalogi_search'] ?? null,
+			'listed' => $row['catalogi_listed'] ?? null,
+			'organisation' => $row['catalogi_organisation'] ?? null,
+			'metadata' => $row['catalogi_metadata'] ?? null,
 		];
 
 		$catalogiIsEmpty = true;
@@ -79,6 +97,10 @@ class PublicationMapper extends QBMapper
 		$metaDataData = [
 			'id' => $row['metadata_id'] ?? null,
 			'title' => $row['metadata_title'] ?? null,
+			'version' => $row['metadata_version'] ?? null,
+			'description' => $row['metadata_description'] ?? null,
+			'required' => $row['metadata_required'] ?? null,
+			'properties' => $row['metadata_properties'] ?? null,
 		];
 
 		$metaDataIsEmpty = true;
@@ -93,7 +115,7 @@ class PublicationMapper extends QBMapper
 		}
 
 		$row['catalogi'] = $catalogiIsEmpty === true ? null : json_encode(Catalog::fromRow($catalogiData)->jsonSerialize());
-		$row['metadata'] = $catalogiIsEmpty === true ? null : json_encode(MetaData::fromRow($metaDataData)->jsonSerialize());
+		$row['metaData'] = $metaDataIsEmpty === true ? null : json_encode(MetaData::fromRow($metaDataData)->jsonSerialize());
 
 		return \call_user_func($this->entityClass .'::fromRow', $row);
 	}
@@ -198,12 +220,23 @@ class PublicationMapper extends QBMapper
 				'p.*',
 				'c.id AS catalogi_id',
 				'c.title AS catalogi_title',
+				'c.summary AS catalogi_summary',
+				'c.description AS catalogi_description',
+				'c.image AS catalogi_image',
+				'c.search AS catalogi_search',
+				'c.listed AS catalogi_listed',
+				'c.organisation AS catalogi_organisation',
+				'c.metadata AS catalogi_metadata',
 				'm.id AS metadata_id',
-				'm.title AS metadata_title'
+				'm.title AS metadata_title',
+				'm.version AS metadata_version',
+				'm.description AS metadata_description',
+				'm.required AS metadata_required',
+				'm.properties AS metadata_properties',
 			)
 			->from('publications', 'p')
 			->leftJoin('p', 'catalogi', 'c', 'p.catalogi = c.id')
-			->leftJoin('p', 'metadata', 'm', 'p.metaData = m.id')
+			->leftJoin('p', 'metadata', 'm', 'p.meta_data = m.id')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
@@ -232,9 +265,9 @@ class PublicationMapper extends QBMapper
 		$publication = new Publication();
 		$publication->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
+		$publication = $this->insert(entity: $publication);
 
-		return $this->insert(entity: $publication);
+		return $this->find($publication->getId());
 	}
 
 	public function updateFromArray(int $id, array $object): Publication
@@ -242,6 +275,8 @@ class PublicationMapper extends QBMapper
 		$publication = $this->find(id: $id);
 		$publication->hydrate(object: $object);
 
-		return $this->update($publication);
+		$publication = $this->update($publication);
+
+		return $this->find($publication->getId());
 	}
 }
