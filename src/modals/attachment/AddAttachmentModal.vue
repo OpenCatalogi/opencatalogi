@@ -158,8 +158,15 @@ export default {
 						}),
 					},
 				)
-					.then(() => {
+					.then((response) => {
 						this.loading = false
+
+						// Lets refresh the publicationList
+						publicationStore.refreshPublicationList()
+						response.json().then((data) => {
+							publicationStore.setPublicationItem(data)
+						})
+
 					})
 					.catch((err) => {
 						this.error = err
