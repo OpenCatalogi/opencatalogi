@@ -154,7 +154,12 @@ class PublicationsController extends Controller
 	 */
 	public function attachments(string|int $id, ObjectService $objectService): JSONResponse
 	{
-		$publication = $this->show($id, $objectService)->getData();
+		$jsonResponse = $this->show($id, $objectService);
+		$publication = $jsonResponse->getData();
+		if (is_array($publication) === true && isset($publication['error']) === true) {
+			return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
+		}
+
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
