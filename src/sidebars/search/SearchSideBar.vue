@@ -1,5 +1,5 @@
 <script setup>
-import { searchStore } from '../../store/store.js'
+import { searchStore, directoryStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -23,15 +23,17 @@ import { searchStore } from '../../store/store.js'
 			<template #icon>
 				<DatabaseOutline :size="20" />
 			</template>
-			<NcCheckboxRadioSwitch type="switch">
-				Catalogi naam
+			<NcCheckboxRadioSwitch v-for="(listing, i) in directoryStore.listingList" type="switch">
+				{{ listing.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="share-tab" name="Metadata" :order="3">
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
-			Metadata tab content
+			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList" type="switch">
+				{{ metaData.title || 'Geen titel' }}
+			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
@@ -68,6 +70,10 @@ export default {
 	},
 	watch: {
 		search: 'debouncedSearch',
+	},
+	mounted() {
+		directoryStore.refreshListingList()
+		metadataStore.refreshMetaDataList()
 	},
 	methods: {
 		debouncedSearch: debounce(function() {
