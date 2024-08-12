@@ -80,7 +80,7 @@ class Listing extends Entity implements JsonSerializable
 			'metadata'	  => $this->metadata,
 			'catalogId'	  => $this->catalogId,
 			'status' 	  => $this->status,
-			'lastSync' 	  => $this->lastSync->format('c'),
+			'lastSync' 	  => $this->lastSync?->format('c'),
 			'default' 	  => $this->default,
 			'available'   => $this->available,
 			'organisation'=> json_decode($this->organisation, true),

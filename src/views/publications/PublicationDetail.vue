@@ -477,7 +477,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi?.id)
 						this.fetchMetaData(data.metaData?.id)
-						publicationStore.getPublicationAttachments()
+						publicationStore.getPublicationAttachments(id)
 						// this.loading = false
 					})
 				})
