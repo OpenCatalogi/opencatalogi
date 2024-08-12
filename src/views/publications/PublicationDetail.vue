@@ -269,6 +269,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								</template>
 							</NcListItem>
 						</div>
+
 						<div v-if="publicationStore.publicationAttachments.length === 0" class="tabPanel">
 							Geen bijlagen gevonden
 						</div>
@@ -457,7 +458,6 @@ export default {
 
 	},
 	mounted() {
-
 		this.publication = publicationStore.publicationItem
 
 		this.fetchCatalogi(publicationStore.publicationItem.catalogi, true)
@@ -477,7 +477,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
-						publicationStore.getPublicationAttachments()
+						publicationStore.getPublicationAttachments(data)
 						// this.loading = false
 					})
 				})

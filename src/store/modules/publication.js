@@ -85,9 +85,11 @@ export const usePublicationStore = defineStore(
 						(response) => {
 							response.json().then(
 								(data) => {
-									this.publicationAttachments = data.results.map(
+									this.publicationAttachments = Object.values(data.results.map(
 										(attachmentItem) => new Attachment(attachmentItem),
-									)
+									)).filter((attachment) => {
+										return publication.attachments?.includes(parseInt(attachment.id))
+									})
 									return data
 								},
 							)
