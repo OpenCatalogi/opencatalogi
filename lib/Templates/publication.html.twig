@@ -1,15 +1,15 @@
-<h1>Publicatie #{{ publicatie.title }}</h1>
-<p>Catalogi: {{ publicatie.catalogi.title }}</p>
-<p>Publicatie Type: {{ publicatie.metadata.title }}</p>
-<p>Referentie: {{ publicatie.reference }}</p>
-<p>Samenvatting: {{ publicatie.summary }}</p>
-<p>Beschrijving: {{ publicatie.description }}</p>
+<h1>Publicatie #{{ publication.title }}</h1>
+{#<p>Catalogi: {{ publication.catalogi.title }}</p>#}
+{#<p>Publicatie Type: {{ publication.metadata.title }}</p>#}
+<p>Referentie: {{ publication.reference }}</p>
+<p>Samenvatting: {{ publication.summary }}</p>
+<p>Beschrijving: {{ publication.description }}</p>
 <table>
 	<tr>
 		<th>Key</th>
 		<th>Value</th>
 	</tr>
-	{% for key, value in publicatie.data %}
+	{% for key, value in publication.data %}
 		<tr>
 			<td>{{ key }}</td>
 			<td>{{ value }}</td>

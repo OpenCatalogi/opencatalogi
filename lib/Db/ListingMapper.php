@@ -21,15 +21,15 @@ class ListingMapper extends QBMapper
 		$qb = $this->db->getQueryBuilder();
 
         $qb->select(
-            'l.*', 
-            'o.id AS organisation_id', 
-            'o.title AS organisation_title', 
+            'l.*',
+            'o.id AS organisation_id',
+            'o.title AS organisation_title',
             'o.summary AS organisation_summary',
             'o.description AS organisation_description',
-            'o.image AS organisation_image', 
-            'o.oin AS organisation_oin', 
-            'o.tooi AS organisation_tooi', 
-            'o.rsin AS organisation_rsin', 
+            'o.image AS organisation_image',
+            'o.oin AS organisation_oin',
+            'o.tooi AS organisation_tooi',
+            'o.rsin AS organisation_rsin',
             'o.pki AS organisation_pki'
         )
         ->from('listings', 'l')
@@ -42,7 +42,7 @@ class ListingMapper extends QBMapper
 	}
 
 	/**
-	 * Returns an db result and throws exceptions when there are more or less
+	 * Returns a db result and throws exceptions when there are more or less
 	 * results CUSTOM FOR JOINS
 	 *
 	 * @param IQueryBuilder $query
@@ -117,17 +117,17 @@ class ListingMapper extends QBMapper
     public function findAll(?int $limit = null, ?int $offset = null, ?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): array
     {
         $qb = $this->db->getQueryBuilder();
-    
+
         $qb->select(
-                'l.*', 
-                'o.id AS organisation_id', 
-                'o.title AS organisation_title', 
+                'l.*',
+                'o.id AS organisation_id',
+                'o.title AS organisation_title',
                 'o.summary AS organisation_summary',
                 'o.description AS organisation_description',
-                'o.image AS organisation_image', 
-                'o.oin AS organisation_oin', 
-                'o.tooi AS organisation_tooi', 
-                'o.rsin AS organisation_rsin', 
+                'o.image AS organisation_image',
+                'o.oin AS organisation_oin',
+                'o.tooi AS organisation_tooi',
+                'o.rsin AS organisation_rsin',
                 'o.pki AS organisation_pki'
             )
             ->from('listings', 'l')
@@ -135,7 +135,7 @@ class ListingMapper extends QBMapper
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
-    
+
         // Apply filters
         foreach ($filters as $filter => $value) {
             if ($value === 'IS NOT NULL') {
@@ -146,7 +146,7 @@ class ListingMapper extends QBMapper
                 $qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
             }
         }
-    
+
         // Apply search conditions
         if (!empty($searchConditions)) {
             $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
@@ -154,7 +154,7 @@ class ListingMapper extends QBMapper
                 $qb->setParameter($param, $value);
             }
         }
-    
+
         // Use the existing findEntities method to fetch and map the results
         return $this->findEntitiesCustom($qb);
     }

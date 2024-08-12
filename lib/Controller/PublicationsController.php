@@ -400,14 +400,22 @@ class PublicationsController extends Controller
 		}
 
 		// Initialize Twig
-		$loader = new FilesystemLoader('lib/Templates');
+		$loader = new FilesystemLoader('lib/Templates', '/var/www/html/apps-extra/opencatalogi');
 		$twig = new Environment($loader);
 
 		// Render the Twig template
 		$html = $twig->render('publication.html.twig', ['publication' => $publication]);
 
+		// Check if the directory exists, if not, create it
+		if (!file_exists('/tmp/mpdf')) {
+			mkdir('/tmp/mpdf', 0777, true);
+		}
+
+		// Set permissions for the directory (ensure it's writable)
+		chmod('/tmp/mpdf', 0777);
+
 		// Initialize mPDF
-		$mpdf = new Mpdf();
+		$mpdf = new Mpdf(['tempDir' => '/tmp/mpdf']);
 
 		// Write HTML to PDF
 		$mpdf->WriteHTML($html);
