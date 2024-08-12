@@ -40,7 +40,6 @@ export const useDirectoryStore = defineStore(
                                             return new Listing(listingItem)
                                         },
 									)
-                                    console.log(this.listingList)
 								},
 							)
 						},
