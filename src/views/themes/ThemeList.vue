@@ -33,7 +33,7 @@ import { navigationStore, themeStore } from '../../store/store.js'
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						Theme toevoegen
+						Thema toevoegen
 					</NcActionButton>
 				</NcActions>
 			</div>

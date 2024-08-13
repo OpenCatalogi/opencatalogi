@@ -10,14 +10,14 @@ import { navigationStore, searchStore, metadataStore } from '../../store/store.j
 		<template #default>
 			<NcEmptyContent v-if="!metadataStore.metaDataItem || navigationStore.selected != 'metaData'"
 				class="detailContainer"
-				name="Geen Metadata"
-				description="Nog geen metadata beschrijving geselecteerd">
+				name="Geen publicatie type"
+				description="Nog geen publicatie type geselecteerd">
 				<template #icon>
 					<FileTreeOutline />
 				</template>
 				<template #action>
 					<NcButton type="primary" @click="navigationStore.setModal('addMetaData')">
-						Metadata beschrijving toevoegen
+						Publicatie type toevoegen
 					</NcButton>
 				</template>
 			</NcEmptyContent>

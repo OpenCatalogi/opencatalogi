@@ -5,13 +5,13 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 <template>
 	<NcDialog
 		v-if="navigationStore.dialog === 'deleteMetaDataProperty'"
-		name="Metadata eigenschap verwijderen"
+		name="Publicatie type eigenschap verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
 			Wil je <b>{{ metadataStore.metadataDataKey }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Metadata eigenschap succesvol verwijderd</p>
+			<p>Publicatie type eigenschap succesvol verwijderd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>
