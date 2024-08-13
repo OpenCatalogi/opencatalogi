@@ -270,8 +270,17 @@ export default {
     height: 150px;
     width: 250px;
     border-radius: 8px;
-    /* assume default is dark mode */
-    background-color: rgba(255, 255, 255, 0.1);
+}
+/* default theme */
+@media (prefers-color-scheme: light) {
+    .dashboard-content > .most-searched-terms > div {
+        background-color: rgba(0, 0, 0, 0.07);
+    }
+}
+@media (prefers-color-scheme: dark) {
+    .dashboard-content > .most-searched-terms > div {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 }
 /* do theme checks, light mode | dark mode */
 body[data-theme-light] .dashboard-content > .most-searched-terms > div {
