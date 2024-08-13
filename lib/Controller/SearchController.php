@@ -101,8 +101,8 @@ class SearchController extends Controller
 			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
 			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
 
-			$limit = null;
-			$offset = null;
+			$limit = 30;
+			$offset = 0;
 
 			if(isset($filters['_limit']) === true) {
 				$limit = $filters['_limit'];
@@ -114,9 +114,19 @@ class SearchController extends Controller
 
 			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
+			$total   = $this->publicationMapper->count($filters);
+			$results = $this->publicationMapper->findAll(limit: $limit, offset: $offset, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams);
+			$pages   = (int) ceil($total / $limit);
 
-
-			return new JSONResponse(['results' => $this->publicationMapper->findAll(limit: $limit, offset: $offset, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
+			return new JSONResponse([
+				'results' => $results,
+				'facets'  => [],
+				'count' => count($results),
+				'limit' => $limit,
+				'page' => isset($filters['_page']) === true ? $filters['_page'] : 1,
+				'pages' =>  $pages === 0 ? 1 : $pages,
+				'total' => $total
+			]);
 		}
 
 		//@TODO: find a better way to get query params. This fixes it for now.

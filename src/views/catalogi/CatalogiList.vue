@@ -72,7 +72,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 							<template #icon>
 								<Plus :size="20" />
 							</template>
-							Metadata toevoegen
+							Publicatie type toevoegen
 						</NcActionButton>
 						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setDialog('deleteCatalog')">
 							<template #icon>

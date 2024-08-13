@@ -9,6 +9,7 @@ use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\FileService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
@@ -99,7 +100,7 @@ class AttachmentsController extends Controller
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results' =>$this->attachmentMapper->findAll()]);
+			return new JSONResponse(['results' => $this->attachmentMapper->findAll()]);
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -131,7 +132,11 @@ class AttachmentsController extends Controller
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->attachmentMapper->find(id: (int) $id));
+			try {
+				return new JSONResponse($this->attachmentMapper->find(id: (int) $id));
+			} catch (DoesNotExistException $exception) {
+				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+			}
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -156,7 +161,7 @@ class AttachmentsController extends Controller
 		$uploadedFile = $this->request->getUploadedFile(key: '_file');
 
 		if (empty($uploadedFile) === true) {
-			return new JSONResponse(data: ['error' => 'No file uploaded for key "_file"'], statusCode: 400);
+			return new JSONResponse(data: ['error' => 'Please upload a file using key "_file" or give a "downloadUrl"'], statusCode: 400);
 		}
 
 		// Check for upload errors
@@ -168,14 +173,14 @@ class AttachmentsController extends Controller
 	}
 
 	/**
-	 * Gets all params from the request body and then validates if the URL fields are actual valid urls (or null).
+	 * Validates if the URL fields are actual valid urls (or null).
+	 *
+	 * @param array $data The form-data fields and their values (/request body).
 	 *
 	 * @return JSONResponse|array An error response if there are validation errors or an array containing all request body params.
 	 */
-	private function checkRequestBody(): JSONResponse|array
+	private function checkRequestBody(array $data): JSONResponse|array
 	{
-		$data = $this->request->getParams();
-
 		$errorMsg = [];
 		if (empty($data['accessUrl']) === false && filter_var(value: $data['accessUrl'], filter: FILTER_VALIDATE_URL) === false) {
 			$errorMsg[] = "accessUrl is not a valid url";
@@ -226,7 +231,7 @@ class AttachmentsController extends Controller
 
 
 	/**
-	 * Adds information about the uploaded file to the appropriate Attachment fields. And removes fields we do not want to post.
+	 * Adds information about the uploaded file to the appropriate Attachment fields.
 	 *
 	 * @param array $data The form-data fields and their values (/request body) that we are going to update before posting the Attachment.
 	 * @param array $uploadedFile Information about the uploaded file from the request body.
@@ -252,14 +257,8 @@ class AttachmentsController extends Controller
 		if (empty($data['accessUrl']) === true) {
 			$data['accessUrl'] = $shareLink;
 		}
-		$data['downloadUrl'] =  "$shareLink/download";
-
-		// Remove fields we should never post
-		unset($data['id']);
-		foreach($data as $key => $value) {
-			if(str_starts_with(haystack: $key, needle: '_')) {
-				unset($data[$key]);
-			}
+		if (empty($data['downloadUrl']) === true) {
+			$data['downloadUrl'] =  "$shareLink/download";
 		}
 
 		return $data;
@@ -274,26 +273,40 @@ class AttachmentsController extends Controller
 	 */
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		// Check if a file was uploaded
-		$uploadedFile = $this->checkUploadedFile();
-		if ($uploadedFile instanceof JSONResponse) {
-			return $uploadedFile;
+		$data = $this->request->getParams();
+		// Uploaded _file and downloadURL are mutually exclusive
+		if (empty($data['downloadUrl']) === true) {
+			// Check if a file was uploaded
+			$uploadedFile = $this->checkUploadedFile();
+			if ($uploadedFile instanceof JSONResponse) {
+				return $uploadedFile;
+			}
 		}
 
-		// Get form-data field/request body.
-		$data = $this->checkRequestBody();
+		// Get form-data field/request body and validate the input.
+		$data = $this->checkRequestBody($data);
 		if ($data instanceof JSONResponse) {
 			return $data;
 		}
 
-		// Handle saving the uploaded file in NextCloud
-		$filePath = $this->handleFile(uploadedFile: $uploadedFile);
-		if ($filePath instanceof JSONResponse) {
-			return $filePath;
+		if (empty($uploadedFile) === false) {
+			// Handle saving the uploaded file in NextCloud
+			$filePath = $this->handleFile(uploadedFile: $uploadedFile);
+			if ($filePath instanceof JSONResponse) {
+				return $filePath;
+			}
+
+			// Update Attachment data
+			$data = $this->AddFileInfoToData(data: $data, uploadedFile: $uploadedFile, filePath: $filePath);
 		}
 
-		// Update Attachment data
-		$data = $this->AddFileInfoToData(data: $data, uploadedFile: $uploadedFile, filePath: $filePath);
+		// Remove fields we should never post
+		unset($data['id']);
+		foreach($data as $key => $value) {
+			if(str_starts_with(haystack: $key, needle: '_')) {
+				unset($data[$key]);
+			}
+		}
 
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
