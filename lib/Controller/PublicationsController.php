@@ -14,6 +14,7 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\IAppConfig;
 use OCP\IRequest;
 use Symfony\Component\Uid\Uuid;
@@ -215,7 +216,11 @@ class PublicationsController extends Controller
 			}
 		}
 
-		$data = $validationService->validatePublication($data);
+		try {
+			$data = $validationService->validatePublication($data);
+		} catch (OCSBadRequestException $exception) {
+			return new JSONResponse(data: ['message' => $exception->getMessage()], statusCode: 400);
+		}
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
