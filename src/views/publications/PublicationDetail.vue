@@ -413,7 +413,6 @@ export default {
 	data() {
 		return {
 			publication: [],
-			attachments: [],
 			catalogi: [],
 			metadata: [],
 			now: new Date(),
