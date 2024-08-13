@@ -24,4 +24,4 @@
   * [SAAS en Dashboarding](installatie/saas.md)
   * [On-Prem server](installatie/on-prem-server.md)
   * [Systeemeisen voor Nextcloud](installatie/systeemeisen-voor-nextcloud.md)
-* [Veel gestelde vragen](f-a-g.md)
+* [Veel gestelde vragen](veel-gestelde-vragen.md)

@@ -8,6 +8,10 @@ functionaliteit.
 
 # Systeemeisen voor Nextcloud
 
+***
+
+## Systeemeisen voor Nextcloud
+
 **Desktop Client**
 
 * **Besturingssysteem:**
@@ -46,6 +50,6 @@ functionaliteit.
 * **Netwerk:** Actieve internetverbinding om toegang te krijgen tot Nextcloud server en synchronisatie uit te voeren.
 * **Veiligheid:** Gebruik van HTTPS wordt aanbevolen voor veilige gegevensoverdracht.
 
-#### Opmerkingen
+**Opmerkingen**
 
 Het wordt aanbevolen om regelmatig de laatste updates van het besturingssysteem en de Nextcloud-app te installeren voor optimale prestaties en veiligheid.
