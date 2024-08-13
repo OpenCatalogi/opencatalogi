@@ -50,7 +50,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<NcCheckboxRadioSwitch :disabled="loading"
 						label="Featured"
 						:checked.sync="publicationItem.featured">
-						Featured
+						Uitgelicht
 					</NcCheckboxRadioSwitch>
 				</span>
 				<NcTextField :disabled="loading"

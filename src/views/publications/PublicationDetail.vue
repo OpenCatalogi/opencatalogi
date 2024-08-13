@@ -112,8 +112,8 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					<span>{{ publicationStore.publicationItem.themes.join(", ") }}</span>
 				</div>
 				<div>
-					<b>Featured:</b>
-					<span>{{ publicationStore.publicationItem.featured ? "Yes" : "No" }}</span>
+					<b>Uitgelicht:</b>
+					<span>{{ publicationStore.publicationItem.featured ? "Ja" : "Nee" }}</span>
 				</div>
 				<div>
 					<b>Licentie:</b>
