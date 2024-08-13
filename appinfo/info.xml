@@ -4,13 +4,13 @@
 	<id>opencatalogi</id>
 	<name>Open Catalogi</name>
 	<summary>The Open Catalogi next cloud app provides a framework for federated catalogouses to work together in an open data ecosystem</summary>
-	<description>Hmmm what could we say</description>
-	<version>0.6.0</version>
+	<description>The Nextcloud application for maintaining publications and administration of user activity, roles based access etc. </description>
+	<version>0.1.0</version>
 	<licence>agpl</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
 	<namespace>OpenCatalogi</namespace>
 	<category>workflow</category>
-	<bugs>https://github.com/ConductionNL/ZaakAfhandelApp/issues</bugs>
+	<bugs>https://github.com/OpenCatalogi/.github/issues</bugs>
 	<dependencies>
 		<nextcloud min-version="26" max-version="30"/>
 	</dependencies>
