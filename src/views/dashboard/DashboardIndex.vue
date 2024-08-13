@@ -95,7 +95,7 @@ export default {
 				month: {
 					options: {
 						theme: {
-							mode: 'dark',
+							mode: this.getTheme(),
 							monochrome: {
 								enabled: true,
 								color: '#079cff',
@@ -130,7 +130,7 @@ export default {
 				hour: {
 					options: {
 						theme: {
-							mode: 'dark',
+							mode: this.getTheme(),
 							monochrome: {
 								enabled: true,
 								color: '#079cff',
@@ -168,7 +168,7 @@ export default {
 				month: {
 					options: {
 						theme: {
-							mode: 'dark',
+							mode: this.getTheme(),
 							monochrome: {
 								enabled: true,
 								color: '#079cff',
@@ -214,6 +214,17 @@ export default {
 	},
 	mounted() {
 		searchStore.getSearchResults()
+	},
+	methods: {
+		getTheme() {
+			if (document.body.hasAttribute('data-theme-light')) {
+				return 'light'
+			}
+			if (document.body.hasAttribute('data-theme-default')) {
+				return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+			}
+			return 'dark'
+		},
 	},
 }
 </script>
