@@ -9,7 +9,7 @@ import { navigationStore } from '../store/store.js'
 			<Catalogi v-if="navigationStore.selected === 'catalogi'" />
 			<Organisations v-if="navigationStore.selected === 'organisations'" />
 			<Themes v-if="navigationStore.selected === 'themes'" />
-			<Dashboard v-if="navigationStore.selected === 'dashboard'"/>
+			<Dashboard v-if="navigationStore.selected === 'dashboard'" />
 			<Directory v-if="navigationStore.selected === 'directory'" />
 			<Publications v-if="navigationStore.selected === 'publication'" />
 			<Matadata v-if="navigationStore.selected === 'metaData'" />
