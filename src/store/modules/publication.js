@@ -160,7 +160,7 @@ export const usePublicationStore = defineStore(
 			},
 			setAttachmentFile(files) {
 				this.attachmentFile = files
-				console.log('Files' + files)
+				console.log('Active attachment files set to ' + files)
 			},
 		},
 		setPublicationList(publicationList) {

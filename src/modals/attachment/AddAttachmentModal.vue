@@ -117,7 +117,7 @@ export default {
 	},
 	props: {
 		dropFiles: {
-			type: Object,
+			type: Array,
 			required: false,
 			default: null,
 		},
