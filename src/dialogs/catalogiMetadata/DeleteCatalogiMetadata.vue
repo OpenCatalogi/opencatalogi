@@ -5,13 +5,13 @@ import { navigationStore, catalogiStore, metadataStore } from '../../store/store
 <template>
 	<NcDialog
 		v-if="navigationStore.dialog === 'deleteCatalogiMetadata'"
-		name="Catalogi Metadata verwijderen"
+		name="Publicatie type verwijderen van catalogi"
 		:can-close="false">
 		<p v-if="!succes">
 			Wil je <b>{{ metadataStore.metaDataItem?.title }}</b> verwijderen van <b>{{ catalogiStore.catalogiItem?.title }}</b>?
 		</p>
 		<NcNoteCard v-if="succes" type="success">
-			<p>Metadata succesvol verwijderd</p>
+			<p>Publicatie type succesvol verwijderd</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="error" type="error">
 			<p>{{ error }}</p>

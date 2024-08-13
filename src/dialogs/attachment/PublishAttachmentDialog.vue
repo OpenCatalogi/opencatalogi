@@ -69,7 +69,6 @@ export default {
 	methods: {
 		PublishAttachment() {
 			this.loading = true
-			publicationStore.attachmentItem.status = 'published'
 			fetch(
 				`/index.php/apps/opencatalogi/api/attachments/${publicationStore.attachmentItem.id}`,
 				{
@@ -79,27 +78,22 @@ export default {
 					},
 					body: JSON.stringify(publicationStore.attachmentItem),
 				},
-			)
-				.then((response) => {
-					this.loading = false
-					this.succes = true
-					// Lets refresh the attachment list
-					response.json().then((data) => {
-						publicationStore.setAttachmentItem(data)
-					})
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
-					}
-					publicationStore.getConceptAttachments()
-					// Wait for the user to read the feedback then close the model
-					const self = this
-					setTimeout(function() {
-						self.succes = false
-						publicationStore.setAttachmentItem(false)
-						navigationStore.setDialog(false)
-					}, 2000)
-				})
+			).then((response) => {
+				this.loading = false
+				this.succes = true
+
+				if (publicationStore.publicationItem) {
+					publicationStore.getPublicationAttachments(publicationStore.publicationItem)
+				}
+
+				// Wait for the user to read the feedback then close the model
+				const self = this
+				setTimeout(function() {
+					self.succes = false
+					publicationStore.setAttachmentItem(false)
+					navigationStore.setDialog(false)
+				}, 2000)
+			})
 				.catch((err) => {
 					this.error = err
 					this.loading = false

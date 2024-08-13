@@ -27,7 +27,7 @@ import { searchStore, directoryStore, metadataStore } from '../../store/store.js
 				{{ listing.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
-		<NcAppSidebarTab id="share-tab" name="Metadata" :order="3">
+		<NcAppSidebarTab id="share-tab" name="Publicatie typen" :order="3">
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>

@@ -50,7 +50,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						</NcButton>
 						<NcSelect v-bind="metaData"
 							v-model="metaData.value"
-							input-label="MetaData *"
+							input-label="Publicatie type *"
 							:loading="metaDataLoading"
 							:disabled="publicationLoading"
 							required />
@@ -59,7 +59,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<div v-if="catalogi.value?.id && metaData.value?.id">
 						<NcButton :disabled="loading"
 							@click="metaData.value = null">
-							Terug naar Metadata
+							Terug naar publicatie typen
 						</NcButton>
 						<NcTextField :disabled="loading"
 							label="Titel *"
