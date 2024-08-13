@@ -87,7 +87,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 
 import axios from 'axios'
 
-const { files, open: openFileUpload, reset } = useFileDialog()
+const { files, open: openFileUpload, reset } = useFileDialog({ multiple: false })
 
 export default {
 	name: 'AddAttachmentModal',
@@ -126,6 +126,7 @@ export default {
 
 			axios.post('/index.php/apps/opencatalogi/api/attachments', {
 				...(publicationStore.attachmentItem),
+				published: null,
 				_file: files.value ? files.value[0] : '',
 			}, {
 				headers: {
@@ -140,40 +141,38 @@ export default {
 				this.success = true
 				reset()
 				// Lets refresh the attachment list
-				if (publicationStore.publicationItem?.id) {
-					publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-					// @todo update the publication item
-				}
+				if (publicationStore.publicationItem) {
+					publicationStore.getPublicationAttachments(publicationStore.publicationItem)
 
-				fetch(
-					`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
-					{
-						method: 'PUT',
-						headers: {
-							'Content-Type': 'application/json',
+					fetch(
+						`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
+						{
+							method: 'PUT',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								...publicationStore.publicationItem,
+								attachments: [...publicationStore.publicationItem.attachments, response.data.id],
+							}),
 						},
-						body: JSON.stringify({
-							...publicationStore.publicationItem,
-							attachments: [...publicationStore.publicationItem.attachments, response.data.id],
-						}),
-					},
-				)
-					.then((response) => {
-						this.loading = false
+					)
+						.then((response) => {
+							this.loading = false
 
-						// Lets refresh the publicationList
-						publicationStore.refreshPublicationList()
-						response.json().then((data) => {
-							publicationStore.setPublicationItem(data)
+							// Lets refresh the publicationList
+							publicationStore.refreshPublicationList()
+							response.json().then((data) => {
+								publicationStore.setPublicationItem(data)
+							})
+
 						})
-
-					})
-					.catch((err) => {
-						this.error = err
-						this.loading = false
-					})
+						.catch((err) => {
+							this.error = err
+							this.loading = false
+						})
 				// store.refreshCatalogiList()
-
+				}
 				publicationStore.setAttachmentItem(response)
 
 				// Wait for the user to read the feedback then close the model

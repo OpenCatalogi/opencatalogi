@@ -76,32 +76,6 @@ export const usePublicationStore = defineStore(
 			},
 			getPublicationAttachments(publication) { // @todo this might belong in a service?
 				fetch(
-					'/index.php/apps/opencatalogi/api/attachments',
-					{
-						method: 'GET',
-					},
-				)
-					.then(
-						(response) => {
-							response.json().then(
-								(data) => {
-									this.publicationAttachments = data.results.map(
-										(attachmentItem) => new Attachment(attachmentItem),
-									)
-									return data
-								},
-							)
-						},
-					)
-					.catch(
-						(err) => {
-							console.error(err)
-							return err
-						},
-					)
-			},
-			getPublicationAttachmentsById(publication) { // @todo this might belong in a service?
-				fetch(
 					`/index.php/apps/opencatalogi/api/publications/${publication.id}/attachments`,
 					{
 						method: 'GET',

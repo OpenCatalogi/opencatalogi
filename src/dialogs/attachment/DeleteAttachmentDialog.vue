@@ -83,39 +83,37 @@ export default {
 					this.loading = false
 					this.succes = true
 					// Lets refresh the attachment list
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
-					}
+					if (publicationStore.publicationItem) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem)
+						this.filterdAttachments = publicationStore.publicationItem.attachments.filter((attachment) => { return parseInt(attachment) !== parseInt(publicationStore.attachmentItem.id) })
 
-					this.filterdAttachments = publicationStore.publicationItem.attachments.filter((attachment) => { return parseInt(attachment) !== parseInt(publicationStore.attachmentItem.id) })
-
-					fetch(
-						`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
-						{
-							method: 'PUT',
-							headers: {
-								'Content-Type': 'application/json',
+						fetch(
+							`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
+							{
+								method: 'PUT',
+								headers: {
+									'Content-Type': 'application/json',
+								},
+								body: JSON.stringify({
+									...publicationStore.publicationItem,
+									attachments: [...this.filterdAttachments],
+								}),
 							},
-							body: JSON.stringify({
-								...publicationStore.publicationItem,
-								attachments: [...this.filterdAttachments],
-							}),
-						},
-					)
-						.then((response) => {
-							this.loading = false
+						)
+							.then((response) => {
+								this.loading = false
 
-							// Lets refresh the publicationList
-							publicationStore.refreshPublicationList()
-							response.json().then((data) => {
-								publicationStore.setPublicationItem(data)
+								// Lets refresh the publicationList
+								publicationStore.refreshPublicationList()
+								response.json().then((data) => {
+									publicationStore.setPublicationItem(data)
+								})
 							})
-						})
-						.catch((err) => {
-							this.error = err
-							this.loading = false
-						})
+							.catch((err) => {
+								this.error = err
+								this.loading = false
+							})
+					}
 
 					// Wait for the user to read the feedback then close the model
 					const self = this

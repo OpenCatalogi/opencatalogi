@@ -67,7 +67,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('AddAttachment')">
+				<NcActionButton @click="addAttachment">
 					<template #icon>
 						<FilePlusOutline :size="20" />
 					</template>
@@ -215,14 +215,14 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								:bold="false"
 								:active="publicationStore.attachmentId === attachment.id"
 								:force-display-actions="true"
-								:details="attachment?.status">
+								:details="(attachment?.published && attachment?.published <= now.toISOString()) ? 'Gepubliseerd' : 'Niet gepubliseerd'">
 								<template #icon>
-									<CheckCircle v-if="attachment?.status === 'published'"
-										:class="attachment?.published && 'publishedIcon'"
+									<CheckCircle v-if="attachment?.published && attachment?.published <= now.toISOString()"
+										:class="attachment?.published <= now.toISOString() && 'publishedIcon'"
 										disable-menu
 										:size="44" />
-									<ExclamationThick v-if="attachment?.status !== 'published'"
-										:class="!attachment?.published && 'warningIcon'"
+									<ExclamationThick v-if="!attachment?.published || attachment?.published > now.toISOString()"
+										:class="!attachment?.published && 'warningIcon' || attachment?.published > now.toISOString() && 'warningIcon'"
 										disable-menu
 										:size="44" />
 								</template>
@@ -242,13 +242,13 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 										</template>
 										Download
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status !== 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
+									<NcActionButton v-if="!attachment?.published || attachment?.published > now.toISOString()" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
 										</template>
 										Publiceren
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
+									<NcActionButton v-if="attachment?.published && attachment?.published <= now.toISOString()" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
@@ -416,6 +416,7 @@ export default {
 			attachments: [],
 			catalogi: [],
 			metadata: [],
+			now: new Date(),
 			prive: false,
 			loading: false,
 			catalogiLoading: false,
@@ -478,7 +479,7 @@ export default {
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi)
 						this.fetchMetaData(data.metaData)
-						publicationStore.getPublicationAttachmentsById(data)
+						publicationStore.getPublicationAttachments(data)
 						// this.loading = false
 					})
 				})
@@ -522,6 +523,10 @@ export default {
 					console.error(err)
 					if (loading) { this.metaDataLoading = false }
 				})
+		},
+		addAttachment() {
+			publicationStore.setAttachmentItem([])
+			navigationStore.setModal('AddAttachment')
 		},
 		deletePublication() {
 			publicationStore.setPublicationItem(this.publication)

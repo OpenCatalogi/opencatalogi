@@ -100,9 +100,8 @@ export default {
 					this.loading = false
 					this.success = response.ok
 					// Lets refresh the catalogiList
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
+					if (publicationStore.publicationItem) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem)
 					}
 					response.json().then((data) => {
 						publicationStore.setAttachmentItem(data)
