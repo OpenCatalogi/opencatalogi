@@ -1,10 +1,15 @@
 <h1>Publicatie {{ publication.title }}</h1>
+{% if publication.catalogi|default %}
 <p>Catalogi: {{ publication.catalogi.title }}</p>
+{% endif %}
+{% if publication.metaData|default %}
 <p>Publicatie Type: {{ publication.metaData.title }}</p>
-<p>Referentie: {{ publication.reference }}</p>
-<p>Samenvatting: {{ publication.summary }}</p>
-<p>Beschrijving: {{ publication.description }}</p>
+{% endif %}
+{% if publication.reference|default %}<p>Referentie: {{ publication.reference }}</p>{% endif %}
+{% if publication.summary|default %}<p>Samenvatting: {{ publication.summary }}</p>{% endif %}
+{% if publication.description|default %}<p>Beschrijving: {{ publication.description }}</p>{% endif %}
 
+{% if publication.data|default %}
 <style>
 	table.tb { border-collapse: collapse; width:300px; }
 	.tb th, .tb td { padding: 5px; border: solid 1px #777; }
@@ -23,3 +28,4 @@
 		</tr>
 	{% endfor %}
 </table>
+{% endif %}

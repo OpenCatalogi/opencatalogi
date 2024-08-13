@@ -19,7 +19,8 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
-use OCP\IUserSession;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Symfony\Component\Uid\Uuid;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -27,6 +28,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Twig\Loader\FilesystemLoader;
 use Mpdf\Mpdf;
+use ZipArchive;
 
 class PublicationsController extends Controller
 {
@@ -38,8 +40,7 @@ class PublicationsController extends Controller
 		private readonly PublicationMapper $publicationMapper,
 		private readonly AttachmentMapper $attachmentMapper,
 		private readonly IAppConfig $config,
-		private readonly FileService $fileService,
-		private readonly IUserSession $userSession
+		private readonly FileService $fileService
 	)
     {
         parent::__construct($appName, $request);
@@ -152,18 +153,20 @@ class PublicationsController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function attachments(string|int $id, ObjectService $objectService): JSONResponse
+	public function attachments(string|int $id, ObjectService $objectService, array|null $publication = null): JSONResponse
 	{
-		$jsonResponse = $this->show($id, $objectService);
-		$publication = $jsonResponse->getData();
-		if (is_array($publication) === true && isset($publication['error']) === true) {
-			return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
-		}
+		if ($publication === null) {
+			$jsonResponse = $this->show($id, $objectService);
+			$publication = $jsonResponse->getData();
+			if (is_array($publication) === true && isset($publication['error']) === true) {
+				return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
+			}
 
-		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
-			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
-		) {
-			$publication = $publication->jsonSerialize();
+			if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+				|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
+			) {
+				$publication = $publication->jsonSerialize();
+			}
 		}
 
 		$attachments = $publication['attachments'];
@@ -214,6 +217,213 @@ class PublicationsController extends Controller
 
         return new JSONResponse($result);
     }
+
+
+	/**
+	 * Creates a pdf file containing all metadata of the given publication.
+	 *
+	 * @param ObjectService $objectService The ObjectService, used to connect to a MongoDB database.
+	 * @param string|int $id The id of a Publication we want to create / update a pdf file for.
+	 * @param bool|null $download If we should return a download response (true = default) or only generate and save the file in NextCloud (false).
+	 * @param array|null $publication If we already have a publication body prevent extra database requests by passing it along.
+	 *
+	 * @return JSONResponse A JSONResponse ... todo
+	 * @throws LoaderError|RuntimeError|SyntaxError|MpdfException|Exception
+	 */
+	private function createPublicationFile(ObjectService $objectService, string|int $id, ?bool $download = true, ?array $publication = null): JSONResponse
+	{
+		if ($publication === null) {
+			$jsonResponse = $this->show(id: $id, objectService: $objectService);
+			$publication = $jsonResponse->getData();
+			if (is_array($publication) === true && isset($publication['error']) === true) {
+				return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
+			}
+
+			if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+				|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
+			) {
+				$publication = $publication->jsonSerialize();
+			}
+		}
+
+		// Initialize Twig
+		$loader = new FilesystemLoader(paths: 'lib/Templates', rootPath: '/var/www/html/apps-extra/opencatalogi');
+		$twig = new Environment($loader);
+
+		// Render the Twig template
+		$html = $twig->render(name: 'publication.html.twig', context: ['publication' => $publication]);
+
+		// Check if the directory exists, if not, create it
+		if (file_exists(filename: '/tmp/mpdf') === false) {
+			mkdir(directory: '/tmp/mpdf', recursive: true);
+		}
+
+		// Set permissions for the directory (ensure it's writable)
+		chmod(filename: '/tmp/mpdf', permissions: 0777);
+
+		// Initialize mPDF
+		$mpdf = new Mpdf(config: ['tempDir' => '/tmp/mpdf']);
+
+		// Write HTML to PDF
+		$mpdf->WriteHTML(html: $html);
+
+		// Output to a file
+		$filename = "{$publication['title']}.pdf";
+		$mpdf->Output(name: $filename, dest: Destination::FILE);
+
+		// Create the Publicaties folder and the Publication specific folder.
+		$this->fileService->createFolder(folderPath: 'Publicaties');
+		$publicationFolder = $this->fileService->getPublicationFolderName(
+			publicationId: $publication['id'],
+			publicationTitle: $publication['title']
+		);
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder");
+
+		// Save the uploaded file
+		$filePath = "Publicaties/$publicationFolder/$filename";
+		$this->fileService->deleteFile(filePath: $filePath);
+		$created = $this->fileService->uploadFile(
+			content: file_get_contents(filename: $filename),
+			filePath: $filePath
+		);
+
+		// Create ShareLink
+		$shareLink = $this->fileService->createShareLink(path: $filePath);
+
+		if ($created === false) {
+			return new JSONResponse(data: ['error' => "Failed to upload this file: $filePath to NextCloud"], statusCode: 500);
+		}
+
+		if ($download === true) {
+			// Output directly to the browser
+			$mpdf->Output(name: $filename, dest: Destination::DOWNLOAD);
+		}
+
+		// Remove tmp folder
+		rmdir(directory: '/tmp/mpdf');
+
+		return new JSONResponse(['downloadUrl' => "$shareLink/download"], 200);
+	}
+
+
+	/**
+	 * todo:
+	 *
+	 * @param ObjectService $objectService
+	 * @param string|int $id
+	 *
+	 * @return JSONResponse
+	 * @throws LoaderError|MpdfException|RuntimeError|SyntaxError
+	 */
+	private function creatPublicationZip(ObjectService $objectService, string|int $id): JSONResponse
+	{
+		// Get the publication.
+		$jsonResponse = $this->show(id: $id, objectService: $objectService);
+		$publication = $jsonResponse->getData();
+		if (is_array($publication) === true && isset($publication['error']) === true) {
+			return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
+		}
+
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
+		) {
+			$publication = $publication->jsonSerialize();
+		}
+
+		// Update the publication .pdf file containing publication metadata.
+		$jsonResponse = $this->createPublicationFile(objectService: $objectService, id: $id, download: false, publication: $publication);
+		$publicationFile = $jsonResponse->getData();
+		if (is_array($publicationFile) === true && isset($publicationFile['error']) === true) {
+			return new JSONResponse(data: $publicationFile, statusCode: $jsonResponse->getStatus());
+		}
+
+		// Get all publication attachments.
+		$attachments = $this->attachments(id: $id, objectService: $objectService, publication: $publication)->getData();
+		if (isset($attachments['results']) === false) {
+			return new JSONResponse(data: ['error' => "failed to get attachments for this publication: $id"], statusCode: 500);
+		}
+
+		// Temporary paths.
+		$tempFolder = '/tmp/nextcloud_download_' . $publication['title'];
+		$tempZip = '/tmp/publicatie_' . $publication['title'] . '.zip';
+
+		// Create temporary directory
+		if (file_exists(filename: $tempFolder) === false) {
+			mkdir(directory: $tempFolder, recursive: true);
+			if (count($attachments['results']) > 0) {
+				mkdir(directory: "$tempFolder/Bijlagen", recursive: true);
+			}
+		}
+
+		// Add .pdf file containing publication metadata.
+		$file_content = file_get_contents(filename: $publicationFile['downloadUrl']);
+		if ($file_content !== false) {
+			file_put_contents(filename: "$tempFolder/{$publication['title']}.pdf", data: $file_content);
+		}
+
+		// Add all attachments in Bijlagen folder.
+		foreach ($attachments['results'] as $attachment) {
+			$attachment = $attachment->jsonSerialize();
+			$file_content = file_get_contents(filename: $attachment['downloadUrl']);
+			if ($file_content !== false) {
+				$filePath = explode(separator: '/', string: $attachment['reference']);
+				file_put_contents(filename: "$tempFolder/Bijlagen/".end(array: $filePath), data: $file_content);
+			}
+		}
+
+		// Create ZIP archive.
+		$zip = new ZipArchive();
+		if ($zip->open(filename: $tempZip, flags: ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+			$files = new RecursiveIteratorIterator(
+				iterator: new RecursiveDirectoryIterator($tempFolder),
+				mode: RecursiveIteratorIterator::LEAVES_ONLY
+			);
+
+			foreach ($files as $name => $file) {
+				// Skip directories (they would be added automatically)
+				if ($file->isDir() === false) {
+					$filePath = $file->getRealPath();
+					$relativePath = substr(string: $filePath, offset: strlen(string: $tempFolder) + 1);
+
+					// Add file to zip
+					$zip->addFile(filepath: $filePath, entryname: $relativePath);
+				}
+			}
+			$zip->close();
+		} else {
+			return new JSONResponse(data: ['error' => "failed to create ZIP archive for this publication: $id"], statusCode: 500);
+		}
+
+		// Send the ZIP file to the client for download.
+		header(header: 'Content-Type: application/zip');
+		header(header: 'Content-disposition: attachment; filename=' . basename($tempZip));
+		header(header: 'Content-Length: ' . filesize($tempZip));
+		readfile(filename: $tempZip);
+
+		// Cleanup temporary files.
+		array_map(callback: 'unlink', array: glob(pattern: "$tempFolder/*.*"));
+		rmdir(directory: $tempFolder);
+		unlink(filename: $tempZip);
+
+		return new JSONResponse([], 200);
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function download(string|int $id, ObjectService $objectService): JSONResponse
+	{
+		return match ($this->request->getHeader('Accept')) {
+			'application/pdf' => $this->createPublicationFile(objectService: $objectService, id: $id),
+			'application/zip' => $this->creatPublicationZip(objectService: $objectService, id: $id),
+			default => new JSONResponse(
+				data: ['error' => 'Unsupported Accept header, please use [application/pdf] or [application/zip]'],
+				statusCode: 400
+			),
+		};
+	}
 
 
     /**
@@ -267,8 +477,6 @@ class PublicationsController extends Controller
 			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
 
 		}
-
-		$this->createPublicationFile(objectService: $objectService, publication: $returnData);
 
         // get post from requests
         return new JSONResponse($returnData);
@@ -330,8 +538,6 @@ class PublicationsController extends Controller
 
 		}
 
-		$this->createPublicationFile(objectService: $objectService, publication: $returnData);
-
 		// get post from requests
 		return new JSONResponse($returnData);
     }
@@ -380,81 +586,4 @@ class PublicationsController extends Controller
 		// get post from requests
 		return new JSONResponse($returnData);
     }
-
-	/**
-	 * TODO
-	 *
-	 * @param ObjectService $objectService
-	 * @param array|null $publication
-	 * @param null|string|int $id
-	 *
-	 * @return bool
-	 * @throws LoaderError|RuntimeError|SyntaxError|MpdfException|Exception
-	 */
-	public function createPublicationFile(ObjectService $objectService, ?array $publication = null, null|string|int $id = null): bool
-	{
-		if (empty($publication) === true) {
-			if ($id === null) {
-				return false;
-			}
-
-			$publication = $this->show(id: $id, objectService: $objectService)->getData();
-			if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
-				|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
-			) {
-				$publication = $publication->jsonSerialize();
-			}
-		}
-
-		// Initialize Twig
-		$loader = new FilesystemLoader('lib/Templates', '/var/www/html/apps-extra/opencatalogi');
-		$twig = new Environment($loader);
-
-		// Render the Twig template
-		$html = $twig->render('publication.html.twig', ['publication' => $publication]);
-
-		// Check if the directory exists, if not, create it
-		if (!file_exists('/tmp/mpdf')) {
-			mkdir('/tmp/mpdf', 0777, true);
-		}
-
-		// Set permissions for the directory (ensure it's writable)
-		chmod('/tmp/mpdf', 0777);
-
-		// Initialize mPDF
-		$mpdf = new Mpdf(['tempDir' => '/tmp/mpdf']);
-
-		// Write HTML to PDF
-		$mpdf->WriteHTML($html);
-
-		// Output to a file or directly to the browser
-		$filename = "{$publication['title']}.pdf";
-		$mpdf->Output($filename, Destination::FILE);
-
-		// Create the Publicaties folder and the Publication specific folder.
-		$this->fileService->createFolder(folderPath: 'Publicaties');
-		$publicationFolder = $this->fileService->getPublicationFolderName(
-			publicationId: $publication['id'],
-			publicationTitle: $publication['title']
-		);
-		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder");
-
-		// Save the uploaded file
-		$filePath = "Publicaties/$publicationFolder/$filename";
-		$this->fileService->deleteFile(filePath: $filePath);
-		$created = $this->fileService->uploadFile(
-			content: file_get_contents(filename: $filename),
-			filePath: $filePath
-		);
-
-		// Todo:
-//		return $this->fileService->createShareLink(path: $filePath);
-
-		if ($created === false) {
-//			return new JSONResponse(data: ['error' => "Failed to upload file. This file: $filePath might already exist"], statusCode: 400);
-			return false;
-		}
-
-		return true;
-	}
 }

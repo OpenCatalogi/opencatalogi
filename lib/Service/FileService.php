@@ -4,8 +4,13 @@ namespace OCA\OpenCatalogi\Service;
 
 use DateTime;
 use Exception;
+use OCP\Files\GenericFileException;
+use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IUserSession;
+use OCP\Lock\LockedException;
 use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 
@@ -76,7 +81,7 @@ class FileService
 		$userId = $currentUser ? $currentUser->getUID() : 'Guest';
 		try {
 			$userFolder = $this->rootFolder->getUserFolder(userId: $userId);
-		} catch(\OCP\Files\NotPermittedException) {
+		} catch(NotPermittedException) {
 			$this->logger->error("Can't create share link for $path because user (folder) couldn't be found");
 
 			return "User (folder) couldn't be found";
@@ -85,7 +90,7 @@ class FileService
 		try {
 			// Note: if we ever want to create share links for folders instead of files, just remove this try catch and only use setTarget, not setNodeId.
 			$file = $userFolder->get(path: $path);
-		} catch(\OCP\Files\NotFoundException $e) {
+		} catch(NotFoundException $e) {
 			$this->logger->error("Can't create share link for $path because file doesn't exist");
 
 			return 'File not found at '.$path;
@@ -136,7 +141,7 @@ class FileService
 		try {
 			try {
 				$userFolder->get(path: $filePath);
-			} catch(\OCP\Files\NotFoundException $e) {
+			} catch(NotFoundException $e) {
 				$userFolder->newFile(path: $filePath);
 				$file = $userFolder->get(path: $filePath);
 
@@ -149,7 +154,7 @@ class FileService
 			$this->logger->warning("File $filePath already exists.");
 			return false;
 
-		} catch(\OCP\Files\NotPermittedException|\OCP\Files\GenericFileException|\OCP\Lock\LockedException $e) {
+		} catch(NotPermittedException|GenericFileException|LockedException $e) {
 			$this->logger->error("Can't create file $filePath: " . $e->getMessage());
 
 			throw new Exception("Can't write to file $filePath");
@@ -179,13 +184,13 @@ class FileService
 				$file->delete();
 
 				return true;
-			} catch(\OCP\Files\NotFoundException $e) {
+			} catch(NotFoundException $e) {
 				// File does not exist.
 				$this->logger->warning("File $filePath does not exist.");
 
 				return false;
 			}
-		} catch(\OCP\Files\NotPermittedException|\OCP\Files\InvalidPathException $e) {
+		} catch(NotPermittedException|InvalidPathException $e) {
 			$this->logger->error("Can't delete file $filePath: " . $e->getMessage());
 
 			throw new Exception("Can't delete file $filePath");
@@ -212,7 +217,7 @@ class FileService
 		try {
 			try {
 				$userFolder->get(path: $folderPath);
-			} catch(\OCP\Files\NotFoundException $e) {
+			} catch(NotFoundException $e) {
 				$userFolder->newFolder(path: $folderPath);
 
 				return true;
@@ -222,7 +227,7 @@ class FileService
 			$this->logger->info("This folder already exits $folderPath");
 			return false;
 
-		} catch(\OCP\Files\NotPermittedException $e) {
+		} catch(NotPermittedException $e) {
 			$this->logger->error("Can't create folder $folderPath: " . $e->getMessage());
 
 			throw new Exception("Can\'t create folder $folderPath");
