@@ -9,6 +9,7 @@ use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCA\OpenCatalogi\Service\SearchService;
+use OCA\OpenCatalogi\Service\ValidationService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -202,7 +203,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService, ValidationService $validationService): JSONResponse
     {
 		$data = $this->request->getParams();
 
@@ -213,6 +214,8 @@ class PublicationsController extends Controller
 				unset($data[$key]);
 			}
 		}
+
+		$data = $validationService->validatePublication($data);
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
