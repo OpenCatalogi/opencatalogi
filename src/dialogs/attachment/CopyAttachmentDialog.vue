@@ -86,14 +86,11 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.succes = true
-					// Lets refresh the attachment list
-					response.json().then((data) => {
-						publicationStore.setAttachmentItem(data)
-					})
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
+
+					if (publicationStore.publicationItem) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem)
 					}
+
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {

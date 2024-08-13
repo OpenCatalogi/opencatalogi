@@ -76,7 +76,7 @@ export const usePublicationStore = defineStore(
 			},
 			getPublicationAttachments(publication) { // @todo this might belong in a service?
 				fetch(
-					'/index.php/apps/opencatalogi/api/attachments',
+					`/index.php/apps/opencatalogi/api/publications/${publication.id}/attachments`,
 					{
 						method: 'GET',
 					},
