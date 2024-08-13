@@ -220,18 +220,76 @@ class PublicationsController extends Controller
 
 
 	/**
+	 * Create/updates a file containing all metadata of a publication to NextCloud files, finds/creates a share link and returns it.
+	 *
+	 * @param string $filename The (tmp) filename of the file to store in NextCloud files.
+	 * @param array $publication The publication data used to find/create the publication specific folder in NextCloud files.
+	 *
+	 * @return string|JSONResponse A share link url or an error JSONResponse.
+	 * @throws Exception When a function reading or writing to NextCloud files goes wrong.
+	 */
+	private function saveFileToNextCloud(string $filename, array $publication): string|JSONResponse
+	{
+		// Create the Publicaties folder and the Publication specific folder.
+		$this->fileService->createFolder(folderPath: 'Publicaties');
+		$publicationFolder = $this->fileService->getPublicationFolderName(
+			publicationId: $publication['id'],
+			publicationTitle: $publication['title']
+		);
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder");
+
+		// Save the file to NextCloud.
+		$filePath = "Publicaties/$publicationFolder/$filename";
+		$created = $this->fileService->updateFile(
+			content: file_get_contents(filename: $filename),
+			filePath: $filePath,
+			createNew: true
+		);
+
+		if ($created === false) {
+			return new JSONResponse(data: ['error' => "Failed to upload this file: $filePath to NextCloud"], statusCode: 500);
+		}
+
+		// Create ShareLink
+		$share = $this->fileService->findShare(path: $filePath);
+		if ($share !== null) {
+			$shareLink = $this->fileService->getShareLink($share);
+		} else {
+			$shareLink = $this->fileService->createShareLink(path: $filePath);
+		}
+
+		return $shareLink;
+	}
+
+
+	/**
 	 * Creates a pdf file containing all metadata of the given publication.
 	 *
 	 * @param ObjectService $objectService The ObjectService, used to connect to a MongoDB database.
 	 * @param string|int $id The id of a Publication we want to create / update a pdf file for.
-	 * @param bool|null $download If we should return a download response (true = default) or only generate and save the file in NextCloud (false).
-	 * @param array|null $publication If we already have a publication body prevent extra database requests by passing it along.
+	 * @param array|null $options A few options for this function, "download" & "saveToNextCloud" can't be both false!
+	 * "download" = If we should return a download response (true = default).
+	 * "saveToNextCloud" = If we should create and save the file in NextCloud (true = default).
+	 * "publication" = If we already have a publication body prevent extra database requests by passing it along.
 	 *
-	 * @return JSONResponse A JSONResponse ... todo
+	 * @return JSONResponse A JSONResponse for downloading the pdf file. Or a JSONResponse containing a downloadUrl for a nextCloud file. Or an error response.
 	 * @throws LoaderError|RuntimeError|SyntaxError|MpdfException|Exception
 	 */
-	private function createPublicationFile(ObjectService $objectService, string|int $id, ?bool $download = true, ?array $publication = null): JSONResponse
+	private function createPublicationFile(
+		ObjectService $objectService, string|int $id,
+		?array $options = [
+			'download' => true,
+			'saveToNextCloud' => true,
+			'publication' => null
+		]
+	): JSONResponse
 	{
+		if ($options['download'] === false && $options['saveToNextCloud'] === false) {
+			return new JSONResponse(data: ['error' => '$options "download" & "saveToNextCloud" for function
+			createPublicationFile should not be both set to false'], statusCode: 500);
+		}
+
+		$publication = $options['publication'] ?? null;
 		if ($publication === null) {
 			$jsonResponse = $this->show(id: $id, objectService: $objectService);
 			$publication = $jsonResponse->getData();
@@ -267,34 +325,19 @@ class PublicationsController extends Controller
 		// Write HTML to PDF
 		$mpdf->WriteHTML(html: $html);
 
-		// Output to a file
 		$filename = "{$publication['title']}.pdf";
-		$mpdf->Output(name: $filename, dest: Destination::FILE);
 
-		// Create the Publicaties folder and the Publication specific folder.
-		$this->fileService->createFolder(folderPath: 'Publicaties');
-		$publicationFolder = $this->fileService->getPublicationFolderName(
-			publicationId: $publication['id'],
-			publicationTitle: $publication['title']
-		);
-		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder");
+		if (isset($options['saveToNextCloud']) === false || $options['saveToNextCloud'] === true) {
+			// Output to a file
+			$mpdf->Output(name: $filename, dest: Destination::FILE);
 
-		// Save the uploaded file
-		$filePath = "Publicaties/$publicationFolder/$filename";
-		$this->fileService->deleteFile(filePath: $filePath);
-		$created = $this->fileService->uploadFile(
-			content: file_get_contents(filename: $filename),
-			filePath: $filePath
-		);
-
-		// Create ShareLink
-		$shareLink = $this->fileService->createShareLink(path: $filePath);
-
-		if ($created === false) {
-			return new JSONResponse(data: ['error' => "Failed to upload this file: $filePath to NextCloud"], statusCode: 500);
+			$shareLink = $this->saveFileToNextCloud(filename: $filename, publication: $publication);
+			if ($shareLink instanceof JSONResponse) {
+				return $shareLink;
+			}
 		}
 
-		if ($download === true) {
+		if (isset($options['download']) === false || $options['download'] === true) {
 			// Output directly to the browser
 			$mpdf->Output(name: $filename, dest: Destination::DOWNLOAD);
 		}
@@ -302,17 +345,21 @@ class PublicationsController extends Controller
 		// Remove tmp folder
 		rmdir(directory: '/tmp/mpdf');
 
-		return new JSONResponse(['downloadUrl' => "$shareLink/download"], 200);
+		if (isset($options['saveToNextCloud']) === false || $options['saveToNextCloud'] === true) {
+			return new JSONResponse(['downloadUrl' => "$shareLink/download"], 200);
+		}
+		return new JSONResponse([], 200);
 	}
 
 
 	/**
-	 * todo:
+	 * Creates a ZIP archive containing a pdf file with all metadata of the publication for id = $id.
+	 * Will also add all Attachments (Bijlagen) of this publication to this ZIP archive in a folder called 'Bijlagen'.
 	 *
-	 * @param ObjectService $objectService
-	 * @param string|int $id
+	 * @param ObjectService $objectService The ObjectService, used to connect to a MongoDB database.
+	 * @param string|int $id The id of a Publication we want to download a ZIP archive for.
 	 *
-	 * @return JSONResponse
+	 * @return JSONResponse A JSONResponse for downloading the ZIP archive. Or an error response.
 	 * @throws LoaderError|MpdfException|RuntimeError|SyntaxError
 	 */
 	private function creatPublicationZip(ObjectService $objectService, string|int $id): JSONResponse
@@ -331,7 +378,11 @@ class PublicationsController extends Controller
 		}
 
 		// Update the publication .pdf file containing publication metadata.
-		$jsonResponse = $this->createPublicationFile(objectService: $objectService, id: $id, download: false, publication: $publication);
+		$jsonResponse = $this->createPublicationFile(objectService: $objectService, id: $id,
+			options: [
+				'download' => false,
+				'publication' => $publication
+			]);
 		$publicationFile = $jsonResponse->getData();
 		if (is_array($publicationFile) === true && isset($publicationFile['error']) === true) {
 			return new JSONResponse(data: $publicationFile, statusCode: $jsonResponse->getStatus());

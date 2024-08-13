@@ -4,6 +4,7 @@ namespace OCA\OpenCatalogi\Service;
 
 use DateTime;
 use Exception;
+use OCP\Files\File;
 use OCP\Files\GenericFileException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
@@ -12,6 +13,7 @@ use OCP\Files\NotPermittedException;
 use OCP\IUserSession;
 use OCP\Lock\LockedException;
 use OCP\Share\IManager;
+use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
 class FileService
@@ -54,6 +56,63 @@ class FileService
 		return $protocol . $host;
 	}
 
+
+	/**
+	 * Returns a share link for the given IShare object.
+	 *
+	 * @param IShare $share An IShare object we are getting the share link for.
+	 *
+	 * @return string The share link needed to get the file or folder for the given IShare object.
+	 */
+	public function getShareLink(IShare $share): string
+	{
+		return $this->getCurrentDomain() . '/index.php/s/' . $share->getToken();
+	}
+
+
+	/**
+	 * Try to find a IShare object with given $path & $shareType.
+	 *
+	 * @param string $path The path to a file we are trying to find a IShare object for.
+	 * @param int|null $shareType The shareType of the share we are trying to find.
+	 *
+	 * @return IShare|null An IShare object or null.
+	 */
+	public function findShare(string $path, ?int $shareType = 3): ?IShare
+	{
+		$path = trim(string: $path, characters: '/');
+
+		// Get the current user.
+		$currentUser = $this->userSession->getUser();
+		$userId = $currentUser ? $currentUser->getUID() : 'Guest';
+		try {
+			$userFolder = $this->rootFolder->getUserFolder(userId: $userId);
+		} catch(NotPermittedException) {
+			$this->logger->error("Can't find share for $path because user (folder) for user $userId couldn't be found");
+
+			return null;
+		}
+
+		try {
+			// Note: if we ever want to find shares for folders instead of files, this should work for folders as well?
+			$file = $userFolder->get(path: $path);
+		} catch(NotFoundException $e) {
+			$this->logger->error("Can't find share for $path because file doesn't exist");
+
+			return null;
+		}
+
+		if ($file instanceof File) {
+			$shares = $this->shareManager->getSharesBy(userId: $userId, shareType: $shareType, path: $file);
+			if (count($shares) > 0) {
+				return $shares[0];
+			}
+		}
+
+		return null;
+	}
+
+
 	/**
 	 * Creates and returns a share link for a file (or folder).
 	 * (https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html#create-a-new-share)
@@ -82,7 +141,7 @@ class FileService
 		try {
 			$userFolder = $this->rootFolder->getUserFolder(userId: $userId);
 		} catch(NotPermittedException) {
-			$this->logger->error("Can't create share link for $path because user (folder) couldn't be found");
+			$this->logger->error("Can't create share link for $path because user (folder) for user $userId couldn't be found");
 
 			return "User (folder) couldn't be found";
 		}
@@ -112,7 +171,7 @@ class FileService
 		try
 		{
 			$share = $this->shareManager->createShare(share: $share);
-			return $this->getCurrentDomain() . '/index.php/s/' . $share->getToken();
+			return $this->getShareLink($share);
 		} catch (Exception $exception) {
 			$this->logger->error("Can't create share link for $path: " . $exception->getMessage());
 
@@ -121,7 +180,7 @@ class FileService
 	}
 
 	/**
-	 * Uploads a file to NextCloud. Will overwrite a file if it already exists and create a new one if it doesn't exist.
+	 * Uploads a file to NextCloud. Will create a new file if it doesn't exist yet.
 	 *
 	 * @param mixed $content The content of the file.
 	 * @param string $filePath Path (from root) where to save the file. NOTE: this should include the name and extension/format of the file as well! (example.pdf)
@@ -148,6 +207,55 @@ class FileService
 				$file->putContent(data: $content);
 
 				return true;
+			}
+
+			// File already exists.
+			$this->logger->warning("File $filePath already exists.");
+			return false;
+
+		} catch(NotPermittedException|GenericFileException|LockedException $e) {
+			$this->logger->error("Can't create file $filePath: " . $e->getMessage());
+
+			throw new Exception("Can't write to file $filePath");
+		}
+	}
+
+	/**
+	 * Overwrites an existing file in NextCloud.
+	 *
+	 * @param mixed $content The content of the file.
+	 * @param string $filePath Path (from root) where to save the file. NOTE: this should include the name and extension/format of the file as well! (example.pdf)
+	 * @param bool $createNew Default = false. If set to true this function will create a new file if it doesn't exist yet.
+	 *
+	 * @return bool True if successful.
+	 * @throws Exception In case we can't write to file because it is not permitted.
+	 */
+	public function updateFile(mixed $content, string $filePath, bool $createNew = false): bool
+	{
+		$filePath = trim(string: $filePath, characters: '/');
+
+		// Get the current user.
+		$currentUser = $this->userSession->getUser();
+		$userFolder = $this->rootFolder->getUserFolder(userId: $currentUser ? $currentUser->getUID() : 'Guest');
+
+		// Check if file exists and overwrite it if it does.
+		try {
+			try {
+				$file = $userFolder->get(path: $filePath);
+
+				$file->putContent(data: $content);
+
+				return true;
+			} catch(NotFoundException $e) {
+				if ($createNew === true) {
+					$userFolder->newFile(path: $filePath);
+					$file = $userFolder->get(path: $filePath);
+
+					$file->putContent(data: $content);
+
+					$this->logger->info("File $filePath did not exist, created a new file for it.");
+					return true;
+				}
 			}
 
 			// File already exists.
