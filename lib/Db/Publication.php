@@ -92,7 +92,7 @@ class Publication extends Entity implements JsonSerializable
 			try {
 				$this->$method($value);
 			} catch (\Exception $exception) {
-//				var_dump("Error writing $key");
+//				("Error writing $key");
 			}
 		}
 

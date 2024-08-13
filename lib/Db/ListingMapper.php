@@ -61,9 +61,6 @@ class ListingMapper extends QBMapper
 	{
 		$listing = new Listing();
 		$listing->hydrate(object: $object);
-
-//		var_dump($listing->getTitle());
-
 		return $this->insert(entity: $listing);
 	}
 
