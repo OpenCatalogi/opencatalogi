@@ -52,7 +52,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			<NcButton v-if="success === null"
 				:disabled="!publication.title || !publication.summary"
 				type="primary"
-				@click="updatePublication()">
+				@click="addPublication()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<Plus v-if="!loading" :size="20" />
@@ -62,13 +62,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		</template>
 
 		<div class="formContainer">
-			<div v-if="catalogi?.value?.id">
+			<div v-if="catalogi?.value?.id && success === null">
 				<b>Catalogus:</b> {{ catalogi.value.label }}
 				<NcButton @click="catalogi.value = null">
 					Catalogus wijzigen
 				</NcButton>
 			</div>
-			<div v-if=" metaData.value?.id">
+			<div v-if=" metaData.value?.id && success === null">
 				<b>Publicatietype:</b> {{ metaData.value.label }}
 				<NcButton @click="metaData.value = null">
 					Publicatietype wijzigen
