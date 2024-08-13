@@ -7,72 +7,84 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		ref="modalRef"
 		label-id="AddAttachmentModal"
 		@close="navigationStore.setModal(false)">
-		<div class="modal__content">
+		<div ref="dropZoneRef" class="modal__content">
 			<h2>Bijlage toevoegen</h2>
-			<div v-if="success !== null || error">
-				<NcNoteCard v-if="success" type="success">
-					<p>Bijlage succesvol toegevoegd</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het toevoegen van bijlage</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="error" type="error">
-					<p>{{ error }}</p>
-				</NcNoteCard>
-			</div>
-			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="(files && true) || loading"
-					label="Titel"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.title"
-					required />
-				<NcTextField :disabled="loading"
-					label="Samenvatting"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.summary" />
-				<NcTextArea :disabled="loading"
-					label="Beschrijving"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.description" />
-				<NcTextField :disabled="loading"
-					label="Toegangs URL"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.accessUrl" />
-				<NcTextField :disabled="(files && true) || loading"
-					label="Download URL"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.downloadUrl" />
-				<div class="addFileButtonGroup">
-					<NcButton v-if="success === null && !files"
-						:disabled="checkIfDisabled() || loading"
-						type="primary"
-						@click="openFileUpload()">
-						<template #icon>
-							<Plus :size="20" />
-						</template>
-						Bestand toevoegen
-					</NcButton>
+			<div v-if="!isOverDropZone">
+				<div v-if="success !== null || error">
+					<NcNoteCard v-if="success" type="success">
+						<p>Bijlage succesvol toegevoegd</p>
+					</NcNoteCard>
+					<NcNoteCard v-if="!success" type="error">
+						<p>Er is iets fout gegaan bij het toevoegen van bijlage</p>
+					</NcNoteCard>
+					<NcNoteCard v-if="error" type="error">
+						<p>{{ error }}</p>
+					</NcNoteCard>
+				</div>
+				<div v-if="success === null" class="form-group">
+					<NcTextField :disabled="(files && true) || loading"
+						label="Titel"
+						maxlength="255"
+						:value.sync="publicationStore.attachmentItem.title"
+						required />
+					<NcTextField :disabled="loading"
+						label="Samenvatting"
+						maxlength="255"
+						:value.sync="publicationStore.attachmentItem.summary" />
+					<NcTextArea :disabled="loading"
+						label="Beschrijving"
+						maxlength="255"
+						:value.sync="publicationStore.attachmentItem.description" />
+					<NcTextField :disabled="loading"
+						label="Toegangs URL"
+						maxlength="255"
+						:value.sync="publicationStore.attachmentItem.accessUrl" />
+					<NcTextField :disabled="(files && true) || loading"
+						label="Download URL"
+						maxlength="255"
+						:value.sync="publicationStore.attachmentItem.downloadUrl" />
+					<div class="addFileButtonGroup">
+						<NcButton v-if="success === null && !files"
+							:disabled="checkIfDisabled() || loading"
+							type="primary"
+							@click="openFileUpload()">
+							<template #icon>
+								<Plus :size="20" />
+							</template>
+							Bestand toevoegen
+						</NcButton>
 
-					<NcButton v-if="success === null && files"
-						:disabled="checkIfDisabled() || loading"
+						<NcButton v-if="success === null && files"
+							:disabled="checkIfDisabled() || loading"
+							type="primary"
+							@click="reset()">
+							<template #icon>
+								<Minus :size="20" />
+							</template>
+							<span v-for="file of files" :key="file.name">{{ file.name }}</span>
+						</NcButton>
+					</div>
+					<NcButton v-if="success === null"
+						:disabled="loading"
 						type="primary"
-						@click="reset()">
+						@click="addAttachment()">
 						<template #icon>
-							<Minus :size="20" />
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<Plus v-if="!loading" :size="20" />
 						</template>
-						<span v-for="file of files" :key="file.name">{{ file.name }}</span>
+						Toevoegen
 					</NcButton>
 				</div>
-				<NcButton v-if="success === null"
-					:disabled="loading"
-					type="primary"
-					@click="addAttachment()">
-					<template #icon>
-						<NcLoadingIcon v-if="loading" :size="20" />
-						<Plus v-if="!loading" :size="20" />
-					</template>
-					Toevoegen
-				</NcButton>
+			</div>
+			<div v-if="isOverDropZone">
+				<div class="filesListDragDropNotice">
+					<div class="filesListDragDropNoticeWrapper">
+						<TrayArrowDown :size="48" />
+						<h3 class="filesListDragDropNoticeTitle">
+							Drag and drop files here to upload
+						</h3>
+					</div>
+				</div>
 			</div>
 		</div>
 	</NcModal>
@@ -80,14 +92,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 
 <script>
 import { NcButton, NcLoadingIcon, NcModal, NcNoteCard, NcTextArea, NcTextField } from '@nextcloud/vue'
-import { useFileDialog } from '@vueuse/core'
+import { useFileSelection } from './../../composables/UseFileSelection.js'
+
+import { ref } from 'vue'
 
 import Minus from 'vue-material-design-icons/Minus.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import TrayArrowDown from 'vue-material-design-icons/TrayArrowDown.vue'
 
 import axios from 'axios'
 
-const { files, open: openFileUpload, reset } = useFileDialog({ multiple: false })
+const dropZoneRef = ref()
+const { isOverDropZone, openFileUpload, files, reset, setFiles } = useFileSelection({ allowMultiple: false, dropzone: dropZoneRef })
 
 export default {
 	name: 'AddAttachmentModal',
@@ -98,8 +114,13 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
-		// Icons
-		Plus,
+	},
+	props: {
+		dropFiles: {
+			type: Array,
+			required: false,
+			default: null,
+		},
 	},
 	data() {
 		return {
@@ -108,14 +129,22 @@ export default {
 			error: false,
 		}
 	},
+	watch: {
+		dropFiles: {
+			handler(addedFiles) {
+				publicationStore.attachmentFile && setFiles(addedFiles)
+			},
+			deep: true,
+		},
+	},
 	mounted() {
 		publicationStore.setAttachmentItem([])
 	},
 	methods: {
+
 		closeModal() {
 			navigationStore.modal = false
 		},
-
 		checkIfDisabled() {
 			if (publicationStore.attachmentItem.downloadUrl || publicationStore.attachmentItem.title) return true
 			return false
