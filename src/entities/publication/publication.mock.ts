@@ -20,9 +20,9 @@ export const mockPublicationsData = (): TPublication[] => [
 			key: 'anyvalue',
 			streetNumber: 1,
 			object: {
-                blabla: 'bla'
-            },
-            array: ['appel', 'peer', 0, [], {}]
+				blabla: 'bla',
+			},
+			array: ['appel', 'peer', 0, [], {}],
 		},
 		attachments: [],
 		attachmentCount: 1,

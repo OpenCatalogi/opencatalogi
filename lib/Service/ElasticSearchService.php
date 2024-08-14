@@ -91,7 +91,7 @@ class ElasticSearchService
 		}
 	}
 
-	public function parseFilter(string $name, array $filter): array
+	public function parseFilter(string $name, array|string $filter): array
 	{
 
 		if(is_array($filter) === false) {

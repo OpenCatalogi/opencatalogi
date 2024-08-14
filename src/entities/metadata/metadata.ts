@@ -52,6 +52,25 @@ export class Metadata implements TMetadata {
 			valuation: 'n',
 			class: 1,
 		}
+
+		// convert null's to the respective default value from predefined list of props
+		Object.keys(this.properties).forEach(obj => {
+			const defaultPropertiesProps = {
+				minimum: 0,
+				maximum: 0,
+				multipleOf: 0,
+				minItems: 0,
+				maxItems: 0,
+				minLength: 0,
+				maxLength: 0,
+			} as Pick<TMetadata['properties'][0], 'minimum' | 'maximum' | 'multipleOf' | 'minItems' | 'maxItems' | 'minLength' | 'maxLength'>
+
+			Object.keys(defaultPropertiesProps).forEach((key: keyof typeof defaultPropertiesProps) => {
+				if (this.properties[obj][key] === null) {
+					this.properties[obj][key] = defaultPropertiesProps[key]
+				}
+			})
+		})
 	}
 
 	/* istanbul ignore next */

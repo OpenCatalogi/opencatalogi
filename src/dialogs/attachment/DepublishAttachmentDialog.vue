@@ -30,7 +30,7 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 				v-if="!succes"
 				:disabled="loading"
 				type="primary"
-				@click="CopyAttachment()">
+				@click="depublishAttachment()">
 				<template #icon>
 					<NcLoadingIcon v-if="loading" :size="20" />
 					<PublishOff v-if="!loading" :size="20" />
@@ -67,10 +67,9 @@ export default {
 		}
 	},
 	methods: {
-		CopyAttachment() {
+		depublishAttachment() {
 			this.loading = true
-			publicationStore.attachmentItem.status = 'retracted'
-			publicationStore.attachmentItem.published = ''
+			publicationStore.attachmentItem.published = null
 			fetch(
 				`/index.php/apps/opencatalogi/api/attachments/${publicationStore.attachmentItem.id}`,
 				{
@@ -84,14 +83,11 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.succes = true
-					// Lets refresh the attachment list
-					response.json().then((data) => {
-						publicationStore.setAttachmentItem(data)
-					})
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
+
+					if (publicationStore.publicationItem) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem)
 					}
+
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
