@@ -60,7 +60,6 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
 			succes: false,
 			error: false,
@@ -68,7 +67,10 @@ export default {
 	},
 	methods: {
 		PublishAttachment() {
+			const now = new Date().toISOString()
 			this.loading = true
+			publicationStore.attachmentItem.published = now
+
 			fetch(
 				`/index.php/apps/opencatalogi/api/attachments/${publicationStore.attachmentItem.id}`,
 				{

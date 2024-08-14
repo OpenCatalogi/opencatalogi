@@ -7,84 +7,90 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		ref="modalRef"
 		label-id="AddAttachmentModal"
 		@close="navigationStore.setModal(false)">
-		<div ref="dropZoneRef" class="modal__content">
+		<div class="modal__content">
 			<h2>Bijlage toevoegen</h2>
-			<div v-if="!isOverDropZone">
-				<div v-if="success !== null || error">
-					<NcNoteCard v-if="success" type="success">
-						<p>Bijlage succesvol toegevoegd</p>
-					</NcNoteCard>
-					<NcNoteCard v-if="!success" type="error">
-						<p>Er is iets fout gegaan bij het toevoegen van bijlage</p>
-					</NcNoteCard>
-					<NcNoteCard v-if="error" type="error">
-						<p>{{ error }}</p>
-					</NcNoteCard>
-				</div>
-				<div v-if="success === null" class="form-group">
-					<NcTextField :disabled="(files && true) || loading"
-						label="Titel"
-						maxlength="255"
-						:value.sync="publicationStore.attachmentItem.title"
-						required />
-					<NcTextField :disabled="loading"
-						label="Samenvatting"
-						maxlength="255"
-						:value.sync="publicationStore.attachmentItem.summary" />
-					<NcTextArea :disabled="loading"
-						label="Beschrijving"
-						maxlength="255"
-						:value.sync="publicationStore.attachmentItem.description" />
-					<NcTextField :disabled="loading"
-						label="Toegangs URL"
-						maxlength="255"
-						:value.sync="publicationStore.attachmentItem.accessUrl" />
-					<NcTextField :disabled="(files && true) || loading"
-						label="Download URL"
-						maxlength="255"
-						:value.sync="publicationStore.attachmentItem.downloadUrl" />
-					<div class="addFileButtonGroup">
-						<NcButton v-if="success === null && !files"
-							:disabled="checkIfDisabled() || loading"
-							type="primary"
-							@click="openFileUpload()">
-							<template #icon>
-								<Plus :size="20" />
-							</template>
-							Bestand toevoegen
-						</NcButton>
 
-						<NcButton v-if="success === null && files"
-							:disabled="checkIfDisabled() || loading"
-							type="primary"
-							@click="reset()">
-							<template #icon>
-								<Minus :size="20" />
-							</template>
-							<span v-for="file of files" :key="file.name">{{ file.name }}</span>
-						</NcButton>
-					</div>
-					<NcButton v-if="success === null"
-						:disabled="loading"
-						type="primary"
-						@click="addAttachment()">
-						<template #icon>
-							<NcLoadingIcon v-if="loading" :size="20" />
-							<Plus v-if="!loading" :size="20" />
-						</template>
-						Toevoegen
-					</NcButton>
-				</div>
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Bijlage succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van bijlage</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
 			</div>
-			<div v-if="isOverDropZone">
-				<div class="filesListDragDropNotice">
-					<div class="filesListDragDropNoticeWrapper">
-						<TrayArrowDown :size="48" />
-						<h3 class="filesListDragDropNoticeTitle">
-							Drag and drop files here to upload
-						</h3>
+			<div v-if="success === null" class="form-group">
+				<NcTextField :disabled="(files && true) || loading"
+					label="Titel"
+					maxlength="255"
+					:value.sync="publicationStore.attachmentItem.title"
+					required />
+				<NcTextField :disabled="loading"
+					label="Samenvatting"
+					maxlength="255"
+					:value.sync="publicationStore.attachmentItem.summary" />
+				<NcTextArea :disabled="loading"
+					label="Beschrijving"
+					maxlength="255"
+					:value.sync="publicationStore.attachmentItem.description" />
+				<NcTextField :disabled="loading"
+					label="Toegangs URL"
+					maxlength="255"
+					:value.sync="publicationStore.attachmentItem.accessUrl" />
+				<NcTextField :disabled="(files && true) || loading"
+					label="Download URL"
+					maxlength="255"
+					:value.sync="publicationStore.attachmentItem.downloadUrl" />
+				<div class="addFileContainer" :class="checkIfDisabled() && 'addFileContainer--disabled'">
+					<div :ref="!checkIfDisabled() && 'dropZoneRef'" class="filesListDragDropNotice">
+						<div class="filesListDragDropNoticeWrapper">
+							<div class="filesListDragDropNoticeWrapperIcon">
+								<TrayArrowDown :size="48" />
+								<h3 class="filesListDragDropNoticeTitle">
+									Sleep bestanden hierheen om ze te uploaden
+								</h3>
+							</div>
+
+							<h3 class="filesListDragDropNoticeTitle">
+								Of
+							</h3>
+
+							<div class="filesListDragDropNoticeTitle">
+								<NcButton v-if="success === null && !files"
+									:disabled="checkIfDisabled() || loading"
+									type="primary"
+									@click="openFileUpload()">
+									<template #icon>
+										<Plus :size="20" />
+									</template>
+									Bestand toevoegen
+								</NcButton>
+
+								<NcButton v-if="success === null && files"
+									:disabled="checkIfDisabled() || loading"
+									type="primary"
+									@click="reset()">
+									<template #icon>
+										<Minus :size="20" />
+									</template>
+									<span v-for="file of files" :key="file.name">{{ file.name }}</span>
+								</NcButton>
+							</div>
+						</div>
 					</div>
 				</div>
+				<NcButton v-if="success === null"
+					:disabled="loading"
+					type="primary"
+					@click="addAttachment()">
+					<template #icon>
+						<NcLoadingIcon v-if="loading" :size="20" />
+						<Plus v-if="!loading" :size="20" />
+					</template>
+					Toevoegen
+				</NcButton>
 			</div>
 		</div>
 	</NcModal>
@@ -103,7 +109,7 @@ import TrayArrowDown from 'vue-material-design-icons/TrayArrowDown.vue'
 import axios from 'axios'
 
 const dropZoneRef = ref()
-const { isOverDropZone, openFileUpload, files, reset, setFiles } = useFileSelection({ allowMultiple: false, dropzone: dropZoneRef })
+const { openFileUpload, files, reset, setFiles } = useFileSelection({ allowMultiple: false, dropzone: dropZoneRef })
 
 export default {
 	name: 'AddAttachmentModal',
@@ -226,8 +232,11 @@ export default {
     text-align: center;
 }
 
-.addFileButtonGroup{
+.addFileContainer{
 	margin-block-end: var(--OC-margin-20);
+}
+.addFileContainer--disabled{
+	opacity: 0.4;
 }
 
 .zaakDetailsContainer {

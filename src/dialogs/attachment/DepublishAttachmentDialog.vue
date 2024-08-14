@@ -79,23 +79,22 @@ export default {
 					},
 					body: JSON.stringify(publicationStore.attachmentItem),
 				},
-			)
-				.then((response) => {
-					this.loading = false
-					this.succes = true
+			).then(() => {
+				this.loading = false
+				this.succes = true
 
-					if (publicationStore.publicationItem) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem)
-					}
+				if (publicationStore.publicationItem) {
+					publicationStore.getPublicationAttachments(publicationStore.publicationItem)
+				}
 
-					// Wait for the user to read the feedback then close the model
-					const self = this
-					setTimeout(function() {
-						self.succes = false
-						publicationStore.setAttachmentItem(false)
-						navigationStore.setDialog(false)
-					}, 2000)
-				})
+				// Wait for the user to read the feedback then close the model
+				const self = this
+				setTimeout(function() {
+					self.succes = false
+					publicationStore.setAttachmentItem(false)
+					navigationStore.setDialog(false)
+				}, 2000)
+			})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
