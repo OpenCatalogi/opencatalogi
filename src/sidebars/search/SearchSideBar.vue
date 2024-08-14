@@ -23,7 +23,7 @@ import { searchStore, directoryStore, metadataStore } from '../../store/store.js
 			<template #icon>
 				<DatabaseOutline :size="20" />
 			</template>
-			<NcCheckboxRadioSwitch v-for="(listing, i) in directoryStore.listingList" :key="i" type="switch">
+			<NcCheckboxRadioSwitch v-for="(listing, i) in directoryStore.listingList" :key="`${listing}${i}`" type="switch">
 				{{ listing.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
@@ -31,7 +31,7 @@ import { searchStore, directoryStore, metadataStore } from '../../store/store.js
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
-			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList" :key="i" type="switch">
+			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList" :key="`${metaData}${i}`" type="switch">
 				{{ metaData.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>

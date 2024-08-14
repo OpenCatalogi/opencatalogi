@@ -57,13 +57,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		</div>
 		<template #actions>
 			<NcButton
-				:disabled="loading"
-				icon=""
 				@click="navigationStore.setModal(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
+				{{ success ? 'Sluiten' : 'Annuleer' }}
+			</NcButton>
+			<NcButton
+				@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
+				<template #icon>
+					<Help :size="20" />
+				</template>
+				Help
 			</NcButton>
 			<NcButton v-if="success === null"
 				:disabled="!publicationItem.title || !publicationItem.summary"
@@ -92,6 +97,7 @@ import {
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 import Cancel from 'vue-material-design-icons/Cancel.vue'
+import Help from 'vue-material-design-icons/Help.vue'
 
 export default {
 	name: 'EditPublicationModal',
@@ -107,6 +113,7 @@ export default {
 		// Icons
 		ContentSaveOutline,
 		Cancel,
+		Help,
 	},
 	data() {
 		return {
@@ -213,37 +220,17 @@ export default {
 					this.loading = false
 				})
 		},
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>
 
 <style>
-.modal__content {
-  margin: var(--OC-margin-50);
-  text-align: center;
+.dialog__content {
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
-.zaakDetailsContainer {
-  margin-block-start: var(--OC-margin-20);
-  margin-inline-start: var(--OC-margin-20);
-  margin-inline-end: var(--OC-margin-20);
-}
-
-.success {
-  color: green;
-}
-
-.EPM-horizontal {
-	display: flex;
-	gap: 4px;
-	align-items: flex-end;
-	flex-wrap: wrap;
-}
-
-.wrapper {
-	display: flex;
-	gap: 4px;
-	align-items: flex-end;
-	flex-wrap: wrap;
-}
 </style>

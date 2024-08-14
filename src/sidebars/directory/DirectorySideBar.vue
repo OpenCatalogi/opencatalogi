@@ -79,7 +79,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 		<NcAppSidebarTab v-if="directoryStore.listingItem.id && navigationStore.selected === 'directory'"
 			id="metdata-tab"
 			name="Publicatie typen"
-			:order="2">
+			:order="3">
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
