@@ -1,7 +1,3 @@
-<script setup>
-import { searchStore } from '../../store/store.js'
-</script>
-
 <template>
 	<NcAppContent>
 		<h2 class="pageHeader">
@@ -81,12 +77,6 @@ export default {
 	components: {
 		NcAppContent,
 		apexchart: VueApexCharts,
-	},
-	props: {
-		search: {
-			type: String,
-			required: true,
-		},
 	},
 	data() {
 		return {
@@ -204,16 +194,6 @@ export default {
 
 			topFivePublications: ['1', '3', '5', '7', '23'],
 		}
-	},
-	watch: {
-		search: {
-			handler(search) {
-				searchStore.getSearchResults()
-			},
-		},
-	},
-	mounted() {
-		searchStore.getSearchResults()
 	},
 	methods: {
 		getTheme() {

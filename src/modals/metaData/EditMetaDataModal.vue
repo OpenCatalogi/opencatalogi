@@ -8,10 +8,10 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		label-id="editMetaDataModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
-			<h2>MetaData bewerken</h2>
+			<h2>Publicatie type bewerken</h2>
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
-					<p>Metadata succesvol bewerkt</p>
+					<p>Publicatie type succesvol bewerkt</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error">
 					<p>Er is iets fout gegaan bij het bewerken van metadata</p>
@@ -21,10 +21,23 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success == null" class="form-group">
-				<NcTextField label="Titel" :disabled="loading" :value.sync="metadataStore.metaDataItem.title" />
-				<NcTextField label="Versie" :disabled="loading" :value.sync="metadataStore.metaDataItem.version" />
-				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metadataStore.metaDataItem.description" />
-				<NcTextField label="vereisten (splits op ,)" :value.sync="metadataRequired" />
+				<NcTextField
+					label="Titel"
+					:disabled="loading"
+					:value.sync="metadataStore.metaDataItem.title" />
+				<NcTextField
+					label="Versie"
+					:disabled="loading"
+					:value.sync="metadataStore.metaDataItem.version" />
+				<NcTextField
+					label="Samenvatting *"
+					required="true"
+					:disabled="loading"
+					:value.sync="metadataStore.metaDataItem.summary" />
+				<NcTextArea
+					label="Beschrijving"
+					:disabled="loading"
+					:value.sync="metadataStore.metaDataItem.description" />
 			</div>
 			<NcButton
 				v-if="success == null"

@@ -2,14 +2,15 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use Elastic\Elasticsearch\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use OCA\OpenCatalogi\Db\AttachmentMapper;
 use OCA\opencatalogi\lib\Db\Publication;
 use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
@@ -24,6 +25,7 @@ class PublicationsController extends Controller
 		$appName,
 		IRequest $request,
 		private readonly PublicationMapper $publicationMapper,
+		private readonly AttachmentMapper $attachmentMapper,
 		private readonly IAppConfig $config
 	)
     {
@@ -83,17 +85,17 @@ class PublicationsController extends Controller
      * @NoCSRFRequired
      */
     public function catalog(string|int $id): TemplateResponse
-    {
-        // The TemplateResponse loads the 'main.php'
-        // defined in our app's 'templates' folder.
-        // We pass the $getParameter variable to the template
-        // so that the value is accessible in the template.
-        return new TemplateResponse(
-            $this->appName,
-            'PublicationsIndex',
-            []
-        );
-    }
+	{
+		// The TemplateResponse loads the 'main.php'
+		// defined in our app's 'templates' folder.
+		// We pass the $getParameter variable to the template
+		// so that the value is accessible in the template.
+		return new TemplateResponse(
+			$this->appName,
+			'PublicationsIndex',
+			[]
+		);
+	}
 
     /**
      * @NoAdminRequired
@@ -112,7 +114,7 @@ class PublicationsController extends Controller
 			$sort = $searchService->createSortForMySQL(filters: $filters);
 			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
 
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams, sort: $sort)]);
+			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams, sort: $sort)]);
 		}
 
 		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
@@ -133,16 +135,55 @@ class PublicationsController extends Controller
         return new JSONResponse($results);
     }
 
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function attachments(string|int $id, ObjectService $objectService): JSONResponse
+	{
+		$publication = $this->show($id, $objectService)->getData();
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
+		) {
+			$publication = $publication->jsonSerialize();
+		}
+
+		$attachments = $publication['attachments'];
+
+		if ($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			return new JSONResponse(['results' => $this->attachmentMapper->findMultiple($attachments)]);
+		}
+
+		$filters = [];
+		$filters['id']['$in'] = $attachments;
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters['_schema'] = 'attachment';
+
+		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
+
+		return new JSONResponse(['results' => $result['documents']]);
+	}
+
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
     public function show(string|int $id, ObjectService $objectService): JSONResponse
     {
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+		if ($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->publicationMapper->find(id: (int) $id));
+			try {
+				return new JSONResponse($this->publicationMapper->find(id: (int) $id));
+			} catch (DoesNotExistException $exception) {
+				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+			}
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');

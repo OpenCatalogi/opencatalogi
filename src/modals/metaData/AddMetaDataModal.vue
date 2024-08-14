@@ -6,24 +6,36 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 	<NcModal v-if="navigationStore.modal === 'addMetaData'"
 		ref="modalRef"
 		label-id="addMetaDataModal"
-		@close="navigationStore.setModal(false)">
+		@close="closeModal">
 		<div class="modal__content">
-			<h2>MetaData toevoegen</h2>
+			<h2>Publicatie type toevoegen</h2>
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
-					<p>Metadata succesvol toegevoegd</p>
+					<p>Publicatie type succesvol toegevoegd</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het toevoegen van metadata</p>
+					<p>Er is iets fout gegaan bij het toevoegen van publicatie type</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="error" type="error">
 					<p>{{ error }}</p>
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
-				<NcTextField label="Versie" :value.sync="metaData.version" />
-				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metaData.description" />
+				<NcTextField
+					label="Titel"
+					required="true"
+					value.sync="metaData.title" />
+				<NcTextField
+					label="Versie"
+					:value.sync="metaData.version" />
+				<NcTextField :disabled="loading"
+					label="Samenvatting *"
+					required="true"
+					:value.sync="metaData.summary" />
+				<NcTextArea
+					label="Beschrijving"
+					:disabled="loading"
+					:value.sync="metaData.description" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!metaData.title || loading"
@@ -71,6 +83,16 @@ export default {
 		}
 	},
 	methods: {
+		closeModal() {
+			this.success = null
+			this.metaData = {
+				title: '',
+				version: '',
+				description: '',
+				required: '',
+			}
+			navigationStore.setModal(false)
+		},
 		addMetaData() {
 			this.loading = true
 			fetch(
@@ -98,14 +120,7 @@ export default {
 					// Update the list
 					const self = this
 					setTimeout(function() {
-						self.success = null
-						this.metaData = {
-							title: '',
-							version: '',
-							description: '',
-							required: '',
-						}
-						navigationStore.setModal(false)
+						self.closeModal()
 					}, 2000)
 				})
 				.catch((err) => {
