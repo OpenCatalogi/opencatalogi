@@ -91,8 +91,6 @@ export default {
 			const bodyData = publicationStore.publicationItem
 			bodyData.data[this.key] = this.value
 			delete bodyData.publicationDate
-			bodyData.catalogi = bodyData?.catalogi?.id?.toString()
-			bodyData.metaData = bodyData?.metaData?.id?.toString()
 
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
@@ -101,7 +99,7 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(bodyData),
+					body: JSON.stringify({ ...bodyData, catalogi: bodyData.catalogi.id, metaData: bodyData.metaData.id }),
 				},
 			)
 				.then((response) => {
