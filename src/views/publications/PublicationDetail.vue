@@ -1,5 +1,7 @@
 <script setup>
 import { catalogiStore, metadataStore, navigationStore, publicationStore } from '../../store/store.js'
+import { ref } from 'vue'
+
 </script>
 
 <template>
@@ -67,7 +69,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					</template>
 					Eigenschap toevoegen
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('AddAttachment')">
+				<NcActionButton @click="addAttachment">
 					<template #icon>
 						<FilePlusOutline :size="20" />
 					</template>
@@ -205,9 +207,20 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 							Geen eigenschappen gevonden
 						</div>
 					</BTab>
-					<BTab title="Bijlagen">
+					<BTab  title="Bijlagen">
+						<div ref="dropZoneRef">
+						<div v-if="isOverDropZone">
+							<div class="filesListDragDropNotice">
+								<div class="filesListDragDropNoticeWrapper">
+									<TrayArrowDown :size="48" />
+									<h3 class="filesListDragDropNoticeTitle">
+										Drag and drop files here to upload
+									</h3>
+								</div>
+							</div>
+						</div>
 						<div
-							v-if="publicationStore.publicationAttachments.length > 0"
+							v-if="publicationStore.publicationAttachments.length > 0 && !isOverDropZone"
 							class="tabPanel">
 							<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments"
 								:key="`${attachment}${i}`"
@@ -215,14 +228,14 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								:bold="false"
 								:active="publicationStore.attachmentId === attachment.id"
 								:force-display-actions="true"
-								:details="attachment?.status">
+								:details="(attachment?.published && attachment?.published <= now.toISOString()) ? 'Gepubliseerd' : 'Niet gepubliseerd'">
 								<template #icon>
-									<CheckCircle v-if="attachment?.status === 'published'"
-										:class="attachment?.published && 'publishedIcon'"
+									<CheckCircle v-if="attachment?.published && attachment?.published <= now.toISOString()"
+										:class="attachment?.published <= now.toISOString() && 'publishedIcon'"
 										disable-menu
 										:size="44" />
-									<ExclamationThick v-if="attachment?.status !== 'published'"
-										:class="!attachment?.published && 'warningIcon'"
+									<ExclamationThick v-if="!attachment?.published || attachment?.published > now.toISOString()"
+										:class="!attachment?.published && 'warningIcon' || attachment?.published > now.toISOString() && 'warningIcon'"
 										disable-menu
 										:size="44" />
 								</template>
@@ -242,13 +255,13 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 										</template>
 										Download
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status !== 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
+									<NcActionButton v-if="!attachment?.published || attachment?.published > now.toISOString()" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 										<template #icon>
 											<Publish :size="20" />
 										</template>
 										Publiceren
 									</NcActionButton>
-									<NcActionButton v-if="attachment.status === 'published'" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
+									<NcActionButton v-if="attachment?.published && attachment?.published <= now.toISOString()" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 										<template #icon>
 											<PublishOff :size="20" />
 										</template>
@@ -269,7 +282,8 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								</template>
 							</NcListItem>
 						</div>
-						<div v-if="publicationStore.publicationAttachments.length === 0" class="tabPanel">
+
+						<div v-if="publicationStore.publicationAttachments.length === 0 && !isOverDropZone" class="tabPanel">
 							Geen bijlagen gevonden
 						</div>
 						<div v-if="publicationStore.publicationAttachments.length !== 0 && !publicationStore.publicationAttachments.length > 0" class="tabPanel">
@@ -279,6 +293,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 								appearance="dark"
 								name="Bijlagen aan het laden" />
 						</div>
+					</div>
 					</BTab>
 					<BTab title="Logging">
 						<table width="100%">
@@ -346,6 +361,7 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 <script>
 // Components
 import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
+import { useFileSelection } from './../../composables/UseFileSelection.js'
 import { BTab, BTabs } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 
@@ -356,6 +372,7 @@ import CircleOutline from 'vue-material-design-icons/CircleOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import TrayArrowDown from 'vue-material-design-icons/TrayArrowDown.vue'
 import Download from 'vue-material-design-icons/Download.vue'
 import ExclamationThick from 'vue-material-design-icons/ExclamationThick.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
@@ -368,6 +385,15 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import TimelineQuestionOutline from 'vue-material-design-icons/TimelineQuestionOutline.vue'
+
+function onDrop() {
+	publicationStore.setAttachmentItem([])
+	publicationStore.setAttachmentFile(files)
+	navigationStore.setModal('AddAttachment')
+}
+
+const dropZoneRef = ref()
+const { isOverDropZone, files } = useFileSelection({ allowMultiple: false, dropzone: dropZoneRef, onFileDrop: onDrop })
 
 export default {
 	name: 'PublicationDetail',
@@ -402,6 +428,7 @@ export default {
 		Download,
 		ArchivePlusOutline,
 		HelpCircleOutline,
+		TrayArrowDown,
 	},
 	props: {
 		publicationItem: {
@@ -414,6 +441,7 @@ export default {
 			publication: [],
 			catalogi: [],
 			metadata: [],
+			now: new Date(),
 			prive: false,
 			loading: false,
 			catalogiLoading: false,
@@ -457,7 +485,6 @@ export default {
 
 	},
 	mounted() {
-
 		this.publication = publicationStore.publicationItem
 
 		this.fetchCatalogi(this.publication.catalogi?.id, true)
@@ -522,6 +549,10 @@ export default {
 					if (loading) { this.metaDataLoading = false }
 				})
 		},
+		addAttachment() {
+			publicationStore.setAttachmentItem([])
+			navigationStore.setModal('AddAttachment')
+		},
 		deletePublication() {
 			publicationStore.setPublicationItem(this.publication)
 			navigationStore.setModal('deletePublication')
@@ -549,7 +580,9 @@ export default {
 		openLink(url, type = '') {
 			window.open(url, type)
 		},
+
 	},
+
 }
 </script>
 

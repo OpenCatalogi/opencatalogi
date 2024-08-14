@@ -9,6 +9,7 @@ export const usePublicationStore = defineStore(
 			publicationList: [],
 			publicationDataKey: false,
 			attachmentItem: false,
+			attachmentFile: null,
 			publicationAttachments: false,
 			conceptPublications: [],
 			conceptAttachments: [],
@@ -157,6 +158,10 @@ export const usePublicationStore = defineStore(
 				this.attachmentItem = attachmentItem && new Attachment(attachmentItem)
 				console.log('Active attachment item set to ' + attachmentItem)
 			},
+			setAttachmentFile(files) {
+				this.attachmentFile = files
+				console.log('Active attachment files set to ' + files)
+			},
 		},
 		setPublicationList(publicationList) {
 			this.publicationList = publicationList.map((publicationItem) => new Publication(publicationItem))
@@ -253,6 +258,9 @@ export const usePublicationStore = defineStore(
 		setAttachmentItem(attachmentItem) {
 			this.attachmentItem = attachmentItem && new Attachment(attachmentItem)
 			console.log('Active attachment item set to ' + attachmentItem)
+		},
+		setAttachmentFile(files) {
+			this.attachmentFile = files
 		},
 	},
 )

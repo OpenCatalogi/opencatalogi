@@ -1,7 +1,11 @@
+<script setup>
+import { publicationStore } from './../store/store.js'
+</script>
+
 <template>
 	<!-- Placeholder Div -->
 	<div>
-		<AddAttachmentModal />
+		<AddAttachmentModal :drop-files="publicationStore.attachmentFile" />
 		<EditAttachmentModal />
 		<AddPublicationModal />
 		<EditPublicationModal />
