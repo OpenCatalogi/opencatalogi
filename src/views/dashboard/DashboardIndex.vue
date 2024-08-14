@@ -214,10 +214,6 @@ export default {
     background-color: transparent !important;
 }
 
-.pageHeader {
-    margin-block-end: 4rem;
-}
-
 .dashboard-content {
     margin-inline: auto;
     max-width: 1000px;
