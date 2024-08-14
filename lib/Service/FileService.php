@@ -4,6 +4,8 @@ namespace OCA\OpenCatalogi\Service;
 
 use DateTime;
 use Exception;
+use Mpdf\Mpdf;
+use Mpdf\MpdfException;
 use OCP\Files\File;
 use OCP\Files\GenericFileException;
 use OCP\Files\InvalidPathException;
@@ -15,6 +17,14 @@ use OCP\Lock\LockedException;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig\Loader\FilesystemLoader;
+use ZipArchive;
 
 class FileService
 {
@@ -340,6 +350,110 @@ class FileService
 
 			throw new Exception("Can\'t create folder $folderPath");
 		}
+	}
+
+
+	/**
+	 * Creates a pdf file in a /tmp folder using a twig template and given context.
+	 *
+	 * @param string $twigTemplate The path and filename of the twig template to use in the folder "lib/Templates".
+	 * @param array $context The context to pass along while rendering the pdf with the given twig template.
+	 *
+	 * @return Mpdf A Mpdf object.
+	 * Use "$mpdf->Output(name: $filename, dest: Destination::FILE)" to create the actual file or use one of the other Destination::X options.
+	 * Please use the "rmdir(directory: '/tmp/mpdf');" function after this to clean up temporary files.
+	 * @throws MpdfException|LoaderError|RuntimeError|SyntaxError
+	 */
+	public function createPdf(string $twigTemplate, array $context): Mpdf
+	{
+		// Initialize Twig
+		$loader = new FilesystemLoader(paths: 'lib/Templates', rootPath: '/var/www/html/apps-extra/opencatalogi');
+		$twig = new Environment($loader);
+
+		// Render the Twig template
+		$html = $twig->render(name: $twigTemplate, context: $context);
+
+		// Check if the directory exists, if not, create it
+		if (file_exists(filename: '/tmp/mpdf') === false) {
+			mkdir(directory: '/tmp/mpdf', recursive: true);
+		}
+
+		// Set permissions for the directory (ensure it's writable)
+		chmod(filename: '/tmp/mpdf', permissions: 0777);
+
+		// Initialize mPDF
+		$mpdf = new Mpdf(config: ['tempDir' => '/tmp/mpdf']);
+
+		// Write HTML to PDF
+		$mpdf->WriteHTML(html: $html);
+
+		return $mpdf;
+	}
+
+
+	/**
+	 * Creates a ZIP archive at the $tempZip location using the $tempFolder location as input for the ZIP archive.
+	 * Please use "unlink(filename: $tempZip);" or the downloadZip() function after calling this function to clean up temporary files.
+	 *
+	 * @param string $inputFolder The (tmp) location used as input for creating the ZIP archive.
+	 * @param string $tempZip The tmp location where the ZIP will be saved. Please start this with '/tmp/..' and end with '../zipName.zip'.
+	 *
+	 * @return string|null Returns null if created successfully and a string in case of an error.
+	 */
+	public function createZip(string $inputFolder, string $tempZip): ?string
+	{
+		// Create ZIP archive.
+		$zip = new ZipArchive();
+		if ($zip->open(filename: $tempZip, flags: ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+			$files = new RecursiveIteratorIterator(
+				iterator: new RecursiveDirectoryIterator($inputFolder),
+				mode: RecursiveIteratorIterator::LEAVES_ONLY
+			);
+
+			foreach ($files as $name => $file) {
+				// Skip directories (they would be added automatically)
+				if ($file->isDir() === false) {
+					$filePath = $file->getRealPath();
+					$relativePath = substr(string: $filePath, offset: strlen(string: $inputFolder) + 1);
+
+					// Add file to zip
+					$zip->addFile(filepath: $filePath, entryname: $relativePath);
+				}
+			}
+			$zip->close();
+		} else {
+			return "failed to create ZIP archive";
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * A function that outputs a downloadable ZIP to the response body of the current api request.
+	 * Can best be used after creating a ZIP archive with the createZip() function.
+	 *
+	 * @param string $tempZip The tmp location where the ZIP is saved.
+	 * Note that "unlink(filename: $tempZip);" will be called at the end of this function.
+	 * @param string|null $inputFolder The tmp location used as input for creating the ZIP archive.
+	 * Will unlink all files in this folder and remove this folder at the end of this function.
+	 *
+	 * @return void
+	 */
+	public function downloadZip(string $tempZip, ?string $inputFolder = null): void
+	{
+		// Send the ZIP file to the client for download.
+		header(header: 'Content-Type: application/zip');
+		header(header: 'Content-disposition: attachment; filename=' . basename($tempZip));
+		header(header: 'Content-Length: ' . filesize($tempZip));
+		readfile(filename: $tempZip);
+
+		// Cleanup temporary files.
+		if ($inputFolder !== null) {
+			array_map(callback: 'unlink', array: glob(pattern: "$inputFolder/*.*"));
+			rmdir(directory: $inputFolder);
+		}
+		unlink(filename: $tempZip);
 	}
 
 }

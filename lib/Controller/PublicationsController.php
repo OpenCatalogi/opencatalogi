@@ -22,12 +22,9 @@ use OCP\IRequest;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Symfony\Component\Uid\Uuid;
-use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use Twig\Loader\FilesystemLoader;
-use Mpdf\Mpdf;
 use ZipArchive;
 
 class PublicationsController extends Controller
@@ -156,16 +153,9 @@ class PublicationsController extends Controller
 	public function attachments(string|int $id, ObjectService $objectService, array|null $publication = null): JSONResponse
 	{
 		if ($publication === null) {
-			$jsonResponse = $this->show($id, $objectService);
-			$publication = $jsonResponse->getData();
-			if (is_array($publication) === true && isset($publication['error']) === true) {
-				return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
-			}
-
-			if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
-				|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
-			) {
-				$publication = $publication->jsonSerialize();
+			$publication = $this->getPublicationData(id: $id, objectService: $objectService);
+			if ($publication instanceof JSONResponse) {
+				return $publication;
 			}
 		}
 
@@ -190,6 +180,33 @@ class PublicationsController extends Controller
 
 		return new JSONResponse(['results' => $result['documents']]);
 	}
+
+
+	/**
+	 * Gets a publication for the given id (if it exists) and returns its data as an array.
+	 *
+	 * @param string|int $id The id of a Publication we want to get a data array for.
+	 * @param ObjectService $objectService The ObjectService, used to connect to a MongoDB database.
+	 *
+	 * @return array|JSONResponse An array containing all data of the publication or an error JSONResponse.
+	 */
+	private function getPublicationData(string|int $id, ObjectService $objectService): array|JSONResponse
+	{
+		$jsonResponse = $this->show($id, $objectService);
+		$publication = $jsonResponse->getData();
+		if (is_array($publication) === true && isset($publication['error']) === true) {
+			return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
+		}
+
+		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
+			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
+		) {
+			$publication = $publication->jsonSerialize();
+		}
+
+		return $publication;
+	}
+
 
     /**
      * @NoAdminRequired
@@ -291,46 +308,23 @@ class PublicationsController extends Controller
 
 		$publication = $options['publication'] ?? null;
 		if ($publication === null) {
-			$jsonResponse = $this->show(id: $id, objectService: $objectService);
-			$publication = $jsonResponse->getData();
-			if (is_array($publication) === true && isset($publication['error']) === true) {
-				return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
-			}
-
-			if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
-				|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
-			) {
-				$publication = $publication->jsonSerialize();
+			$publication = $this->getPublicationData(id: $id, objectService: $objectService);
+			if ($publication instanceof JSONResponse) {
+				return $publication;
 			}
 		}
 
-		// Initialize Twig
-		$loader = new FilesystemLoader(paths: 'lib/Templates', rootPath: '/var/www/html/apps-extra/opencatalogi');
-		$twig = new Environment($loader);
+		// Create the PDF file using a twig template and publication data.
+		$mpdf = $this->fileService->createPdf(twigTemplate: 'publication.html.twig', context: ['publication' => $publication]);
 
-		// Render the Twig template
-		$html = $twig->render(name: 'publication.html.twig', context: ['publication' => $publication]);
-
-		// Check if the directory exists, if not, create it
-		if (file_exists(filename: '/tmp/mpdf') === false) {
-			mkdir(directory: '/tmp/mpdf', recursive: true);
-		}
-
-		// Set permissions for the directory (ensure it's writable)
-		chmod(filename: '/tmp/mpdf', permissions: 0777);
-
-		// Initialize mPDF
-		$mpdf = new Mpdf(config: ['tempDir' => '/tmp/mpdf']);
-
-		// Write HTML to PDF
-		$mpdf->WriteHTML(html: $html);
-
+		// The filename.
 		$filename = "{$publication['title']}.pdf";
 
 		if (isset($options['saveToNextCloud']) === false || $options['saveToNextCloud'] === true) {
-			// Output to a file
+			// Output to a file.
 			$mpdf->Output(name: $filename, dest: Destination::FILE);
 
+			// Save the file in NextCloud.
 			$shareLink = $this->saveFileToNextCloud(filename: $filename, publication: $publication);
 			if ($shareLink instanceof JSONResponse) {
 				return $shareLink;
@@ -338,17 +332,59 @@ class PublicationsController extends Controller
 		}
 
 		if (isset($options['download']) === false || $options['download'] === true) {
-			// Output directly to the browser
+			// Output directly to the browser.
 			$mpdf->Output(name: $filename, dest: Destination::DOWNLOAD);
 		}
 
-		// Remove tmp folder
+		// Remove tmp folder after mpdf->Output & $this->saveFileToNextCloud have been called.
 		rmdir(directory: '/tmp/mpdf');
 
 		if (isset($options['saveToNextCloud']) === false || $options['saveToNextCloud'] === true) {
-			return new JSONResponse(['downloadUrl' => "$shareLink/download"], 200);
+			return new JSONResponse(data: [
+					'downloadUrl' => "$shareLink/download",
+					'filename' 	  => $filename
+				], statusCode: 200
+			);
 		}
 		return new JSONResponse([], 200);
+	}
+
+
+	/**
+	 * Prepares the creation of a ZIP archive for a publication, by adding all folders & files we want in this zip
+	 * to a $tempFolder that will be used as input for creating the actual ZIP archive later.
+	 *
+	 * @param string $tempFolder The tmp location used as input for creating the ZIP archive.
+	 * @param array $attachments An array containing all Attachments (Bijlagen) for the Publication.
+	 * @param array $publicationFile An array containing the downloadUrl and filename of the pdf file created that contains all metadata of the Publication.
+	 *
+	 * @return void
+	 */
+	private function prepareZip(string $tempFolder, array $attachments, array $publicationFile): void
+	{
+		// Create temporary directory
+		if (file_exists(filename: $tempFolder) === false) {
+			mkdir(directory: $tempFolder, recursive: true);
+			if (count($attachments['results']) > 0) {
+				mkdir(directory: "$tempFolder/Bijlagen", recursive: true);
+			}
+		}
+
+		// Add .pdf file containing publication metadata.
+		$file_content = file_get_contents(filename: $publicationFile['downloadUrl']);
+		if ($file_content !== false) {
+			file_put_contents(filename: "$tempFolder/{$publicationFile['filename']}", data: $file_content);
+		}
+
+		// Add all attachments in Bijlagen folder.
+		foreach ($attachments['results'] as $attachment) {
+			$attachment = $attachment->jsonSerialize();
+			$file_content = file_get_contents(filename: $attachment['downloadUrl']);
+			if ($file_content !== false) {
+				$filePath = explode(separator: '/', string: $attachment['reference']);
+				file_put_contents(filename: "$tempFolder/Bijlagen/".end(array: $filePath), data: $file_content);
+			}
+		}
 	}
 
 
@@ -362,31 +398,21 @@ class PublicationsController extends Controller
 	 * @return JSONResponse A JSONResponse for downloading the ZIP archive. Or an error response.
 	 * @throws LoaderError|MpdfException|RuntimeError|SyntaxError
 	 */
-	private function creatPublicationZip(ObjectService $objectService, string|int $id): JSONResponse
+	private function createPublicationZip(ObjectService $objectService, string|int $id): JSONResponse
 	{
 		// Get the publication.
-		$jsonResponse = $this->show(id: $id, objectService: $objectService);
-		$publication = $jsonResponse->getData();
-		if (is_array($publication) === true && isset($publication['error']) === true) {
-			return new JSONResponse(data: $publication, statusCode: $jsonResponse->getStatus());
-		}
-
-		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
-			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
-		) {
-			$publication = $publication->jsonSerialize();
+		$publication = $this->getPublicationData(id: $id, objectService: $objectService);
+		if ($publication instanceof JSONResponse) {
+			return $publication;
 		}
 
 		// Update the publication .pdf file containing publication metadata.
 		$jsonResponse = $this->createPublicationFile(objectService: $objectService, id: $id,
-			options: [
-				'download' => false,
-				'publication' => $publication
-			]);
-		$publicationFile = $jsonResponse->getData();
-		if (is_array($publicationFile) === true && isset($publicationFile['error']) === true) {
-			return new JSONResponse(data: $publicationFile, statusCode: $jsonResponse->getStatus());
+			options: ['download' => false, 'publication' => $publication]);
+		if ($jsonResponse->getStatus() !== 200) {
+			return $jsonResponse;
 		}
+		$publicationFile = $jsonResponse->getData();
 
 		// Get all publication attachments.
 		$attachments = $this->attachments(id: $id, objectService: $objectService, publication: $publication)->getData();
@@ -398,63 +424,17 @@ class PublicationsController extends Controller
 		$tempFolder = '/tmp/nextcloud_download_' . $publication['title'];
 		$tempZip = '/tmp/publicatie_' . $publication['title'] . '.zip';
 
-		// Create temporary directory
-		if (file_exists(filename: $tempFolder) === false) {
-			mkdir(directory: $tempFolder, recursive: true);
-			if (count($attachments['results']) > 0) {
-				mkdir(directory: "$tempFolder/Bijlagen", recursive: true);
-			}
-		}
+		// Prepare ZIP by creating a temp folder with everything we want in the ZIP archive.
+		$this->prepareZip(tempFolder: $tempFolder, attachments: $attachments, publicationFile: $publicationFile);
 
-		// Add .pdf file containing publication metadata.
-		$file_content = file_get_contents(filename: $publicationFile['downloadUrl']);
-		if ($file_content !== false) {
-			file_put_contents(filename: "$tempFolder/{$publication['title']}.pdf", data: $file_content);
-		}
-
-		// Add all attachments in Bijlagen folder.
-		foreach ($attachments['results'] as $attachment) {
-			$attachment = $attachment->jsonSerialize();
-			$file_content = file_get_contents(filename: $attachment['downloadUrl']);
-			if ($file_content !== false) {
-				$filePath = explode(separator: '/', string: $attachment['reference']);
-				file_put_contents(filename: "$tempFolder/Bijlagen/".end(array: $filePath), data: $file_content);
-			}
-		}
-
-		// Create ZIP archive.
-		$zip = new ZipArchive();
-		if ($zip->open(filename: $tempZip, flags: ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-			$files = new RecursiveIteratorIterator(
-				iterator: new RecursiveDirectoryIterator($tempFolder),
-				mode: RecursiveIteratorIterator::LEAVES_ONLY
-			);
-
-			foreach ($files as $name => $file) {
-				// Skip directories (they would be added automatically)
-				if ($file->isDir() === false) {
-					$filePath = $file->getRealPath();
-					$relativePath = substr(string: $filePath, offset: strlen(string: $tempFolder) + 1);
-
-					// Add file to zip
-					$zip->addFile(filepath: $filePath, entryname: $relativePath);
-				}
-			}
-			$zip->close();
-		} else {
+		// Create the ZIP archive.
+		$error = $this->fileService->createZip(inputFolder: $tempFolder, tempZip: $tempZip);
+		if ($error !== null) {
 			return new JSONResponse(data: ['error' => "failed to create ZIP archive for this publication: $id"], statusCode: 500);
 		}
 
-		// Send the ZIP file to the client for download.
-		header(header: 'Content-Type: application/zip');
-		header(header: 'Content-disposition: attachment; filename=' . basename($tempZip));
-		header(header: 'Content-Length: ' . filesize($tempZip));
-		readfile(filename: $tempZip);
-
-		// Cleanup temporary files.
-		array_map(callback: 'unlink', array: glob(pattern: "$tempFolder/*.*"));
-		rmdir(directory: $tempFolder);
-		unlink(filename: $tempZip);
+		// Return a download response containing the ZIP archive. And clean up temp files/folders.
+		$this->fileService->downloadZip(tempZip: $tempZip, inputFolder: $tempFolder);
 
 		return new JSONResponse([], 200);
 	}
@@ -468,7 +448,7 @@ class PublicationsController extends Controller
 	{
 		return match ($this->request->getHeader('Accept')) {
 			'application/pdf' => $this->createPublicationFile(objectService: $objectService, id: $id),
-			'application/zip' => $this->creatPublicationZip(objectService: $objectService, id: $id),
+			'application/zip' => $this->createPublicationZip(objectService: $objectService, id: $id),
 			default => new JSONResponse(
 				data: ['error' => 'Unsupported Accept header, please use [application/pdf] or [application/zip]'],
 				statusCode: 400
