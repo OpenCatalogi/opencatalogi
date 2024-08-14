@@ -31,7 +31,6 @@ import { searchStore, directoryStore, metadataStore } from '../../store/store.js
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
-			{{ searchStore.metadata }}
 			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList"
 				:key="`${metaData}${i}`"
 				type="switch"
