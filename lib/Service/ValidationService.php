@@ -78,13 +78,17 @@ class ValidationService
 	public function validatePublication(array $publication): array
 	{
 		$catalogId  = $publication['catalogi'];
-		$metadata   = $publication['metadata'];
+		$metadata   = $publication['metaData'];
 
 		$catalog = $this->getCatalog($catalogId);
+
+//		var_dump($catalog['metadata'], $metadata, in_array(needle: $metadata, haystack: $catalog['metadata']));
 
 		if(in_array(needle: $metadata, haystack: $catalog['metadata']) === false) {
 			throw new OCSBadRequestException(message: 'Given metadata object not present in catalog');
 		}
+
+//		var_dump($publication);
 
 		return $publication;
 	}

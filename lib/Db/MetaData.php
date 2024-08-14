@@ -14,6 +14,7 @@ class MetaData extends Entity implements JsonSerializable
 	protected ?string $description = null;
 	protected ?array  $required    = [];
 	protected ?array  $properties  = [];
+	protected ?array  $archive     = [];
 	protected ?string $source      = null;
 
 	public function __construct() {
