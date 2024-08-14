@@ -19,13 +19,10 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Symfony\Component\Uid\Uuid;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use ZipArchive;
 
 class PublicationsController extends Controller
 {
@@ -150,7 +147,7 @@ class PublicationsController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function attachments(string|int $id, ObjectService $objectService, array|null $publication = null): JSONResponse
+	public function attachments(string|int $id, ObjectService $objectService, ?array $publication = null): JSONResponse
 	{
 		if ($publication === null) {
 			$publication = $this->getPublicationData(id: $id, objectService: $objectService);
