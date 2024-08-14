@@ -1,4 +1,4 @@
-import { Organisation, TOrganisation } from '../organisation'
+import { TOrganisation } from '../organisation'
 import { TListing } from './listing.types'
 import { SafeParseReturnType, z } from 'zod'
 

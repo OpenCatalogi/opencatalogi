@@ -197,7 +197,7 @@ export default {
 						...this.publicationItem,
 						id: this.publicationItem.id.toString(),
 						catalogi: this.publicationItem.catalogi?.id?.toString(),
-						metaData: this.publicationItem.metaData?.id?.toString()
+						metaData: this.publicationItem.metaData?.id?.toString(),
 					}),
 				},
 			)

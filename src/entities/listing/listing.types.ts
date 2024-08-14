@@ -1,4 +1,4 @@
-import { TOrganisation } from "../organisation"
+import { TOrganisation } from '../organisation'
 
 export type TListing = {
     id: string

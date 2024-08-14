@@ -1,6 +1,4 @@
-import { TAttachment } from '../'
-import { TCatalogi } from '../'
-import { TMetadata } from '../'
+import { TAttachment, TCatalogi, TMetadata } from '../'
 import { TPublication } from './publication.types'
 import { SafeParseReturnType, z } from 'zod'
 
