@@ -61,9 +61,6 @@ class ThemeMapper extends QBMapper
 	{
 		$theme = new Theme();
 		$theme->hydrate(object: $object);
-
-//		var_dump($catalog->getTitle());
-
 		return $this->insert(entity: $theme);
 	}
 

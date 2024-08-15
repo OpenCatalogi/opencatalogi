@@ -9,6 +9,7 @@ export const usePublicationStore = defineStore(
 			publicationList: [],
 			publicationDataKey: false,
 			attachmentItem: false,
+			attachmentFile: null,
 			publicationAttachments: false,
 			conceptPublications: [],
 			conceptAttachments: [],
@@ -74,9 +75,9 @@ export const usePublicationStore = defineStore(
 						},
 					)
 			},
-			getPublicationAttachments(publication) { // @todo this might belong in a service?
+			getPublicationAttachments(publicationId) {
 				fetch(
-					'/index.php/apps/opencatalogi/api/attachments',
+					`/index.php/apps/opencatalogi/api/publications/${publicationId}/attachments`,
 					{
 						method: 'GET',
 					},
@@ -157,6 +158,10 @@ export const usePublicationStore = defineStore(
 				this.attachmentItem = attachmentItem && new Attachment(attachmentItem)
 				console.log('Active attachment item set to ' + attachmentItem)
 			},
+			setAttachmentFile(files) {
+				this.attachmentFile = files
+				console.log('Active attachment files set to ' + files)
+			},
 		},
 		setPublicationList(publicationList) {
 			this.publicationList = publicationList.map((publicationItem) => new Publication(publicationItem))
@@ -187,9 +192,9 @@ export const usePublicationStore = defineStore(
 				})
 		},
 		/* istanbul ignore next */ // ignore this for Jest until moved into a service
-		getPublicationAttachments(publication) { // @todo this might belong in a service?
+		getPublicationAttachments(publicationId) {
 			fetch(
-				'/index.php/apps/opencatalogi/api/attachments',
+				'/index.php/apps/opencatalogi/api/publications/' + publicationId + '/attachments',
 				{
 					method: 'GET',
 				},
@@ -253,6 +258,9 @@ export const usePublicationStore = defineStore(
 		setAttachmentItem(attachmentItem) {
 			this.attachmentItem = attachmentItem && new Attachment(attachmentItem)
 			console.log('Active attachment item set to ' + attachmentItem)
+		},
+		setAttachmentFile(files) {
+			this.attachmentFile = files
 		},
 	},
 )

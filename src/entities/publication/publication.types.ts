@@ -1,6 +1,6 @@
 // TODO: double check this type for correct properties and optionals when stoplight updates - https://conduction.stoplight.io/docs/open-catalogi/fee989a9c8e3f-publication
 
-import { TAttachment } from '../attachment'
+import { TAttachment, TCatalogi, TMetadata } from '../'
 
 export type TPublication = {
     id: string
@@ -17,7 +17,7 @@ export type TPublication = {
     attachments: TAttachment[]
     attachmentCount: number
     themes: string[]
-    data: Record<string, any>
+    data: Record<string, unknown>
     anonymization: {
         anonymized: boolean
         results: string
@@ -36,6 +36,6 @@ export type TPublication = {
         type: 'Point' | 'LineString' | 'Polygon' | 'MultiPoint' | 'MultiLineString' | 'MultiPolygon'
         coordinates: [number, number]
     }
-    catalogi: string
-    metaData: string
+    catalogi: string|TCatalogi
+    metaData: string|TMetadata
 }

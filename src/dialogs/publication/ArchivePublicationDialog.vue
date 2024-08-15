@@ -68,6 +68,7 @@ export default {
 		ArchivePublication() {
 			this.loading = true
 			publicationStore.publicationItem.status = 'archived'
+
 			fetch(
 				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
 				{
@@ -75,7 +76,11 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.publicationItem),
+					body: JSON.stringify({
+						...publicationStore.publicationItem,
+						catalogi: publicationStore.publicationItem.catalogi.id,
+						metaData: publicationStore.publicationItem.metaData.id,
+					}),
 				},
 			)
 				.then((response) => {

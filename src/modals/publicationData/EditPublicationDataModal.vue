@@ -112,8 +112,8 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						// this.publication.data = JSON.stringify(data.data)
-						this.catalogi.value = [data.catalogi]
-						this.metaData.value = [data.metaData]
+						this.catalogi.value = [data.catalogi?.id]
+						this.metaData.value = [data.metaData?.id]
 					})
 					this.publicationLoading = false
 				})
@@ -182,7 +182,9 @@ export default {
 					},
 					body: JSON.stringify({
 						...publicationStore.publicationItem,
-						id: publicationStore.publicationItem.id.toString(),
+						id: publicationStore.publicationItem.id,
+						catalogi: publicationStore.publicationItem.catalogi.id,
+						metaData: publicationStore.publicationItem.metaData.id,
 					}),
 				},
 			)

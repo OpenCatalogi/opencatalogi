@@ -21,9 +21,21 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField label="Titel" :value.sync="metaData.title" required="true" />
-				<NcTextField label="Versie" :value.sync="metaData.version" />
-				<NcTextArea label="Beschrijving" :disabled="loading" :value.sync="metaData.description" />
+				<NcTextField
+					label="Titel"
+					required="true"
+					:value.sync="metaData.title" />
+				<NcTextField
+					label="Versie"
+					:value.sync="metaData.version" />
+				<NcTextField :disabled="loading"
+					label="Samenvatting *"
+					required="true"
+					:value.sync="metaData.summary" />
+				<NcTextArea
+					label="Beschrijving"
+					:disabled="loading"
+					:value.sync="metaData.description" />
 			</div>
 			<NcButton v-if="success === null"
 				:disabled="!metaData.title || loading"
@@ -62,9 +74,9 @@ export default {
 				title: '',
 				version: '',
 				description: '',
+				summary: '',
 				required: '',
 			},
-			metaDataList: [],
 			loading: false,
 			success: null,
 			error: false,

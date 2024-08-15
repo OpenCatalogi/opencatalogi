@@ -89,7 +89,11 @@ Als onderdeel van de CI/CD-straat voeren we een aantal tests uit, hiermee handha
 
 ### Voor de kwaliteit van de code maken we gebruik van linters
 
-Voor frontend is dat:
+Voorzowel de frontend als de backend geldt dat het aantal acceptabele errors 0 is.
+
+#### Frontend&#x20;
+
+Voor frontend gebruiken we ESLint, de installatiehandleiding is [hier](https://www.npmjs.com/package/eslint) te vinden. Het commando om ESLint uit te voeren. ESLint is voornamelijk een linter, met enige format-functionaliteit.&#x20;
 
 ```cli
 npm run lint
@@ -97,19 +101,22 @@ npm run lint
 
 ![alt text](npm_lint.png)
 
-Voor de backend is dat:
+#### Backend
+
+Voor de backend gebruiken we PHP Code Sniffer. [Zie hier](https://dev.to/xxzeroxx/phpcs-php-code-sniffer-59f4) de handleiding voor de installatiemogelijkheden. PHP-code sniffer bestaat uit een linter ( `phpcs)` en een formatter(`phpcbf`). De formatter werkt hetzelfde als de linter en kan soms aardig wat errors wegwerken. De regels voor zowel de linter als de formatter zijn te vinden in `phpcs.xml` in de root van de applicatie.&#x20;
 
 ```cli
 phpcs [filename]
+phpcbf [filename]
 ```
 
-Hiervoor moet php code sniffer geïnstalleerd zijn. [Zie hier](https://dev.to/xxzeroxx/phpcs-php-code-sniffer-59f4) de handleiding ervoor
+## Voor stabiliteit gebruiken we unit tests
 
-Voor beide geldt dat het aantal acceptabele errors 0 is.
+Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele errors 0.
 
-## Voor stabilliteit gebruiken we unit tests
+#### Frontend
 
-Voor frontend is dat:
+Voor het uitvoeren van de unit tests gebruiken we aan de frontend Jest. Indien je deze nog moet installeren of meer erover wilt weten, kijk dat [hier](https://www.npmjs.com/package/jest). Het uit te voeren commando is:
 
 ```cli
 npm run test-coverage
@@ -117,13 +124,13 @@ npm run test-coverage
 
 ![alt text](npm_test.png)
 
-Voor de backend is dat:
+#### Backend:
+
+Voor het uitvoeren van de unit tests gebruiken we aan de backend PHPunit. Indien je deze nog moet installeren of meer erover wilt weten, kijk dan [hier](https://docs.phpunit.de/en/11.3/). Het uit te voeren commando is:
 
 ```cli
 phpunit 
 ```
-
-Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele errors 0.
 
 > **NOTE 1** We volgen de Nextcloud wijze voor unit testing, zie hier voor [de details](https://docs.nextcloud.com/server/latest/developer_manual/server/unit-testing.html), maar dit komt neer op [phpunit](https://docs.phpunit.de/en/11.3/index.html) en de juist configuratie van `phpunit.xml`en de `bootstrap.php`. Een voorbeeld van deze files zijn te vinden in de `root` van de applicatie (`phpunit.xml`) en de `/tests/unit`(`bootstrap.php`). Er zijn veel mogelijkheden om het jezelf makkelijk te maken, zoals een percentageoverzicht in de terminal. Het commando dat wij gebruiken is :
 
@@ -133,7 +140,7 @@ Voor beide geldt dat minimale test coverage 80% is, en het aantal acceptabele er
 
 ## Voor veiligheid gebruiken we dependency scanning
 
-Voor frontend is dat:
+#### Frontend:
 
 ```cli
 npm audit
@@ -141,7 +148,7 @@ npm audit
 
 ![alt text](npm_audit.png)
 
-Voor de backend is dat:
+#### Backend
 
 ```cli
 composer audit
@@ -150,3 +157,44 @@ composer audit
 ![alt text](composer_audit.png)
 
 Voor beide geldt dat het aantal acceptabele critical vulnerabilities in *production packadges* 0 is.
+
+### Gebruikersdocumentatie
+
+We gebruiken Gitbook voor de gebruikersdocumentatie. Features binnen de app zouden zo veel mogelijk direct moeten doorverwijzen naar deze documentatie.
+
+Ook voor de documentatie wordt een linter gebruikt namelijk [remarklint](https://github.com/remarkjs/remark-lint).
+
+De commando's om deze linter in de CLI te gebruiken zijn [hier te vinden](https://github.com/remarkjs/remark-lint?tab=readme-ov-file#what-is-this) voor een uitgebreide output in de terminal.
+
+## API Development
+
+De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.io](https://stoplight.io/), die automatisch een [OpenAPI Specificatie (OAS)](https://www.noraonline.nl/wiki/FS:Openapi-specification) genereert uit de documentatie. De Stoplight voor OpenCatalogi is [hier](https://conduction.stoplight.io/docs/open-catalogi/6yuj08rgf7w44-open-catalogi-api) te vinden.
+
+## Frontend Development
+
+### Storage en Typing
+
+Om gegevens deelbaar te maken tussen de verschillende Vue-componenten maken we gebruik van [statemanagement](https://vuejs.org/guide/scaling-up/state-management) waarbij we het Action, State, View patroon van Vue zelf volgen. Omdat de applicatie ingewikkeld begint te worden stappen we daarbij over van [simple state management](https://vuejs.org/guide/scaling-up/state-management#simple-state-management-with-reactivity-api) naar [Pinia](https://pinia.vuejs.org/), de door Vue zelf geadviseerde opvolger van [Vuex](https://vuejs.org/guide/scaling-up/state-management#pinia).
+
+Daarnaast gebruiken we Typescript voor het definiëren van entities.
+
+### Modals
+
+* Er mag altijd slechts één modal actief zijn.
+* Modals moeten abstract en overal bereikbaar zijn.
+* Modals moeten geplaatst worden in de map src/modals.
+* Modals moeten getriggerd worden via de state (zodat knoppen die modal openen overal plaatsbaar zijn).
+* Modals moeten geïmporteerd worden via `/src/modals/Modals.vue`.
+
+### Views
+
+* Views moeten dezelfde bestandsnaam hebben als de geëxporteerde naam en een correlatie hebben met de map waarin het bestand zich bevindt.
+* Bijvoorbeeld, als het bestand een detailpagina is en het zich in de map `publications` bevindt, moet het bestand de naam `PublicationDetail.vue` hebben.
+
+## Documentatie
+
+Het is goed om bij development kennnis te nemen/hebben van de volgende gebruikte Nextcloud onderdelen:
+
+* [Icons](https://pictogrammers.com/library/mdi/)
+* [Layout](https://docs.nextcloud.com/server/latest/developer_manual/design/layout.html)-
+* [Componenten](https://nextcloud-vue-components.netlify.app/)

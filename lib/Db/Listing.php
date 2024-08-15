@@ -65,7 +65,6 @@ class Listing extends Entity implements JsonSerializable
 			try {
 				$this->$method($value);
 			} catch (\Exception $exception) {
-//				var_dump("Error writing $key");
 			}
 		}
 
@@ -84,10 +83,10 @@ class Listing extends Entity implements JsonSerializable
 			'metadata'	  => $this->metadata,
 			'catalogId'	  => $this->catalogId,
 			'status' 	  => $this->status,
-			'lastSync' 	  => $this->lastSync->format('c'),
+			'lastSync' 	  => $this->lastSync?->format('c'),
 			'default' 	  => $this->default,
 			'available'   => $this->available,
-			'organisation'=> $this->organisation,
+			'organisation'=> json_decode($this->organisation, true),
 		];
 
 		$jsonFields = $this->getJsonFields();

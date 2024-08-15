@@ -71,7 +71,6 @@ class Attachment extends Entity implements JsonSerializable
 			try {
 				$this->$method($value);
 			} catch (\Exception $exception) {
-//				var_dump("Error writing $key");
 			}
 		}
 
@@ -96,8 +95,8 @@ class Attachment extends Entity implements JsonSerializable
 			'hash'	=> $this->hash,
 			'anonymization' => $this->anonymization,
 			'language' => $this->language,
-			'modified'	=> $this->modified->format('c'),
-			'published' => $this->published->format('c'),
+			'modified'	=> $this->modified?->format('c'),
+			'published' => $this->published?->format('c'),
 			'license' => $this->license,
 		];
 
