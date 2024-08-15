@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore } from '../store/store.js'
+import { navigationStore, directoryStore } from '../store/store.js'
 </script>
 
 <template>
@@ -7,7 +7,7 @@ import { navigationStore } from '../store/store.js'
 		<!-- Placeholder div for all of the sidebars-->
 		<SearchSideBar v-if="navigationStore.selected === 'search'" />
 		<DashboardSideBar v-if="navigationStore.selected === 'dashboard'" />
-		<DirectorySideBar v-if="navigationStore.selected === 'directory'" />
+		<DirectorySideBar v-if="navigationStore.selected === 'directory'" :listing-item="directoryStore.listingItem" />
 	</div>
 </template>
 

@@ -56,7 +56,7 @@ class ListingMapper extends QBMapper
             }
         }
 
-        $row['organisation'] = $organisationIsEmpty === true ? null : Organisation::fromRow($organisationData);
+        // $row['organisation'] = $organisationIsEmpty === true ? null : Organisation::fromRow($organisationData);
 
 		return \call_user_func($this->entityClass .'::fromRow', $row);
 	}
@@ -86,25 +86,25 @@ class ListingMapper extends QBMapper
     public function findAll(?int $limit = null, ?int $offset = null, ?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): array
     {
         $qb = $this->db->getQueryBuilder();
-    
-        $qb->select(
-                'l.*', 
-                'o.id AS organisation_id', 
-                'o.title AS organisation_title', 
-                'o.summary AS organisation_summary',
-                'o.description AS organisation_description',
-                'o.image AS organisation_image', 
-                'o.oin AS organisation_oin', 
-                'o.tooi AS organisation_tooi', 
-                'o.rsin AS organisation_rsin', 
-                'o.pki AS organisation_pki'
+
+        $qb->select('*'
+                // 'l.*',
+                // 'o.id AS organisation_id',
+                // 'o.title AS organisation_title',
+                // 'o.summary AS organisation_summary',
+                // 'o.description AS organisation_description',
+                // 'o.image AS organisation_image',
+                // 'o.oin AS organisation_oin',
+                // 'o.tooi AS organisation_tooi',
+                // 'o.rsin AS organisation_rsin',
+                // 'o.pki AS organisation_pki'
             )
             ->from('listings', 'l')
-            ->leftJoin('l', 'organizations', 'o', 'l.organisation = o.id')
+            // ->leftJoin('l', 'organizations', 'o', 'l.organisation = o.id')
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
-    
+
         // Apply filters
         foreach ($filters as $filter => $value) {
             if ($value === 'IS NOT NULL') {
@@ -115,7 +115,7 @@ class ListingMapper extends QBMapper
                 $qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
             }
         }
-    
+
         // Apply search conditions
         if (!empty($searchConditions)) {
             $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
@@ -123,7 +123,7 @@ class ListingMapper extends QBMapper
                 $qb->setParameter($param, $value);
             }
         }
-    
+
         // Use the existing findEntities method to fetch and map the results
         return $this->findEntitiesCustom($qb);
     }

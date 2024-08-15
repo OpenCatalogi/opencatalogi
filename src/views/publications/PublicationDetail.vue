@@ -132,6 +132,10 @@ import { catalogiStore, metadataStore, navigationStore, publicationStore } from 
 					<span>{{ publicationStore.publicationItem.modified }}</span>
 				</div>
 				<div>
+					<b>Bron:</b>
+					<span>{{ publicationStore.publicationItem.source }}</span>
+				</div>
+				<div>
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">

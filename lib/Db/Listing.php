@@ -15,7 +15,7 @@ class Listing extends Entity implements JsonSerializable
 	protected ?string $description = null;
 	protected ?string $search	   = null;
 	protected ?string $directory   = null;
-	protected ?string $metadata    = null;
+	protected ?array $metadata     = null;
 	protected ?string $catalogId   = null;
 	protected ?string $status	   = null;
 	protected ?DateTime $lastSync  = null;
@@ -29,7 +29,7 @@ class Listing extends Entity implements JsonSerializable
 		$this->addType(fieldName: 'description', type: 'string');
 		$this->addType(fieldName: 'search', type: 'string');
 		$this->addType(fieldName: 'directory', type: 'string');
-		$this->addType(fieldName: 'metadata', type: 'string');
+		$this->addType(fieldName: 'metadata', type: 'json');
 		$this->addType(fieldName: 'catalogId', type: 'string');
 		$this->addType(fieldName: 'status', type: 'string');
 		$this->addType(fieldName: 'lastSync', type: 'datetime');
@@ -50,6 +50,10 @@ class Listing extends Entity implements JsonSerializable
 	public function hydrate(array $object): self
 	{
 		$jsonFields = $this->getJsonFields();
+
+		if(isset($object['metadata']) === false) {
+			$object['metadata'] = [];
+		}
 
 		foreach($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {

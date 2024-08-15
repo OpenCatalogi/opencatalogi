@@ -28,7 +28,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					required />
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="!metaData?.value?.id || loading"
+				:disabled="!metaData?.value?.source || loading"
 				type="primary"
 				@click="addCatalogMetadata">
 				<template #icon>
@@ -130,7 +130,7 @@ export default {
 
 						this.metaData = {
 							options: filteredData.map((metaData) => ({
-								id: metaData.id,
+								source: metaData.source,
 								label: metaData.title,
 							})),
 						}
@@ -146,7 +146,13 @@ export default {
 			this.loading = true
 			this.error = false
 
-			this.catalogiItem.metadata.push(this.metaData.value.id)
+			this.catalogiItem.metadata.push(this.metaData.value.source)
+			if (!this.metaData?.value?.source) {
+				this.error = 'Publicatie type heeft geen bron, kan niet gekoppeld worden'
+				this.metaDataLoading = false
+
+				return
+			}
 
 			fetch(
 				`/index.php/apps/opencatalogi/api/catalogi/${this.catalogiItem.id}`,

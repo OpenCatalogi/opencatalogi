@@ -50,8 +50,8 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<FileTreeOutline :size="20" />
 			</template>
 			Welke meta data typen zou u uit deze catalogus willen overnemen?
-			<NcCheckboxRadioSwitch type="switch">
-				Metedata type 1
+			<NcCheckboxRadioSwitch v-for="(metadataSingular, i) in metadata" :key="`${metadataSingular}${i}`" type="switch">
+				{{ metadataSingular.title }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 	</NcAppSidebar>
@@ -80,13 +80,111 @@ export default {
 		CogOutline,
 		FileTreeOutline,
 	},
+	props: {
+		listingItem: {
+			type: Object,
+			required: true,
+		},
+	},
 	data() {
 		return {
+			metadata: [],
+			listing: '',
 		}
+	},
+	watch: {
+		publicationItem: {
+			handler(newVal) {
+				console.log('test watch')
+				console.log(newVal)
+				if (newVal && newVal.id) {
+					this.fetchMetaData()
+				}
+			},
+			immediate: true, // Ensures the watcher runs when the component is created
+		},
+	},
+	mounted() {
+		this.fetchMetaData()
 	},
 	methods: {
 		openLink(url, type = '') {
 			window.open(url, type)
+		},
+		CopyMetadata() {
+			this.loading = true
+			// metadataStore.metaDataItem.title = 'KOPIE: ' + metadataStore.metaDataItem.title
+			if (Object.keys(metadataStore.metaDataItem.properties).length === 0) {
+				delete metadataStore.metaDataItem.properties
+			}
+			delete metadataStore.metaDataItem.id
+			delete metadataStore.metaDataItem._id
+			fetch(
+				'/index.php/apps/opencatalogi/api/metadata',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(metadataStore.metaDataItem),
+				},
+			)
+				.then((response) => {
+					this.loading = false
+					this.succes = true
+					// Lets refresh the catalogiList
+					metadataStore.refreshMetaDataList()
+					response.json().then((data) => {
+						metadataStore.setMetaDataItem(data)
+					})
+					navigationStore.setSelected('metaData')
+					// Wait for the user to read the feedback then close the model
+					const self = this
+					setTimeout(function() {
+						self.succes = false
+						navigationStore.setDialog(false)
+					}, 2000)
+				})
+				.catch((err) => {
+					this.error = err
+					this.loading = false
+				})
+		},
+		fetchMetaData() {
+			this.loading = true
+			console.log('test1')
+			console.log(directoryStore.listingItem)
+			if (directoryStore.listingItem && Array.isArray(directoryStore.listingItem.metadata)) {
+				directoryStore.listingItem?.metadata.forEach(metadataSingular => {
+					console.log('test2')
+					fetch(
+						'/index.php/apps/opencatalogi/api/metadata?source=' + metadataSingular,
+						{
+							method: 'GET',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+						},
+					)
+						.then((response) => {
+							this.loading = false
+							this.succes = true
+
+							response.json().then(
+								(data) => {
+									if (data?.results[0] !== undefined) {
+										this.metaData.push(data.results[0])
+									}
+									return data
+								},
+							)
+						})
+						.catch((err) => {
+							this.error = err
+							this.loading = false
+						})
+				})
+			}
 		},
 	},
 }

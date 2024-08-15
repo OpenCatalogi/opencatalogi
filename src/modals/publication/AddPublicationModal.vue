@@ -220,6 +220,7 @@ export default {
 		},
 		fetchMetaData() {
 			this.metaDataLoading = true
+
 			fetch('/index.php/apps/opencatalogi/api/metadata', {
 				method: 'GET',
 			})

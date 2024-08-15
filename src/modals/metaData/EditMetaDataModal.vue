@@ -88,6 +88,7 @@ export default {
 		},
 		editMetaData() {
 			this.loading = true
+
 			fetch(
 				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem?.id}`,
 				{
