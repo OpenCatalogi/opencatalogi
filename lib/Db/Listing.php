@@ -9,19 +9,20 @@ use OCP\AppFramework\Db\Entity;
 class Listing extends Entity implements JsonSerializable
 {
 
-	protected ?string $title 	   = null;
-	protected ?string $reference   = null;
-	protected ?string $summary     = null;
-	protected ?string $description = null;
-	protected ?string $search	   = null;
-	protected ?string $directory   = null;
+	protected ?string   $title 	   = null;
+	protected ?string   $reference   = null;
+	protected ?string   $summary     = null;
+	protected ?string   $description = null;
+	protected ?string   $search	   = null;
+	protected ?string   $directory   = null;
 	protected ?array $metadata     = null;
-	protected ?string $catalogId   = null;
-	protected ?string $status	   = null;
+	protected ?string   $catalogId   = null;
+	protected ?string   $status	   = null;
+	protected ?int      $statusCode  = null;
 	protected ?DateTime $lastSync  = null;
-	protected ?bool    $default	   = false;
-	protected ?bool    $available  = false;
-	protected ?string $organisation = null;
+	protected ?bool     $default	   = false;
+	protected ?bool     $available  = false;
+	protected ?string   $organisation = null;
 
 	public function __construct() {
 		$this->addType(fieldName: 'title', type: 'string');
@@ -32,6 +33,7 @@ class Listing extends Entity implements JsonSerializable
 		$this->addType(fieldName: 'metadata', type: 'json');
 		$this->addType(fieldName: 'catalogId', type: 'string');
 		$this->addType(fieldName: 'status', type: 'string');
+		$this->addType(fieldName: 'statusCode', type: 'integer');
 		$this->addType(fieldName: 'lastSync', type: 'datetime');
 		$this->addType(fieldName: 'default', type: 'boolean');
 		$this->addType(fieldName: 'available', type: 'boolean');
