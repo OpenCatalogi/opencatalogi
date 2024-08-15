@@ -24,7 +24,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcTextField
 					label="Titel"
 					required="true"
-					value.sync="metaData.title" />
+					:value.sync="metaData.title" />
 				<NcTextField
 					label="Versie"
 					:value.sync="metaData.version" />
@@ -74,9 +74,9 @@ export default {
 				title: '',
 				version: '',
 				description: '',
+				summary: '',
 				required: '',
 			},
-			metaDataList: [],
 			loading: false,
 			success: null,
 			error: false,

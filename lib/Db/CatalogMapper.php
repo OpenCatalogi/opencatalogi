@@ -61,9 +61,6 @@ class CatalogMapper extends QBMapper
 	{
 		$catalog = new Catalog();
 		$catalog->hydrate(object: $object);
-
-//		var_dump($catalog->getTitle());
-
 		return $this->insert(entity: $catalog);
 	}
 
