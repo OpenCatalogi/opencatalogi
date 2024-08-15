@@ -15,6 +15,7 @@ return [
 		['name' => 'metadata#page', 'url' => '/metadata', 'verb' => 'GET'],
 		['name' => 'publications#page', 'url' => '/publications', 'verb' => 'GET'],
 		['name' => 'publications#attachments', 'url' => '/api/publications/{id}/attachments', 'verb' => 'GET', 'requirements' => ['id' => '.+']],
+		['name' => 'publications#download', 'url' => '/api/publications/{id}/download', 'verb' => 'GET', 'requirements' => ['id' => '.+']],
 		['name' => 'catalogi#page', 'url' => '/catalogi', 'verb' => 'GET'],
 		['name' => 'search#index', 'url' => '/search', 'verb' => 'GET'],
 		['name' => 'search#index', 'url' => '/api/search', 'verb' => 'GET'],

@@ -21,6 +21,7 @@ class Listing extends Entity implements JsonSerializable
 	protected ?DateTime $lastSync  = null;
 	protected ?bool    $default	   = false;
 	protected ?bool    $available  = false;
+	protected ?string $organisation = null;
 
 	public function __construct() {
 		$this->addType(fieldName: 'title', type: 'string');
@@ -34,6 +35,7 @@ class Listing extends Entity implements JsonSerializable
 		$this->addType(fieldName: 'lastSync', type: 'datetime');
 		$this->addType(fieldName: 'default', type: 'boolean');
 		$this->addType(fieldName: 'available', type: 'boolean');
+		$this->addType(fieldName: 'organisation', type: 'string');
 	}
 
 	public function getJsonFields(): array
@@ -77,9 +79,10 @@ class Listing extends Entity implements JsonSerializable
 			'metadata'	  => $this->metadata,
 			'catalogId'	  => $this->catalogId,
 			'status' 	  => $this->status,
-			'lastSync' 	  => $this->lastSync->format('c'),
+			'lastSync' 	  => $this->lastSync?->format('c'),
 			'default' 	  => $this->default,
 			'available'   => $this->available,
+			'organisation'=> json_decode($this->organisation, true),
 		];
 
 		$jsonFields = $this->getJsonFields();

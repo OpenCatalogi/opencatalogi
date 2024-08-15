@@ -164,7 +164,7 @@ class AttachmentsController extends Controller
 			return new JSONResponse(data: ['error' => 'Please upload a file using key "_file" or give a "downloadUrl"'], statusCode: 400);
 		}
 
-		// Check for upload errors
+		// Check for upload errors.
 		if ($uploadedFile['error'] !== UPLOAD_ERR_OK) {
 			return new JSONResponse(data: ['error' => 'File upload error: '.$uploadedFile['error']], statusCode: 400);
 		}
@@ -209,14 +209,17 @@ class AttachmentsController extends Controller
 	 */
 	private function handleFile(array $uploadedFile): JSONResponse|string
 	{
-		// Create the Attachments folder and the Publication specific folder.
-		$this->fileService->createFolder(folderPath: 'Attachments');
-		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
-			. $this->request->getHeader('Publication-Title');
-		$this->fileService->createFolder(folderPath: "Attachments/$publicationFolder");
+		// Create the Publicaties folder, the Publication specific folder and the Bijlagen folder in that.
+		$this->fileService->createFolder(folderPath: 'Publicaties');
+		$publicationFolder = $this->fileService->getPublicationFolderName(
+			publicationId: $this->request->getHeader('Publication-Id'),
+			publicationTitle: $this->request->getHeader('Publication-Title')
+		);
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder");
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder/Bijlagen");
 
-		// Save the uploaded file
-		$filePath = "Attachments/$publicationFolder/" . $uploadedFile['name']; // Add a file version to the file name?
+		// Save the uploaded file.
+		$filePath = "Publicaties/$publicationFolder/Bijlagen/" . $uploadedFile['name']; // Add a file version to the file name?
 		$created = $this->fileService->uploadFile(
 			content: file_get_contents(filename: $uploadedFile['tmp_name']),
 			filePath: $filePath
@@ -231,7 +234,7 @@ class AttachmentsController extends Controller
 
 
 	/**
-	 * Adds information about the uploaded file to the appropriate Attachment fields.
+	 * Adds information about the uploaded file to the appropriate Attachment fields. Inclusive share link.
 	 *
 	 * @param array $data The form-data fields and their values (/request body) that we are going to update before posting the Attachment.
 	 * @param array $uploadedFile Information about the uploaded file from the request body.
@@ -242,7 +245,7 @@ class AttachmentsController extends Controller
 	 */
 	private function AddFileInfoToData(array $data, array $uploadedFile, string $filePath): array
 	{
-		// Update Attachment data
+		// Update Attachment data.
 		$currentUser = $this->userSession->getUser();
 		$userId = $currentUser ? $currentUser->getUID() : 'Guest';
 		$data['reference'] = "$userId/$filePath";
@@ -252,7 +255,7 @@ class AttachmentsController extends Controller
 		$data['title'] = $explodedName[0];
 		$data['extension'] = end(array: $explodedName);
 
-		// Create ShareLink
+		// Create ShareLink.
 		$shareLink = $this->fileService->createShareLink(path: $filePath);
 		if (empty($data['accessUrl']) === true) {
 			$data['accessUrl'] = $shareLink;
@@ -274,9 +277,9 @@ class AttachmentsController extends Controller
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
 		$data = $this->request->getParams();
-		// Uploaded _file and downloadURL are mutually exclusive
+		// Uploaded _file and downloadURL are mutually exclusive.
 		if (empty($data['downloadUrl']) === true) {
-			// Check if a file was uploaded
+			// Check if a file was uploaded.
 			$uploadedFile = $this->checkUploadedFile();
 			if ($uploadedFile instanceof JSONResponse) {
 				return $uploadedFile;
@@ -290,17 +293,17 @@ class AttachmentsController extends Controller
 		}
 
 		if (empty($uploadedFile) === false) {
-			// Handle saving the uploaded file in NextCloud
+			// Handle saving the uploaded file in NextCloud.
 			$filePath = $this->handleFile(uploadedFile: $uploadedFile);
 			if ($filePath instanceof JSONResponse) {
 				return $filePath;
 			}
 
-			// Update Attachment data
+			// Update Attachment data, inclusive share link.
 			$data = $this->AddFileInfoToData(data: $data, uploadedFile: $uploadedFile, filePath: $filePath);
 		}
 
-		// Remove fields we should never post
+		// Remove fields we should never post.
 		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with(haystack: $key, needle: '_')) {
@@ -325,7 +328,6 @@ class AttachmentsController extends Controller
 			config: $dbConfig
 		);
 
-        // get post from requests
         return new JSONResponse($returnData);
     }
 
@@ -338,7 +340,7 @@ class AttachmentsController extends Controller
     {
 		$data = $this->request->getParams();
 
-		// Remove fields we should never post
+		// Remove fields we should never post.
 		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with(haystack: $key, needle: '_')) {
@@ -365,7 +367,6 @@ class AttachmentsController extends Controller
 			config: $dbConfig
 		);
 
-		// get post from requests
 		return new JSONResponse($returnData);
     }
 
@@ -385,8 +386,10 @@ class AttachmentsController extends Controller
 		}
 
 		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
-//		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
-//			. $this->request->getHeader('Publication-Title');
+//		$publicationFolder = $this->fileService->getPublicationFolderName(
+//			publicationId: $this->request->getHeader('Publication-Id'),
+//			publicationTitle: $this->request->getHeader('Publication-Title')
+//		);
 //		$this->fileService->deleteFile(filePath: "Attachments/$publicationFolder" . $attachment['title'] . '.' . $attachment['extension']);
 		$filePath = explode(separator: '/', string: $attachment['reference']);
 		array_shift(array: $filePath);
@@ -411,7 +414,6 @@ class AttachmentsController extends Controller
 			config: $dbConfig
 		);
 
-		// get post from requests
 		return new JSONResponse($returnData);
     }
 }

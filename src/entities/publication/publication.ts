@@ -1,4 +1,4 @@
-import { TAttachment } from '../'
+import { TAttachment, TCatalogi, TMetadata } from '../'
 import { TPublication } from './publication.types'
 import { SafeParseReturnType, z } from 'zod'
 
@@ -42,8 +42,8 @@ export class Publication implements TPublication {
         coordinates: [number, number]
     }
 
-	public catalogi: string
-	public metaData: string
+	public catalogi: string|TCatalogi
+	public metaData: string|TMetadata
 
 	constructor(data: TPublication) {
 		this.hydrate(data)

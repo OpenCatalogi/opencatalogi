@@ -16,6 +16,16 @@ export const mockListingsData = (): TListing[] => [
 		lastSync: '2024-07-25T00:00:00Z',
 		default: true,
 		available: false,
+		organisation: { // full data
+			id: '1',
+			title: 'Decat',
+			summary: 'a short form summary',
+			description: 'a really really long description about this organisation',
+			oin: 'string',
+			tooi: 'string',
+			rsin: 'string',
+			pki: 'string',
+		},
 	},
 	{
 		id: '2',
@@ -31,6 +41,16 @@ export const mockListingsData = (): TListing[] => [
 		lastSync: '',
 		default: true,
 		available: false,
+		organisation: { // full data
+			id: '1',
+			title: 'Decat',
+			summary: 'a short form summary',
+			description: 'a really really long description about this organisation',
+			oin: 'string',
+			tooi: 'string',
+			rsin: 'string',
+			pki: 'string',
+		},
 	},
 	{
 		id: '1',
