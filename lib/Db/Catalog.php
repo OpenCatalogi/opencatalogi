@@ -42,12 +42,6 @@ class Catalog extends Entity implements JsonSerializable
 
 	public function hydrate(array $object): self
 	{
-
-
-		if(isset($object['metadata']) === false) {
-			$object['metadata'] = [];
-		}
-
 		$jsonFields = $this->getJsonFields();
 
 		foreach($object as $key => $value) {

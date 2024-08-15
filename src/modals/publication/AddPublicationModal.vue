@@ -2,115 +2,151 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="navigationStore.modal === 'publicationAdd'"
-		ref="modalRef"
-		label-id="addPublicationModal"
-		@close="closeModal">
-		<div class="modal__content">
-			<h2>Publicatie toevoegen</h2>
-			<div v-if="success !== null || error">
-				<NcNoteCard v-if="success" type="success">
-					<p>Publicatie succesvol toegevoegd</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het toevoegen van Publicatie</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="error" type="error">
-					<p>{{ error }}</p>
-				</NcNoteCard>
-			</div>
-			<div class="formContainer">
-				<div v-if="success === null" class="form-group">
-					<!-- STAGE 1 -->
-					<div v-if="!catalogi?.value?.id">
-						<NcSelect v-bind="catalogi"
-							v-model="catalogi.value"
-							input-label="Catalogi *"
-							:loading="catalogiLoading"
-							:disabled="publicationLoading"
-							required />
-					</div>
-					<!-- STAGE 2 -->
-					<div v-if="catalogi?.value?.id && !metaData?.value?.id">
-						<NcButton :disabled="loading"
-							@click="catalogi.value = null">
-							Terug naar Catalogi
-						</NcButton>
-						<NcSelect v-bind="metaData"
-							v-model="metaData.value"
-							input-label="MetaData *"
-							:loading="metaDataLoading"
-							:disabled="publicationLoading"
-							required />
-					</div>
-					<!-- STAGE 3 -->
-					<div v-if="catalogi.value?.id && metaData.value?.id">
-						<NcButton :disabled="loading"
-							@click="metaData.value = null">
-							Terug naar Metadata
-						</NcButton>
-						<NcTextField :disabled="loading"
-							label="Titel *"
-							required
-							:value.sync="publication.title" />
-						<NcTextField :disabled="loading"
-							label="Samenvatting *"
-							required
-							:value.sync="publication.summary" />
-						<NcTextArea :disabled="loading"
-							label="Beschrijving"
-							:value.sync="publication.description" />
-						<NcTextField :disabled="loading"
-							label="Reference"
-							:value.sync="publication.reference" />
-						<NcTextField :disabled="loading"
-							label="Categorie"
-							:value.sync="publication.category" />
-						<NcTextField :disabled="loading"
-							label="Portaal"
-							:value.sync="publication.portal" />
-						<span>
-							<p>Publicatie datum</p>
-							<NcDateTimePicker v-model="publication.published"
-								:disabled="loading"
-								label="Publicatie datum" />
-						</span>
-						<span class="APM-horizontal">
-							<NcCheckboxRadioSwitch :disabled="loading"
-								label="Featured"
-								:checked.sync="publication.featured">
-								Featured
-							</NcCheckboxRadioSwitch>
-						</span>
-						<NcTextField :disabled="loading"
-							label="Image"
-							:value.sync="publication.image" />
-						<b>Juridisch</b>
-						<NcTextField :disabled="loading"
-							label="Licentie"
-							:value.sync="publication.license" />
+	<NcDialog v-if="navigationStore.modal === 'publicationAdd'"
+		name="Publicatie toevoegen"
+		size="normal"
+		:can-close="false">
+		<div v-if="success !== null || error">
+			<NcNoteCard v-if="success" type="success">
+				<p>Publicatie succesvol aangemaakt</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="!success" type="error">
+				<p>Er is iets fout gegaan bij het aanmaken van Publicatie</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+		</div>
 
-						<NcButton :disabled="(!publication.title || !catalogi?.value?.id || !metaData?.value?.id || !publication.summary) || loading"
-							class="apm-submit-button"
-							type="primary"
-							@click="addPublication()">
-							<template #icon>
-								<NcLoadingIcon v-if="loading" :size="20" />
-								<Plus v-if="!loading" :size="20" />
-							</template>
-							Toevoegen
-						</NcButton>
-					</div>
+		<template #actions>
+			<NcButton v-if="catalogi?.value?.id && !metaData?.value?.id"
+				:disabled="loading"
+				@click="catalogi.value = null">
+				<template #icon>
+					<ArrowLeft :size="20" />
+				</template>
+				Terug naar Catalogi
+			</NcButton>
+			<NcButton v-if="catalogi.value?.id && metaData.value?.id"
+				:disabled="loading"
+				@click="metaData.value = null">
+				<template #icon>
+					<ArrowLeft :size="20" />
+				</template>
+				Terug naar publicatie type
+			</NcButton>
+			<NcButton
+				@click="navigationStore.setModal(false)">
+				<template #icon>
+					<Cancel :size="20" />
+				</template>
+				{{ success ? 'Sluiten' : 'Annuleer' }}
+			</NcButton>
+			<NcButton
+				@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
+				<template #icon>
+					<Help :size="20" />
+				</template>
+				Help
+			</NcButton>
+			<NcButton v-if="success === null"
+				:disabled="!publication.title || !publication.summary"
+				type="primary"
+				@click="addPublication()">
+				<template #icon>
+					<NcLoadingIcon v-if="loading" :size="20" />
+					<Plus v-if="!loading" :size="20" />
+				</template>
+				Toevoegen
+			</NcButton>
+		</template>
+
+		<div class="formContainer">
+			<div v-if="catalogi?.value?.id && success === null">
+				<b>Catalogus:</b> {{ catalogi.value.label }}
+				<NcButton @click="catalogi.value = null">
+					Catalogus wijzigen
+				</NcButton>
+			</div>
+			<div v-if=" metaData.value?.id && success === null">
+				<b>Publicatietype:</b> {{ metaData.value.label }}
+				<NcButton @click="metaData.value = null">
+					Publicatietype wijzigen
+				</NcButton>
+			</div>
+			<div v-if="success === null" class="form-group">
+				<!-- STAGE 1 -->
+				<div v-if="!catalogi?.value?.id">
+					<p>Publicaties horen in een <a @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/catalogi', '_blank')">catalogus</a>, aan welke catlogus wilt u deze publicatie toevoegen?</p>
+					<NcSelect v-bind="catalogi"
+						v-model="catalogi.value"
+						input-label="Catalogus *"
+						:loading="catalogiLoading"
+						:disabled="publicationLoading"
+						required />
+				</div>
+				<!-- STAGE 2 -->
+				<div v-if="catalogi?.value?.id && !metaData?.value?.id">
+					<p>Publicaties worden gedefineerd door <a @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">publicatie typen</a>, van welk publicatie type wit u een publicatie aanmaken?</p>
+					<NcSelect v-bind="metaData"
+						v-model="metaData.value"
+						input-label="Publicatie type *"
+						:loading="metaDataLoading"
+						:disabled="publicationLoading"
+						required />
+				</div>
+				<!-- STAGE 3 -->
+				<div v-if="catalogi.value?.id && metaData.value?.id">
+					<NcTextField :disabled="loading"
+						label="Titel *"
+						required
+						:value.sync="publication.title" />
+					<NcTextField :disabled="loading"
+						label="Samenvatting *"
+						required
+						:value.sync="publication.summary" />
+					<NcTextArea :disabled="loading"
+						label="Beschrijving"
+						:value.sync="publication.description" />
+					<NcTextField :disabled="loading"
+						label="Reference"
+						:value.sync="publication.reference" />
+					<NcTextField :disabled="loading"
+						label="Categorie"
+						:value.sync="publication.category" />
+					<NcTextField :disabled="loading"
+						label="Portaal"
+						:value.sync="publication.portal" />
+					<span>
+						<p>Publicatie datum</p>
+						<NcDateTimePicker v-model="publication.published"
+							:disabled="loading"
+							label="Publicatie datum" />
+					</span>
+					<span class="APM-horizontal">
+						<NcCheckboxRadioSwitch :disabled="loading"
+							label="Featured"
+							:checked.sync="publication.featured">
+							Uitgelicht
+						</NcCheckboxRadioSwitch>
+					</span>
+					<NcTextField :disabled="loading"
+						label="Image"
+						:value.sync="publication.image" />
+					<b>Juridisch</b>
+					<NcTextField :disabled="loading"
+						label="Licentie"
+						:value.sync="publication.license" />
 				</div>
 			</div>
 		</div>
-	</NcModal>
+	</NcDialog>
 </template>
 
 <script>
 import {
 	NcButton,
-	NcModal,
+	NcDialog,
 	NcTextField,
 	NcTextArea,
 	NcSelect,
@@ -119,12 +155,16 @@ import {
 	NcNoteCard,
 	NcDateTimePicker,
 } from '@nextcloud/vue'
+
 import Plus from 'vue-material-design-icons/Plus.vue'
+import Help from 'vue-material-design-icons/Help.vue'
+import Cancel from 'vue-material-design-icons/Cancel.vue'
+import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 
 export default {
 	name: 'AddPublicationModal',
 	components: {
-		NcModal,
+		NcDialog,
 		NcTextField,
 		NcTextArea,
 		NcButton,
@@ -135,6 +175,9 @@ export default {
 		NcDateTimePicker,
 		// Icons
 		Plus,
+		Help,
+		Cancel,
+		ArrowLeft,
 	},
 	data() {
 		return {
@@ -273,7 +316,7 @@ export default {
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
-						navigationStore.setSelectedCatalogus(data?.catalogi)
+						navigationStore.setSelectedCatalogus(data?.catalogi?.id)
 					})
 					navigationStore.setSelected('publication')
 					// Wait for the user to read the feedback then close the model
@@ -308,6 +351,9 @@ export default {
 			this.catalogi = {}
 			this.metaData = {}
 			this.hasUpdated = false
+		},
+		openLink(url, type = '') {
+			window.open(url, type)
 		},
 	},
 }

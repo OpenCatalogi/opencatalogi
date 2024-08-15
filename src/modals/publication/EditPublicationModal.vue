@@ -2,65 +2,74 @@
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="navigationStore.modal === 'editPublication'"
-		ref="modalRef"
-		label-id="editPublicationModal"
-		@close="navigationStore.setModal(false)">
-		<div class="modal__content">
-			<h2>Edit publication</h2>
-			<div v-if="success !== null || error">
-				<NcNoteCard v-if="success" type="success">
-					<p>Publicatie succesvol bewerkt</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="error" type="error">
-					<p>{{ error }}</p>
-				</NcNoteCard>
-			</div>
-			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
-					label="Titel *"
-					required
-					:value.sync="publicationItem.title" />
-				<NcTextField :disabled="loading"
-					label="Samenvatting *"
-					required
-					:value.sync="publicationItem.summary" />
-				<NcTextArea :disabled="loading"
-					label="Beschrijving"
-					:value.sync="publicationItem.description" />
-				<NcTextField :disabled="loading"
-					label="Reference"
-					:value.sync="publicationItem.reference" />
-				<NcTextField :disabled="loading"
-					label="Categorie"
-					:value.sync="publicationItem.category" />
-				<NcTextField :disabled="loading"
-					label="Portaal"
-					:value.sync="publicationItem.portal" />
-				<span>
-					<p>Publicatie datum</p>
-					<NcDateTimePicker v-model="publicationItem.published"
-						:disabled="loading"
-						label="Publicatie datum" />
-				</span>
-				<span class="EPM-horizontal">
-					<NcCheckboxRadioSwitch :disabled="loading"
-						label="Featured"
-						:checked.sync="publicationItem.featured">
-						Featured
-					</NcCheckboxRadioSwitch>
-				</span>
-				<NcTextField :disabled="loading"
-					label="Image"
-					:value.sync="publicationItem.image" />
-				<b>Juridisch</b>
-				<NcTextField :disabled="loading"
-					label="Licentie"
-					:value.sync="publicationItem.license" />
-			</div>
+	<NcDialog v-if="navigationStore.modal === 'editPublication'"
+		name="Bewerk Publicatie"
+		size="normal"
+		:can-close="false">
+		<div v-if="success !== null || error">
+			<NcNoteCard v-if="success" type="success">
+				<p>Publicatie succesvol bewerkt</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="!success" type="error">
+				<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+		</div>
+		<div v-if="success === null" class="wrapper">
+			<NcTextField :disabled="loading"
+				label="Titel *"
+				required
+				:value.sync="publicationItem.title" />
+			<NcTextField :disabled="loading"
+				label="Samenvatting *"
+				required
+				:value.sync="publicationItem.summary" />
+			<NcTextArea :disabled="loading"
+				label="Beschrijving"
+				:value.sync="publicationItem.description" />
+			<NcTextField :disabled="loading"
+				label="Kenmerk"
+				:value.sync="publicationItem.reference" />
+			<NcTextField :disabled="loading"
+				label="Categorie"
+				:value.sync="publicationItem.category" />
+			<NcTextField :disabled="loading"
+				label="Portaal"
+				:value.sync="publicationItem.portal" />
+			<p>Publicatie datum</p>
+			<NcDateTimePicker v-model="publicationItem.published"
+				:disabled="loading"
+				label="Publicatie datum" />
+			<NcCheckboxRadioSwitch :disabled="loading"
+				label="Featured"
+				:checked.sync="publicationItem.featured">
+				Uitgelicht
+			</NcCheckboxRadioSwitch>
+			<NcTextField :disabled="loading"
+				label="Image"
+				:value.sync="publicationItem.image" />
+			<b>Juridisch</b>
+			<NcTextField :disabled="loading"
+				label="Licentie"
+				:value.sync="publicationItem.license" />
+		</div>
+		<template #actions>
+			<NcButton
+				@click="navigationStore.setModal(false)">
+				<template #icon>
+					<Cancel :size="20" />
+				</template>
+				{{ success ? 'Sluiten' : 'Annuleer' }}
+			</NcButton>
+			<NcButton
+				@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
+				<template #icon>
+					<Help :size="20" />
+				</template>
+				Help
+			</NcButton>
 			<NcButton v-if="success === null"
 				:disabled="!publicationItem.title || !publicationItem.summary"
 				type="primary"
@@ -71,8 +80,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</template>
 				Opslaan
 			</NcButton>
-		</div>
-	</NcModal>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -81,17 +90,19 @@ import {
 	NcCheckboxRadioSwitch,
 	NcDateTimePicker,
 	NcLoadingIcon,
-	NcModal,
+	NcDialog,
 	NcNoteCard,
 	NcTextArea,
 	NcTextField,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Cancel from 'vue-material-design-icons/Cancel.vue'
+import Help from 'vue-material-design-icons/Help.vue'
 
 export default {
 	name: 'EditPublicationModal',
 	components: {
-		NcModal,
+		NcDialog,
 		NcTextField,
 		NcTextArea,
 		NcCheckboxRadioSwitch,
@@ -101,6 +112,8 @@ export default {
 		NcNoteCard,
 		// Icons
 		ContentSaveOutline,
+		Cancel,
+		Help,
 	},
 	data() {
 		return {
@@ -183,6 +196,8 @@ export default {
 					body: JSON.stringify({
 						...this.publicationItem,
 						id: this.publicationItem.id.toString(),
+						catalogi: this.publicationItem.catalogi?.id?.toString(),
+						metaData: this.publicationItem.metaData?.id?.toString(),
 					}),
 				},
 			)
@@ -207,30 +222,17 @@ export default {
 					this.loading = false
 				})
 		},
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>
 
 <style>
-.modal__content {
-  margin: var(--OC-margin-50);
-  text-align: center;
+.dialog__content {
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
-.zaakDetailsContainer {
-  margin-block-start: var(--OC-margin-20);
-  margin-inline-start: var(--OC-margin-20);
-  margin-inline-end: var(--OC-margin-20);
-}
-
-.success {
-  color: green;
-}
-
-.EPM-horizontal {
-    display: flex;
-    gap: 4px;
-    flex-direction: row;
-    align-items: center;
-}
 </style>

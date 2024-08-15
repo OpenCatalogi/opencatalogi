@@ -177,7 +177,7 @@ export default {
 				reset()
 				// Lets refresh the attachment list
 				if (publicationStore.publicationItem) {
-					publicationStore.getPublicationAttachments(publicationStore.publicationItem)
+					publicationStore.getPublicationAttachments(publicationStore.publicationItem?.id)
 
 					fetch(
 						`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,

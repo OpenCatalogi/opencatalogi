@@ -84,7 +84,7 @@ export default {
 					this.succes = true
 					// Lets refresh the attachment list
 					if (publicationStore.publicationItem) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem)
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem?.id)
 						this.filterdAttachments = publicationStore.publicationItem.attachments.filter((attachment) => { return parseInt(attachment) !== parseInt(publicationStore.attachmentItem.id) })
 
 						fetch(

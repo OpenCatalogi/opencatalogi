@@ -12,7 +12,7 @@ De organisatie-eigen catalogi (waartoe een gebruiker toegang heeft) zijn opgenom
 
 ## Catalogi beheren
 
-Catalogi kunnen worden beheerd via het menu-item Instellingen -> Catalogi.
+Catalogi kunnen worden beheerd via het menu-item Instellingen -> Catalogi en dan de drie bolletjes te selecten voor de opties.&#x20;
 
 * **Configuratie**: Onder de configuratie van een catalogus kan worden aangegeven
   * Of deze actief is (anders wordt de catalogus niet getoond in het navigatiemenu en de zoekresultaten)

@@ -114,8 +114,8 @@ import { ref } from 'vue'
 					<span>{{ publicationStore.publicationItem.themes.join(", ") }}</span>
 				</div>
 				<div>
-					<b>Featured:</b>
-					<span>{{ publicationStore.publicationItem.featured ? "Yes" : "No" }}</span>
+					<b>Uitgelicht:</b>
+					<span>{{ publicationStore.publicationItem.featured ? "Ja" : "Nee" }}</span>
 				</div>
 				<div>
 					<b>Licentie:</b>
@@ -151,7 +151,7 @@ import { ref } from 'vue'
 					</div>
 				</div>
 				<div>
-					<b>Metadata:</b>
+					<b>Publicatie type:</b>
 					<span v-if="metaDataLoading">Loading...</span>
 					<div v-if="!metaDataLoading" class="buttonLinkContainer">
 						<span>{{ metadata.title }}</span>
@@ -470,8 +470,8 @@ export default {
 			handler(newPublicationItem, oldPublicationItem) {
 				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
 					this.publication = publicationStore.publicationItem
-					this.fetchCatalogi(publicationStore.publicationItem.catalogi)
-					this.fetchMetaData(publicationStore.publicationItem.metaData)
+					this.fetchCatalogi(this.publication.catalogi?.id)
+					this.fetchMetaData(this.publication.metaData?.id)
 					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
@@ -482,8 +482,8 @@ export default {
 	mounted() {
 		this.publication = publicationStore.publicationItem
 
-		this.fetchCatalogi(publicationStore.publicationItem.catalogi, true)
-		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
+		this.fetchCatalogi(this.publication.catalogi?.id, true)
+		this.fetchMetaData(this.publication.metaData?.id, true)
 		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
@@ -497,9 +497,9 @@ export default {
 					response.json().then((data) => {
 						this.publication = data
 						// this.oldZaakId = id
-						this.fetchCatalogi(data.catalogi)
-						this.fetchMetaData(data.metaData)
-						publicationStore.getPublicationAttachments(data)
+						this.fetchCatalogi(data.catalogi?.id)
+						this.fetchMetaData(data.metaData?.id)
+						publicationStore.getPublicationAttachments(id)
 						// this.loading = false
 					})
 				})

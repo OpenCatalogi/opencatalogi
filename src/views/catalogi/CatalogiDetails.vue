@@ -45,7 +45,7 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 					<template #icon>
 						<Plus :size="20" />
 					</template>
-					Metadata toevoegen
+					Publicatie type toevoegen
 				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
@@ -61,7 +61,7 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 				<BTab title="Toegang">
 					Publiek of alleen bepaalde rollen
 				</BTab>
-				<BTab title="Metadata">
+				<BTab title="Publicatie typen">
 					<div v-if="catalogiStore.catalogiItem?.metadata.length > 0 && !metadataLoading">
 						<NcListItem v-for="(value) in catalogiStore.catalogiItem?.metadata"
 							:key="`${value}`"
@@ -80,7 +80,7 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 									<template #icon>
 										<OpenInApp :size="20" />
 									</template>
-									Bekijk Metadata
+									Bekijk publicatie type
 								</NcActionButton>
 								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setDialog('deleteCatalogiMetadata')">
 									<template #icon>
@@ -92,7 +92,7 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 						</NcListItem>
 					</div>
 					<div v-if="catalogiStore.catalogiItem?.metadata.length === 0">
-						Geen Metadata gevonden
+						Geen publicatie typen gevonden
 					</div>
 				</BTab>
 			</BTabs>
