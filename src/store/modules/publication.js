@@ -75,9 +75,9 @@ export const usePublicationStore = defineStore(
 						},
 					)
 			},
-			getPublicationAttachments(publication) { // @todo this might belong in a service?
+			getPublicationAttachments(publicationId) {
 				fetch(
-					`/index.php/apps/opencatalogi/api/publications/${publication.id}/attachments`,
+					`/index.php/apps/opencatalogi/api/publications/${publicationId}/attachments`,
 					{
 						method: 'GET',
 					},
@@ -192,9 +192,9 @@ export const usePublicationStore = defineStore(
 				})
 		},
 		/* istanbul ignore next */ // ignore this for Jest until moved into a service
-		getPublicationAttachments(publication) { // @todo this might belong in a service?
+		getPublicationAttachments(publicationId) {
 			fetch(
-				'/index.php/apps/opencatalogi/api/attachments',
+				'/index.php/apps/opencatalogi/api/publications/' + publicationId + '/attachments',
 				{
 					method: 'GET',
 				},

@@ -42,6 +42,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				:key="`${listing}${i}`"
 				:name="listing.name ?? listing.title"
 				:active="directoryStore.listingItem?.id === listing?.id"
+				:details="listing?.organisation?.title || 'Geen organisatie'"
 				@click="directoryStore.setListingItem(listing)">
 				<template #icon>
 					<LayersOutline :class="directoryStore.listingItem?.id === listing?.id && 'selectedIcon'"
