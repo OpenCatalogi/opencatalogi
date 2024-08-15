@@ -18,7 +18,7 @@ export class Publication implements TPublication {
 	public attachments: TAttachment[]
 	public attachmentCount: number
 	public themes: string[]
-	public data: Record<string, object>
+	public data: Record<string, unknown>
 
 	public anonymization: {
         anonymized: boolean
@@ -42,8 +42,8 @@ export class Publication implements TPublication {
         coordinates: [number, number]
     }
 
-	public catalogi: string|TCatalogi
-	public metaData: string|TMetadata
+	public catalogi: string | TCatalogi
+	public metaData: string | TMetadata
 
 	constructor(data: TPublication) {
 		this.hydrate(data)
