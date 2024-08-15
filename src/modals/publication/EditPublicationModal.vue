@@ -195,9 +195,9 @@ export default {
 					},
 					body: JSON.stringify({
 						...this.publicationItem,
-						id: this.publicationItem.id.toString(),
-						catalogi: this.publicationItem.catalogi?.id?.toString(),
-						metaData: this.publicationItem.metaData?.id?.toString(),
+						id: this.publicationItem.id,
+						catalogi: this.publicationItem.catalogi.id,
+						metaData: this.publicationItem.metaData.id,
 					}),
 				},
 			)

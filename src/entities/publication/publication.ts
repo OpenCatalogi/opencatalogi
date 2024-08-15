@@ -18,7 +18,7 @@ export class Publication implements TPublication {
 	public attachments: TAttachment[]
 	public attachmentCount: number
 	public themes: string[]
-	public data: Record<string, object>
+	public data: Record<string, unknown>
 
 	public anonymization: {
         anonymized: boolean

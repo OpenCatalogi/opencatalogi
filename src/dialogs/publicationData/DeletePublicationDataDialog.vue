@@ -67,9 +67,6 @@ export default {
 	methods: {
 		DeleteProperty() {
 			const publication = publicationStore.publicationItem
-			publication.catalogi = publication.catalogi?.id?.toString()
-			publication.metaData = publication.metaData?.id?.toString()
-
 			delete publication?.data[publicationStore.publicationDataKey]
 
 			this.loading = true
@@ -80,7 +77,11 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publication),
+					body: JSON.stringify({
+						...publicationStore.publicationItem,
+						catalogi: publicationStore.publicationItem.catalogi.id,
+						metaData: publicationStore.publicationItem.metaData.id,
+					}),
 				},
 			)
 				.then((response) => {

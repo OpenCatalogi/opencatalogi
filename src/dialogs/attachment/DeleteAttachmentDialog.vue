@@ -97,6 +97,8 @@ export default {
 								body: JSON.stringify({
 									...publicationStore.publicationItem,
 									attachments: [...this.filterdAttachments],
+									catalogi: publicationStore.publicationItem.catalogi.id,
+									metaData: publicationStore.publicationItem.metaData.id,
 								}),
 							},
 						)

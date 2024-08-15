@@ -99,7 +99,11 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ ...bodyData, catalogi: bodyData.catalogi.id, metaData: bodyData.metaData.id }),
+					body: JSON.stringify({
+						...bodyData,
+						catalogi: bodyData.catalogi.id,
+						metaData: bodyData.metaData.id,
+					}),
 				},
 			)
 				.then((response) => {
