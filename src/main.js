@@ -11,4 +11,4 @@ new Vue(
 		pinia,
 		render: h => h(App),
 	},
-).$mount('#opencatalogi')
+).$mount('#content')

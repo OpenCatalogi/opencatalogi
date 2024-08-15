@@ -19,6 +19,7 @@ export function useFileSelection(options) {
 		allowMultiple,
 		allowedFileTypes,
 		onFileDrop,
+		onFileSelect,
 	} = options
 
 	// Data types computed ref
@@ -53,19 +54,12 @@ export function useFileSelection(options) {
 		}
 		filesList.value = files
 		onFileDrop && onFileDrop()
+		onFileSelect && onFileSelect()
 	}
 
 	const reset = () => {
 		filesList.value = null
 	}
-
-	// const onLeave = () => {
-	// let timer
-	// document.addEventListener('mousemove', () => {
-	// clearTimeout(timer)
-	// timer = setTimeout(isOverDropZone.value = false, 300)
-	// })
-	// }
 
 	const setFiles = (files) => {
 		filesList.value = files
