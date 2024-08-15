@@ -1,6 +1,7 @@
 <script setup>
 import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
+
 <template>
 	<NcDialog v-if="navigationStore.modal === 'publicationAdd'"
 		name="Publicatie toevoegen"
