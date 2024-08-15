@@ -61,9 +61,6 @@ class OrganisationMapper extends QBMapper
 	{
 		$organisation = new Organisation();
 		$organisation->hydrate(object: $object);
-
-//		var_dump($organisation->getTitle());
-
 		return $this->insert(entity: $organisation);
 	}
 

@@ -55,9 +55,6 @@ class AttachmentMapper extends QBMapper
 	{
 		$attachment = new Attachment();
 		$attachment->hydrate(object: $object);
-
-//		var_dump($attachment->getTitle());
-
 		return $this->insert(entity: $attachment);
 	}
 

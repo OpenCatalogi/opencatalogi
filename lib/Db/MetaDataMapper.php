@@ -61,9 +61,6 @@ class MetaDataMapper extends QBMapper
 	{
 		$metadata = new MetaData();
 		$metadata->hydrate(object: $object);
-
-//		var_dump($metadata->getTitle());
-
 		return $this->insert(entity: $metadata);
 	}
 

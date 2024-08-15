@@ -149,7 +149,6 @@ class ElasticSearchService
 		}
 
 		if(isset($filters['.catalogi']) === true) {
-//			var_dump($filters['.catalogi']);
 			$body['query']['bool']['must'][] = [
 				'match' => [
 					'catalogi._id' => [
