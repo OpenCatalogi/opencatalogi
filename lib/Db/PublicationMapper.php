@@ -6,6 +6,7 @@ use OCA\OpenCatalogi\Db\Publication;
 use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\DB\Types;
 use OCP\IDBConnection;
 
 class PublicationMapper extends QBMapper
@@ -163,7 +164,7 @@ class PublicationMapper extends QBMapper
 					$queryBuilder->andWhere($queryBuilder->expr()->lt($name, $queryBuilder->createNamedParameter($value)));
 					break;
 				default:
-					$queryBuilder->andWhere($queryBuilder->expr()->eq($name, $queryBuilder->createNamedParameter($filter)));
+					$queryBuilder->andWhere($queryBuilder->expr()->eq(x: $name, y: $queryBuilder->createNamedParameter($filter)));
 			}
 		}
 
@@ -174,7 +175,7 @@ class PublicationMapper extends QBMapper
 	{
 		foreach($filters as $key => $filter) {
 			if(is_array($filter) === false) {
-				$queryBuilder->andWhere($queryBuilder->expr()->eq($key, $queryBuilder->createNamedParameter($key)));
+				$queryBuilder->andWhere($queryBuilder->expr()->eq($key, $queryBuilder->createNamedParameter($filter)));
 				$queryBuilder->setParameter($key, $filter);
 				continue;
 			}
