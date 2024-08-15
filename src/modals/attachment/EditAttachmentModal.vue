@@ -93,7 +93,11 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.attachmentItem),
+					body: JSON.stringify({
+						...publicationStore.attachmentItem,
+						published: publicationStore.attachmentItem.published === '' ? null : publicationStore.attachmentItem.published,
+					}),
+
 				},
 			)
 				.then((response) => {
