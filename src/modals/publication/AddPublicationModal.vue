@@ -127,7 +127,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<NcCheckboxRadioSwitch :disabled="loading"
 							label="Featured"
 							:checked.sync="publication.featured">
-							Featured
+							Uitgelicht
 						</NcCheckboxRadioSwitch>
 					</span>
 					<NcTextField :disabled="loading"
@@ -316,7 +316,7 @@ export default {
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
-						navigationStore.setSelectedCatalogus(data?.catalogi)
+						navigationStore.setSelectedCatalogus(data?.catalogi?.id)
 					})
 					navigationStore.setSelected('publication')
 					// Wait for the user to read the feedback then close the model

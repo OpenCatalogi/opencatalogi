@@ -83,7 +83,7 @@ export default {
 				this.succes = true
 
 				if (publicationStore.publicationItem) {
-					publicationStore.getPublicationAttachments(publicationStore.publicationItem)
+					publicationStore.getPublicationAttachments(publicationStore.publicationItem?.id)
 				}
 
 				// Wait for the user to read the feedback then close the model

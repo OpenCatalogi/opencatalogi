@@ -4,7 +4,7 @@ import { publicationStore } from './../store/store.js'
 
 /**
  * File selection composable
- * @param options
+ * @param {Array} options
  *
  * Special thanks to Github user adamreisnz for creating most of this file
  * https://github.com/adamreisnz

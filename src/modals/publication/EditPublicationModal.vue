@@ -45,7 +45,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 			<NcCheckboxRadioSwitch :disabled="loading"
 				label="Featured"
 				:checked.sync="publicationItem.featured">
-				Featured
+				Uitgelicht
 			</NcCheckboxRadioSwitch>
 			<NcTextField :disabled="loading"
 				label="Image"
@@ -196,6 +196,8 @@ export default {
 					body: JSON.stringify({
 						...this.publicationItem,
 						id: this.publicationItem.id.toString(),
+						catalogi: this.publicationItem.catalogi?.id?.toString(),
+						metaData: this.publicationItem.metaData?.id?.toString(),
 					}),
 				},
 			)
