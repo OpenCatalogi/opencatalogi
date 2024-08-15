@@ -31,9 +31,6 @@ class PublicationMapper extends QBMapper
 
 	private function parseComplexFilter(IQueryBuilder $queryBuilder, array $filter, string $name): IQueryBuilder
 	{
-		var_dump($filter);
-
-
 		foreach($filter as $key => $value) {
 			switch($key) {
 				case '>=':
