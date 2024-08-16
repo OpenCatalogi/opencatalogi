@@ -84,8 +84,8 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<FileTreeOutline :size="20" />
 			</template>
 			Welke meta data typen zou u uit deze catalogus willen overnemen?
-			<NcCheckboxRadioSwitch type="switch">
-				Metedata type 1
+			<NcCheckboxRadioSwitch :checked.sync="checkedMetadata" v-for="(metadataSingular, i) in directoryStore.listingItem.metadata" :key="`${metadataSingular}${i}`" type="switch">
+				{{ metadataSingular }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 	</NcAppSidebar>
@@ -116,13 +116,65 @@ export default {
 		FileTreeOutline,
 		InformationSlabSymbol,
 	},
+	props: {
+		listingItem: {
+			type: Object,
+			required: true,
+		},
+	},
 	data() {
 		return {
+			checkedMetadata: {},
+			listing: '',
 		}
 	},
+    watch: {
+        checkedMetadata(newValue, oldValue) {
+            console.log(newValue, oldValue)
+        },
+    },
 	methods: {
 		openLink(url, type = '') {
 			window.open(url, type)
+		},
+		copyMetadata() {
+			this.loading = true
+			// metadataStore.metaDataItem.title = 'KOPIE: ' + metadataStore.metaDataItem.title
+			if (Object.keys(metadataStore.metaDataItem.properties).length === 0) {
+				delete metadataStore.metaDataItem.properties
+			}
+			delete metadataStore.metaDataItem.id
+			delete metadataStore.metaDataItem._id
+			fetch(
+				'/index.php/apps/opencatalogi/api/metadata',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(metadataStore.metaDataItem),
+				},
+			)
+				.then((response) => {
+					this.loading = false
+					this.succes = true
+					// Lets refresh the catalogiList
+					metadataStore.refreshMetaDataList()
+					response.json().then((data) => {
+						metadataStore.setMetaDataItem(data)
+					})
+					navigationStore.setSelected('metaData')
+					// Wait for the user to read the feedback then close the model
+					const self = this
+					setTimeout(function() {
+						self.succes = false
+						navigationStore.setDialog(false)
+					}, 2000)
+				})
+				.catch((err) => {
+					this.error = err
+					this.loading = false
+				})
 		},
 	},
 }

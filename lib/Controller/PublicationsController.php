@@ -13,10 +13,13 @@ use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\FileService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCA\OpenCatalogi\Service\SearchService;
+use OCA\OpenCatalogi\Service\ValidationService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\OCS\OCSBadRequestException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IAppConfig;
 use OCP\IRequest;
 use Symfony\Component\Uid\Uuid;
@@ -458,7 +461,7 @@ class PublicationsController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService, ValidationService $validationService): JSONResponse
     {
 		$data = $this->request->getParams();
 
@@ -468,6 +471,12 @@ class PublicationsController extends Controller
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
 			}
+		}
+
+		try {
+			$data = $validationService->validatePublication($data);
+		} catch (OCSBadRequestException|OCSNotFoundException $exception) {
+			return new JSONResponse(data: ['message' => $exception->getMessage()], statusCode: 400);
 		}
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
