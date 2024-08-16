@@ -5,16 +5,16 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 <template>
 	<NcModal v-if="navigationStore.modal === 'editListing'"
 		ref="modalRef"
-		label-id="editListingModal"
+		label-id="editDirectoryModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory bewerken</h2>
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
-					<p>Listing succesvol bewerkt</p>
+					<p>Directory succesvol bewerkt</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het bewerken van Listing</p>
+					<p>Er is iets fout gegaan bij het bewerken van Directory</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="error" type="error">
 					<p>{{ error }}</p>
