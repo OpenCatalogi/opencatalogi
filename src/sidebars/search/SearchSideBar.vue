@@ -31,7 +31,10 @@ import { searchStore, directoryStore, metadataStore } from '../../store/store.js
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
-			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList" :key="`${metaData}${i}`" type="switch">
+			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList"
+				:key="`${metaData}${i}`"
+				type="switch"
+				:checked.sync="searchStore.metadata[metaData.id]">
 				{{ metaData.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
@@ -62,6 +65,10 @@ export default {
 			type: String,
 			required: true,
 		},
+		metadata: {
+			type: Object,
+			required: true,
+		},
 	},
 	data() {
 		return {
@@ -70,6 +77,12 @@ export default {
 	},
 	watch: {
 		search: 'debouncedSearch',
+		metadata: {
+			handler() {
+				this.debouncedSearch()
+			},
+			deep: true,
+		},
 	},
 	mounted() {
 		directoryStore.refreshListingList()

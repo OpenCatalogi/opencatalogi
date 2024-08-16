@@ -17,7 +17,7 @@ import { searchStore } from '../../store/store.js'
 				<ListBoxOutline :size="44" />
 			</template>
 			<template #actions>
-				<NcActionButton v-if="result.portal" @click="goToLink(result.portal)">
+				<NcActionButton v-if="result.portal" @click="openLink(result.portal)">
 					<template #icon>
 						<OpenInNew :size="20" />
 					</template>
@@ -44,8 +44,8 @@ export default {
 		OpenInNew,
 	},
 	methods: {
-		goToLink(link) {
-			//
+		openLink(link, type = '') {
+			window.open(link, type)
 		},
 	},
 }

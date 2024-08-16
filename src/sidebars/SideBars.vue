@@ -5,7 +5,9 @@ import { navigationStore, searchStore } from '../store/store.js'
 <template>
 	<div>
 		<!-- Placeholder div for all of the sidebars-->
-		<SearchSideBar v-if="navigationStore.selected === 'search'" :search="searchStore.search" />
+		<SearchSideBar v-if="navigationStore.selected === 'search'"
+			:search="searchStore.search"
+			:metadata="searchStore.metadata" />
 		<DashboardSideBar v-if="navigationStore.selected === 'dashboard'" />
 		<DirectorySideBar v-if="navigationStore.selected === 'directory'" />
 	</div>
