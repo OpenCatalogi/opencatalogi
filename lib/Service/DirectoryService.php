@@ -137,7 +137,7 @@ class DirectoryService
 		}
  		$result = $this->client->get(uri: $url);
 
-		if($result->getHeader('content-type') !== 'application/json') {
+		if($result->getHeader('Content-Type') !== 'application/json') {
 			$result = $this->client->get(uri: rtrim(string: $url, characters: '/').'/apps/opencatalogi/api/directory');
 		}
 
