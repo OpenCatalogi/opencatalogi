@@ -236,9 +236,9 @@ class DirectoryController extends Controller
 			$filters['_id'] = (string) $id;
 
 			$object = $objectService->findObject(filters: $filters, config: $dbConfig);
-
-			$url = $object['directory'];
 		}
+
+		$url = $object['directory'];
 
 		$directoryService->fetchFromExternalDirectory(url: $url, update: true);
 
