@@ -252,6 +252,8 @@ class DirectoryService
 		$listing = $this->getDirectoryEntry(catalogId: $catalogId);
 
 		$listing['title']        = $catalog['title'];
+		$listing['description']  = $catalog['description'];
+		$listing['summary']      = $catalog['summary'];
 		$listing['organisation'] = $catalog['organisation'];
 		$listing['metadata']     = $catalog['metadata'];
 
