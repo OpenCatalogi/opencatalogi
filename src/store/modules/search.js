@@ -28,7 +28,7 @@ export const useSearchStore = defineStore('search', {
 
 			const searchParams = new URLSearchParams({
 				_search: this.search,
-				meta_data: enabledMetadataIds,
+				...(enabledMetadataIds[0] && { meta_data: enabledMetadataIds }),
 			}).toString()
 
 			fetch('/index.php/apps/opencatalogi/api/search?' + searchParams,
