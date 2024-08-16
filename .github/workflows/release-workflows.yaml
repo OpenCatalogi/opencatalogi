@@ -42,7 +42,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'release.zip'
-          exclusions: '*.git* /*node_modules/* .editorconfig'
+          exclusions: '*.git* *.vscode* .coverage-frontend* .docker* .tests* .specs.ts* .mocks.ts* .tests* .editorconfig .eslintrc.js .phpmd.xml .phpunit.xml .psalm.xml .eslintrc.js stylelint.config.js webpack.config.js' 
 
       #https://github.com/marvinpinto/action-automatic-releases
       - uses: "marvinpinto/action-automatic-releases@latest"
