@@ -42,8 +42,8 @@ export class Publication implements TPublication {
         coordinates: [number, number]
     }
 
-	public catalogi: string|TCatalogi
-	public metaData: string|TMetadata
+	public catalogi: string | TCatalogi
+	public metaData: string | TMetadata
 
 	constructor(data: TPublication) {
 		this.hydrate(data)
