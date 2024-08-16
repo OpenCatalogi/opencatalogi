@@ -131,7 +131,7 @@ class Publication extends Entity implements JsonSerializable
 			'data' => $this->data,
 			'attachments' => $this->attachments,
 			'attachmentCount' => $this->attachmentCount,
-			'schema' => json_decode($this->schema, true),
+			'schema' => $this->schema,
 			'status' => $this->status,
 			'license' => $this->license,
 			'themes' => $this->themes,
