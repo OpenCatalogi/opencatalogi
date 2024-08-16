@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, directoryStore } from '../../store/store.js'
+import { navigationStore, directoryStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -75,6 +75,19 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			<NcCheckboxRadioSwitch :checked.sync="directoryStore.listingItem.default" type="switch">
 				Standaard mee nemen in de beantwoording van mijn zoekopdrachten
 			</NcCheckboxRadioSwitch>
+
+			<NcButton
+				:disabled="syncLoading"
+				type="primary"
+				class="syncButton"
+				@click="synDirectroy">
+				<template #icon>
+					<NcLoadingIcon v-if="syncLoading" :size="20" />
+
+					<DatabaseSyncOutline v-if="!syncLoading" :size="20" />
+				</template>
+				Synchroniseren
+			</NcButton>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="directoryStore.listingItem.id && navigationStore.selected === 'directory'"
 			id="metdata-tab"
@@ -84,7 +97,10 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<FileTreeOutline :size="20" />
 			</template>
 			Welke meta data typen zou u uit deze catalogus willen overnemen?
-			<NcCheckboxRadioSwitch :checked.sync="checkedMetadata" v-for="(metadataSingular, i) in directoryStore.listingItem.metadata" :key="`${metadataSingular}${i}`" type="switch">
+			<NcCheckboxRadioSwitch v-for="(metadataSingular, i) in directoryStore.listingItem.metadata"
+				:key="`${metadataSingular}${i}`"
+				:checked.sync="checkedMetadata"
+				type="switch">
 				{{ metadataSingular }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
@@ -92,10 +108,11 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 </template>
 <script>
 
-import { NcAppSidebar, NcEmptyContent, NcButton, NcAppSidebarTab, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { NcAppSidebar, NcEmptyContent, NcButton, NcAppSidebarTab, NcCheckboxRadioSwitch, NcLoadingIcon } from '@nextcloud/vue'
 import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import DatabaseSyncOutline from 'vue-material-design-icons/DatabaseSyncOutline.vue'
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import InformationSlabSymbol from 'vue-material-design-icons/InformationSlabSymbol.vue'
@@ -108,13 +125,7 @@ export default {
 		NcEmptyContent,
 		NcButton,
 		NcCheckboxRadioSwitch,
-		// Icons
-		LayersOutline,
-		Plus,
-		HelpCircleOutline,
-		CogOutline,
-		FileTreeOutline,
-		InformationSlabSymbol,
+		NcLoadingIcon,
 	},
 	props: {
 		listingItem: {
@@ -126,13 +137,14 @@ export default {
 		return {
 			checkedMetadata: {},
 			listing: '',
+			syncLoading: false,
 		}
 	},
-    watch: {
-        checkedMetadata(newValue, oldValue) {
-            console.log(newValue, oldValue)
-        },
-    },
+	watch: {
+		checkedMetadata(newValue, oldValue) {
+			console.log(newValue, oldValue)
+		},
+	},
 	methods: {
 		openLink(url, type = '') {
 			window.open(url, type)
@@ -176,6 +188,32 @@ export default {
 					this.loading = false
 				})
 		},
+		synDirectroy() {
+			this.syncLoading = true
+			fetch(
+				`/index.php/apps/opencatalogi/api/directory/${directoryStore.listingItem.id}/sync`,
+				{
+					method: 'GET',
+				},
+			)
+				.then((response) => {
+					this.syncLoading = false
+					// eslint-disable-next-line no-console
+					console.log(response)
+
+				})
+				.catch((err) => {
+					this.error = err
+					this.loading = false
+				})
+		},
 	},
 }
 </script>
+
+<style>
+.syncButton {
+	margin-block-start: 15px;
+	width: 100% !important;
+}
+</style>
