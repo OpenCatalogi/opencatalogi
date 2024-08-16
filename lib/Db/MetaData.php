@@ -68,7 +68,7 @@ class MetaData extends Entity implements JsonSerializable
 			'summary'     => $this->summary,
 			'required'    => $this->required,
 			'properties'  => $this->properties,
-			'archive'     => $this->title,
+			'archive'     => $this->archive,
 			'source'	  => $this->source,
 		];
 
