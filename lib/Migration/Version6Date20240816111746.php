@@ -18,7 +18,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * FIXME Auto-generated migration step: Please modify to your needs!
  */
-class Version6Date20240816084024 extends SimpleMigrationStep {
+class Version6Date20240816111746 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
@@ -43,16 +43,16 @@ class Version6Date20240816084024 extends SimpleMigrationStep {
 		if($schema->hasTable(tableName: 'listings') === true) {
 			$table = $schema->getTable(tableName: 'listings');
 
-			if($table->hasColumn(name: 'reference') === true) {
-				$table->dropColumn(name: 'reference');
+			if($table->hasColumn(name: 'status_code') === false) {
+				$table->addColumn(name: 'status_code', typeName: Types::INTEGER);
 			}
 		}
 
 		if($schema->hasTable(tableName: 'metadata') === true) {
 			$table = $schema->getTable(tableName: 'metadata');
 
-			if($table->hasColumn(name: 'summary') === false) {
-				$column = $table->addColumn(name: 'summary', typeName: Types::STRING);
+			if($table->hasColumn(name: 'archive') === false) {
+				$column = $table->addColumn(name: 'archive', typeName: Types::JSON);
 				$column->setNotnull(notnull: false)->setDefault(default: null);
 			}
 		}
