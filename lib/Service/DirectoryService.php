@@ -100,7 +100,13 @@ class DirectoryService
 		) {
 			return null;
 		} else if (count($this->listDirectory(filters: ['catalogId' => $result['catalogId'], 'directory' => $result['directory']])) > 0 && $update === true) {
-			$id = $this->listDirectory(filters: ['catalogId' => $result['catalogId'], 'directory' => $result['directory']])[0]['id'];
+			$listing = $this->listDirectory(filters: ['catalogId' => $result['catalogId'], 'directory' => $result['directory']])[0];
+
+			if($listing instanceof Listing) {
+				$listing = $listing->jsonSerialize();
+			}
+
+			$id = $listing['id'];
 		}
 
 		if($this->config->getValueString($this->appName, 'mongoStorage') === '1') {
