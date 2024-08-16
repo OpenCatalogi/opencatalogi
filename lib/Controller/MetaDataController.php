@@ -11,6 +11,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 
 class MetaDataController extends Controller
 {
@@ -43,6 +44,7 @@ class MetaDataController extends Controller
     }
 
     /**
+	 * @PublicPage
      * @NoAdminRequired
      * @NoCSRFRequired
      */
@@ -77,6 +79,7 @@ class MetaDataController extends Controller
 	}
 
 	/**
+	 * @PublicPage
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
@@ -107,13 +110,15 @@ class MetaDataController extends Controller
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function create(ObjectService $objectService): JSONResponse
+	public function create(ObjectService $objectService, IURLGenerator $urlGenerator): JSONResponse
 	{
 
 		$data = $this->request->getParams();
 
 		// Remove fields we should never post
 		unset($data['id']);
+
+
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);
@@ -123,7 +128,18 @@ class MetaDataController extends Controller
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->metaDataMapper->createFromArray(object: $data));
+			$object = $this->metaDataMapper->createFromArray(object: $data);
+
+			$id = $object->getId();
+
+			if($object->getSource() === null) {
+				$source = $urlGenerator->getAbsoluteURL($urlGenerator->linkToRoute(routeName:"opencatalogi.metadata.show", arguments: ['id' => $id]));
+				$object->setSource($source);
+				$this->metaDataMapper->update($object);
+			}
+
+
+			return new JSONResponse($object);
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -135,6 +151,14 @@ class MetaDataController extends Controller
 			data: $data,
 			config: $dbConfig
 		);
+
+		if(isset($data['source']) === false || $data['source'] === null) {
+			$returnData['source'] = $urlGenerator->getAbsoluteURL($urlGenerator->linkToRoute(routeName:"opencatalogi.metadata.show", arguments: ['id' => $returnData['id']]));
+			$returnData = $objectService->saveObject(
+				data: $data,
+				config: $dbConfig
+			);
+		}
 
 		// get post from requests
 		return new JSONResponse($returnData);
@@ -149,7 +173,7 @@ class MetaDataController extends Controller
 		$data = $this->request->getParams();
 
 		// Remove fields we should never post
-		unset($data['id']);
+		unset($data['id'],$data['source']);
 		foreach($data as $key => $value) {
 			if(str_starts_with($key, '_')) {
 				unset($data[$key]);

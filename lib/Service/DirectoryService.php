@@ -242,7 +242,7 @@ class DirectoryService
 
 		$listing['title']        = $catalog['title'];
 		$listing['organisation'] = $catalog['organisation'];
-		$listing['metaData']     = $catalog['metaData'];
+		$listing['metadata']     = $catalog['metadata'];
 
 		if($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
