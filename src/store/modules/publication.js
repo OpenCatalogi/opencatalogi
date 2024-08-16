@@ -6,6 +6,7 @@ export const usePublicationStore = defineStore(
 	'publication', {
 		state: () => ({
 			publicationItem: false,
+			publicationMetaData: false,
 			publicationList: [],
 			publicationDataKey: false,
 			attachmentItem: false,
@@ -162,6 +163,9 @@ export const usePublicationStore = defineStore(
 				this.attachmentFile = files
 				console.log('Active attachment files set to ' + files)
 			},
+			setPublicationMetaData(metaData) {
+				this.publicationMetaData = metaData
+			},
 		},
 		setPublicationList(publicationList) {
 			this.publicationList = publicationList.map((publicationItem) => new Publication(publicationItem))
@@ -261,6 +265,9 @@ export const usePublicationStore = defineStore(
 		},
 		setAttachmentFile(files) {
 			this.attachmentFile = files
+		},
+		setPublicationMetaData(metaData) {
+			this.publicationMetaData = metaData
 		},
 	},
 )

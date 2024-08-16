@@ -55,6 +55,8 @@ import {
 	NcLoadingIcon,
 	NcNoteCard,
 } from '@nextcloud/vue'
+import { getMetaDataId } from './../../services/getMetaDataId.js'
+
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
@@ -184,7 +186,7 @@ export default {
 						...publicationStore.publicationItem,
 						id: publicationStore.publicationItem.id,
 						catalogi: publicationStore.publicationItem.catalogi.id,
-						metaData: publicationStore.publicationItem.metaData.id,
+						metaData: getMetaDataId(publicationStore.publicationItem.metaData),
 					}),
 				},
 			)

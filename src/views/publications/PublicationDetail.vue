@@ -209,7 +209,7 @@ import { ref } from 'vue'
 									:bold="false"
 									:active="publicationStore.attachmentId === attachment.id"
 									:force-display-actions="true"
-									:details="(attachment?.published && attachment?.published <= getTime) ? 'Gepubliseerd' : 'Niet gepubliseerd'">
+									:details="(attachment?.published && attachment?.published <= getTime) ? 'Gepubliceerd' : 'Niet gepubliceerd'">
 									<template #icon>
 										<CheckCircle v-if="attachment?.published && attachment?.published <= getTime"
 											:class="attachment?.published <= getTime && 'publishedIcon'"
@@ -382,6 +382,7 @@ import { ref } from 'vue'
 import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
 import { useFileSelection } from './../../composables/UseFileSelection.js'
 import { BTab, BTabs } from 'bootstrap-vue'
+import { getMetaDataId } from './../../services/getMetaDataId.js'
 import VueApexCharts from 'vue-apexcharts'
 
 // Icons
@@ -472,10 +473,11 @@ export default {
 	watch: {
 		publicationItem: {
 			handler(newPublicationItem, oldPublicationItem) {
+
 				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
 					this.publication = publicationStore.publicationItem
 					this.fetchCatalogi(publicationStore.publicationItem.catalogi.id)
-					this.fetchMetaData(publicationStore.publicationItem.metaData.id)
+					this.fetchMetaData(getMetaDataId(publicationStore.publicationItem.metaData))
 					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
@@ -487,7 +489,7 @@ export default {
 		this.publication = publicationStore.publicationItem
 
 		this.fetchCatalogi(this.publication.catalogi?.id, true)
-		this.fetchMetaData(this.publication.metaData?.id, true)
+		this.fetchMetaData(getMetaDataId(publicationStore.publicationItem.metaData), true)
 		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
@@ -502,7 +504,7 @@ export default {
 						this.publication = data
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi.id)
-						this.fetchMetaData(data.metaData.id)
+						this.fetchMetaData(getMetaDataId(data.metaData))
 						publicationStore.getPublicationAttachments(id)
 						// this.loading = false
 					})
@@ -540,6 +542,7 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						this.metadata = data
+						publicationStore.setPublicationMetaData(data)
 					})
 					if (loading) { this.metaDataLoading = false }
 				})
