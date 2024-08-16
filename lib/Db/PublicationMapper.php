@@ -87,29 +87,7 @@ class PublicationMapper extends QBMapper
 			}
 		}
 
-		// Map the MetaData fields to a sub-array
-		$metaDataData = [
-			'id' => $row['metadata_id'] ?? null,
-			'title' => $row['metadata_title'] ?? null,
-			'version' => $row['metadata_version'] ?? null,
-			'description' => $row['metadata_description'] ?? null,
-			'required' => $row['metadata_required'] ?? null,
-			'properties' => $row['metadata_properties'] ?? null,
-		];
-
-		$metaDataIsEmpty = true;
-		foreach ($metaDataData as $key => $value) {
-			if ($value !== null) {
-				$metaDataIsEmpty = false;
-			}
-
-			if (array_key_exists("metadata_$key", $row) === true) {
-				unset($row["metadata_$key"]);
-			}
-		}
-
 		$row['catalogi'] = $catalogiIsEmpty === true ? null : json_encode(Catalog::fromRow($catalogiData)->jsonSerialize());
-		$row['metaData'] = $metaDataIsEmpty === true ? null : json_encode(MetaData::fromRow($metaDataData)->jsonSerialize());
 
 		return \call_user_func($this->entityClass .'::fromRow', $row);
 	}
