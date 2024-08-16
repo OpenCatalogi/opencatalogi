@@ -5,6 +5,7 @@ export const useSearchStore = defineStore('search', {
 	state: () => ({
 		search: '',
 		metadata: {},
+		catalogi: {},
 		searchResults: '',
 		searchError: '',
 	}),
@@ -23,9 +24,14 @@ export const useSearchStore = defineStore('search', {
 				.filter(([key, value]) => value === true)
 				.map((metadata) => metadata[0])
 
+			const enabledCatalogiIds = Object.entries(this.catalogi)
+				.filter(([key, value]) => value === true)
+				.map((catalogi) => catalogi[0])
+
 			const searchParams = new URLSearchParams({
 				...(this.search && { _search: this.search }),
 				...(enabledMetadataIds[0] && { meta_data: enabledMetadataIds }),
+				...(enabledCatalogiIds[0] && { catalogi: enabledCatalogiIds }),
 			}).toString()
 
 			fetch('/index.php/apps/opencatalogi/api/search?' + searchParams,
