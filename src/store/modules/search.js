@@ -13,9 +13,6 @@ export const useSearchStore = defineStore('search', {
 			this.search = search
 			console.log('Active search set to ' + search)
 		},
-		toggleMetadataSearch(metadataId, value = undefined) {
-			this.metadata[metadataId] = value || !this.metadata[metadataId] || false
-		},
 		setSearchResults(searchResults) {
 			this.searchResults = searchResults
 			console.log('Active search set to ' + searchResults)
