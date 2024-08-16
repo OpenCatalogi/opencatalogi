@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, directoryStore } from '../../store/store.js'
+import { navigationStore, directoryStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -84,15 +84,18 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<FileTreeOutline :size="20" />
 			</template>
 			Welke meta data typen zou u uit deze catalogus willen overnemen?
-			<NcCheckboxRadioSwitch :checked.sync="checkedMetadata" v-for="(metadataSingular, i) in directoryStore.listingItem.metadata" :key="`${metadataSingular}${i}`" type="switch">
-				{{ metadataSingular }}
-			</NcCheckboxRadioSwitch>
+            <div v-if="!loading">
+			    <NcCheckboxRadioSwitch :disabled="loading" v-for="(metadataSingular, i) in directoryStore.listingItem.metadata" :checked.sync="checkedMetadata[metadataSingular]" :key="`${metadataSingular}${i}`" type="switch">
+				    {{ metadataSingular }}
+                </NcCheckboxRadioSwitch>
+            </div>
+			<NcLoadingIcon v-if="loading" :size="20" />
 		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
 <script>
 
-import { NcAppSidebar, NcEmptyContent, NcButton, NcAppSidebarTab, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { NcAppSidebar, NcEmptyContent, NcButton, NcAppSidebarTab, NcCheckboxRadioSwitch, NcLoadingIcon } from '@nextcloud/vue'
 import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
@@ -126,25 +129,127 @@ export default {
 		return {
 			checkedMetadata: {},
 			listing: '',
+            loading: false
 		}
 	},
+	// created() {
+    //     if (directoryStore?.listingItem?.metadata !== undefined) {
+	// 	    this.checkMetadataSwitches()
+    //     }
+	// },
     watch: {
-        checkedMetadata(newValue, oldValue) {
-            console.log(newValue, oldValue)
+        checkedMetadata: {
+            handler(newValue, oldValue) {
+                const metadataUrl = Object.entries(newValue)[0][0]
+                const shouldCopyMetadata = Object.entries(newValue)[0][1]
+                this.loading = true
+                if (shouldCopyMetadata === true) {
+                    this.copyMetadata(metadataUrl)
+                } else if (shouldCopyMetadata === false) {
+                    console.log('deletemetadata')
+                    this.deleteMetadata(metadataUrl)
+                }
+                this.checkMetadataSwitches();
+                this.loading = false
+            },
+            deep: true
+        },
+        'directoryStore.listingItem': {
+            handler(newValue, oldValue) {
+                if (directoryStore?.listingItem !== false) {
+                    this.loading = true
+                    this.checkMetadataSwitches();
+                }
+            },
+            deep: true, // If listingItem has nested objects and you want to track changes in them as well
+            immediate: true // Optionally, run the handler immediately on initialization
         },
     },
 	methods: {
 		openLink(url, type = '') {
 			window.open(url, type)
 		},
-		copyMetadata() {
-			this.loading = true
-			// metadataStore.metaDataItem.title = 'KOPIE: ' + metadataStore.metaDataItem.title
-			if (Object.keys(metadataStore.metaDataItem.properties).length === 0) {
-				delete metadataStore.metaDataItem.properties
+        deleteMetadata(metadataUrl) {
+            console.log('deleteMetadata')
+            metedataId = getMetadataId(metadataUrl)
+
+            fetch(
+				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
+				{
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			)
+				.then((response) => {
+					this.loading = false
+				})
+				.catch((err) => {
+					this.error = err
+					this.loading = false
+				})
+        },
+        getMetadataId(metadataUrl) {
+            console.log('getMetadataId')
+            directoryStore.listingItem.metadata.forEach((metadataItem) => {
+                const isEqual = metadataUrl.some(metadataUrl === metadataItem.source);
+                if (isEqual) {
+                    return metadataItem.id
+                }
+            })
+        },
+        checkMetadataSwitches() {
+            console.log('createMetadata')
+            console.log('refresh');
+            metadataStore.refreshMetaDataList()
+            console.log('refresh done');
+
+            console.log('check the switches');
+            if (directoryStore?.listingItem?.metadata !== undefined) {
+                directoryStore.listingItem.metadata.forEach((metadataItem) => {
+                    const exists = metadataStore.metaDataList.some(metaData => metaData.source === metadataItem.source);
+                    this.$set(this.checkedMetadata, metadataItem.source, exists);
+                });
+            }
+            console.log('check the switches done');
+            
+            this.loading = false
+            console.log('set loading false');
+
+        },
+		copyMetadata(metadataUrl) {
+            console.log('copyMetadata')
+			fetch(
+				metadataUrl,
+				{
+					method: 'GET'
+				},
+			)
+				.then((response) => {
+					// Lets refresh the catalogiList
+					metadataStore.refreshMetaDataList()
+					response.json().then((data) => {
+						this.createMetadata(data)
+					})
+					this.loading = false
+				})
+				.catch((err) => {
+					this.error = err
+					this.loading = false
+				})
+		},
+		createMetadata(data) {
+            console.log('createMetadata')
+			data.title = 'KOPIE: ' + data.title
+
+			if (Object.keys(data.properties).length === 0) {
+				delete data.properties
 			}
-			delete metadataStore.metaDataItem.id
-			delete metadataStore.metaDataItem._id
+
+			delete data.id
+			delete data._id
+
 			fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
 				{
@@ -152,24 +257,10 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(metadataStore.metaDataItem),
+					body: JSON.stringify(data),
 				},
 			)
 				.then((response) => {
-					this.loading = false
-					this.succes = true
-					// Lets refresh the catalogiList
-					metadataStore.refreshMetaDataList()
-					response.json().then((data) => {
-						metadataStore.setMetaDataItem(data)
-					})
-					navigationStore.setSelected('metaData')
-					// Wait for the user to read the feedback then close the model
-					const self = this
-					setTimeout(function() {
-						self.succes = false
-						navigationStore.setDialog(false)
-					}, 2000)
 				})
 				.catch((err) => {
 					this.error = err
