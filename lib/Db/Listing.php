@@ -10,7 +10,6 @@ class Listing extends Entity implements JsonSerializable
 {
 
 	protected ?string $title 	   = null;
-	protected ?string $reference   = null;
 	protected ?string $summary     = null;
 	protected ?string $description = null;
 	protected ?string $search	   = null;
