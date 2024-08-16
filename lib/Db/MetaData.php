@@ -26,7 +26,7 @@ class MetaData extends Entity implements JsonSerializable
 		$this->addType(fieldName: 'summary', type: 'string');
 		$this->addType(fieldName: 'required', type: 'json');
 		$this->addType(fieldName: 'properties', type: 'json');
-
+		$this->addType(fieldName: 'source', type: 'string');
 	}
 
 	public function getJsonFields(): array
