@@ -1,0 +1,68 @@
+name: Release Workflow
+
+on: [merge, push]
+
+jobs:
+  release-managment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0                # fetch the whole repo history
+
+      #Based on https://github.com/marketplace/actions/git-version
+      - name: Git Version
+        id: version
+        uses: codacy/git-version@2.7.1
+        with:
+          release-branch: main
+
+      - name: Extract repository description
+        id: repo-description
+        run: |
+          description=$(jq -r '.description' <(curl -s https://api.github.com/repos/${{ github.repository }}))
+          echo "REPO_DESCRIPTION=$description" >> $GITHUB_ENV
+
+      - name: Update info.xml with version and description
+        run: |
+          version=${{ steps.version.outputs.version }}
+          description=${{ env.REPO_DESCRIPTION }}
+
+          # Update the version in info.xml
+          sed -i "s|<version>.*</version>|<version>${version}</version>|" apinfo/info.xml
+
+          # Update the summary in info.xml
+          sed -i "s|<summary>.*</summary>|<summary>${description}</summary>|" apinfo/info.xml
+
+      - name: Commit and push updated info.xml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apinfo/info.xml
+          git commit -m "Update version and summary in info.xml to ${{ steps.version.outputs.version }}"
+          git push origin ${{ github.head_ref }}
+
+      - name: Use the version
+        run: |
+          echo ${{ steps.version.outputs.version }}
+
+      #https://github.com/marketplace/actions/zip-release
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: 'zip'
+          filename: 'release.zip'
+          exclusions: '*.git* /*node_modules/* .editorconfig'
+
+      #https://github.com/marvinpinto/action-automatic-releases
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ steps.version.outputs.version }}
+          prerelease: false
+          title: "Release ${{ steps.version.outputs.version }}"
+          files: |
+            LICENSE.md
+            release.zip
