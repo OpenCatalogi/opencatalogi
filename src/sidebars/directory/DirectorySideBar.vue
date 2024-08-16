@@ -196,15 +196,12 @@ export default {
 					method: 'GET',
 				},
 			)
-				.then((response) => {
+				.then(() => {
 					this.syncLoading = false
-					// eslint-disable-next-line no-console
-					console.log(response)
-
 				})
 				.catch((err) => {
 					this.error = err
-					this.loading = false
+					this.syncLoading = false
 				})
 		},
 	},
