@@ -10,7 +10,6 @@ class Listing extends Entity implements JsonSerializable
 {
 
 	protected ?string   $title 	   = null;
-	protected ?string   $reference   = null;
 	protected ?string   $summary     = null;
 	protected ?string   $description = null;
 	protected ?string   $search	   = null;
@@ -85,6 +84,7 @@ class Listing extends Entity implements JsonSerializable
 			'metadata'	  => $this->metadata,
 			'catalogId'	  => $this->catalogId,
 			'status' 	  => $this->status,
+			'statusCode'  => $this->statusCode,
 			'lastSync' 	  => $this->lastSync?->format('c'),
 			'default' 	  => $this->default,
 			'available'   => $this->available,

@@ -4,6 +4,7 @@ namespace OCA\OpenCatalogi\Service;
 
 use OCA\OpenCatalogi\Db\CatalogMapper;
 use OCP\AppFramework\OCS\OCSBadRequestException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IAppConfig;
 
 class ValidationService
@@ -61,7 +62,11 @@ class ValidationService
 		) {
 			$filter = ['id' => $id, '_schema' => 'catalog'];
 
-			return $this->objectService->findObject(filters: $filter, config: $this->getMongodbConfig());
+            try {
+                return $this->objectService->findObject(filters: $filter, config: $this->getMongodbConfig());
+            } catch (OCSNotFoundException $exception) {
+			    throw new OCSNotFoundException(message: 'Catalog not found for id: ' . $id);
+            }
 		}
 
 		return $this->catalogMapper->find(id: $id)->jsonSerialize();
@@ -77,11 +82,21 @@ class ValidationService
 	 */
 	public function validatePublication(array $publication): array
 	{
+        $requiredFields = ['catalogi', 'metaData'];
+        foreach ($requiredFields as $field) {
+            if (isset($publication[$field]) === false) {
+                throw new OCSBadRequestException(message: $field . ' is required but not given.');
+            }
+        }
+
 		$catalogId  = $publication['catalogi'];
 		$metadata   = $publication['metaData'];
 
-		$catalog = $this->getCatalog($catalogId);
-
+        try {
+		    $catalog = $this->getCatalog($catalogId);
+        } catch (OCSNotFoundException $exception) {
+            throw new OCSNotFoundException(message: $exception->getMessage());
+        }
 //		var_dump($catalog['metadata'], $metadata, in_array(needle: $metadata, haystack: $catalog['metadata']));
 
 		if(in_array(needle: $metadata, haystack: $catalog['metadata']) === false) {

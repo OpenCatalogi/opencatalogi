@@ -19,6 +19,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IAppConfig;
 use OCP\IRequest;
 use Symfony\Component\Uid\Uuid;
@@ -474,7 +475,7 @@ class PublicationsController extends Controller
 
 		try {
 			$data = $validationService->validatePublication($data);
-		} catch (OCSBadRequestException $exception) {
+		} catch (OCSBadRequestException|OCSNotFoundException $exception) {
 			return new JSONResponse(data: ['message' => $exception->getMessage()], statusCode: 400);
 		}
 

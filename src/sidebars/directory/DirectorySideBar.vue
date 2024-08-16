@@ -84,8 +84,8 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				<FileTreeOutline :size="20" />
 			</template>
 			Welke meta data typen zou u uit deze catalogus willen overnemen?
-			<NcCheckboxRadioSwitch v-for="(metadataSingular, i) in metadata" :key="`${metadataSingular}${i}`" type="switch">
-				{{ metadataSingular.title }}
+			<NcCheckboxRadioSwitch :checked.sync="checkedMetadata" v-for="(metadataSingular, i) in directoryStore.listingItem.metadata" :key="`${metadataSingular}${i}`" type="switch">
+				{{ metadataSingular }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 	</NcAppSidebar>
@@ -124,30 +124,20 @@ export default {
 	},
 	data() {
 		return {
-			metadata: [],
+			checkedMetadata: {},
 			listing: '',
 		}
 	},
-	watch: {
-		publicationItem: {
-			handler(newVal) {
-				console.log('test watch')
-				console.log(newVal)
-				if (newVal && newVal.id) {
-					this.fetchMetaData()
-				}
-			},
-			immediate: true, // Ensures the watcher runs when the component is created
-		},
-	},
-	mounted() {
-		this.fetchMetaData()
-	},
+    watch: {
+        checkedMetadata(newValue, oldValue) {
+            console.log(newValue, oldValue)
+        },
+    },
 	methods: {
 		openLink(url, type = '') {
 			window.open(url, type)
 		},
-		CopyMetadata() {
+		copyMetadata() {
 			this.loading = true
 			// metadataStore.metaDataItem.title = 'KOPIE: ' + metadataStore.metaDataItem.title
 			if (Object.keys(metadataStore.metaDataItem.properties).length === 0) {
@@ -185,42 +175,6 @@ export default {
 					this.error = err
 					this.loading = false
 				})
-		},
-		fetchMetaData() {
-			this.loading = true
-			console.log('test1')
-			console.log(directoryStore.listingItem)
-			if (directoryStore.listingItem && Array.isArray(directoryStore.listingItem.metadata)) {
-				directoryStore.listingItem?.metadata.forEach(metadataSingular => {
-					console.log('test2')
-					fetch(
-						'/index.php/apps/opencatalogi/api/metadata?source=' + metadataSingular,
-						{
-							method: 'GET',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-						},
-					)
-						.then((response) => {
-							this.loading = false
-							this.succes = true
-
-							response.json().then(
-								(data) => {
-									if (data?.results[0] !== undefined) {
-										this.metaData.push(data.results[0])
-									}
-									return data
-								},
-							)
-						})
-						.catch((err) => {
-							this.error = err
-							this.loading = false
-						})
-				})
-			}
 		},
 	},
 }
