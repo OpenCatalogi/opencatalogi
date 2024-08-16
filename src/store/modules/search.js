@@ -33,20 +33,18 @@ export const useSearchStore = defineStore('search', {
 					method: 'GET',
 				},
 			)
-				.then(
-					(response) => {
-						response.json().then(
-							(data) => {
-								if (data?.code === 403 && data?.message) {
-									this.searchError = data.message
-									console.log(this.searchError)
-								} else {
-									this.searchError = '' // Clear any previous errors
-								}
-								this.searchResults = data
-							},
-						)
+				.then((response) => {
+					response.json().then((data) => {
+						if (data?.code === 403 && data?.message) {
+							this.searchError = data.message
+							console.log(this.searchError)
+						} else {
+							this.searchError = '' // Clear any previous errors
+						}
+						this.searchResults = data
 					},
+					)
+				},
 				)
 				.catch(
 					(err) => {
