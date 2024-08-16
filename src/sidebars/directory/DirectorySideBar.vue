@@ -119,11 +119,8 @@ export default {
 		FileTreeOutline,
 		InformationSlabSymbol,
 	},
-	props: {
-		listingItem: {
-			type: Object,
-			required: true,
-		},
+	mounted() {
+		metadataStore.refreshMetaDataList()
 	},
 	data() {
 		return {
@@ -154,9 +151,19 @@ export default {
             },
             deep: true
         },
+        'metadataStore.metaDataList': {
+            handler(newValue, oldValue) {
+                if (directoryStore?.listingItem !== false && metaDataStore?.metaDataList) {
+                    this.loading = true
+                    this.checkMetadataSwitches();
+                }
+            },
+            deep: true, // If listingItem has nested objects and you want to track changes in them as well
+            immediate: true // Optionally, run the handler immediately on initialization
+        },
         'directoryStore.listingItem': {
             handler(newValue, oldValue) {
-                if (directoryStore?.listingItem !== false) {
+                if (directoryStore?.listingItem !== false && metaDataStore?.metaDataList) {
                     this.loading = true
                     this.checkMetadataSwitches();
                 }
@@ -171,10 +178,11 @@ export default {
 		},
         deleteMetadata(metadataUrl) {
             console.log('deleteMetadata')
-            metedataId = getMetadataId(metadataUrl)
+            let metadataId;
+            metadataId = this.getMetadataId(metadataUrl)
 
             fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
+				`/index.php/apps/opencatalogi/api/metadata/${metadataId}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -192,8 +200,11 @@ export default {
         },
         getMetadataId(metadataUrl) {
             console.log('getMetadataId')
-            directoryStore.listingItem.metadata.forEach((metadataItem) => {
-                const isEqual = metadataUrl.some(metadataUrl === metadataItem.source);
+
+            console.log(metadataStore.metadataList)
+            metadataStore.metadataList.forEach((metadataItem) => {
+                console.log('metadataItem', metadataItem.source, 'metadataUrl', metadataUrl)
+                const isEqual = (metadataUrl === metadataItem.source);
                 if (isEqual) {
                     return metadataItem.id
                 }
