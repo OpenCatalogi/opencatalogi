@@ -111,6 +111,8 @@ class Publication extends Entity implements JsonSerializable
 
 	public function jsonSerialize(): array
 	{
+
+
 		$array = [
 			'id' => $this->id,
 			'title' => $this->title,
@@ -121,7 +123,7 @@ class Publication extends Entity implements JsonSerializable
 			'category' => $this->category,
 			'portal' => $this->portal,
 			'catalogi' => json_decode($this->catalogi, true),
-			'metaData' => json_decode($this->metaData, true),
+			'metaData' => $this->metaData,
 			'published' => $this->published?->format('c'),
 			'modified'	=> $this->modified?->format('c'),
 			'featured' => $this->featured !== null ? (bool) $this->featured : null,

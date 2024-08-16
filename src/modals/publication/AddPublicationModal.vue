@@ -274,6 +274,7 @@ export default {
 						this.metaData = {
 							options: Object.entries(data.results).map((metaData) => ({
 								id: metaData[1].id ?? metaData[1]._id,
+								source: metaData[1].source ?? metaData[1].source,
 								label: metaData[1].title ?? metaData[1].name,
 							})),
 
@@ -297,6 +298,7 @@ export default {
 		addPublication() {
 			this.loading = true
 			this.error = false
+
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -307,7 +309,7 @@ export default {
 					body: JSON.stringify({
 						...this.publication,
 						catalogi: this.catalogi.value.id,
-						metaData: this.metaData.value.id,
+						metaData: this.metaData.value.source,
 					}),
 				},
 			)

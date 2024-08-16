@@ -31,16 +31,9 @@ class PublicationMapper extends QBMapper
 					'c.listed AS catalogi_listed',
 					'c.organisation AS catalogi_organisation',
 					'c.metadata AS catalogi_metadata',
-					'm.id AS metadata_id',
-					'm.title AS metadata_title',
-					'm.version AS metadata_version',
-					'm.description AS metadata_description',
-					'm.required AS metadata_required',
-					'm.properties AS metadata_properties',
 			)
 			->from('publications', 'p')
 			->leftJoin('p', 'catalogi', 'c', 'p.catalogi = c.id')
-			->leftJoin('p', 'metadata', 'm', 'p.meta_data = m.id')
 			->where(
 				$qb->expr()->eq('p.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
@@ -228,16 +221,9 @@ class PublicationMapper extends QBMapper
 				'c.listed AS catalogi_listed',
 				'c.organisation AS catalogi_organisation',
 				'c.metadata AS catalogi_metadata',
-				'm.id AS metadata_id',
-				'm.title AS metadata_title',
-				'm.version AS metadata_version',
-				'm.description AS metadata_description',
-				'm.required AS metadata_required',
-				'm.properties AS metadata_properties',
 			)
 			->from('publications', 'p')
 			->leftJoin('p', 'catalogi', 'c', 'p.catalogi = c.id')
-			->leftJoin('p', 'metadata', 'm', 'p.meta_data = m.id')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
