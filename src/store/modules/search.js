@@ -24,7 +24,7 @@ export const useSearchStore = defineStore('search', {
 				.map((metadata) => metadata[0])
 
 			const searchParams = new URLSearchParams({
-				_search: this.search,
+				...(this.search && { _search: this.search }),
 				...(enabledMetadataIds[0] && { meta_data: enabledMetadataIds }),
 			}).toString()
 
