@@ -20,9 +20,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcSelect v-bind="mapMetadataEigenschappen"
+				<NcSelect v-if="mapMetadataEigenschappen().length > 0"
+					v-bind="mapMetadataEigenschappen"
 					v-model="eigenschappen.value"
-					required />-
+					required />
+				<div v-if="mapMetadataEigenschappen().length <= 0">
+					Nog geen eigenschappen toegevoegd
+				</div>
 
 				<NcTextField :disabled="loading"
 					label="Data"
