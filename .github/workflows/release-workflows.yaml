@@ -31,11 +31,12 @@ jobs:
           description=${{ env.REPO_DESCRIPTION }}
 
           # Update the version in info.xml
-          sed -i "s|<version>.*</version>|<version>${version}</version>|" apinfo/info.xml
+          # sed -i "s|<version>.*</version>|<version>${version}</version>|" apinfo/info.xml
 
           # Update the summary in info.xml
-          sed -i "s|<summary>.*</summary>|<summary>${description}</summary>|" apinfo/info.xml
+          # sed -i "s|<summary>.*</summary>|<summary>${description}</summary>|" apinfo/info.xml
 
+      #https://github.com/marvinpinto/action-automatic-releases
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
 
