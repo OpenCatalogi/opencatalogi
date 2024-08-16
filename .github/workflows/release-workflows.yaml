@@ -29,13 +29,13 @@ jobs:
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
         with:
-          release_version: steps.version.outputs.version
+          release_version: ${{ steps.version.outputs.version }}
+          config_file: changelog-ci-config.json
 
       - name: Commit and push updated info.xml and changelog.md
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add apinfo/info.xml
           git add changelog.md
           git commit -m "Update version and summary in info.xml to ${{ steps.version.outputs.version }}"
           git push origin ${{ github.head_ref }}
