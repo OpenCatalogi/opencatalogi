@@ -93,7 +93,7 @@ class SearchController extends Controller
 		$filters = $this->request->getParams();
 		unset($filters['_route']);
 
-        $fieldsToSearch = ['title', 'description', 'summary'];
+        $fieldsToSearch = ['p.title', 'p.description', 'p.summary'];
 
 		if($this->config->hasKey($this->appName, 'elasticLocation') === false
 			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
