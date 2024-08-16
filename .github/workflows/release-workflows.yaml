@@ -25,9 +25,11 @@ jobs:
           description=$(jq -r '.description' <(curl -s https://api.github.com/repos/${{ github.repository }}))
           echo "REPO_DESCRIPTION=$description" >> $GITHUB_ENV
 
-      #https://github.com/marvinpinto/action-automatic-releases
+      #https://github.com/saadmk11/changelog-ci
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
+        with:
+          release_version: steps.version.outputs.version
 
       - name: Commit and push updated info.xml and changelog.md
         run: |
