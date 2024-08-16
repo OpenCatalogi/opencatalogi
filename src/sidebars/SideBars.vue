@@ -1,6 +1,5 @@
 <script setup>
-import { navigationStore, directoryStore } from '../store/store.js'
-import { navigationStore, searchStore } from '../store/store.js'
+import { navigationStore, searchStore, directoryStore } from '../store/store.js'
 </script>
 
 <template>
