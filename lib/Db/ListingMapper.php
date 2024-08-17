@@ -131,7 +131,7 @@ class ListingMapper extends QBMapper
                 'o.pki AS organisation_pki'
             )
             ->from('listings', 'l')
-            ->leftJoin('l', 'organizations', 'o', 'l.organisation = o.id')
+			->leftJoin('l', 'organizations', 'o', 'l.organisation = o.id')
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 

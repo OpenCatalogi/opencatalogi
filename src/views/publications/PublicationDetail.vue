@@ -139,6 +139,10 @@ import { ref } from 'vue'
 					<span>{{ publicationStore.publicationItem.modified }}</span>
 				</div>
 				<div>
+					<b>Bron:</b>
+					<span>{{ publicationStore.publicationItem.source }}</span>
+				</div>
+				<div>
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
@@ -389,6 +393,7 @@ import { ref } from 'vue'
 import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
 import { useFileSelection } from './../../composables/UseFileSelection.js'
 import { BTab, BTabs } from 'bootstrap-vue'
+import { getMetaDataId } from './../../services/getMetaDataId.js'
 import VueApexCharts from 'vue-apexcharts'
 
 // Icons
@@ -479,10 +484,11 @@ export default {
 	watch: {
 		publicationItem: {
 			handler(newPublicationItem, oldPublicationItem) {
+
 				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
 					this.publication = publicationStore.publicationItem
 					this.fetchCatalogi(publicationStore.publicationItem.catalogi.id)
-					this.fetchMetaData(publicationStore.publicationItem.metaData.id)
+					this.fetchMetaData(getMetaDataId(publicationStore.publicationItem.metaData))
 					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
@@ -494,7 +500,7 @@ export default {
 		this.publication = publicationStore.publicationItem
 
 		this.fetchCatalogi(this.publication.catalogi?.id, true)
-		this.fetchMetaData(this.publication.metaData?.id, true)
+		this.fetchMetaData(getMetaDataId(publicationStore.publicationItem.metaData), true)
 		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
@@ -509,7 +515,7 @@ export default {
 						this.publication = data
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi.id)
-						this.fetchMetaData(data.metaData.id)
+						this.fetchMetaData(getMetaDataId(data.metaData))
 						publicationStore.getPublicationAttachments(id)
 						// this.loading = false
 					})
@@ -547,6 +553,7 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						this.metadata = data
+						publicationStore.setPublicationMetaData(data)
 					})
 					if (loading) { this.metaDataLoading = false }
 				})

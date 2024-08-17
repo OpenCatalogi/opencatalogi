@@ -79,6 +79,7 @@ export default {
 	data() {
 		return {
 			eigenschappen: {},
+			metaData: {},
 			data: '',
 			loading: false,
 			success: null,
@@ -89,7 +90,7 @@ export default {
 		mapMetadataEigenschappen() {
 			return {
 				inputLabel: 'Publicatie type eigenschap',
-				options: Object.values(publicationStore.publicationItem?.metaData?.properties)
+				options: Object.values(publicationStore.publicationMetaData?.properties)
 					.filter((prop) => !Object.keys(publicationStore.publicationItem?.data).includes(prop.title))
 					.map((prop) => ({
 						id: prop.title,
@@ -144,6 +145,24 @@ export default {
 				.catch((err) => {
 					this.loading = false
 					this.error = err
+				})
+		},
+		fetchMetaData(metadataId, loading) {
+
+			if (loading) { this.metaDataLoading = true }
+
+			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.metadata = data
+					})
+					if (loading) { this.metaDataLoading = false }
+				})
+				.catch((err) => {
+					console.error(err)
+					if (loading) { this.metaDataLoading = false }
 				})
 		},
 	},

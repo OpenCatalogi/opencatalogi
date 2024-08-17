@@ -95,6 +95,12 @@ export default {
 		},
 		addMetaData() {
 			this.loading = true
+
+			// Prevent setting source on any way.
+			if (this.metadata?.source !== undefined) {
+				delete this.metadata.source
+			}
+
 			fetch(
 				'/index.php/apps/opencatalogi/api/metadata',
 				{
