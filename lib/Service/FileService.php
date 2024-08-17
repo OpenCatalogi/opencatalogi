@@ -367,7 +367,7 @@ class FileService
 	public function createPdf(string $twigTemplate, array $context): Mpdf
 	{
 		// Initialize Twig
-		$loader = new FilesystemLoader(paths: 'lib/Templates', rootPath: '/var/www/html/apps-extra/opencatalogi');
+		$loader = new FilesystemLoader(paths: 'lib/Templates', rootPath: __DIR__ . '/../../');
 		$twig = new Environment($loader);
 
 		// Render the Twig template
