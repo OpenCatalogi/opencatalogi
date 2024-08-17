@@ -1,0 +1,60 @@
+name: Build and Release Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Default Environment Variables
+        run:
+          export NAME=$(grep CONTAINER_PROJECT_NAME= .env | cut -d '=' -f2);
+          export REGISTRY=$(grep CONTAINER_REGISTRY_BASE= .env | cut -d '=' -f2);
+          echo "https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables";
+          echo "GITHUB_WORKFLOW is $GITHUB_WORKFLOW";
+          echo "GITHUB_WORKFLOW_REF is $GITHUB_WORKFLOW_REF";
+          echo "GITHUB_RUN_ATTEMPT is $GITHUB_RUN_ATTEMPT";
+          echo "GITHUB_REF is $GITHUB_REF";
+          echo "GITHUB_REF_NAME is $GITHUB_REF_NAME";
+          echo "GITHUB_REF_PROTECTED is $GITHUB_REF_PROTECTED";
+          echo "APP_NAME=$NAME" >> $GITHUB_ENV;
+          echo "APP_ENV=prod">> $GITHUB_ENV;
+          export VERSION=$(grep APP_VERSION= .env | cut -d '=' -f2);
+          export RELEASE=$VERSION.$(date --utc +%y%m%d);
+          echo "RELEASE=$RELEASE" >> $GITHUB_ENV;
+          echo "REGISTRY_BASE=$REGISTRY" >> $GITHUB_ENV;
+      - name: Build Docker Image
+        run: docker-compose build --build-arg APP_ENV=$APP_ENV
+      - name: Run docker image
+        run: docker compose up -d
+      - name: Taking some sleep (for containers to come up)
+        run: sleep 10
+      - name: Check if all containers are running
+        run: docker ps
+      - name: Dumping the logs
+        run: docker-compose logs
+      - name: Add docker tags
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/development'
+        run: |
+          images=$(docker-compose images -q | xargs docker inspect --format='{{ index .RepoTags 0}}' | cut -d':' -f1 | grep $APP_NAME)
+          for image in $images
+          do
+            docker tag "${image}":${APP_ENV} "${image}":"$GITHUB_REF_NAME_$RELEASE"
+          done
+          echo 'IMAGES=$images' >> $GITHUB_ENV
+      - name: Show all images
+        run: docker images
