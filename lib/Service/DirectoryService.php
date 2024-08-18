@@ -136,6 +136,21 @@ class DirectoryService
 		}
 	}
 
+	public function doCronSync(): array {
+
+		$results = [];
+		$directories = [];
+		//@todo get unique direcotries form the database
+		$directories[] = 'https://directory.opencatalogi.nl/apps/opencatalogi/api/directory';
+		foreach($directories as $key -> $directory){
+			$result = $this->fetchFromExternalDirectory([], $directory, true); 
+			$results = array_merge_recursive($results, $result);
+		}
+
+		return $results;
+	}
+
+	// Get or update the data for an specifi exernal directory
 	public function fetchFromExternalDirectory(array $directory = [], ?string $url = null, bool $update = false): array
 	{
 		if($directory !== [] && $url === null) {
