@@ -14,19 +14,6 @@ use OCP\IRequest;
 
 class ThemesController extends Controller
 {
-    const TEST_ARRAY = [
-        "354980e5-c967-4ba5-989b-65c2b0cd2ff4" => [
-            "id" => "354980e5-c967-4ba5-989b-65c2b0cd2ff4",
-            "name" => "Input voor OpenCatalogi",
-            "summary" => "Dit is een selectie van high-value datasets in DCAT-AP 2.0 standaard x"
-        ],
-        "2ab0011e-9b4c-4c50-a50d-a16fc0be0178" => [
-            "id" => "2ab0011e-9b4c-4c50-a50d-a16fc0be0178",
-            "title" => "Publication two",
-            "description" => "summary for two"
-        ]
-    ];
-
     public function __construct
 	(
 		$appName,

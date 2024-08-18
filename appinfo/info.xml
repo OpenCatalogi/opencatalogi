@@ -13,7 +13,9 @@
 	<bugs>https://github.com/ConductionNL/ZaakAfhandelApp/issues</bugs>
 	<dependencies>
 		<nextcloud min-version="26" max-version="30"/>
-	</dependencies>
+	</dependencies><background-jobs>
+		<job>OCA\OpenCatalogi\Cron\DirectorySync</job>
+	</background-jobs>
 	<navigations>
 		<navigation>
 			<id>opencatalogi</id>
