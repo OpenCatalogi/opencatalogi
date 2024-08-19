@@ -88,6 +88,23 @@ export default {
 	},
 	computed: {
 		mapMetadataEigenschappen() {
+			if (publicationStore.publicationMetaData) {
+				const incomingUrl = new URL(publicationStore.publicationMetaData.source)
+				if (incomingUrl?.host !== window.location.host) {
+					return {
+						inputLabel: 'Publicatie type eigenschap',
+						options: Object.keys(publicationStore.publicationMetaData?.properties)
+							.filter((prop) => !Object.keys(publicationStore.publicationItem?.data).includes(prop))
+							.map((prop) => ({
+								id: prop,
+								label: prop,
+							})),
+					}
+				}
+			}
+
+			console.log('test')
+
 			return {
 				inputLabel: 'Publicatie type eigenschap',
 				options: Object.values(publicationStore.publicationMetaData?.properties)

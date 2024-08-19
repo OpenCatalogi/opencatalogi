@@ -187,10 +187,9 @@ export default {
 					this.loading = false
 				})
 		},
-		filteredMetadata(url) {
-			const id = getMetaDataId(url)
+		filteredMetadata(source) {
 			if (this.metadataLoading) return null
-			return metadataStore.metaDataList.filter((metadata) => metadata?.id.toString() === id.toString())[0]
+			return metadataStore.metaDataList.filter((metadata) => metadata?.source === source)[0]
 		},
 		openLink(url, type = '') {
 			window.open(url, type)

@@ -68,7 +68,7 @@ export default {
 	methods: {
 		DeleteCatalogiMetadata() {
 			const metadataArray = catalogiStore.catalogiItem?.metadata
-			    .filter((metaId) => getMetaDataId(metaId) !== metadataStore.metaDataItem?.id.toString())
+			    .filter((source) => source !== metadataStore.metaDataItem?.source)
 
 			this.loading = true
 			fetch(
