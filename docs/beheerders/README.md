@@ -1,9 +1,10 @@
----
+***
+
 description: >-
-  De rol van een "Beheerder" binnen het platform is gericht op het beheren van
-  de publicaties, catalogi en metadata, evenals de autorisatie van gebruikers.
-  De verantwoordelijkheden van de beheerder:
----
+De rol van een "Beheerder" binnen het platform is gericht op het beheren van
+de publicaties, catalogi en metadata, evenals de autorisatie van gebruikers.
+De verantwoordelijkheden van de beheerder:
+------------------------------------------
 
 # Beheerders
 
