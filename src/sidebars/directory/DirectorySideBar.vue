@@ -97,12 +97,15 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 				<FileTreeOutline :size="20" />
 			</template>
 			Welke meta data typen zou u uit deze catalogus willen overnemen?
-			<NcCheckboxRadioSwitch v-for="(metadataSingular, i) in directoryStore.listingItem.metadata"
-				:key="`${metadataSingular}${i}`"
-				:checked.sync="checkedMetadata"
-				type="switch">
-				{{ metadataSingular }}
-			</NcCheckboxRadioSwitch>
+			<div v-if="!loading">
+				<NcCheckboxRadioSwitch v-for="(metadataSingular, i) in directoryStore.listingItem.metadata"
+					:key="`${metadataSingular}${i}`"
+					:checked.sync="checkedMetadata[metadataSingular]"
+					type="switch">
+					{{ metadataSingular }}
+				</NcCheckboxRadioSwitch>
+			</div>
+			<NcLoadingIcon v-if="loading" :size="20" />
 		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
@@ -127,70 +130,52 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcLoadingIcon,
 	},
-	mounted() {
-		metadataStore.refreshMetaDataList()
-	},
 	data() {
 		return {
 			checkedMetadata: {},
 			listing: '',
-            loading: false
+			loading: false,
 			syncLoading: false,
 		}
 	},
-	// created() {
-    //     if (directoryStore?.listingItem?.metadata !== undefined) {
-	// 	    this.checkMetadataSwitches()
-    //     }
-	// },
-    watch: {
-        checkedMetadata: {
-            handler(newValue, oldValue) {
-                const metadataUrl = Object.entries(newValue)[0][0]
-                const shouldCopyMetadata = Object.entries(newValue)[0][1]
-                this.loading = true
-                if (shouldCopyMetadata === true) {
-                    this.copyMetadata(metadataUrl)
-                } else if (shouldCopyMetadata === false) {
-                    console.log('deletemetadata')
-                    this.deleteMetadata(metadataUrl)
-                }
-                this.checkMetadataSwitches();
-                this.loading = false
-            },
-            deep: true
-        },
-        'metadataStore.metaDataList': {
-            handler(newValue, oldValue) {
-                if (directoryStore?.listingItem !== false && metaDataStore?.metaDataList) {
-                    this.loading = true
-                    this.checkMetadataSwitches();
-                }
-            },
-            deep: true, // If listingItem has nested objects and you want to track changes in them as well
-            immediate: true // Optionally, run the handler immediately on initialization
-        },
-        'directoryStore.listingItem': {
-            handler(newValue, oldValue) {
-                if (directoryStore?.listingItem !== false && metaDataStore?.metaDataList) {
-                    this.loading = true
-                    this.checkMetadataSwitches();
-                }
-            },
-            deep: true, // If listingItem has nested objects and you want to track changes in them as well
-            immediate: true // Optionally, run the handler immediately on initialization
-        },
-    },
+	watch: {
+		checkedMetadata: {
+			handler(newValue, oldValue) {
+				const metadataUrl = Object.entries(newValue)[0][0]
+				const shouldCopyMetadata = Object.entries(newValue)[0][1]
+				this.loading = true
+				if (shouldCopyMetadata === true) {
+					this.copyMetadata(metadataUrl)
+				} else if (shouldCopyMetadata === false) {
+					this.deleteMetadata(metadataUrl)
+				}
+				this.loading = false
+			},
+			deep: true,
+		},
+		'directoryStore.listingItem': {
+			handler(newValue, oldValue) {
+				if (directoryStore?.listingItem !== false && metadataStore?.metaDataList) {
+					this.loading = true
+					this.checkMetadataSwitches()
+				}
+			},
+			deep: true, // If listingItem has nested objects and you want to track changes in them as well
+			immediate: true, // Optionally, run the handler immediately on initialization
+		},
+	},
+	mounted() {
+		metadataStore.refreshMetaDataList()
+	},
 	methods: {
 		openLink(url, type = '') {
 			window.open(url, type)
 		},
-        deleteMetadata(metadataUrl) {
-            console.log('deleteMetadata')
-            let metadataId;
-            metadataId = this.getMetadataId(metadataUrl)
+		deleteMetadata(metadataUrl) {
+			let metadataId
+			metadataId = this.getMetadataId(metadataUrl)
 
-            fetch(
+			fetch(
 				`/index.php/apps/opencatalogi/api/metadata/${metadataId}`,
 				{
 					method: 'DELETE',
@@ -206,44 +191,32 @@ export default {
 					this.error = err
 					this.loading = false
 				})
-        },
-        getMetadataId(metadataUrl) {
-            console.log('getMetadataId')
+		},
+		getMetadataId(metadataUrl) {
+			metadataStore.metadataList.forEach((metadataItem) => {
+				const isEqual = (metadataUrl === metadataItem.source)
+				if (isEqual) {
+					return metadataItem.id
+				}
+			})
+		},
+		checkMetadataSwitches() {
+			metadataStore.refreshMetaDataList()
 
-            console.log(metadataStore.metadataList)
-            metadataStore.metadataList.forEach((metadataItem) => {
-                console.log('metadataItem', metadataItem.source, 'metadataUrl', metadataUrl)
-                const isEqual = (metadataUrl === metadataItem.source);
-                if (isEqual) {
-                    return metadataItem.id
-                }
-            })
-        },
-        checkMetadataSwitches() {
-            console.log('createMetadata')
-            console.log('refresh');
-            metadataStore.refreshMetaDataList()
-            console.log('refresh done');
+			if (directoryStore?.listingItem?.metadata !== undefined) {
+				directoryStore.listingItem.metadata.forEach((metadataItem) => {
+					const exists = metadataStore.metaDataList.some(metaData => metaData.source === metadataItem.source)
+					this.$set(this.checkedMetadata, metadataItem.source, exists)
+				})
+			}
 
-            console.log('check the switches');
-            if (directoryStore?.listingItem?.metadata !== undefined) {
-                directoryStore.listingItem.metadata.forEach((metadataItem) => {
-                    const exists = metadataStore.metaDataList.some(metaData => metaData.source === metadataItem.source);
-                    this.$set(this.checkedMetadata, metadataItem.source, exists);
-                });
-            }
-            console.log('check the switches done');
-            
-            this.loading = false
-            console.log('set loading false');
-
-        },
+			this.loading = false
+		},
 		copyMetadata(metadataUrl) {
-            console.log('copyMetadata')
 			fetch(
 				metadataUrl,
 				{
-					method: 'GET'
+					method: 'GET',
 				},
 			)
 				.then((response) => {
@@ -260,7 +233,6 @@ export default {
 				})
 		},
 		createMetadata(data) {
-            console.log('createMetadata')
 			data.title = 'KOPIE: ' + data.title
 
 			if (Object.keys(data.properties).length === 0) {
