@@ -44,7 +44,6 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 
 <script>
 import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
-import { getMetaDataId } from './../../services/getMetaDataId.js'
 
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -99,7 +98,7 @@ export default {
 									...publicationStore.publicationItem,
 									attachments: [...this.filterdAttachments],
 									catalogi: publicationStore.publicationItem.catalogi.id,
-									metaData: getMetaDataId(publicationStore.publicationItem.metaData),
+									metaData: publicationStore.publicationItem.metaData,
 								}),
 							},
 						)
