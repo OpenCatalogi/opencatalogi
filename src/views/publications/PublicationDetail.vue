@@ -393,7 +393,6 @@ import { ref } from 'vue'
 import { NcActionButton, NcActions, NcButton, NcListItem, NcLoadingIcon, NcNoteCard, NcSelectTags } from '@nextcloud/vue'
 import { useFileSelection } from './../../composables/UseFileSelection.js'
 import { BTab, BTabs } from 'bootstrap-vue'
-import { getMetaDataId } from './../../services/getMetaDataId.js'
 import VueApexCharts from 'vue-apexcharts'
 
 // Icons
@@ -488,7 +487,7 @@ export default {
 				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
 					this.publication = publicationStore.publicationItem
 					this.fetchCatalogi(publicationStore.publicationItem.catalogi.id)
-					this.fetchMetaData(getMetaDataId(publicationStore.publicationItem.metaData))
+					this.fetchMetaData(publicationStore.publicationItem.metaData)
 					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
@@ -500,7 +499,7 @@ export default {
 		this.publication = publicationStore.publicationItem
 
 		this.fetchCatalogi(this.publication.catalogi?.id, true)
-		this.fetchMetaData(getMetaDataId(publicationStore.publicationItem.metaData), true)
+		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
 		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
@@ -515,7 +514,7 @@ export default {
 						this.publication = data
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi.id)
-						this.fetchMetaData(getMetaDataId(data.metaData))
+						this.fetchMetaData(data.metaData)
 						publicationStore.getPublicationAttachments(id)
 						// this.loading = false
 					})
@@ -543,17 +542,17 @@ export default {
 					if (loading) { this.catalogiLoading = false }
 				})
 		},
-		fetchMetaData(metadataId, loading) {
+		fetchMetaData(metaDataUrl, loading) {
 
 			if (loading) { this.metaDataLoading = true }
 
-			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+			fetch(`/index.php/apps/opencatalogi/api/metadata?source=${metaDataUrl}`, {
 				method: 'GET',
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.metadata = data
-						publicationStore.setPublicationMetaData(data)
+						this.metadata = data.results[0]
+						publicationStore.setPublicationMetaData(data.results[0])
 					})
 					if (loading) { this.metaDataLoading = false }
 				})
@@ -561,6 +560,7 @@ export default {
 					console.error(err)
 					if (loading) { this.metaDataLoading = false }
 				})
+
 		},
 		getTime() {
 			const timeNow = new Date().toISOString()

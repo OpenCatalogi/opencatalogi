@@ -99,7 +99,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 <script>
 import { NcButton, NcLoadingIcon, NcModal, NcNoteCard, NcTextArea, NcTextField } from '@nextcloud/vue'
 import { useFileSelection } from './../../composables/UseFileSelection.js'
-import { getMetaDataId } from './../../services/getMetaDataId.js'
 
 import { ref } from 'vue'
 
@@ -191,7 +190,7 @@ export default {
 								...publicationStore.publicationItem,
 								attachments: [...publicationStore.publicationItem.attachments, response.data.id],
 								catalogi: publicationStore.publicationItem.catalogi.id,
-								metaData: getMetaDataId(publicationStore.publicationItem.metaData),
+								metaData: publicationStore.publicationItem.metaData,
 							}),
 						},
 					)

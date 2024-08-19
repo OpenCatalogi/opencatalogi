@@ -29,4 +29,5 @@ export type TMetadata = {
         valuation: 'b' | 'v' | 'n'
         class: 1 | 2 | 3 | 4 | 5
     }
+    source: string
 }
