@@ -6,6 +6,7 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
 
 class DashboardController extends Controller
 {
@@ -22,11 +23,17 @@ class DashboardController extends Controller
     public function page(?string $getParameter)
     {
         try {
-            return new TemplateResponse(
+            $response =new TemplateResponse(
                 $this->appName,
                 'index',
                 []
             );
+            
+            $csp = new ContentSecurityPolicy();
+            $csp->addAllowedConnectDomain('*');
+            $response->setContentSecurityPolicy($csp);
+
+            return $response;
         } catch (\Exception $e) {
             return new TemplateResponse(
                 $this->appName,

@@ -103,8 +103,6 @@ export default {
 				}
 			}
 
-			console.log('test')
-
 			return {
 				inputLabel: 'Publicatie type eigenschap',
 				options: Object.values(publicationStore.publicationMetaData?.properties)
@@ -164,16 +162,16 @@ export default {
 					this.error = err
 				})
 		},
-		fetchMetaData(metadataId, loading) {
+		fetchMetaData(metaDataUrl, loading) {
 
 			if (loading) { this.metaDataLoading = true }
 
-			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+			fetch(`/index.php/apps/opencatalogi/api/metadata?source=${metaDataUrl}`, {
 				method: 'GET',
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.metadata = data
+						this.metadata = data.results[0]
 					})
 					if (loading) { this.metaDataLoading = false }
 				})
