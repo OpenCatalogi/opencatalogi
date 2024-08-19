@@ -6,6 +6,7 @@ export const mockMetadataData = (): TMetadata[] => [
 		id: '1',
 		title: 'Test metadata',
 		description: 'this is a very long description for test metadata',
+		source: 'http://testurl.com',
 		version: '0.0.1',
 		required: ['test'],
 		properties: {
@@ -61,6 +62,7 @@ export const mockMetadataData = (): TMetadata[] => [
 		id: '2',
 		title: 'Test metadata',
 		description: 'this is a very long description for test metadata',
+		source: 'http://testurl.com',
 		version: '',
 		required: [],
 		properties: {},
