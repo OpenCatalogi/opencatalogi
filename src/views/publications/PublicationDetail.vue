@@ -488,7 +488,7 @@ export default {
 				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
 					this.publication = publicationStore.publicationItem
 					this.fetchCatalogi(publicationStore.publicationItem.catalogi.id)
-					this.fetchMetaData(getMetaDataId(publicationStore.publicationItem.metaData))
+					// this.fetchMetaData(publicationStore.publicationItem.metaData)
 					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
@@ -500,7 +500,7 @@ export default {
 		this.publication = publicationStore.publicationItem
 
 		this.fetchCatalogi(this.publication.catalogi?.id, true)
-		this.fetchMetaData(getMetaDataId(publicationStore.publicationItem.metaData), true)
+		// this.fetchMetaData(publicationStore.publicationItem.metaData, true)
 		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
 
 	},
@@ -515,7 +515,7 @@ export default {
 						this.publication = data
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi.id)
-						this.fetchMetaData(getMetaDataId(data.metaData))
+						this.fetchMetaData(data.metaData)
 						publicationStore.getPublicationAttachments(id)
 						// this.loading = false
 					})
@@ -547,20 +547,42 @@ export default {
 
 			if (loading) { this.metaDataLoading = true }
 
-			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-						this.metadata = data
-						publicationStore.setPublicationMetaData(data)
+			console.log('metadataID', metadataId)
+			const incomingUrl = new URL(metadataId)
+			if (incomingUrl.host === window.location.host) {
+				const id = getMetaDataId(metadataId)
+				fetch(`/index.php/apps/opencatalogi/api/metadata/${id}`, {
+					method: 'GET',
+				})
+					.then((response) => {
+						response.json().then((data) => {
+							this.metadata = data
+							publicationStore.setPublicationMetaData(data)
+						})
+						if (loading) { this.metaDataLoading = false }
 					})
-					if (loading) { this.metaDataLoading = false }
+					.catch((err) => {
+						console.error(err)
+						if (loading) { this.metaDataLoading = false }
+					})
+			}
+			if (incomingUrl.host !== window.location.host) {
+				fetch(incomingUrl, {
+					method: 'GET',
 				})
-				.catch((err) => {
-					console.error(err)
-					if (loading) { this.metaDataLoading = false }
-				})
+					.then((response) => {
+						response.json().then((data) => {
+							this.metadata = data
+							publicationStore.setPublicationMetaData(data)
+						})
+						if (loading) { this.metaDataLoading = false }
+					})
+					.catch((err) => {
+						console.error(err)
+						if (loading) { this.metaDataLoading = false }
+					})
+			}
+
 		},
 		getTime() {
 			const timeNow = new Date().toISOString()
