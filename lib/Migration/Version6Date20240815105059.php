@@ -61,14 +61,10 @@ class Version6Date20240815105059 extends SimpleMigrationStep {
 
 		$table->addColumn(
 			name: 'metadata',
-			typeName: Types::JSON,
-			options: [
-				'notNull' => false,
-				'default' => 'a:0:{}'
-			]);
+			typeName: Types::JSON)->setNotnull(notnull: false)->setDefault(default:'{}');
 
 		$output->info("Added 'metadata' column as JSON type with a default value of an empty array.");
-		
+
 		return $schema;
 	}
 

@@ -15,35 +15,6 @@ use OCP\IRequest;
 
 class DirectoryController extends Controller
 {
-    const TEST_ARRAY = [
-        "64996753-5109-4396-9f07-17040d7fb137" => [
-            "id" => "64996753-5109-4396-9f07-17040d7fb137",
-			"title" => "Directory test 1",
-			"summary" => "A testing directory",
-			"description" => "A testing directory description",
-			"search" => "string",
-			"metadata" => "string",
-			"status" => "A status",
-			"lastSync" => "string",
-			"default" => "string",
-			"available" => "true"
-
-        ],
-        "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea" =>[
-            "id" => "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea",
-			"title" => "Directory test 2",
-			"summary" => "A testing directory",
-			"description" => "A testing directory description",
-			"search" => "string",
-			"metadata" => "string",
-			"status" => "A status",
-			"lastSync" => "string",
-			"default" => "string",
-			"available" => "true"
-
-        ]
-    ];
-
     public function __construct(
 		$appName,
 		IRequest $request,
@@ -236,9 +207,9 @@ class DirectoryController extends Controller
 			$filters['_id'] = (string) $id;
 
 			$object = $objectService->findObject(filters: $filters, config: $dbConfig);
-
-			$url = $object['directory'];
 		}
+
+		$url = $object['directory'];
 
 		$directoryService->fetchFromExternalDirectory(url: $url, update: true);
 

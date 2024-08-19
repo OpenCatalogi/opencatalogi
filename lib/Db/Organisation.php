@@ -52,7 +52,7 @@ class Organisation extends Entity implements JsonSerializable
 
 			try {
 				$this->$method($value);
-			} catch (\Exception $exception) {
+			} catch (\Exception $exception) {}
 		}
 
 		return $this;

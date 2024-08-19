@@ -9,18 +9,6 @@ use OCP\IRequest;
 
 class DashboardController extends Controller
 {
-    const TEST_ARRAY = [
-        "d021c5ff-a254-4114-a1fb-7a18db152270" => [
-            "id" => "d021c5ff-a254-4114-a1fb-7a18db152270",
-            "name" => "Dashboard one",
-            "summary" => "summary for one"
-        ],
-        "79c02b33-78ba-4d65-aabd-ff9aae6654f7" => [
-            "id" => "79c02b33-78ba-4d65-aabd-ff9aae6654f7",
-            "name" => "Dashboard two",
-            "summary" => "summary for two"
-        ]
-    ];
 
     public function __construct($appName, IRequest $request)
     {

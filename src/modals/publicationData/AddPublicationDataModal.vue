@@ -20,21 +20,19 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
-					label="Naam"
-					required
-					:value.sync="key"
-					:loading="loading" />
+				<NcSelect v-bind="mapMetadataEigenschappen"
+					v-model="eigenschappen.value"
+					required />
 
 				<NcTextField :disabled="loading"
 					label="Data"
-					:value.sync="value"
+					:value.sync="data"
 					:loading="loading" />
 			</div>
 
 			<span class="flex-horizontal">
 				<NcButton v-if="success === null"
-					:disabled="loading || !key || !value"
+					:disabled="loading || !eigenschappen.value?.id || !data"
 					type="primary"
 					@click="AddPublicatieEigenschap()">
 					<template #icon>
@@ -62,6 +60,7 @@ import {
 	NcTextField,
 	NcNoteCard,
 	NcLoadingIcon,
+	NcSelect,
 } from '@nextcloud/vue'
 
 // icons
@@ -72,24 +71,40 @@ export default {
 	components: {
 		NcModal,
 		NcTextField,
+		NcSelect,
 		NcButton,
 		NcNoteCard,
 		NcLoadingIcon,
 	},
 	data() {
 		return {
-			key: '',
-			value: '',
+			eigenschappen: {},
+			metaData: {},
+			data: '',
 			loading: false,
 			success: null,
 			error: false,
 		}
 	},
+	computed: {
+		mapMetadataEigenschappen() {
+			return {
+				inputLabel: 'Publicatie type eigenschap',
+				options: Object.values(publicationStore.publicationMetaData?.properties)
+					.filter((prop) => !Object.keys(publicationStore.publicationItem?.data).includes(prop.title))
+					.map((prop) => ({
+						id: prop.title,
+						label: prop.title,
+					})),
+			}
+		},
+	},
 	methods: {
 		AddPublicatieEigenschap() {
 			this.loading = true
+
 			const bodyData = publicationStore.publicationItem
-			bodyData.data[this.key] = this.value
+			bodyData.data[this.eigenschappen.value?.label] = this.data
 			delete bodyData.publicationDate
 
 			fetch(
@@ -124,12 +139,30 @@ export default {
 					}, 2000)
 
 					// reset modal form
-					this.key = ''
-					this.value = ''
+					this.eigenschappen = {}
+					this.data = ''
 				})
 				.catch((err) => {
 					this.loading = false
 					this.error = err
+				})
+		},
+		fetchMetaData(metadataId, loading) {
+
+			if (loading) { this.metaDataLoading = true }
+
+			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.metadata = data
+					})
+					if (loading) { this.metaDataLoading = false }
+				})
+				.catch((err) => {
+					console.error(err)
+					if (loading) { this.metaDataLoading = false }
 				})
 		},
 	},

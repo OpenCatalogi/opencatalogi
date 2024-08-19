@@ -1,5 +1,5 @@
 <script setup>
-import { searchStore, directoryStore, metadataStore } from '../../store/store.js'
+import { searchStore, metadataStore, catalogiStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -23,15 +23,21 @@ import { searchStore, directoryStore, metadataStore } from '../../store/store.js
 			<template #icon>
 				<DatabaseOutline :size="20" />
 			</template>
-			<NcCheckboxRadioSwitch v-for="(listing, i) in directoryStore.listingList" :key="`${listing}${i}`" type="switch">
-				{{ listing.title || 'Geen titel' }}
+			<NcCheckboxRadioSwitch v-for="(catalogiItem, i) in catalogiStore.catalogiList"
+				:key="`${catalogiItem}${i}`"
+				type="switch"
+				:checked.sync="searchStore.catalogi[catalogiItem.id]">
+				{{ catalogiItem.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab id="share-tab" name="Publicatie typen" :order="3">
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
-			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList" :key="`${metaData}${i}`" type="switch">
+			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList"
+				:key="`${metaData}${i}`"
+				type="switch"
+				:checked.sync="searchStore.metadata[metaData.id]">
 				{{ metaData.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
@@ -62,6 +68,14 @@ export default {
 			type: String,
 			required: true,
 		},
+		metadata: {
+			type: Object,
+			required: true,
+		},
+		catalogi: {
+			type: Object,
+			required: true,
+		},
 	},
 	data() {
 		return {
@@ -70,10 +84,22 @@ export default {
 	},
 	watch: {
 		search: 'debouncedSearch',
+		metadata: {
+			handler() {
+				this.debouncedSearch()
+			},
+			deep: true,
+		},
+		catalogi: {
+			handler() {
+				this.debouncedSearch()
+			},
+			deep: true,
+		},
 	},
 	mounted() {
-		directoryStore.refreshListingList()
 		metadataStore.refreshMetaDataList()
+		catalogiStore.refreshCatalogiList()
 	},
 	methods: {
 		debouncedSearch: debounce(function() {
