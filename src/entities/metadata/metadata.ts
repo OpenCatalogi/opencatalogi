@@ -35,6 +35,8 @@ export class Metadata implements TMetadata {
         class: 1 | 2 | 3 | 4 | 5
     }
 
+	public source: string
+
 	constructor(data: TMetadata) {
 		this.hydrate(data)
 	}
@@ -52,6 +54,7 @@ export class Metadata implements TMetadata {
 			valuation: 'n',
 			class: 1,
 		}
+		this.source = data?.source || ''
 
 		// convert null's to the respective default value from predefined list of props
 		Object.keys(this.properties).forEach(obj => {
@@ -111,6 +114,7 @@ export class Metadata implements TMetadata {
 					return [1, 2, 3, 4, 5].includes(data)
 				}),
 			}),
+			source: z.string().min(1).url(),
 		})
 
 		const result = schema.safeParse({
