@@ -1,4 +1,5 @@
 <script setup>
+import { getMetaDataId } from '../../services/getMetaDataId.js'
 import { navigationStore, catalogiStore, metadataStore } from '../../store/store.js'
 </script>
 
@@ -67,7 +68,7 @@ export default {
 	methods: {
 		DeleteCatalogiMetadata() {
 			const metadataArray = catalogiStore.catalogiItem?.metadata
-			    .filter((metaId) => metaId.toString() !== metadataStore.metaDataItem?.id.toString())
+			    .filter((metaId) => getMetaDataId(metaId) !== metadataStore.metaDataItem?.id.toString())
 
 			this.loading = true
 			fetch(

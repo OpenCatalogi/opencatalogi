@@ -544,8 +544,7 @@ export default {
 				})
 		},
 		fetchMetaData(metadataId, loading) {
-
-			if (loading) { this.metaDataLoading = true }
+			if (loading) this.metaDataLoading = true
 
 			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
 				method: 'GET',
@@ -555,11 +554,11 @@ export default {
 						this.metadata = data
 						publicationStore.setPublicationMetaData(data)
 					})
-					if (loading) { this.metaDataLoading = false }
+					if (loading) this.metaDataLoading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					if (loading) { this.metaDataLoading = false }
+					if (loading) this.metaDataLoading = false
 				})
 		},
 		getTime() {

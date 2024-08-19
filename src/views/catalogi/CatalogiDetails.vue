@@ -63,9 +63,9 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 				</BTab>
 				<BTab title="Publicatie typen">
 					<div v-if="catalogiStore.catalogiItem?.metadata.length > 0 && !metadataLoading">
-						<NcListItem v-for="(value) in catalogiStore.catalogiItem?.metadata"
-							:key="`${value}`"
-							:name="filteredMetadata(value)?.title || 'loading...'"
+						<NcListItem v-for="(url, i) in catalogiStore.catalogiItem?.metadata"
+							:key="filteredMetadata(url)?.id + i"
+							:name="filteredMetadata(url)?.title || 'loading...'"
 							:bold="false"
 							:force-display-actions="true">
 							<template #icon>
@@ -73,16 +73,16 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 									:size="44" />
 							</template>
 							<template #subname>
-								{{ filteredMetadata(value)?.description }}
+								{{ filteredMetadata(url)?.description }}
 							</template>
 							<template #actions>
-								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setSelected('metaData')">
+								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(url)); navigationStore.setSelected('metaData')">
 									<template #icon>
 										<OpenInApp :size="20" />
 									</template>
 									Bekijk publicatie type
 								</NcActionButton>
-								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setDialog('deleteCatalogiMetadata')">
+								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(url)); navigationStore.setDialog('deleteCatalogiMetadata')">
 									<template #icon>
 										<Delete :size="20" />
 									</template>
@@ -116,6 +116,7 @@ import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import { getMetaDataId } from '../../services/getMetaDataId.js'
 
 export default {
 	name: 'CatalogiDetails',
@@ -186,7 +187,8 @@ export default {
 					this.loading = false
 				})
 		},
-		filteredMetadata(id) {
+		filteredMetadata(url) {
+			const id = getMetaDataId(url)
 			if (this.metadataLoading) return null
 			return metadataStore.metaDataList.filter((metadata) => metadata?.id.toString() === id.toString())[0]
 		},
