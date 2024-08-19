@@ -116,7 +116,6 @@ import OpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
-import { getMetaDataId } from '../../services/getMetaDataId.js'
 
 export default {
 	name: 'CatalogiDetails',

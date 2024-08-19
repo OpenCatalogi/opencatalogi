@@ -8,7 +8,7 @@ import { ref } from 'vue'
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ publicationStore.publicationItem.title }}
+				{{ publicationStore.publicationItem?.title }}
 			</h1>
 
 			<NcActions :disabled="loading"
@@ -146,15 +146,15 @@ import { ref } from 'vue'
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
-						<span>{{ catalogi.title }}</span>
+						<span>{{ catalogi?.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${catalogi.title}`"
-								:name="catalogi.title"
+							<NcActionLink :aria-label="`got to ${catalogi?.title}`"
+								:name="catalogi?.title"
 								@click="goToCatalogi()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ catalogi.title }}
+								{{ catalogi?.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -163,15 +163,15 @@ import { ref } from 'vue'
 					<b>Publicatie type:</b>
 					<span v-if="metaDataLoading">Loading...</span>
 					<div v-if="!metaDataLoading" class="buttonLinkContainer">
-						<span>{{ metadata.title }}</span>
+						<span>{{ metadata?.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${metadata.title}`"
-								:name="metadata.title"
+							<NcActionLink :aria-label="`got to ${metadata?.title}`"
+								:name="metadata?.title"
 								@click="goToMetadata()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ metadata.title }}
+								{{ metadata?.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -208,7 +208,7 @@ import { ref } from 'vue'
 							<div v-if="publicationStore.publicationAttachments.length > 0">
 								<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments"
 									:key="`${attachment}${i}`"
-									:name="attachment.name ?? attachment.title"
+									:name="attachment.name ?? attachment?.title"
 									:bold="false"
 									:active="publicationStore.attachmentId === attachment.id"
 									:force-display-actions="true"
