@@ -1,9 +1,8 @@
-***
-
+---
 description: >-
-Enkel alleen voor volledig in eigen beheer nemen van Nextcloud en de apps. Dit
-is zeker niet nodig voor het gebruik van de OpenCatalogi Nextcloud-app
-----------------------------------------------------------------------
+  Enkel alleen voor volledig in eigen beheer nemen van Nextcloud en de apps. Dit
+  is zeker niet nodig voor het gebruik van de OpenCatalogi Nextcloud-app
+---
 
 # On-Prem server
 
@@ -37,4 +36,4 @@ De systeemeisen voor het draaien van een eigen Nextcloud-server kunnen variëren
 * **Geheugen**: Minimaal 512 MB RAM, maar 1 GB of meer wordt aanbevolen voor betere prestaties.
 * **SSL-certificaat**: Voor beveiligde toegang via HTTPS.
 
-Voor een gedetailleerde handleiding en verdere documentatie over het opzetten van een Nextcloud-server, bezoek de officiële [Nextcloud documentatie hier](https://docs.nextcloud.com/server/latest/admin_manual/index.html).
+Voor een gedetailleerde handleiding en verdere documentatie over het opzetten van een Nextcloud-server, bezoek de officiële [Nextcloud documentatie hier](https://docs.nextcloud.com/server/latest/admin\_manual/index.html).
