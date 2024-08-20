@@ -80,7 +80,11 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.publicationItem),
+					body: JSON.stringify({
+						...publicationStore.publicationItem,
+						catalogi: publicationStore.publicationItem.catalogi.id,
+						metaData: publicationStore.publicationItem.metaData,
+					}),
 				},
 			)
 				.then((response) => {
@@ -90,13 +94,13 @@ export default {
 					publicationStore.refreshPublicationList()
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
+						navigationStore.setSelectedCatalogus(data?.catalogi?.id)
 					})
 					navigationStore.setSelected('publication')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						publicationStore.setPublicationItem(false)
 						navigationStore.setDialog(false)
 					}, 2000)
 				})

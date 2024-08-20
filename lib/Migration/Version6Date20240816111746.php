@@ -44,7 +44,7 @@ class Version6Date20240816111746 extends SimpleMigrationStep {
 			$table = $schema->getTable(tableName: 'listings');
 
 			if($table->hasColumn(name: 'status_code') === false) {
-				$table->addColumn(name: 'status_code', typeName: Types::INTEGER);
+				$table->addColumn(name: 'status_code', typeName: Types::INTEGER)->setNotnull(notnull: false);
 			}
 		}
 

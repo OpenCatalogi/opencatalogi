@@ -57,6 +57,8 @@ export const mockMetadataData = (): TMetadata[] => [
 			valuation: 'b',
 			class: 1,
 		},
+		source: 'https://nextcloud.test.commonground.nu/apps/opencatalogi/api/metadata/b2f02f60-3243-49a1-82eb-75a133090e18',
+
 	},
 	{ // partial data
 		id: '2',
@@ -70,6 +72,7 @@ export const mockMetadataData = (): TMetadata[] => [
 			valuation: 'b',
 			class: 1,
 		},
+		source: 'https://nextcloud.test.commonground.nu/apps/opencatalogi/api/metadata/b2f02f60-3243-49a1-82eb-75a133090e18',
 	},
 	{ // invalid data
 		id: '1',
@@ -126,6 +129,8 @@ export const mockMetadataData = (): TMetadata[] => [
 			valuation: 'b',
 			class: 1,
 		},
+		source: '5',
+
 	},
 ]
 
