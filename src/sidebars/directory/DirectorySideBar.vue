@@ -159,7 +159,7 @@ export default {
 		listingItem: {
 			handler(newValue, oldValue) {
 				if (newValue !== false && metadataStore?.metaDataList) {
-					this.loading = true // Manage loading state locally
+					this.loading = true
 					this.checkMetadataSwitches()
 				}
 			},
@@ -185,7 +185,6 @@ export default {
 			return metadataId
 		},
 		checkMetadataSwitches() {
-			// Ensure the metadata array is defined and not empty
 			if (Array.isArray(directoryStore?.listingItem?.metadata)) {
 				directoryStore.listingItem.metadata.forEach((metadataUrl) => {
 					// Check if the metadata URL exists in the metadataStore.metaDataList
@@ -194,7 +193,7 @@ export default {
 					this.$set(this.checkedMetadata, metadataUrl, exists)
 				})
 			}
-			this.loading = false // Reset loading state after checks
+			this.loading = false
 		},
 		copyMetadata(metadataUrl) {
 			this.loading = true
