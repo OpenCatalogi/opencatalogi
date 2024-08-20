@@ -62,7 +62,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			name="Listings aan het laden" />
 
 		<NcEmptyContent
-			v-if="!directoryStore.listingList?.length > 0"
+			v-if="!directoryStore.listingList?.length > 0 && !loading"
 			class="detailContainer"
 			name="Geen Listings"
 			description="Je directory of zoek opdracht bevat nog geen listings, wil je een externe directory toevoegen?">

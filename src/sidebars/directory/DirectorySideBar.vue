@@ -172,8 +172,7 @@ export default {
 			window.open(url, type)
 		},
 		deleteMetadata(metadataUrl) {
-			let metadataId
-			metadataId = this.getMetadataId(metadataUrl)
+			const metadataId = this.getMetadataId(metadataUrl)
 
 			fetch(
 				`/index.php/apps/opencatalogi/api/metadata/${metadataId}`,
