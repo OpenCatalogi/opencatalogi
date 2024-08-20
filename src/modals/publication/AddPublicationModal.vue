@@ -161,7 +161,6 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import Help from 'vue-material-design-icons/Help.vue'
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import { getMetaDataId } from '../../services/getMetaDataId.js'
 
 export default {
 	name: 'AddPublicationModal',
@@ -222,11 +221,10 @@ export default {
 			// step 1: get the selected catalogus from the catalogi dropdown
 			const selectedCatalogus = this.catalogiList
 				.filter((catalogus) => catalogus.id.toString() === this.catalogi.value.id.toString())[0]
-			// step 2: get all the metadata ID's from the `metadata` property inside the catalogus
-			const metadataIds = selectedCatalogus.metadata.map((metadataUrl) => getMetaDataId(metadataUrl))
-			// step 3: get the full metadata's from the metadataIds
+
+			// step 2: get the full metadata's from the metadataIds
 			const filteredMetadata = this.metaDataList
-				.filter((metadata) => metadataIds.includes(metadata.id.toString()))
+				.filter((metadata) => selectedCatalogus.metadata.includes(metadata.source))
 
 			return {
 				options: filteredMetadata.map((metaData) => ({

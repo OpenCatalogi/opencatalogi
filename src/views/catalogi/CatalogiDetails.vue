@@ -64,7 +64,7 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 				<BTab title="Publicatie typen">
 					<div v-if="catalogiStore.catalogiItem?.metadata.length > 0 && !metadataLoading">
 						<NcListItem v-for="(url, i) in catalogiStore.catalogiItem?.metadata"
-							:key="filteredMetadata(url)?.id + i"
+							:key="url + i"
 							:name="filteredMetadata(url)?.title || 'loading...'"
 							:bold="false"
 							:force-display-actions="true">

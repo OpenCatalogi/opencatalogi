@@ -1,5 +1,4 @@
 <script setup>
-import { getMetaDataId } from '../../services/getMetaDataId.js'
 import { catalogiStore, navigationStore } from '../../store/store.js'
 </script>
 
@@ -127,8 +126,8 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						const metadataIds = metadataList.map(getMetaDataId)
-						const filteredData = data.results.filter((meta) => !metadataIds.includes(meta?.id.toString()))
+
+						const filteredData = data.results.filter((meta) => !metadataList.includes(meta?.source))
 
 						this.metaData = {
 							options: filteredData.map((metaData) => ({

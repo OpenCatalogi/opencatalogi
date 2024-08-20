@@ -1,5 +1,4 @@
 <script setup>
-import { getMetaDataId } from '../../services/getMetaDataId.js'
 import { navigationStore, catalogiStore, metadataStore } from '../../store/store.js'
 </script>
 
