@@ -99,8 +99,9 @@ class Version6Date20240725114845 extends SimpleMigrationStep {
 			$table->addColumn(name: 'directory', typeName: TYPES::STRING, options: [
 				'notnull' => false,
 			]);
-			$table->addColumn(name: 'metadata', typeName: TYPES::STRING, options: [
+			$table->addColumn(name: 'metadata', typeName: Types::JSON, options: [
 				'notnull' => false,
+				'default' => '{}'
 			]);
 			$table->addColumn(name: 'status', typeName: TYPES::STRING, options: [
 				'notnull' => false,
