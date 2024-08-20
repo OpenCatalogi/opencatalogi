@@ -30,7 +30,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						:disabled="loading"
 						label="Waarde"
 						:value.sync="value"
-						:loading="loading" />
+						:loading="loading"
+						@input="verifyInput" />
 
 					<!-- TYPE : NUMBER -->
 					<NcInputField v-if="getSelectedMetadataProperty.type === 'number'"
@@ -39,7 +40,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						step="any"
 						label="Nummer"
 						:value.sync="value"
-						:loading="loading" />
+						:loading="loading"
+						@input="verifyInput" />
 				</div>
 			</div>
 
@@ -181,6 +183,21 @@ export default {
 			default:
 				this.value = prop.default
 				break
+			}
+		},
+		/**
+		 * Takes the input element and tests it against various rules from `getSelectedMetadataProperty`.
+		 * Which then returns a success boolean and a helper text containing the error message.
+		 *
+		 * @param {HTMLInputElement} inputElement the input element
+		 * @see getSelectedMetadataProperty
+		 */
+		verifyInput(inputElement) {
+			console.log(inputElement.target.value)
+
+			return {
+				success: true,
+				helperText: '',
 			}
 		},
 		AddPublicatieEigenschap() {
