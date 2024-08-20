@@ -6,7 +6,6 @@ export class Metadata implements TMetadata {
 	public id: string
 	public title: string
 	public description: string
-	public source: string
 	public version: string
 	public required: string[]
 	public properties: Record<string, {
@@ -47,7 +46,6 @@ export class Metadata implements TMetadata {
 		this.id = data?.id?.toString() || ''
 		this.title = data?.title || ''
 		this.description = data?.description || ''
-		this.source = data?.source || ''
 		this.version = data?.version || ''
 		this.required = data?.required || []
 		// backend (PHP) doesn't know objects so it will return an array if empty
@@ -107,7 +105,6 @@ export class Metadata implements TMetadata {
 		const schema = z.object({
 			title: z.string().min(1), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
 			description: z.string(),
-			source: z.string(),
 			version: z.string(),
 			required: z.string().array(),
 			properties: z.record(propertiesDataSchema), // z.record allows for any amount of any keys, with specific type for value validation

@@ -2,7 +2,6 @@ export type TMetadata = {
     id: string
     title: string
     description: string
-    source: string
     version: string
     required: string[]
     properties: Record<string, {
