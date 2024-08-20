@@ -24,15 +24,28 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					v-model="eigenschappen.value"
 					required />
 
-				<NcTextField :disabled="loading"
-					label="Data"
-					:value.sync="data"
-					:loading="loading" />
+				<div v-if="!!getSelectedMetadataProperty">
+					<!-- TYPE : STRING -->
+					<NcTextField v-if="getSelectedMetadataProperty.type === 'string'"
+						:disabled="loading"
+						label="Waarde"
+						:value.sync="value"
+						:loading="loading" />
+
+					<!-- TYPE : NUMBER -->
+					<NcInputField v-if="getSelectedMetadataProperty.type === 'number'"
+						:disabled="loading"
+						type="number"
+						step="any"
+						label="Nummer"
+						:value.sync="value"
+						:loading="loading" />
+				</div>
 			</div>
 
 			<span class="flex-horizontal">
 				<NcButton v-if="success === null"
-					:disabled="loading || !eigenschappen.value?.id || !data"
+					:disabled="loading || !eigenschappen.value?.id || !value"
 					type="primary"
 					@click="AddPublicatieEigenschap()">
 					<template #icon>
@@ -58,6 +71,7 @@ import {
 	NcButton,
 	NcModal,
 	NcTextField,
+	NcInputField,
 	NcNoteCard,
 	NcLoadingIcon,
 	NcSelect,
@@ -71,6 +85,7 @@ export default {
 	components: {
 		NcModal,
 		NcTextField,
+		NcInputField,
 		NcSelect,
 		NcButton,
 		NcNoteCard,
@@ -80,13 +95,35 @@ export default {
 		return {
 			eigenschappen: {},
 			metaData: {},
-			data: '',
+			value: '',
 			loading: false,
 			success: null,
 			error: false,
 		}
 	},
 	computed: {
+		// I write documentation to help me understand what I need to do.
+
+		/**
+		 * Takes the properties from the metadata in the store and loops through them, returning only the items not in the publication data
+		 * @return {Array<object> | []} list of metadata properties NOT in the publication data
+		 */
+		getFilteredMetadataProperties() {
+			if (!publicationStore.publicationMetaData?.properties) return []
+			return Object.values(publicationStore.publicationMetaData?.properties)
+				.filter((prop) => !Object.keys(publicationStore.publicationItem?.data).includes(prop.title))
+		},
+		/**
+		 * based on the result `getFilteredMetadataProperties` gives AND the selected value in the eigenschappen dropdown,
+		 * it will return the full metadata property of the selected property, containing the rules for the data.
+		 *
+		 * It will return `null` if no property is selected
+		 * @see getFilteredMetadataProperties
+		 * @return {object | null} A single metadata properties object or null
+		 */
+		getSelectedMetadataProperty() {
+			return this.getFilteredMetadataProperties.filter((prop) => prop?.title === this.eigenschappen.value?.label)[0] || null
+		},
 		mapMetadataEigenschappen() {
 			if (publicationStore.publicationMetaData) {
 				const incomingUrl = new URL(publicationStore.publicationMetaData.source)
@@ -105,8 +142,7 @@ export default {
 
 			return {
 				inputLabel: 'Publicatie type eigenschap',
-				options: Object.values(publicationStore.publicationMetaData?.properties)
-					.filter((prop) => !Object.keys(publicationStore.publicationItem?.data).includes(prop.title))
+				options: this.getFilteredMetadataProperties
 					.map((prop) => ({
 						id: prop.title,
 						label: prop.title,
@@ -114,7 +150,39 @@ export default {
 			}
 		},
 	},
+	watch: {
+		getSelectedMetadataProperty(newVal) {
+			// eslint-disable-next-line no-console
+			console.log('new selected metadata property', newVal)
+			this.setDefaultValue(newVal)
+		},
+	},
 	methods: {
+		/**
+		 * Accepts the selected metadata property or nothing, and changes the value property in `data()` to the default value from the property.
+		 *
+		 * Depending on the property.type, it will put in specialized data, such as `object` or 'boolean'.
+		 *
+		 * This function only runs when the selected metadata property changes
+		 * @param {object} value The metadata property Object containing the rules
+		 * @see getSelectedMetadataProperty
+		 */
+		setDefaultValue(value = null) {
+			const prop = value || this.getSelectedMetadataProperty
+
+			switch (prop.type) {
+			case 'boolean': {
+				const isTrueSet = typeof prop.default === 'boolean'
+					? prop.default
+					: prop.default?.toLowerCase?.() === 'true'
+				this.value = isTrueSet
+				break
+			}
+			default:
+				this.value = prop.default
+				break
+			}
+		},
 		AddPublicatieEigenschap() {
 			this.loading = true
 

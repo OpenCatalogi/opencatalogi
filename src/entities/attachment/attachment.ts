@@ -84,11 +84,11 @@ export class Attachment implements TAttachment {
 				// this regex checks if the code has either 2 or 3 characters per group, and the -aaa after the first is optional
 				code: z.string()
 					.max(7)
-					.regex(/([a-z]{2,3})(-[a-z]{2,3})?/g, 'language code is not a valid ISO 639-1 code (e.g. en-us)')
+					.regex(/^([a-z]{2,3})(-[a-z]{2,3})?$/g, 'language code is not a valid ISO 639-1 code (e.g. en-us)')
 					.or(z.literal('')),
 				level: z.string()
 					.max(2)
-					.regex(/(A|B|C)(1|2)/g, 'language level is not a valid CEFRL level (e.g. A1)')
+					.regex(/^(A|B|C)(1|2)$/g, 'language level is not a valid CEFRL level (e.g. A1)')
 					.or(z.literal('')),
 			}),
 			versionOf: z.string(),
