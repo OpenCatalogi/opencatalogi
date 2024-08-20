@@ -70,6 +70,7 @@ export default {
 			success: null,
 			error: false,
 			errorCode: '',
+			hasUpdated: false,
 		}
 	},
 	mounted() {
@@ -125,8 +126,8 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						const metadataListAsString = metadataList.map(String)
-						const filteredData = data.results.filter((meta) => !metadataListAsString.includes(meta?.id.toString()))
+
+						const filteredData = data.results.filter((meta) => !metadataList.includes(meta?.source))
 
 						this.metaData = {
 							options: filteredData.map((metaData) => ({
@@ -181,10 +182,13 @@ export default {
 						self.success = null
 						self.closeModal()
 					}, 2000)
+
+					this.hasUpdated = false
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
+					this.hasUpdated = false
 				})
 		},
 	},

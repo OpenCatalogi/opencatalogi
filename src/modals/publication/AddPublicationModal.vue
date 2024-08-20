@@ -89,7 +89,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<!-- STAGE 2 -->
 				<div v-if="catalogi?.value?.id && !metaData?.value?.id">
 					<p>Publicaties worden gedefineerd door <a @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">publicatie typen</a>, van welk publicatie type wit u een publicatie aanmaken?</p>
-					<NcSelect v-bind="metaData"
+					<NcSelect v-bind="filteredMetadataOptions"
 						v-model="metaData.value"
 						input-label="Publicatie type *"
 						:loading="metaDataLoading"
@@ -195,7 +195,9 @@ export default {
 				image: '',
 				data: {},
 			},
+			catalogiList: [], // this is the entire dataset of catalogi
 			catalogi: {},
+			metaDataList: [], // this is the entire dataset of metadata
 			metaData: {},
 			errorCode: '',
 			catalogiLoading: false,
@@ -208,6 +210,30 @@ export default {
 			dataIsValidJson: false,
 			attachmentsIsValidJson: false,
 		}
+	},
+	computed: {
+		filteredMetadataOptions() {
+			if (!this.catalogiList?.length) return {}
+			if (!this.catalogi?.options?.length) return {}
+			if (!this.catalogi?.value.id) return {}
+			if (!this.metaDataList?.length) return {}
+
+			// step 1: get the selected catalogus from the catalogi dropdown
+			const selectedCatalogus = this.catalogiList
+				.filter((catalogus) => catalogus.id.toString() === this.catalogi.value.id.toString())[0]
+
+			// step 2: get the full metadata's from the metadataIds
+			const filteredMetadata = this.metaDataList
+				.filter((metadata) => selectedCatalogus.metadata.includes(metadata.source))
+
+			return {
+				options: filteredMetadata.map((metaData) => ({
+					id: metaData.id,
+					source: metaData.source,
+					label: metaData.title,
+				})),
+			}
+		},
 	},
 	watch: {
 		data: {
@@ -238,6 +264,8 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
+						this.catalogiList = data.results
+
 						const selectedCatalogus = navigationStore.getTransferData() !== 'ignore selectedCatalogus'
 							? data.results.filter((catalogus) => catalogus.id.toString() === navigationStore.selectedCatalogus.toString())[0]
 							: null
@@ -270,15 +298,7 @@ export default {
 			})
 				.then((response) => {
 					response.json().then((data) => {
-
-						this.metaData = {
-							options: Object.entries(data.results).map((metaData) => ({
-								id: metaData[1].id ?? metaData[1]._id,
-								source: metaData[1].source ?? metaData[1].source,
-								label: metaData[1].title ?? metaData[1].name,
-							})),
-
-						}
+						this.metaDataList = data.results
 					})
 					this.metaDataLoading = false
 				})
