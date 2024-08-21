@@ -199,7 +199,7 @@ export default {
 
 			let schema = z.any()
 
-			// TODO: add more validation patterns
+			// TODO: add more validations
 			if (this.getSelectedMetadataProperty.pattern) {
 				schema = schema.regex(this.getSelectedMetadataProperty.pattern, { message: 'Voldoet niet aan het vereiste patroon' })
 			}
