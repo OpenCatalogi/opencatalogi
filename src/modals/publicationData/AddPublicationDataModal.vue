@@ -26,28 +26,141 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 
 				<div v-if="!!getSelectedMetadataProperty">
 					<!-- TYPE : STRING -->
-					<NcTextField v-if="getSelectedMetadataProperty.type === 'string'"
-						:disabled="loading"
-						label="Waarde"
-						:value.sync="value"
-						:loading="loading"
-						@input="verifyInput" />
+					<div v-if="getSelectedMetadataProperty.type === 'string'">
+						<NcDateTimePicker v-if="getSelectedMetadataProperty.format === 'date'"
+							v-model="value"
+							type="date"
+							label="Waarde"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcDateTimePicker v-else-if="getSelectedMetadataProperty.format === 'time'"
+							v-model="value"
+							type="time"
+							label="Waarde"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcTextField v-else-if="getSelectedMetadataProperty.format === 'duration'"
+							:value.sync="value"
+							label="Waarde"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcDateTimePicker v-else-if="getSelectedMetadataProperty.format === 'date-time'"
+							v-model="value"
+							type="datetime"
+							label="Waarde"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'url'"
+							:value.sync="value"
+							label="Waarde"
+							type="url"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'uri'"
+							:value.sync="value"
+							label="Waarde"
+							type="url"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'email'"
+							:value.sync="value"
+							label="Waarde"
+							type="email"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'idn-email'"
+							:value.sync="value"
+							label="Waarde"
+							type="email"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcTextField v-else-if="getSelectedMetadataProperty.format === 'regex'"
+							:value.sync="value"
+							label="Waarde (regex)"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'password'"
+							:value.sync="value"
+							type="password"
+							label="Waarde"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'telephone'"
+							:value.sync="value"
+							type="tel"
+							label="Waarde"
+							:disabled="loading"
+							:loading="loading" />
+
+						<NcTextField v-else
+							:value.sync="value"
+							label="Waarde"
+							:disabled="loading"
+							:loading="loading" />
+					</div>
 
 					<!-- TYPE : NUMBER -->
-					<NcInputField v-if="getSelectedMetadataProperty.type === 'number'"
+					<NcInputField v-else-if="getSelectedMetadataProperty.type === 'number'"
 						:disabled="loading"
 						type="number"
 						step="any"
 						label="Nummer"
 						:value.sync="value"
 						:loading="loading"
-						@input="verifyInput" />
+						@input="(elem) => verifyInput(elem.target.value)" />
+
+					<!-- TYPE : INTEGER -->
+					<NcInputField v-else-if="getSelectedMetadataProperty.type === 'integer'"
+						:disabled="loading"
+						type="number"
+						step="1"
+						label="Integer"
+						:value.sync="value"
+						:loading="loading"
+						@input="(elem) => verifyInput(elem.target.value)" />
+
+					<!-- TYPE : OBJECT -->
+					<NcTextArea v-else-if="getSelectedMetadataProperty.type === 'object'"
+						:disabled="loading"
+						label="Object"
+						:value.sync="value"
+						:loading="loading"
+						@input="(elem) => verifyInput(elem.target.value)" />
+
+					<!-- TYPE : ARRAY -->
+					<NcTextArea v-else-if="getSelectedMetadataProperty.type === 'array'"
+						:disabled="loading"
+						label="Waarde lijst (split op ,)"
+						:value.sync="value"
+						:loading="loading"
+						@input="(elem) => verifyInput(elem.target.value)" />
+
+					<!-- TYPE : BOOLEAN -->
+					<NcCheckboxRadioSwitch v-else-if="getSelectedMetadataProperty.type === 'boolean'"
+						:disabled="loading"
+						:checked.sync="value"
+						:loading="loading">
+						Waarde
+					</NcCheckboxRadioSwitch>
 				</div>
 			</div>
 
 			<span class="flex-horizontal">
 				<NcButton v-if="success === null"
-					:disabled="loading || !eigenschappen.value?.id || !value"
+					:disabled="loading
+						|| !eigenschappen.value?.id
+						|| ( getSelectedMetadataProperty.type !== 'boolean' && !value )
+					"
 					type="primary"
 					@click="AddPublicatieEigenschap()">
 					<template #icon>
@@ -68,11 +181,15 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 	</NcModal>
 </template>
 
+<!-- eslint-disable no-console -->
 <script>
 import {
 	NcButton,
 	NcModal,
 	NcTextField,
+	NcTextArea,
+	NcDateTimePicker,
+	NcCheckboxRadioSwitch,
 	NcInputField,
 	NcNoteCard,
 	NcLoadingIcon,
@@ -88,6 +205,9 @@ export default {
 	components: {
 		NcModal,
 		NcTextField,
+		NcTextArea,
+		NcDateTimePicker,
+		NcCheckboxRadioSwitch,
 		NcInputField,
 		NcSelect,
 		NcButton,
@@ -167,39 +287,65 @@ export default {
 		 * Depending on the property.type, it will put in specialized data, such as `object` or 'boolean'.
 		 *
 		 * This function only runs when the selected metadata property changes
-		 * @param {object} value The metadata property Object containing the rules
+		 * @param {object} SelectedMetadataProperty The metadata property Object containing the rules
 		 * @see getSelectedMetadataProperty
 		 */
-		setDefaultValue(value = null) {
-			const prop = value || this.getSelectedMetadataProperty
+		setDefaultValue(SelectedMetadataProperty = null) {
+			const prop = SelectedMetadataProperty || this.getSelectedMetadataProperty
 
-			// TODO: add more types than just boolean
 			switch (prop.type) {
+			case 'string': {
+				if (prop.format === 'date' || prop.format === 'time' || prop.format === 'date-time') {
+					console.log('Set default value to Date ', prop.default)
+					this.value = new Date(prop.default || '')
+					break
+				} else {
+					console.log('Set default value to ', prop.default)
+					this.value = prop.default
+					break
+				}
+			}
+
+			case 'object': {
+				console.log('Set default value to Object ', prop.default)
+				this.value = Object.parse(prop.default)
+				break
+			}
+
+			case 'array': {
+				console.log('Set default value to Array ', prop.default)
+				this.value = prop.default.join(', ')
+				break
+			}
+
 			case 'boolean': {
+				console.log('Set default value to Boolean ', prop.default)
 				const isTrueSet = typeof prop.default === 'boolean'
 					? prop.default
-					: prop.default?.toLowerCase?.() === 'true'
+					: prop.default?.toLowerCase() === 'true'
 				this.value = isTrueSet
 				break
 			}
+
 			default:
+				console.log('Set default value to ', prop.default)
 				this.value = prop.default
 				break
 			}
 		},
 		/**
-		 * Takes the input element and tests it against various rules from `getSelectedMetadataProperty`.
+		 * Takes the value of a input element and tests it against various rules from `getSelectedMetadataProperty`.
 		 * Which then returns a success boolean and a helper text containing the error message when success is false.
 		 *
-		 * @param {HTMLInputElement} inputElement the input element
+		 * @param {string} value the value to be verified
 		 * @see getSelectedMetadataProperty
 		 */
-		verifyInput(inputElement) {
-			const value = inputElement.target.value
-
+		verifyInput(value) {
 			let schema = z.any()
 
 			// TODO: add more validations
+			// 'duration' format needs to have a max length of 10
+			// and more, all based on the format
 			if (this.getSelectedMetadataProperty.pattern) {
 				schema = schema.regex(this.getSelectedMetadataProperty.pattern, { message: 'Voldoet niet aan het vereiste patroon' })
 			}
