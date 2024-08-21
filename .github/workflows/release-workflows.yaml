@@ -81,22 +81,22 @@ jobs:
       - name: Archive Release
         uses: thedoctor0/zip-release@main
         with:
-          type: 'zip'
-          filename: "packadge.${{ steps.version.outputs.version }}.zip"
+          command: "mkdir -p opencatalogi && mv * opencatalogi/"
+          type: 'tar'
+          filename: "packadge.${{ steps.version.outputs.version }}.tar.gz"
           exclusions: '*.git* *.vscode* .coverage-frontend* .docker* .tests* .docs* .specs.ts* .mocks.ts* .tests* .babelrc .nvmrc .php-cs-fixer.dist.php .phpunit.result.cache .prettierrc changelog-ci-config.json composer-setup.php coverage.txt docker-compose.yml .editorconfig .jest.config.js .eslintrc.js phpmd.xml phpunit.xml psalm.xml .eslintrc.js stylelint.config.js webpack.config.js'
         # Documentation: https://github.com/marketplace/actions/zip-release
         # Explanation: This step creates a zip archive of the repository, excluding certain files and directories as specified.
 
       # Step 10: Create a new release on GitHub
-      - name: Create GitHub Release
-        uses: marvinpinto/action-automatic-releases@latest
+      - name: Upload Release
+        uses: ncipollo/release-action@v1.12.0
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: ${{ steps.version.outputs.version }}
-          prerelease: false
-          title: "Release ${{ steps.version.outputs.version }}"
-          files: |
+          # bodyFile: 'opencatalogi/'
+          artifacts: |
             LICENSE.md
-            "packadge.${{ steps.version.outputs.version }}.zip"
-        # Documentation: https://github.com/marvinpinto/action-automatic-releases
+            "packadge.${{ steps.version.outputs.version }}.tar.gz"
+          token: ${{ secrets.GITHUB_TOKEN }}
+        # Documentation: https://github.com/ncipollo/release-action
         # Explanation: This step creates a new release on GitHub, uploading the generated release files, and tagging the release with the calculated version.
+       
