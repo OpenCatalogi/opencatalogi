@@ -19,7 +19,7 @@ jobs:
       - name: Set up PHP and install extensions
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.2'
           extensions: zip, gd
         # Documentation: https://github.com/shivammathur/setup-php
         # Explanation: This step sets up PHP 7.4 and installs the required extensions (`zip` and `gd`) that are necessary for your Composer dependencies.
