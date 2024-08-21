@@ -40,7 +40,7 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-progress --no-interaction --prefer-dist --ignore-platform-req=ext-zip --ignore-platform-req=ext-gd
         env:
-          COMPOSER_ROOT_VERSION: dev-${{ github.head_ref }}
+          COMPOSER_ROOT_VERSION: 2.7.7
         # Documentation: https://getcomposer.org/doc/03-cli.md#install
         # Explanation: This step runs `composer install` to install the PHP dependencies required for the project. It also ignores platform requirements for `ext-zip` and `ext-gd` to avoid issues if extensions are not detected correctly in the environment.
 
