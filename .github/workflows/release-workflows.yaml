@@ -15,7 +15,16 @@ jobs:
         # Documentation: https://github.com/actions/checkout
         # Explanation: This step checks out the source code from the GitHub repository, ensuring that the workflow has access to the latest version of the code.
 
-      # Step 2: Install Node.js dependencies using npm
+      # Step 2: Install PHP extensions
+      - name: Set up PHP and install extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: zip, gd
+        # Documentation: https://github.com/shivammathur/setup-php
+        # Explanation: This step sets up PHP 7.4 and installs the required extensions (`zip` and `gd`) that are necessary for your Composer dependencies.
+
+      # Step 3: Install Node.js dependencies using npm
       - name: Install npm dependencies
         uses: actions/setup-node@v3
         with:
@@ -27,19 +36,15 @@ jobs:
         # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
         # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
 
-      # Step 3: Install PHP dependencies using Composer
+      # Step 4: Install PHP dependencies using Composer
       - name: Install Composer dependencies
-        uses: php-actions/composer@v6
-        with:
-          php_version: '7.4' # Specify PHP version if needed
-        # Documentation: https://github.com/php-actions/composer
-        # Explanation: This step sets up Composer in the GitHub Actions environment and installs the PHP dependencies listed in the `composer.json` file.
-
-      - run: composer install --no-progress --no-interaction --prefer-dist
+        run: composer install --no-progress --no-interaction --prefer-dist --ignore-platform-req=ext-zip --ignore-platform-req=ext-gd
+        env:
+          COMPOSER_ROOT_VERSION: dev-${{ github.head_ref }}
         # Documentation: https://getcomposer.org/doc/03-cli.md#install
-        # Explanation: This step runs `composer install` to install the PHP dependencies required for the project without any interactive prompts and with optimized autoloading.
+        # Explanation: This step runs `composer install` to install the PHP dependencies required for the project. It also ignores platform requirements for `ext-zip` and `ext-gd` to avoid issues if extensions are not detected correctly in the environment.
 
-      # Step 4: Generate Git version information
+      # Step 5: Generate Git version information
       - name: Git Version
         id: version
         uses: codacy/git-version@2.7.1
@@ -48,7 +53,7 @@ jobs:
         # Documentation: https://github.com/marketplace/actions/git-version
         # Explanation: This step calculates the version of the software based on the Git tags and branch information, storing the result in the `version` output.
 
-      # Step 5: Extract repository description
+      # Step 6: Extract repository description
       - name: Extract repository description
         id: repo-description
         run: |
@@ -57,7 +62,7 @@ jobs:
         # Documentation: https://docs.github.com/en/rest/reference/repos#get-a-repository
         # Explanation: This step retrieves the description of the GitHub repository using the GitHub API and stores it in the environment variables.
 
-      # Step 6: Run Changelog CI
+      # Step 7: Run Changelog CI
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
         with:
@@ -66,13 +71,13 @@ jobs:
         # Documentation: https://github.com/saadmk11/changelog-ci
         # Explanation: This step generates a changelog for the current release using the Changelog CI tool.
 
-      # Step 7: Output the version
+      # Step 8: Output the version
       - name: Use the version
         run: |
           echo ${{ steps.version.outputs.version }}
         # Explanation: This step outputs the calculated version number to the console for reference.
 
-      # Step 8: Archive the release files
+      # Step 9: Archive the release files
       - name: Archive Release
         uses: thedoctor0/zip-release@main
         with:
@@ -82,7 +87,7 @@ jobs:
         # Documentation: https://github.com/marketplace/actions/zip-release
         # Explanation: This step creates a zip archive of the repository, excluding certain files and directories as specified.
 
-      # Step 9: Create a new release on GitHub
+      # Step 10: Create a new release on GitHub
       - name: Create GitHub Release
         uses: marvinpinto/action-automatic-releases@latest
         with:
