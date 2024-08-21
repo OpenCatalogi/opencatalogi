@@ -88,18 +88,16 @@ jobs:
         # Documentation: https://github.com/marketplace/actions/zip-release
         # Explanation: This step creates a zip archive of the repository, excluding certain files and directories as specified.
 
-      # Step 10: Create a new release on GitHub
-      - name: Upload Release
-        uses: ncipollo/release-action@v1.12.0
+        # Step 10: Create a new release on GitHub
+      - name: Create GitHub Release
+        uses: marvinpinto/action-automatic-releases@latest
         with:
-          # bodyFile: 'opencatalogi/'          
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ steps.version.outputs.version }}
-          artifacts: |
+          prerelease: false
+          title: "Release ${{ steps.version.outputs.version }}"
+          files: |
             LICENSE.md
-            "packadge.zip"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.version.outputs.version }}
-          name: "Release ${{ steps.version.outputs.version }}"
-        # Documentation: https://github.com/ncipollo/release-action
+            "packadge.${{ steps.version.outputs.version }}.zip"
+        # Documentation: https://github.com/marvinpinto/action-automatic-releases
         # Explanation: This step creates a new release on GitHub, uploading the generated release files, and tagging the release with the calculated version.
-       
