@@ -87,9 +87,9 @@ jobs:
             -o -name '*.mocks.ts*' \
             -o -name '*.babelrc' \
             -o -name '*.nvmrc' \
-            -o -name '*.php-cs-fixer.dist.php' \
-            -o -name '*.phpunit.result.cache' \
-            -o -name '*.prettierrc' \
+            -o -name '.php-cs-fixer.dist.php' \
+            -o -name '.phpunit.result.cache' \
+            -o -name '.prettierrc' \
             -o -name 'changelog-ci-config.json' \
             -o -name 'composer-setup.php' \
             -o -name 'coverage.txt' \
@@ -105,10 +105,11 @@ jobs:
           \) -exec rm -f {} +
           find . -type d \( \
             -name '.github' \
-            -o -name '.docker' \
+            -o -name '.git' \
+            -o -name 'docker' \
             -o -name '.vscode' \
-            -o -name '.tests*' \
-            -o -name '.docs*' \
+            -o -name 'tests' \
+            -o -name 'docs' \
           \) -exec rm -rf {} +
           mkdir -p opencatalogi && find . -maxdepth 1 ! -path './opencatalogi' ! -path '.' -exec mv -t opencatalogi {} +
           mkdir -p ../packadges
