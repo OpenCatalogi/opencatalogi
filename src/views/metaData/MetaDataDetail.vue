@@ -59,9 +59,11 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 						<NcListItem v-for="(value, key, i) in metadataStore.metaDataItem.properties"
 							:key="`${key}${i}`"
 							:name="key"
+							:active="metadataStore.metadataDataKey === key"
 							:bold="false"
 							:details="value.type ?? 'Onbekend'"
-							:force-display-actions="true">
+							:force-display-actions="true"
+							@click="metadataStore.setMetadataDataKey(key)">
 							<template #icon>
 								<CircleOutline :class="metadataStore.metadataDataKey === key && 'selectedZaakIcon'"
 									disable-menu

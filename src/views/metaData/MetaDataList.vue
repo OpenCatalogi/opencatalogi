@@ -45,7 +45,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					:active="metadataStore.metaDataItem?.id === metaData?.id"
 					:details="metaData.version ?? 'Onbekend'"
 					:force-display-actions="true"
-					@click="metadataStore.setMetaDataItem(metaData)">
+					@click="setActive(metaData)">
 					<template #icon>
 						<FileTreeOutline :class="metadataStore.metaDataItem?.id === metaData?.id && 'selectedIcon'"
 							disable-menu
@@ -146,6 +146,11 @@ export default {
 		this.fetchData()
 	},
 	methods: {
+		setActive(metaData) {
+			if (JSON.stringify(metadataStore.metaDataItem) === JSON.stringify(metaData)) {
+				metadataStore.setMetaDataItem(false)
+			} else { metadataStore.setMetaDataItem(metaData) }
+		},
 		refresh(e) {
 			e.preventDefault()
 			this.fetchData()
