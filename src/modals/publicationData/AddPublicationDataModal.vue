@@ -78,6 +78,7 @@ import {
 	NcLoadingIcon,
 	NcSelect,
 } from '@nextcloud/vue'
+import { z } from 'zod'
 
 // icons
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -172,6 +173,7 @@ export default {
 		setDefaultValue(value = null) {
 			const prop = value || this.getSelectedMetadataProperty
 
+			// TODO: add more types than just boolean
 			switch (prop.type) {
 			case 'boolean': {
 				const isTrueSet = typeof prop.default === 'boolean'
@@ -187,17 +189,26 @@ export default {
 		},
 		/**
 		 * Takes the input element and tests it against various rules from `getSelectedMetadataProperty`.
-		 * Which then returns a success boolean and a helper text containing the error message.
+		 * Which then returns a success boolean and a helper text containing the error message when success is false.
 		 *
 		 * @param {HTMLInputElement} inputElement the input element
 		 * @see getSelectedMetadataProperty
 		 */
 		verifyInput(inputElement) {
-			console.log(inputElement.target.value)
+			const value = inputElement.target.value
+
+			let schema = z.any()
+
+			// TODO: add more validation patterns
+			if (this.getSelectedMetadataProperty.pattern) {
+				schema = schema.regex(this.getSelectedMetadataProperty.pattern, { message: 'Voldoet niet aan het vereiste patroon' })
+			}
+
+			const result = schema.safeParse(value)
 
 			return {
-				success: true,
-				helperText: '',
+				success: result.success,
+				helperText: result?.error || false,
 			}
 		},
 		AddPublicatieEigenschap() {
