@@ -111,21 +111,11 @@ jobs:
             -o -name '.docs*' \
           \) -exec rm -rf {} +
           mkdir -p opencatalogi && find . -maxdepth 1 ! -path './opencatalogi' ! -path '.' -exec mv -t opencatalogi {} +
+          mkdir -p ../packadges
         # 
         # Explanation: This step outputs the calculated version number to the console for reference.
       
       #Step 2: Create the .tar.gz archive
-      - name: Create Tarball
-        run: |
-          tar -czf packadge.tar.gz .      
-          
-      - name: Upload Tarball
-        uses: actions/upload-artifact@v3
-        with:
-          name: tar packadge
-          path: packadge.tar.gz
-
-
       - name: Create ZIP
         run: |
           zip -r packadge.zip .  
@@ -134,17 +124,28 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: zip packadge
-          path: packadge.zip
+          path: ../packadges/packadge.zip
+
+      - name: Create Tarball
+        run: |
+          tar -czf ../packadges/packadge.tar.gz .      
+          
+      - name: Upload Tarball
+        uses: actions/upload-artifact@v3
+        with:
+          name: tar packadge
+          path: ../packadges/packadge.tar.gz
 
       
         # Step 10: Create a new release on GitHub
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
         with:
-          # bodyFile: 'opencatalogi/'
+          # bodyFile: 'opencatalogi/changelog.md'
           artifacts: |
             LICENSE.md
-            packadge.zip
+            ../packadges/packadge.zip
+            ../packadges/packadge.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.version }}
         # Documentation: https://github.com/ncipollo/release-action
