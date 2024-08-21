@@ -120,23 +120,10 @@ jobs:
         run: |
           zip -r packadge.zip .  
           
-      - name: Upload ZIP
-        uses: actions/upload-artifact@v3
-        with:
-          name: zip packadge
-          path: ../packadges/packadge.zip
-
       - name: Create Tarball
         run: |
           tar -czf ../packadges/packadge.tar.gz .      
-          
-      - name: Upload Tarball
-        uses: actions/upload-artifact@v3
-        with:
-          name: tar packadge
-          path: ../packadges/packadge.tar.gz
-
-      
+                
         # Step 10: Create a new release on GitHub
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
