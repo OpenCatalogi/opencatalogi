@@ -92,11 +92,14 @@ jobs:
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
         with:
-          # bodyFile: 'opencatalogi/'
+          # bodyFile: 'opencatalogi/'          
+          automatic_release_tag: ${{ steps.version.outputs.version }}
           artifacts: |
             LICENSE.md
-            "packadge.${{ steps.version.outputs.version }}.tar.gz"
+            "packadge.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.version.outputs.version }}
+          name: "Release ${{ steps.version.outputs.version }}"
         # Documentation: https://github.com/ncipollo/release-action
         # Explanation: This step creates a new release on GitHub, uploading the generated release files, and tagging the release with the calculated version.
        
