@@ -80,7 +80,8 @@ jobs:
       # Step 9: Output the version
       - name: Move the file around
         run: |
-          echo ${{ steps.version.outputs.version }}
+          mkdir -p opencatalogi && mv * opencatalogi/
+          find . -type f \( -name '*.git*' -o -name '*.vscode*' -o -name '*.coverage-frontend*' -o -name '*.docker*' -o -name '*.tests*' -o -name '*.docs*' -o -name '*.specs.ts*' -o -name '*.mocks.ts*' -o -name '*.babelrc' -o -name '*.nvmrc' -o -name '*.php-cs-fixer.dist.php' -o -name '*.phpunit.result.cache' -o -name '*.prettierrc' -o -name 'changelog-ci-config.json' -o -name 'composer-setup.php' -o -name 'coverage.txt' -o -name 'docker-compose.yml' -o -name '*.editorconfig' -o -name '*.jest.config.js' -o -name '*.eslintrc.js' -o -name 'phpmd.xml' -o -name 'phpunit.xml' -o -name 'psalm.xml' -o -name 'stylelint.config.js' -o -name 'webpack.config.js' \) -exec rm -f {} +
         # Explanation: This step outputs the calculated version number to the console for reference.
 
       # Step 9: Archive the release files
@@ -88,8 +89,8 @@ jobs:
         uses: thedoctor0/zip-release@main
         with:
           command: "mkdir -p opencatalogi && mv * opencatalogi/"
-          type: 'tar'
-          filename: packadge.tar.gz
+          type: 'zip'
+          filename: packadge.zip
         #  exclusions: '*.git* *.vscode* *.coverage-frontend* *.docker* *.tests* *.docs* *.specs.ts* *.mocks.ts* *.tests* *.babelrc *.nvmrc *.php-cs-fixer.dist.php *.phpunit.result.cache *.prettierrc *changelog-ci-config.json *composer-setup.php *coverage.txt *docker-compose.yml *.editorconfig *.jest.config.js *.eslintrc.js *phpmd.xml *phpunit.xml *psalm.xml *.eslintrc.js *stylelint.config.js *webpack.config.js'
         # Documentation: https://github.com/marketplace/actions/zip-release
         # Explanation: This step creates a zip archive of the repository, excluding certain files and directories as specified.
@@ -104,7 +105,7 @@ jobs:
           title: "Release ${{ steps.version.outputs.version }}"
           files: |
             opencatalogi/LICENSE.md
-            opencatalogi/packadge.tar.gz
-            packadge.tar.gz
+            opencatalogi/packadge.zip
+            packadge.zip
         # Documentation: https://github.com/marvinpinto/action-automatic-releases
         # Explanation: This step creates a new release on GitHub, uploading the generated release files, and tagging the release with the calculated version.
