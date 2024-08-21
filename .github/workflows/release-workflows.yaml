@@ -78,16 +78,11 @@ jobs:
         # Explanation: This step outputs the calculated version number to the console for reference.
 
       # Step 9: Output the version
-      - name: Move the file around and remove nog product stuff
+      - name: Remove files and folders that are part of development and then move te remaining files to the openatalogi sub folder
         run: |
-          mkdir -p opencatalogi && find . -maxdepth 1 ! -path './opencatalogi' ! -path '.' -exec mv -t opencatalogi {} +
           find . -type f \( \
             -name '*.git*' \
-            -o -name '*.vscode*' \
-            -o -name '*.coverage-frontend*' \
-            -o -name '*.docker*' \
-            -o -name '*.tests*' \
-            -o -name '*.docs*' \
+            -o -name '.coverage-frontend*' \
             -o -name '*.specs.ts*' \
             -o -name '*.mocks.ts*' \
             -o -name '*.babelrc' \
@@ -99,23 +94,30 @@ jobs:
             -o -name 'composer-setup.php' \
             -o -name 'coverage.txt' \
             -o -name 'docker-compose.yml' \
-            -o -name '*.editorconfig' \
-            -o -name '*.jest.config.js' \
-            -o -name '*.eslintrc.js' \
+            -o -name '.editorconfig' \
+            -o -name '.jest.config.js' \
+            -o -name '.eslintrc.js' \
             -o -name 'phpmd.xml' \
             -o -name 'phpunit.xml' \
             -o -name 'psalm.xml' \
             -o -name 'stylelint.config.js' \
             -o -name 'webpack.config.js' \
           \) -exec rm -f {} +
-
-        # find . -type f \( -name '*.git*' -o -name '*.vscode*' -o -name '*.coverage-frontend*' -o -name '*.docker*' -o -name '*.tests*' -o -name '*.docs*' -o -name '*.specs.ts*' -o -name '*.mocks.ts*' -o -name '*.babelrc' -o -name '*.nvmrc' -o -name '*.php-cs-fixer.dist.php' -o -name '*.phpunit.result.cache' -o -name '*.prettierrc' -o -name 'changelog-ci-config.json' -o -name 'composer-setup.php' -o -name 'coverage.txt' -o -name 'docker-compose.yml' -o -name '*.editorconfig' -o -name '*.jest.config.js' -o -name '*.eslintrc.js' -o -name 'phpmd.xml' -o -name 'phpunit.xml' -o -name 'psalm.xml' -o -name 'stylelint.config.js' -o -name 'webpack.config.js' \) -exec rm -f {} +
+          find . -type d \( \
+            -name '.github' \
+            -o -name '.docker' \
+            -o -name '.vscode' \
+            -o -name '.tests*' \
+            -o -name '.docs*' \
+          \) -exec rm -rf {} +
+          mkdir -p opencatalogi && find . -maxdepth 1 ! -path './opencatalogi' ! -path '.' -exec mv -t opencatalogi {} +
+        # 
         # Explanation: This step outputs the calculated version number to the console for reference.
       
       #Step 2: Create the .tar.gz archive
       #- name: Create Tarball
       #  run: |
-      #    tar -czvf packadge.tar.gz .      
+      #    tar -czf packadge.tar.gz .      
           
      # - name: Upload Tarball
      #   uses: actions/upload-artifact@v3
