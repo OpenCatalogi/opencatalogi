@@ -116,7 +116,6 @@ jobs:
           title: "Release ${{ steps.version.outputs.version }}"
           files: |
             opencatalogi/LICENSE.md
-            opencatalogi/packadge.zip
             packadge.zip
             packadge.tar.gz
         # Documentation: https://github.com/marvinpinto/action-automatic-releases
