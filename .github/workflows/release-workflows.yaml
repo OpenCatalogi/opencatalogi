@@ -77,13 +77,19 @@ jobs:
           echo ${{ steps.version.outputs.version }}
         # Explanation: This step outputs the calculated version number to the console for reference.
 
+      # Step 9: Output the version
+      - name: Move the file around
+        run: |
+          echo ${{ steps.version.outputs.version }}
+        # Explanation: This step outputs the calculated version number to the console for reference.
+
       # Step 9: Archive the release files
       - name: Archive Release
         uses: thedoctor0/zip-release@main
         with:
           command: "mkdir -p opencatalogi && mv * opencatalogi/"
           type: 'zip'
-          filename: "packadge.zip"
+          filename: "packadge-${{ steps.version.outputs.version }}.zip"
           exclusions: '*.git* *.vscode* .coverage-frontend* .docker* .tests* .docs* .specs.ts* .mocks.ts* .tests* .babelrc .nvmrc .php-cs-fixer.dist.php .phpunit.result.cache .prettierrc changelog-ci-config.json composer-setup.php coverage.txt docker-compose.yml .editorconfig .jest.config.js .eslintrc.js phpmd.xml phpunit.xml psalm.xml .eslintrc.js stylelint.config.js webpack.config.js'
         # Documentation: https://github.com/marketplace/actions/zip-release
         # Explanation: This step creates a zip archive of the repository, excluding certain files and directories as specified.
@@ -98,6 +104,6 @@ jobs:
           title: "Release ${{ steps.version.outputs.version }}"
           files: |
             LICENSE.md
-            "packadge.${{ steps.version.outputs.version }}.zip"
+            "packadge-${{ steps.version.outputs.version }}.zip"
         # Documentation: https://github.com/marvinpinto/action-automatic-releases
         # Explanation: This step creates a new release on GitHub, uploading the generated release files, and tagging the release with the calculated version.
