@@ -80,7 +80,7 @@ jobs:
       # Step 9: Output the version
       - name: Move the file around
         run: |
-          mkdir -p opencatalogi && shopt -s extglob && mv !(opencatalogi) opencatalogi/
+          mkdir -p opencatalogi && find . -maxdepth 1 ! -path './opencatalogi' ! -path '.' -exec mv -t opencatalogi {} +
         # find . -type f \( -name '*.git*' -o -name '*.vscode*' -o -name '*.coverage-frontend*' -o -name '*.docker*' -o -name '*.tests*' -o -name '*.docs*' -o -name '*.specs.ts*' -o -name '*.mocks.ts*' -o -name '*.babelrc' -o -name '*.nvmrc' -o -name '*.php-cs-fixer.dist.php' -o -name '*.phpunit.result.cache' -o -name '*.prettierrc' -o -name 'changelog-ci-config.json' -o -name 'composer-setup.php' -o -name 'coverage.txt' -o -name 'docker-compose.yml' -o -name '*.editorconfig' -o -name '*.jest.config.js' -o -name '*.eslintrc.js' -o -name 'phpmd.xml' -o -name 'phpunit.xml' -o -name 'psalm.xml' -o -name 'stylelint.config.js' -o -name 'webpack.config.js' \) -exec rm -f {} +
         # Explanation: This step outputs the calculated version number to the console for reference.
       
