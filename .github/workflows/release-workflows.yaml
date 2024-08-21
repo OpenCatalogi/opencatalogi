@@ -128,26 +128,24 @@ jobs:
 
       - name: Create ZIP
         run: |
-          zip -rpackadge-${{ steps.version.outputs.version }}.zip .  
+          zip -r packadge.zip .  
           
       - name: Upload ZIP
         uses: actions/upload-artifact@v3
         with:
           name: zip packadge
-          path: "packadge-${{ steps.version.outputs.version }}.zip"
+          path: packadge.zip
 
       
         # Step 10: Create a new release on GitHub
-      - name: Create GitHub Release
-        uses: marvinpinto/action-automatic-releases@latest
+      - name: Upload Release
+        uses: ncipollo/release-action@v1.12.0
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: ${{ steps.version.outputs.version }}
-          prerelease: false
-          title: "Release ${{ steps.version.outputs.version }}"
-          files: |
-            opencatalogi/LICENSE.md
-            "packadge-${{ steps.version.outputs.version }}.zip"
-            packadge.tar.gz
-        # Documentation: https://github.com/marvinpinto/action-automatic-releases
+          # bodyFile: 'opencatalogi/'
+          artifacts: |
+            LICENSE.md
+            packadge.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.version.outputs.version }}
+        # Documentation: https://github.com/ncipollo/release-action
         # Explanation: This step creates a new release on GitHub, uploading the generated release files, and tagging the release with the calculated version.
