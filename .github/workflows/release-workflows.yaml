@@ -78,7 +78,7 @@ jobs:
         # Explanation: This step outputs the calculated version number to the console for reference.
 
       # Step 9: Output the version
-      - name: Move the file around
+      - name: Move the file around and remove nog product stuff
         run: |
           mkdir -p opencatalogi && find . -maxdepth 1 ! -path './opencatalogi' ! -path '.' -exec mv -t opencatalogi {} +
           find . -type f \( \
