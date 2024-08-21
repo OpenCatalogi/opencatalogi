@@ -87,7 +87,13 @@ jobs:
       #Step 2: Create the .tar.gz archive
       - name: Create Tarball
         run: |
-          tar -czvf opencatalogi.tar.gz .
+          tar -czvf packadge.tar.gz .      
+          
+      - name: Upload Tarball
+        uses: actions/upload-artifact@v3
+        with:
+          name: packadge
+          path: packadge.tar.gz
 
       # Step 9: Archive the release files
       - name: Archive Release
@@ -112,6 +118,6 @@ jobs:
             opencatalogi/LICENSE.md
             opencatalogi/packadge.zip
             packadge.zip
-            opencatalogi.tar.gz
+            packadge.tar.gz
         # Documentation: https://github.com/marvinpinto/action-automatic-releases
         # Explanation: This step creates a new release on GitHub, uploading the generated release files, and tagging the release with the calculated version.
