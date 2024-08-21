@@ -115,15 +115,15 @@ jobs:
         # Explanation: This step outputs the calculated version number to the console for reference.
       
       #Step 2: Create the .tar.gz archive
-      #- name: Create Tarball
-      #  run: |
-      #    tar -czf packadge.tar.gz .      
+      - name: Create Tarball
+        run: |
+          tar -czf packadge.tar.gz .      
           
-     # - name: Upload Tarball
-     #   uses: actions/upload-artifact@v3
-     #   with:
-     #     name: tar packadge
-     #     path: packadge.tar.gz
+      - name: Upload Tarball
+        uses: actions/upload-artifact@v3
+        with:
+          name: tar packadge
+          path: packadge.tar.gz
 
 
       - name: Create ZIP
