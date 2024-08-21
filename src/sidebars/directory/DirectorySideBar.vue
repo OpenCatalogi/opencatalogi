@@ -138,80 +138,65 @@ export default {
 			syncLoading: false,
 		}
 	},
+	computed: {
+		listingItem() {
+			return directoryStore.listingItem
+		},
+	},
 	watch: {
 		checkedMetadata: {
 			handler(newValue, oldValue) {
 				const metadataUrl = Object.entries(newValue)[0][0]
 				const shouldCopyMetadata = Object.entries(newValue)[0][1]
-				this.loading = true
 				if (shouldCopyMetadata === true) {
 					this.copyMetadata(metadataUrl)
 				} else if (shouldCopyMetadata === false) {
 					this.deleteMetadata(metadataUrl)
 				}
-				this.loading = false
 			},
 			deep: true,
 		},
-		'directoryStore.listingItem': {
+		listingItem: {
 			handler(newValue, oldValue) {
-				if (directoryStore?.listingItem !== false && metadataStore?.metaDataList) {
+				if (newValue !== false && metadataStore?.metaDataList) {
 					this.loading = true
 					this.checkMetadataSwitches()
 				}
 			},
-			deep: true, // If listingItem has nested objects and you want to track changes in them as well
-			immediate: true, // Optionally, run the handler immediately on initialization
+			deep: true, // Track changes in nested objects
+			immediate: true, // Run the handler immediately on initialization
 		},
 	},
-	mounted() {
+	created() {
 		metadataStore.refreshMetaDataList()
+		this.checkMetadataSwitches()
 	},
 	methods: {
 		openLink(url, type = '') {
 			window.open(url, type)
 		},
-		deleteMetadata(metadataUrl) {
-			const metadataId = this.getMetadataId(metadataUrl)
-
-			fetch(
-				`/index.php/apps/opencatalogi/api/metadata/${metadataId}`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				},
-			)
-				.then((response) => {
-					this.loading = false
-				})
-				.catch((err) => {
-					this.error = err
-					this.loading = false
-				})
-		},
 		getMetadataId(metadataUrl) {
-			metadataStore.metadataList.forEach((metadataItem) => {
-				const isEqual = (metadataUrl === metadataItem.source)
-				if (isEqual) {
-					return metadataItem.id
+			let metadataId
+			metadataStore.metaDataList.forEach((metadataItem) => {
+				if (metadataUrl === metadataItem.source) {
+					metadataId = metadataItem.id
 				}
 			})
+			return metadataId
 		},
 		checkMetadataSwitches() {
-			metadataStore.refreshMetaDataList()
-
-			if (directoryStore?.listingItem?.metadata !== undefined) {
-				directoryStore.listingItem.metadata.forEach((metadataItem) => {
-					const exists = metadataStore.metaDataList.some(metaData => metaData.source === metadataItem.source)
-					this.$set(this.checkedMetadata, metadataItem.source, exists)
+			if (Array.isArray(directoryStore?.listingItem?.metadata)) {
+				directoryStore.listingItem.metadata.forEach((metadataUrl) => {
+					// Check if the metadata URL exists in the metadataStore.metaDataList
+					const exists = metadataStore.metaDataList.some(metaData => metaData.source === metadataUrl)
+					// Update the checkedMetadata reactive state
+					this.$set(this.checkedMetadata, metadataUrl, exists)
 				})
 			}
-
 			this.loading = false
 		},
 		copyMetadata(metadataUrl) {
+			this.loading = true
 			fetch(
 				metadataUrl,
 				{
@@ -219,7 +204,6 @@ export default {
 				},
 			)
 				.then((response) => {
-					// Lets refresh the catalogiList
 					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
 						this.createMetadata(data)
@@ -232,6 +216,7 @@ export default {
 				})
 		},
 		createMetadata(data) {
+			this.loading = true
 			data.title = 'KOPIE: ' + data.title
 
 			if (Object.keys(data.properties).length === 0) {
@@ -252,6 +237,28 @@ export default {
 				},
 			)
 				.then((response) => {
+					this.loading = false
+				})
+				.catch((err) => {
+					this.error = err
+					this.loading = false
+				})
+		},
+		deleteMetadata(metadataUrl) {
+			this.loading = true
+			const metadataId = this.getMetadataId(metadataUrl)
+
+			fetch(
+				`/index.php/apps/opencatalogi/api/metadata/${metadataId}`,
+				{
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			)
+				.then(() => {
+					this.loading = false
 				})
 				.catch((err) => {
 					this.error = err
