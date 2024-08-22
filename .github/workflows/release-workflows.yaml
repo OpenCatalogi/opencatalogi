@@ -90,6 +90,11 @@ jobs:
             README.md \
             CHANGELOG.md \
             LICENSE.md \
+            psalm.xml \
+            package.json \
+            package-lock.json \
+            openapi.json \
+            composer.json \            
             appinfo \
             css \
             img \
