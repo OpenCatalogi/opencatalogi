@@ -38,7 +38,7 @@ jobs:
         # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
 
       # Step 3: Webpack the whole thing
-      - run: npm webpack --config webpack.config.js
+      - run: npm run build
 
       # Step 4: Install PHP dependencies using Composer
       - name: Install Composer dependencies
