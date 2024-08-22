@@ -190,7 +190,7 @@ export default {
 								...publicationStore.publicationItem,
 								attachments: [...publicationStore.publicationItem.attachments, response.data.id],
 								catalogi: publicationStore.publicationItem.catalogi.id,
-								metaData: publicationStore.publicationItem.metaData.id,
+								metaData: publicationStore.publicationItem.metaData,
 							}),
 						},
 					)

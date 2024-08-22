@@ -20,6 +20,13 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Eigenschap naam"
 					required
+					:error="checkIfTitleIsUnique(properties.name)"
+					:helper-text="checkIfTitleIsUnique(properties.name) ? 'Deze naam is al in gebruik. Kies een andere naam.' : ''"
+					:value.sync="properties.name" />
+
+				<NcTextField :disabled="loading"
+					label="Titel"
+					required
 					:value.sync="properties.title" />
 
 				<NcTextField :disabled="loading"
@@ -44,7 +51,6 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Gedrag"
 					:value.sync="properties.behavior" />
-
 				<NcCheckboxRadioSwitch
 					:disabled="loading"
 					:checked.sync="properties.required">
@@ -124,9 +130,9 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 			</div>
 
 			<NcButton v-if="!success"
-				:disabled="!properties.title || !properties.type || loading"
+				:disabled="!properties.title || !properties.type || loading || checkIfTitleIsUnique(properties.title)"
 				type="primary"
-				@click="AddMetadata()">
+				@click="addMetadata()">
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading" :size="20" />
@@ -175,6 +181,7 @@ export default {
 	data() {
 		return {
 			properties: {
+				name: '',
 				title: '',
 				description: '',
 				type: '',
@@ -212,7 +219,7 @@ export default {
 		}
 	},
 	methods: {
-		AddMetadata() {
+		addMetadata() {
 			this.loading = true
 			fetch(
 				`/index.php/apps/opencatalogi/api/metadata/${metadataStore.metaDataItem.id}`,
@@ -225,9 +232,8 @@ export default {
 						...metadataStore.metaDataItem,
 						properties: { // due to bad (no) support for number fields inside nextcloud/vue, parse the text to a number
 							...metadataStore.metaDataItem.properties,
-							[this.properties.title]: {
+							[this.properties.name]: {
 								...this.properties,
-								pattern: parseFloat(this.properties.pattern) || 0,
 								minLength: parseFloat(this.properties.minLength) || null,
 								maxLength: parseFloat(this.properties.maxLength) || null,
 								minimum: parseFloat(this.properties.minimum) || null,
@@ -251,6 +257,7 @@ export default {
 					setTimeout(() => {
 						// lets reset
 						this.properties = {
+							name: '',
 							title: '',
 							description: '',
 							type: '',
@@ -280,6 +287,11 @@ export default {
 					this.success = false
 					this.error = err
 				})
+		},
+		checkIfTitleIsUnique(name) {
+			const keys = Object.keys(metadataStore.metaDataItem.properties)
+			if (keys.includes(name)) return true
+			return false
 		},
 	},
 }

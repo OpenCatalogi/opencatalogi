@@ -20,9 +20,10 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 
-			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
-					label="Eigenschap naam"
+			<div v-if="success === null && metadata.properties[metadataStore.metadataDataKey]" class="form-group">
+				<NcTextField
+					:disabled="loading"
+					label="Title"
 					required
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].title" />
 
@@ -37,7 +38,8 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<NcSelect v-bind="formatOptions"
 					v-model="metadata.properties[metadataStore.metadataDataKey].format" />
 
-				<NcTextField :disabled="loading"
+				<NcTextField
+					:disabled="loading"
 					label="Patroon (regex)"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].pattern" />
 
@@ -127,10 +129,10 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<template #icon>
 					<span>
 						<NcLoadingIcon v-if="loading" :size="20" />
-						<Plus v-if="!loading" :size="20" />
+						<ContentSaveOutline v-if="!loading" :size="20" />
 					</span>
 				</template>
-				Toevoegen
+				Opslaan
 			</NcButton>
 		</div>
 	</NcModal>
@@ -148,7 +150,7 @@ import {
 } from '@nextcloud/vue'
 
 // icons
-import Plus from 'vue-material-design-icons/Plus.vue'
+import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
 	name: 'EditMetaDataPropertyModal',
@@ -209,7 +211,9 @@ export default {
 			if (this.dataKey !== metadataStore.metadataDataKey) this.hasUpdated = false
 		}
 		if (navigationStore.modal === 'editMetadataDataModal' && !this.hasUpdated) {
-			this.metadata = metadataStore.metaDataItem
+
+			this.metadata = this.addMissingProperties(metadataStore.metaDataItem)
+
 			this.fetchData(metadataStore.metaDataItem.id)
 
 			this.dataKey = metadataStore.metadataDataKey
@@ -251,7 +255,6 @@ export default {
 							...this.metadata.properties,
 							[metadataStore.metadataDataKey]: {
 								...this.metadata.properties[metadataStore.metadataDataKey],
-								pattern: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].pattern) || 0,
 								minLength: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].minLength) || null,
 								maxLength: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].maxLength) || null,
 								minimum: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].minimum) || null,
@@ -282,6 +285,35 @@ export default {
 					this.success = null
 					this.error = err
 				})
+		},
+		addMissingProperties(data) {
+			Object.entries(data.properties).forEach(function(property) {
+				data.properties[property[0]] = {
+					title: property[1].title ?? property[0] ?? '',
+					description: property[1].description ?? '',
+					type: property[1].type ?? '',
+					format: property[1].format ?? '',
+					pattern: property[1].pattern ?? '',
+					default: property[1].default.toString() ?? '',
+					behavior: property[1].behavior ?? '',
+					required: property[1].required ?? false,
+					deprecated: property[1].deprecated ?? false,
+					minLength: property[1].minLength ?? 0,
+					maxLength: property[1].maxLength ?? 0,
+					example: property[1].example ?? '',
+					minimum: property[1].minimum ?? 0,
+					maximum: property[1].maximum ?? 0,
+					multipleOf: property[1].multipleOf ?? 0,
+					exclusiveMin: property[1].exclusiveMin ?? false,
+					exclusiveMax: property[1].exclusiveMax ?? false,
+					minItems: property[1].minItems ?? 0,
+					maxItems: property[1].maxItems ?? 0,
+				}
+			})
+
+			return {
+				...data,
+			}
 		},
 	},
 }

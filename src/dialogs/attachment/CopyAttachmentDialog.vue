@@ -71,6 +71,7 @@ export default {
 			this.loading = true
 			publicationStore.attachmentItem.title = 'KOPIE: ' + publicationStore.attachmentItem.title
 			publicationStore.attachmentItem.status = 'concept'
+			publicationStore.attachmentItem.published = 'null'
 			delete publicationStore.attachmentItem.id
 			delete publicationStore.attachmentItem._id
 			fetch(
@@ -87,15 +88,48 @@ export default {
 					this.loading = false
 					this.succes = true
 
-					if (publicationStore.publicationItem) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem?.id)
-					}
+					response.json().then((data) => {
+						if (publicationStore.publicationItem) {
+							publicationStore.getPublicationAttachments(publicationStore.publicationItem?.id)
+
+							fetch(
+								`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
+								{
+									method: 'PUT',
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify({
+										...publicationStore.publicationItem,
+										attachments: [...publicationStore.publicationItem.attachments, data.id],
+										catalogi: publicationStore.publicationItem.catalogi.id,
+										metaData: publicationStore.publicationItem.metaData,
+									}),
+								},
+							)
+								.then((response) => {
+									this.loading = false
+
+									// Lets refresh the publicationList
+									publicationStore.refreshPublicationList()
+									response.json().then((data) => {
+										publicationStore.setPublicationItem(data)
+									})
+
+								})
+								.catch((err) => {
+									this.error = err
+									this.loading = false
+								})
+						// store.refreshCatalogiList()
+						}
+					})
+					publicationStore.setAttachmentItem(response)
 
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
 						self.succes = false
-						publicationStore.setAttachmentItem(false)
 						navigationStore.setDialog(false)
 					}, 2000)
 				})

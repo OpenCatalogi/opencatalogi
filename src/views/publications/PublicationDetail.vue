@@ -8,25 +8,21 @@ import { ref } from 'vue'
 	<div class="detailContainer">
 		<div class="head">
 			<h1 class="h1">
-				{{ publicationStore.publicationItem.title }}
+				{{ publicationStore.publicationItem?.title }}
 			</h1>
 
-			<NcActions
-				:disabled="loading"
+			<NcActions :disabled="loading"
 				:primary="true"
 				:menu-name="loading ? 'Laden...' : 'Acties'"
 				:inline="1"
 				title="Acties die je kan uitvoeren op deze publicatie">
 				<template #icon>
 					<span>
-						<NcLoadingIcon v-if="loading"
-							:size="20"
-							appearance="dark" />
+						<NcLoadingIcon v-if="loading" :size="20" appearance="dark" />
 						<DotsHorizontal v-if="!loading" :size="20" />
 					</span>
 				</template>
-				<NcActionButton
-					title="Bekijk de documentatie over publicaties"
+				<NcActionButton title="Bekijk de documentatie over publicaties"
 					@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
 					<template #icon>
 						<HelpCircleOutline :size="20" />
@@ -45,13 +41,15 @@ import { ref } from 'vue'
 					</template>
 					Kopiëren
 				</NcActionButton>
-				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
+				<NcActionButton v-if="publicationStore.publicationItem.status !== 'published'"
+					@click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 					<template #icon>
 						<Publish :size="20" />
 					</template>
 					Publiceren
 				</NcActionButton>
-				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
+				<NcActionButton v-if="publicationStore.publicationItem.status === 'published'"
+					@click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 					<template #icon>
 						<PublishOff :size="20" />
 					</template>
@@ -62,6 +60,12 @@ import { ref } from 'vue'
 						<ArchivePlusOutline :size="20" />
 					</template>
 					Archiveren
+				</NcActionButton>
+				<NcActionButton @click="navigationStore.setDialog('downloadPublication')">
+					<template #icon>
+						<Download :size="20" />
+					</template>
+					Downloaden
 				</NcActionButton>
 				<NcActionButton @click="navigationStore.setModal('addPublicationData')">
 					<template #icon>
@@ -103,7 +107,8 @@ import { ref } from 'vue'
 				</div>
 				<div>
 					<b>Portal:</b>
-					<span><a target="_blank" :href="publicationStore.publicationItem.portal">{{ publicationStore.publicationItem.portal }}</a></span>
+					<span><a target="_blank" :href="publicationStore.publicationItem.portal">{{
+						publicationStore.publicationItem.portal }}</a></span>
 				</div>
 				<div>
 					<b>Foto:</b>
@@ -134,18 +139,22 @@ import { ref } from 'vue'
 					<span>{{ publicationStore.publicationItem.modified }}</span>
 				</div>
 				<div>
+					<b>Bron:</b>
+					<span>{{ publicationStore.publicationItem.source }}</span>
+				</div>
+				<div>
 					<b>Catalogi:</b>
 					<span v-if="catalogiLoading">Loading...</span>
 					<div v-if="!catalogiLoading" class="buttonLinkContainer">
-						<span>{{ catalogi.title }}</span>
+						<span>{{ catalogi?.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${catalogi.title}`"
-								:name="catalogi.title"
+							<NcActionLink :aria-label="`got to ${catalogi?.title}`"
+								:name="catalogi?.title"
 								@click="goToCatalogi()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ catalogi.title }}
+								{{ catalogi?.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -154,15 +163,15 @@ import { ref } from 'vue'
 					<b>Publicatie type:</b>
 					<span v-if="metaDataLoading">Loading...</span>
 					<div v-if="!metaDataLoading" class="buttonLinkContainer">
-						<span>{{ metadata.title }}</span>
+						<span>{{ metadata?.title }}</span>
 						<NcActions>
-							<NcActionLink :aria-label="`got to ${metadata.title}`"
-								:name="metadata.title"
+							<NcActionLink :aria-label="`got to ${metadata?.title}`"
+								:name="metadata?.title"
 								@click="goToMetadata()">
 								<template #icon>
 									<OpenInApp :size="20" />
 								</template>
-								{{ metadata.title }}
+								{{ metadata?.title }}
 							</NcActionLink>
 						</NcActions>
 					</div>
@@ -186,9 +195,7 @@ import { ref } from 'vue'
 									</h3>
 
 									<div class="filesListDragDropNoticeTitle">
-										<NcButton
-											type="primary"
-											@click="openFileUpload()">
+										<NcButton type="primary" @click="openFileUpload()">
 											<template #icon>
 												<Plus :size="20" />
 											</template>
@@ -201,17 +208,18 @@ import { ref } from 'vue'
 							<div v-if="publicationStore.publicationAttachments.length > 0">
 								<NcListItem v-for="(attachment, i) in publicationStore.publicationAttachments"
 									:key="`${attachment}${i}`"
-									:name="attachment.name ?? attachment.title"
+									:name="attachment.name ?? attachment?.title"
 									:bold="false"
 									:active="publicationStore.attachmentId === attachment.id"
 									:force-display-actions="true"
-									:details="(attachment?.published && attachment?.published <= getTime) ? 'Gepubliseerd' : 'Niet gepubliseerd'">
+									:details="(attachment?.published && attachment?.published <= getTime) ? 'Gepubliceerd' : 'Niet gepubliceerd'">
 									<template #icon>
 										<CheckCircle v-if="attachment?.published && attachment?.published <= getTime"
 											:class="attachment?.published <= getTime && 'publishedIcon'"
 											disable-menu
 											:size="44" />
-										<ExclamationThick v-if="!attachment?.published || attachment?.published > getTime"
+										<ExclamationThick
+											v-if="!attachment?.published || attachment?.published > getTime"
 											:class="!attachment?.published && 'warningIcon' || attachment?.published > getTime && 'warningIcon'"
 											disable-menu
 											:size="44" />
@@ -220,7 +228,8 @@ import { ref } from 'vue'
 										{{ attachment?.description }}
 									</template>
 									<template #actions>
-										<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
+										<NcActionButton
+											@click="publicationStore.setAttachmentItem(attachment); navigationStore.setModal('EditAttachment')">
 											<template #icon>
 												<Pencil :size="20" />
 											</template>
@@ -232,25 +241,29 @@ import { ref } from 'vue'
 											</template>
 											Download
 										</NcActionButton>
-										<NcActionButton v-if="!attachment?.published || attachment?.published > getTime" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
+										<NcActionButton v-if="!attachment?.published || attachment?.published > getTime"
+											@click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('publishAttachment')">
 											<template #icon>
 												<Publish :size="20" />
 											</template>
 											Publiceren
 										</NcActionButton>
-										<NcActionButton v-if="attachment?.published && attachment?.published <= getTime" @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
+										<NcActionButton v-if="attachment?.published && attachment?.published <= getTime"
+											@click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('depublishAttachment')">
 											<template #icon>
 												<PublishOff :size="20" />
 											</template>
 											Depubliceren
 										</NcActionButton>
-										<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
+										<NcActionButton
+											@click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('copyAttachment')">
 											<template #icon>
 												<ContentCopy :size="20" />
 											</template>
 											Kopiëren
 										</NcActionButton>
-										<NcActionButton @click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
+										<NcActionButton
+											@click="publicationStore.setAttachmentItem(attachment); navigationStore.setDialog('deleteAttachment')">
 											<template #icon>
 												<Delete :size="20" />
 											</template>
@@ -264,9 +277,9 @@ import { ref } from 'vue'
 								Nog geen bijlage toegevoegd
 							</div>
 
-							<div v-if="publicationStore.publicationAttachments.length !== 0 && !publicationStore.publicationAttachments.length > 0">
-								<NcLoadingIcon
-									:size="64"
+							<div
+								v-if="publicationStore.publicationAttachments.length !== 0 && !publicationStore.publicationAttachments.length > 0">
+								<NcLoadingIcon :size="64"
 									class="loadingIcon"
 									appearance="dark"
 									name="Bijlagen aan het laden" />
@@ -283,7 +296,8 @@ import { ref } from 'vue'
 								@click="publicationStore.setPublicationDataKey(key)
 								">
 								<template #icon>
-									<CircleOutline :class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
+									<CircleOutline
+										:class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
 										disable-menu
 										:size="44" />
 								</template>
@@ -325,8 +339,7 @@ import { ref } from 'vue'
 								<td>
 									<NcButton @click="navigationStore.setDialog('viewLog')">
 										<template #icon>
-											<TimelineQuestionOutline
-												:size="20" />
+											<TimelineQuestionOutline :size="20" />
 										</template>
 										Bekijk details
 									</NcButton>
@@ -341,10 +354,8 @@ import { ref } from 'vue'
 								<td>
 									<NcButton @click="prive = !prive">
 										<template #icon>
-											<LockOpenVariantOutline v-if="!prive"
-												:size="20" />
-											<LockOutline v-if="prive"
-												:size="20" />
+											<LockOpenVariantOutline v-if="!prive" :size="20" />
+											<LockOutline v-if="prive" :size="20" />
 										</template>
 										<span v-if="!prive">Privé maken</span>
 										<span v-if="prive">Openbaar maken</span>
@@ -353,7 +364,11 @@ import { ref } from 'vue'
 							</tr>
 							<tr v-if="prive">
 								<td>Gebruikersgroepen</td>
-								<td><NcSelectTags v-model="userGroups" input-label="gebruikers groepen" :multiple="true" /></td>
+								<td>
+									<NcSelectTags v-model="userGroups"
+										input-label="gebruikers groepen"
+										:multiple="true" />
+								</td>
 							</tr>
 						</table>
 					</BTab>
@@ -468,11 +483,12 @@ export default {
 	watch: {
 		publicationItem: {
 			handler(newPublicationItem, oldPublicationItem) {
+
 				if (!this.upToDate || JSON.stringify(newPublicationItem) !== JSON.stringify(oldPublicationItem)) {
 					this.publication = publicationStore.publicationItem
 					this.fetchCatalogi(publicationStore.publicationItem.catalogi.id)
-					this.fetchMetaData(publicationStore.publicationItem.metaData.id)
-					publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
+					this.fetchMetaData(publicationStore.publicationItem.metaData)
+					publicationStore.publicationItem?.id && this.fetchData(publicationStore.publicationItem.id)
 				}
 			},
 			deep: true,
@@ -483,8 +499,8 @@ export default {
 		this.publication = publicationStore.publicationItem
 
 		this.fetchCatalogi(this.publication.catalogi?.id, true)
-		this.fetchMetaData(this.publication.metaData?.id, true)
-		publicationStore.publicationItem && this.fetchData(publicationStore.publicationItem.id)
+		this.fetchMetaData(publicationStore.publicationItem.metaData, true)
+		publicationStore.publicationItem?.id && this.fetchData(publicationStore.publicationItem.id)
 
 	},
 	methods: {
@@ -498,7 +514,7 @@ export default {
 						this.publication = data
 						// this.oldZaakId = id
 						this.fetchCatalogi(data.catalogi.id)
-						this.fetchMetaData(data.metaData.id)
+						this.fetchMetaData(data.metaData)
 						publicationStore.getPublicationAttachments(id)
 						// this.loading = false
 					})
@@ -526,16 +542,16 @@ export default {
 					if (loading) { this.catalogiLoading = false }
 				})
 		},
-		fetchMetaData(metadataId, loading) {
+		fetchMetaData(metaDataUrl, loading) {
+			if (loading) this.metaDataLoading = true
 
-			if (loading) { this.metaDataLoading = true }
-
-			fetch(`/index.php/apps/opencatalogi/api/metadata/${metadataId}`, {
+			fetch(`/index.php/apps/opencatalogi/api/metadata?source=${metaDataUrl}`, {
 				method: 'GET',
 			})
 				.then((response) => {
 					response.json().then((data) => {
-						this.metadata = data
+						this.metadata = data.results[0]
+						publicationStore.setPublicationMetaData(data.results[0])
 					})
 					if (loading) { this.metaDataLoading = false }
 				})
@@ -543,6 +559,7 @@ export default {
 					console.error(err)
 					if (loading) { this.metaDataLoading = false }
 				})
+
 		},
 		getTime() {
 			const timeNow = new Date().toISOString()
@@ -587,56 +604,57 @@ export default {
 
 <style>
 h4 {
-  font-weight: bold;
+	font-weight: bold;
 }
 
-.head{
+.head {
 	display: flex;
 	justify-content: space-between;
 }
 
-.button{
+.button {
 	max-height: 10px;
 }
 
 .h1 {
-  display: block !important;
-  font-size: 2em !important;
-  margin-block-start: 0.67em !important;
-  margin-block-end: 0.67em !important;
-  margin-inline-start: 0px !important;
-  margin-inline-end: 0px !important;
-  font-weight: bold !important;
-  unicode-bidi: isolate !important;
+	display: block !important;
+	font-size: 2em !important;
+	margin-block-start: 0.67em !important;
+	margin-block-end: 0.67em !important;
+	margin-inline-start: 0px !important;
+	margin-inline-end: 0px !important;
+	font-weight: bold !important;
+	unicode-bidi: isolate !important;
 }
 
 .dataContent {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .active.publicationDetails-actionsDelete {
-    background-color: var(--color-error) !important;
+	background-color: var(--color-error) !important;
 }
+
 .active.publicationDetails-actionsDelete button {
-    color: #EBEBEB !important;
+	color: #EBEBEB !important;
 }
 
 .PublicationDetail-clickable {
-    cursor: pointer !important;
+	cursor: pointer !important;
 }
 
-.buttonLinkContainer{
+.buttonLinkContainer {
 	display: flex;
-    align-items: center;
+	align-items: center;
 }
 
 .flex-hor {
-    display: flex;
-    gap: 4px;
+	display: flex;
+	gap: 4px;
 }
 
 .float-right {
-    float: right;
+	float: right;
 }
 </style>

@@ -63,9 +63,9 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 				</BTab>
 				<BTab title="Publicatie typen">
 					<div v-if="catalogiStore.catalogiItem?.metadata.length > 0 && !metadataLoading">
-						<NcListItem v-for="(value) in catalogiStore.catalogiItem?.metadata"
-							:key="`${value}`"
-							:name="filteredMetadata(value)?.title || 'loading...'"
+						<NcListItem v-for="(url, i) in catalogiStore.catalogiItem?.metadata"
+							:key="url + i"
+							:name="filteredMetadata(url)?.title || 'loading...'"
 							:bold="false"
 							:force-display-actions="true">
 							<template #icon>
@@ -73,16 +73,16 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 									:size="44" />
 							</template>
 							<template #subname>
-								{{ filteredMetadata(value)?.description }}
+								{{ filteredMetadata(url)?.description }}
 							</template>
 							<template #actions>
-								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setSelected('metaData')">
+								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(url)); navigationStore.setSelected('metaData')">
 									<template #icon>
 										<OpenInApp :size="20" />
 									</template>
 									Bekijk publicatie type
 								</NcActionButton>
-								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setDialog('deleteCatalogiMetadata')">
+								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(url)); navigationStore.setDialog('deleteCatalogiMetadata')">
 									<template #icon>
 										<Delete :size="20" />
 									</template>
@@ -186,9 +186,9 @@ export default {
 					this.loading = false
 				})
 		},
-		filteredMetadata(id) {
+		filteredMetadata(source) {
 			if (this.metadataLoading) return null
-			return metadataStore.metaDataList.filter((metadata) => metadata?.id.toString() === id.toString())[0]
+			return metadataStore.metaDataList.filter((metadata) => metadata?.source === source)[0]
 		},
 		openLink(url, type = '') {
 			window.open(url, type)

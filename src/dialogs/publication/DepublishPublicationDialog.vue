@@ -80,7 +80,7 @@ export default {
 					body: JSON.stringify({
 						...publicationStore.publicationItem,
 						catalogi: publicationStore.publicationItem.catalogi.id,
-						metaData: publicationStore.publicationItem.metaData.id,
+						metaData: publicationStore.publicationItem.metaData,
 					}),
 				},
 			)

@@ -10,18 +10,6 @@ use OCP\IRequest;
 
 class ConfigurationController extends Controller
 {
-	const TEST_ARRAY = [
-		"5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f" => [
-			"id" => "5137a1e5-b54d-43ad-abd1-4b5bff5fcd3f",
-			"name" => "Configuration one",
-			"summary" => "summary for one"
-		],
-		"7782b511-7034-4d49-a005-e827d5ae603f" => [
-			"id" => "7782b511-7034-4d49-a005-e827d5ae603f",
-			"name" => "Configuration two",
-			"summary" => "summary for two"
-		]
-	];
 
 	public function __construct(
 		$appName,

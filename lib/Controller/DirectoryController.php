@@ -15,35 +15,6 @@ use OCP\IRequest;
 
 class DirectoryController extends Controller
 {
-    const TEST_ARRAY = [
-        "64996753-5109-4396-9f07-17040d7fb137" => [
-            "id" => "64996753-5109-4396-9f07-17040d7fb137",
-			"title" => "Directory test 1",
-			"summary" => "A testing directory",
-			"description" => "A testing directory description",
-			"search" => "string",
-			"metadata" => "string",
-			"status" => "A status",
-			"lastSync" => "string",
-			"default" => "string",
-			"available" => "true"
-
-        ],
-        "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea" =>[
-            "id" => "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea",
-			"title" => "Directory test 2",
-			"summary" => "A testing directory",
-			"description" => "A testing directory description",
-			"search" => "string",
-			"metadata" => "string",
-			"status" => "A status",
-			"lastSync" => "string",
-			"default" => "string",
-			"available" => "true"
-
-        ]
-    ];
-
     public function __construct(
 		$appName,
 		IRequest $request,
@@ -212,5 +183,36 @@ class DirectoryController extends Controller
 
 		// get post from requests
 		return new JSONResponse($returnData);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function synchronise(string|int $id, DirectoryService $directoryService, ObjectService $objectService): JSONResponse
+	{
+		if($this->config->hasKey($this->appName, 'mongoStorage') === false
+			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		) {
+			try {
+				$object = $this->listingMapper->find(id: (int) $id)->jsonSerialize();
+			} catch (DoesNotExistException $exception) {
+				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+			}
+		} else {
+			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+			$filters['_id'] = (string) $id;
+
+			$object = $objectService->findObject(filters: $filters, config: $dbConfig);
+		}
+
+		$url = $object['directory'];
+
+		$directoryService->fetchFromExternalDirectory(url: $url, update: true);
+
+		return new JsonResponse(data: $object, statusCode: 200);
 	}
 }

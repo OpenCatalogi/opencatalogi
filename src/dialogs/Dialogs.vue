@@ -11,6 +11,7 @@
 		<CopyMetaDataDialog />
 		<DeleteMetaDataPropertiesDialog />
 		<CopyMetaDataPropertiesDialog />
+		<DownloadPublicationDialog />
 		<DeletePublicationDialog />
 		<DeletePublicationDataDialog />
 		<CopyPublicationDialog />
@@ -51,6 +52,7 @@ import PublishPublicationDialog from './publication/PublishPublicationDialog.vue
 import DeletePublicationDataDialog from './publicationData/DeletePublicationDataDialog.vue'
 import CopyThemeDialog from './theme/CopyThemeDialog.vue'
 import DeleteThemeDialog from './theme/DeleteThemeDialog.vue'
+import DownloadPublicationDialog from './publication/DownloadPublicationDialog.vue'
 
 export default {
 	name: 'Dialogs',
@@ -77,6 +79,7 @@ export default {
 		CopyOrganisationDialog,
 		DeleteThemeDialog,
 		CopyThemeDialog,
+		DownloadPublicationDialog,
 	},
 }
 </script>

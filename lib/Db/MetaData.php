@@ -12,16 +12,21 @@ class MetaData extends Entity implements JsonSerializable
 	protected ?string $title 	   = null;
 	protected ?string $version     = null;
 	protected ?string $description = null;
-	protected ?array   $required    = [];
-	protected ?array   $properties  = [];
+	protected ?string $summary     = null;
+	protected ?array  $required    = [];
+	protected ?array  $properties  = [];
+	protected ?array  $archive     = [];
+	protected ?string $source      = null;
 
 	public function __construct() {
+		$this->addType(fieldName: 'archive', type: 'json');
 		$this->addType(fieldName: 'title', type: 'string');
 		$this->addType(fieldName: 'version', type: 'string');
 		$this->addType(fieldName: 'description', type: 'string');
+		$this->addType(fieldName: 'summary', type: 'string');
 		$this->addType(fieldName: 'required', type: 'json');
 		$this->addType(fieldName: 'properties', type: 'json');
-
+		$this->addType(fieldName: 'source', type: 'string');
 	}
 
 	public function getJsonFields(): array
@@ -60,8 +65,11 @@ class MetaData extends Entity implements JsonSerializable
 			'title'       => $this->title,
 			'version'     => $this->version,
 			'description' => $this->description,
+			'summary'     => $this->summary,
 			'required'    => $this->required,
 			'properties'  => $this->properties,
+			'archive'     => $this->archive,
+			'source'	  => $this->source,
 		];
 
 		$jsonFields = $this->getJsonFields();
