@@ -234,7 +234,6 @@ export default {
 							...metadataStore.metaDataItem.properties,
 							[this.properties.name]: {
 								...this.properties,
-								pattern: parseFloat(this.properties.pattern) || 0,
 								minLength: parseFloat(this.properties.minLength) || null,
 								maxLength: parseFloat(this.properties.maxLength) || null,
 								minimum: parseFloat(this.properties.minimum) || null,

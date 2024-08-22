@@ -255,7 +255,6 @@ export default {
 							...this.metadata.properties,
 							[metadataStore.metadataDataKey]: {
 								...this.metadata.properties[metadataStore.metadataDataKey],
-								pattern: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].pattern) || 0,
 								minLength: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].minLength) || null,
 								maxLength: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].maxLength) || null,
 								minimum: parseFloat(this.metadata.properties[metadataStore.metadataDataKey].minimum) || null,
