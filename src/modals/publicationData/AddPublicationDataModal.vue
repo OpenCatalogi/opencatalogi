@@ -373,7 +373,7 @@ export default {
 				if (selectedProperty.format === 'rsin') {
 					schema = schema.regex(/^(\d{9})$/g, 'Dit is geen geldige RSIN-nummer')
 				}
-				if (selectedProperty.format === 'rsin') {
+				if (selectedProperty.format === 'kvk') {
 					schema = schema.regex(/^(\d{8})$/g, 'Dit is geen geldige KVK-nummer')
 				}
 				if (selectedProperty.format === 'bsn') {
