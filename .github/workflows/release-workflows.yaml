@@ -68,6 +68,7 @@ jobs:
 
       # Step 7: Run Changelog CI
       - name: Run Changelog CI
+        if: github.ref == 'refs/heads/master'
         uses: saadmk11/changelog-ci@v1.1.2
         with:
           release_version: ${{ steps.version.outputs.version }}
@@ -84,14 +85,13 @@ jobs:
       # Step 9: Output the version
       - name: Copy the packadge files into the packadge
         run: |
-          mkdir -p packadge/opencatalogi
+          mkdir -p package/opencatalogi
           cp -r \
             README.md \
             CHANGELOG.md \
             LICENSE.md \
             appinfo \
             css \
-            docs \
             img \
             js \
             lib \
@@ -99,16 +99,20 @@ jobs:
             src \
             templates \
             vendor \
-            packadge/opencatalogi/
       
       #Step 2: Create the .tar.gz archive
       - name: Create ZIP
         run: |
-          zip -r opencatalogi.zip packadge  
+          zip -r opencatalogi.zip package  
           
       - name: Create Tarball
         run: |
-          tar -czf opencatalogi.tar.gz packadge      
+          tar -czf opencatalogi.tar.gz package      
+
+      # Step 14: Remove the package directory after creating archives and before freezing the code in an realease
+      - name: Clean up package directory
+        run: |
+          rm -rf package
                 
         # Step 10: Create a new release on GitHub
       - name: Upload Release
@@ -116,7 +120,7 @@ jobs:
         with:
           # bodyFile: 'opencatalogi/changelog.md'
           artifacts: |
-            packadge/LICENSE.md
+            package/LICENSE.md
             opencatalogi.zip
             opencatalogi.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
