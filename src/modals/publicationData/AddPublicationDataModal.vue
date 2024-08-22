@@ -271,6 +271,7 @@ export default {
 		 */
 		setDefaultValue(SelectedMetadataProperty = null) {
 			const prop = SelectedMetadataProperty || this.getSelectedMetadataProperty
+			if (!prop) return
 
 			switch (prop.type) {
 			case 'string': {
