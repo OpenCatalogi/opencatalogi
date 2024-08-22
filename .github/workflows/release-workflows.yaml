@@ -32,9 +32,13 @@ jobs:
         # Documentation: https://github.com/actions/setup-node
         # Explanation: This step sets up a Node.js environment and installs the project's dependencies listed in the `package.json` file using npm.
 
+      # Step 3: Build the node_modules
       - run: npm install
         # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
         # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
+
+      # Step 3: Webpack the whole thing
+      - run: npm webpack --config webpack.config.js
 
       # Step 4: Install PHP dependencies using Composer
       - name: Install Composer dependencies
@@ -81,7 +85,7 @@ jobs:
       - name: Copy the packadge files into the packadge
         run: |
           mkdir -p packadge/opencatalogi
-          mv \
+          cp -r \
             README.md \
             CHANGELOG.md \
             LICENSE.md \
