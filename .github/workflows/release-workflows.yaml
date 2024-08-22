@@ -104,7 +104,6 @@ jobs:
           \) -exec rm -f {} +
           find . -type d \( \
             -name '.github' \
-            -o -name '.git' \
             -o -name 'docker' \
             -o -name '.vscode' \
             -o -name 'tests' \
