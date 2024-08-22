@@ -78,40 +78,24 @@ jobs:
         # Explanation: This step outputs the calculated version number to the console for reference.
 
       # Step 9: Output the version
-      - name: Remove files and folders that are part of development and then move te remaining files to the openatalogi sub folder
+      - name: Copy the packadge files into the packadge
         run: |
-          find . -type f \( \
-            -name '.coverage-frontend*' \
-            -o -name '*.specs.ts*' \
-            -o -name '*.mocks.ts*' \
-            -o -name '*.babelrc' \
-            -o -name '*.nvmrc' \
-            -o -name '.php-cs-fixer.dist.php' \
-            -o -name '.phpunit.result.cache' \
-            -o -name '.prettierrc' \
-            -o -name 'changelog-ci-config.json' \
-            -o -name 'composer-setup.php' \
-            -o -name 'coverage.txt' \
-            -o -name 'docker-compose.yml' \
-            -o -name '.editorconfig' \
-            -o -name '.jest.config.js' \
-            -o -name '.eslintrc.js' \
-            -o -name 'phpmd.xml' \
-            -o -name 'phpunit.xml' \
-            -o -name 'psalm.xml' \
-            -o -name 'stylelint.config.js' \
-            -o -name 'webpack.config.js' \
-          \) -exec rm -f {} +
-          find . -type d \( \
-            -name '.github' \
-            -o -name 'docker' \
-            -o -name '.vscode' \
-            -o -name 'tests' \
-            -o -name 'docs' \
-          \) -exec rm -rf {} +
-          mkdir -p packadge/opencatalogi && find . -maxdepth 1 ! -path './packadge/opencatalogi' ! -path '.' ! -path './.git' -exec mv -t packadge/opencatalogi {} +
-        # 
-        # Explanation: This step outputs the calculated version number to the console for reference.
+          mkdir -p packadge/opencatalogi
+          cp -r \
+            README.md \
+            CHANGELOG.md \
+            LICENSE.md \
+            appinfo \
+            css \
+            docs \
+            img \
+            js \
+            lib \
+            node_modules \
+            src \
+            templates \
+            vendor \
+            packadge/opencatalogi/
       
       #Step 2: Create the .tar.gz archive
       - name: Create ZIP
