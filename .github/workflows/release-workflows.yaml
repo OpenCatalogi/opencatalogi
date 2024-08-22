@@ -86,25 +86,7 @@ jobs:
       - name: Copy the packadge files into the packadge
         run: |
           mkdir -p package/opencatalogi
-          cp -r \
-            README.md \
-            CHANGELOG.md \
-            LICENSE.md \
-            psalm.xml \
-            package.json \
-            package-lock.json \
-            openapi.json \
-            composer.json \            
-            appinfo \
-            css \
-            img \
-            js \
-            lib \
-            node_modules \
-            src \
-            templates \
-            vendor \
-            package/opencatalogi
+          cp -r README.md CHANGELOG.md LICENSE.md psalm.xml package.json package-lock.json openapi.json composer.json appinfo css img js lib node_modules src templates vendor package/opencatalogi/
       
       # Step 12: Create the ZIP archive with code in opencatalogi directory
       - name: Create ZIP
