@@ -14,22 +14,28 @@ jobs:
           fetch-depth: 0                # Fetch the whole repo history
         # Documentation: https://github.com/actions/checkout
         # Explanation: This step checks out the source code from the GitHub repository, ensuring that the workflow has access to the latest version of the code.
+         # Step 2: Prepare the signing certificate and key
       
+      - name: Prepare Signing Certificate and Key
+        run: |
+          echo "${{ secrets.NEXTCLOUD_SIGNING_CERT }}" > signing-cert.crt
+          echo "${{ secrets.NEXTCLOUD_SIGNING_KEY }}" > signing-key.key
+
       # Step 9: Copy the files into the package directory, excluding .git and package itself
       - name: Copy the package files into the package
         run: |
           mkdir -p package/opencatalogi
           rsync -av --progress --exclude='package' --exclude='.git' ./ package/opencatalogi/
 
-      # Step 12: Create the ZIP archive with code in opencatalogi directory
-      - name: Create ZIP
-        run: |
-          cd package && zip -r ../opencatalogi-code.zip opencatalogi
-
       # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
       - name: Create Tarball
         run: |
-          cd package && tar -czf ../opencatalogi-code.tar.gz opencatalogi    
+          cd package && tar -czf ../nexcloud-release.tar.gz opencatalogi    
+ 
+      # Step 6: Sign the TAR.GZ archive
+      - name: Sign the TAR.GZ file with OpenSSL
+        run: |
+          openssl smime -sign -in nexcloud-release.tar.gz -out nexcloud-release-signed.tar.gz -signer signing-cert.crt -inkey signing-key.key -outform PEM
 
 
       # Step 2: Install PHP extensions
@@ -123,8 +129,8 @@ jobs:
           # bodyFile: 'opencatalogi/changelog.md'
           artifacts: |
             LICENSE.md
-            opencatalogi-build.zip
-            opencatalogi-build.tar.gz
+            nexcloud-release.tar.gz
+            nexcloud-release-signed.tar.gz
             opencatalogi-code.zip
             opencatalogi-code.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
