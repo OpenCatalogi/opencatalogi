@@ -99,6 +99,7 @@ jobs:
             src \
             templates \
             vendor \
+            package/opencatalogi/
       
       #Step 2: Create the .tar.gz archive
       - name: Create ZIP
