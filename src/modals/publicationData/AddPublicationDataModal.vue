@@ -296,7 +296,7 @@ export default {
 
 			case 'array': {
 				console.log('Set default value to Array ', prop.default)
-				this.value = prop.default.join(', ') || ''
+				this.value = Array.isArray(prop.default) ? (prop.default.join(', ') || '') : prop.default
 				break
 			}
 
