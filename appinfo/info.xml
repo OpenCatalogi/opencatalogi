@@ -2,22 +2,22 @@
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>opencatalogi</id>
-	<name>Open Catalogi</name>
-	<summary>The Open Catalogi next cloud app provides a framework for federated catalogouses to work together in an open data ecosystem</summary>
-	<description>Hmmm what could we say</description>
+	<name>OpenCatalogi</name>
+	<summary>The OpenCatalogi Nextcloud app provides a framework for federated catalogi to work together in an open data ecosystem</summary>
+	<description>This application is a full-stack application for maintaining publications, metadata and catalogi. Administration of users and organisations is also included.</description>
 	<version>0.6.0</version>
 	<licence>agpl</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
 	<namespace>OpenCatalogi</namespace>
 	<category>workflow</category>
-	<bugs>https://github.com/ConductionNL/ZaakAfhandelApp/issues</bugs>
+	<bugs>https://github.com/OpenCatalogi/.github/issues</bugs>
 	<dependencies>
 		<nextcloud min-version="26" max-version="30"/>
 	</dependencies>
 	<navigations>
 		<navigation>
 			<id>opencatalogi</id>
-			<name>Open Catalogi</name>
+			<name>OpenCatalogi</name>
 			<route>opencatalogi.dashboard.page</route>
 			<icon>app.svg</icon>
 			<type>link</type>
