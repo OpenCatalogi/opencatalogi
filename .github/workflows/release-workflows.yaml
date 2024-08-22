@@ -14,37 +14,54 @@ jobs:
           fetch-depth: 0                # Fetch the whole repo history
         # Documentation: https://github.com/actions/checkout
         # Explanation: This step checks out the source code from the GitHub repository, ensuring that the workflow has access to the latest version of the code.
+      
+      # Step 9: Copy the files into the package directory, excluding .git and package itself
+      - name: Copy the package files into the package
+        run: |
+          mkdir -p package/opencatalogi
+          rsync -av --progress --exclude='package' --exclude='.git' ./ package/opencatalogi/
+
+      # Step 12: Create the ZIP archive with code in opencatalogi directory
+      - name: Create ZIP
+        run: |
+          cd package && zip -r ../opencatalogi-code.zip opencatalogi
+
+      # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
+      - name: Create Tarball
+        run: |
+          cd package && tar -czf ../opencatalogi-code.tar.gz opencatalogi    
+
 
       # Step 2: Install PHP extensions
-    #  - name: Set up PHP and install extensions
-    #    uses: shivammathur/setup-php@v2
-    #    with:
-    #      php-version: '8.2'
-    #      extensions: zip, gd
+      - name: Set up PHP and install extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip, gd
         # Documentation: https://github.com/shivammathur/setup-php
         # Explanation: This step sets up PHP 7.4 and installs the required extensions (`zip` and `gd`) that are necessary for your Composer dependencies.
 
       # Step 3: Install Node.js dependencies using npm
-    #  - name: Install npm dependencies
-    #    uses: actions/setup-node@v3
-    #    with:
-    #      node-version: '18.x' # Specify Node.js version
+      - name: Install npm dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x' # Specify Node.js version
         # Documentation: https://github.com/actions/setup-node
         # Explanation: This step sets up a Node.js environment and installs the project's dependencies listed in the `package.json` file using npm.
 
       # Step 3: Build the node_modules
-    #  - run: npm install
+      - run: npm install
         # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
         # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
 
       # Step 3: Webpack the whole thing
-     # - run: npm run build
+      - run: npm run build
 
       # Step 4: Install PHP dependencies using Composer
-     # - name: Install Composer dependencies
-     #   run: composer install --no-progress --no-interaction --prefer-dist --ignore-platform-req=ext-zip --ignore-platform-req=ext-gd
-     #   env:
-     #     COMPOSER_ROOT_VERSION: 2.7.7
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-interaction --prefer-dist --ignore-platform-req=ext-zip --ignore-platform-req=ext-gd
+        env:
+          COMPOSER_ROOT_VERSION: 2.7.7
         # Documentation: https://getcomposer.org/doc/03-cli.md#install
         # Explanation: This step runs `composer install` to install the PHP dependencies required for the project. It also ignores platform requirements for `ext-zip` and `ext-gd` to avoid issues if extensions are not detected correctly in the environment.
 
@@ -92,34 +109,13 @@ jobs:
       # Step 12: Create the ZIP archive with code in opencatalogi directory
       - name: Create ZIP
         run: |
-          cd package && zip -r ../opencatalogi.zip opencatalogi
+          cd package && zip -r ../opencatalogi-build.zip opencatalogi
 
       # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
       - name: Create Tarball
         run: |
-          cd package && tar -czf ../opencatalogi.tar.gz opencatalogi    
-
-      # Step 14: Remove the package directory after creating archives and before freezing the code in an realease
-      - name: Clean up package directory and add dev files
-        run: |
-          cd package && rm -rf vendor js node_modules 
-          cd ../ && cp -r docs tests .babelrc package/opencatalogi/     
-
-      # Step 12: Create the ZIP archive with code in opencatalogi directory
-      - name: Create ZIP
-        run: |
-          cd package && zip -r ../sourcecode.zip opencatalogi
-
-      # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
-      - name: Create Tarball
-        run: |
-          cd package && tar -czf ../sourcecode.tar.gz opencatalogi    
+          cd package && tar -czf ../opencatalogi-build.tar.gz opencatalogi    
                 
-      # Step 14: Remove the package directory after creating archives and before freezing the code in an realease
-      - name: Clean up package directory
-        run: |
-          rm -rf package      
-
         # Step 10: Create a new release on GitHub
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
@@ -127,10 +123,10 @@ jobs:
           # bodyFile: 'opencatalogi/changelog.md'
           artifacts: |
             LICENSE.md
-            opencatalogi.zip
-            opencatalogi.tar.gz
-            sourcecode.zip
-            sourcecode.tar.gz
+            opencatalogi-build.zip
+            opencatalogi-build.tar.gz
+            opencatalogi-code.zip
+            opencatalogi-code.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.version }}
         # Documentation: https://github.com/ncipollo/release-action
