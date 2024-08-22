@@ -106,14 +106,15 @@ jobs:
             vendor \
             package/opencatalogi/
       
-      #Step 2: Create the .tar.gz archive
+      # Step 12: Create the ZIP archive with code in opencatalogi directory
       - name: Create ZIP
         run: |
-          zip -r opencatalogi.zip package  
-          
+          cd package && zip -r ../opencatalogi.zip opencatalogi
+
+      # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
       - name: Create Tarball
         run: |
-          tar -czf opencatalogi.tar.gz package      
+          cd package && tar -czf ../opencatalogi.tar.gz opencatalogi    
 
       # Step 14: Remove the package directory after creating archives and before freezing the code in an realease
       - name: Clean up package directory
