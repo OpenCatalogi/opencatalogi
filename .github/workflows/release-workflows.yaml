@@ -102,7 +102,7 @@ jobs:
       - name: Clean up package directory
         run: |
           cd package && rm -rf vendor js node_modules 
-          cp -r docs tests .babelrc .estlintrc.js  package/opencatalogi/     
+          cd ../ && cp -r docs tests .babelrc .estlintrc.js  package/opencatalogi/     
 
       # Step 12: Create the ZIP archive with code in opencatalogi directory
       - name: Create ZIP
