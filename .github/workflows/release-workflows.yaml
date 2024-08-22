@@ -81,7 +81,7 @@ jobs:
       - name: Copy the packadge files into the packadge
         run: |
           mkdir -p packadge/opencatalogi
-          cp -r \
+          mv -r \
             README.md \
             CHANGELOG.md \
             LICENSE.md \
