@@ -125,7 +125,7 @@ jobs:
         with:
           # bodyFile: 'opencatalogi/changelog.md'
           artifacts: |
-            package/LICENSE.md
+            LICENSE.md
             opencatalogi.zip
             opencatalogi.tar.gz
             sourcecode.zip
