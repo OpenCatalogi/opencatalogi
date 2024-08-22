@@ -9,6 +9,7 @@ use OCA\OpenCatalogi\Service\ElasticSearchService;
 use OCA\OpenCatalogi\Service\FileService;
 use OCA\OpenCatalogi\Service\ObjectService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
@@ -99,7 +100,7 @@ class AttachmentsController extends Controller
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse(['results' =>$this->attachmentMapper->findAll()]);
+			return new JSONResponse(['results' => $this->attachmentMapper->findAll()]);
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -131,7 +132,11 @@ class AttachmentsController extends Controller
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
 		) {
-			return new JSONResponse($this->attachmentMapper->find(id: (int) $id));
+			try {
+				return new JSONResponse($this->attachmentMapper->find(id: (int) $id));
+			} catch (DoesNotExistException $exception) {
+				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+			}
 		}
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -156,10 +161,10 @@ class AttachmentsController extends Controller
 		$uploadedFile = $this->request->getUploadedFile(key: '_file');
 
 		if (empty($uploadedFile) === true) {
-			return new JSONResponse(data: ['error' => 'No file uploaded for key "_file"'], statusCode: 400);
+			return new JSONResponse(data: ['error' => 'Please upload a file using key "_file" or give a "downloadUrl"'], statusCode: 400);
 		}
 
-		// Check for upload errors
+		// Check for upload errors.
 		if ($uploadedFile['error'] !== UPLOAD_ERR_OK) {
 			return new JSONResponse(data: ['error' => 'File upload error: '.$uploadedFile['error']], statusCode: 400);
 		}
@@ -168,14 +173,14 @@ class AttachmentsController extends Controller
 	}
 
 	/**
-	 * Gets all params from the request body and then validates if the URL fields are actual valid urls (or null).
+	 * Validates if the URL fields are actual valid urls (or null).
+	 *
+	 * @param array $data The form-data fields and their values (/request body).
 	 *
 	 * @return JSONResponse|array An error response if there are validation errors or an array containing all request body params.
 	 */
-	private function checkRequestBody(): JSONResponse|array
+	private function checkRequestBody(array $data): JSONResponse|array
 	{
-		$data = $this->request->getParams();
-
 		$errorMsg = [];
 		if (empty($data['accessUrl']) === false && filter_var(value: $data['accessUrl'], filter: FILTER_VALIDATE_URL) === false) {
 			$errorMsg[] = "accessUrl is not a valid url";
@@ -204,14 +209,17 @@ class AttachmentsController extends Controller
 	 */
 	private function handleFile(array $uploadedFile): JSONResponse|string
 	{
-		// Create the Attachments folder and the Publication specific folder.
-		$this->fileService->createFolder(folderPath: 'Attachments');
-		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
-			. $this->request->getHeader('Publication-Title');
-		$this->fileService->createFolder(folderPath: "Attachments/$publicationFolder");
+		// Create the Publicaties folder, the Publication specific folder and the Bijlagen folder in that.
+		$this->fileService->createFolder(folderPath: 'Publicaties');
+		$publicationFolder = $this->fileService->getPublicationFolderName(
+			publicationId: $this->request->getHeader('Publication-Id'),
+			publicationTitle: $this->request->getHeader('Publication-Title')
+		);
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder");
+		$this->fileService->createFolder(folderPath: "Publicaties/$publicationFolder/Bijlagen");
 
-		// Save the uploaded file
-		$filePath = "Attachments/$publicationFolder/" . $uploadedFile['name']; // Add a file version to the file name?
+		// Save the uploaded file.
+		$filePath = "Publicaties/$publicationFolder/Bijlagen/" . $uploadedFile['name']; // Add a file version to the file name?
 		$created = $this->fileService->uploadFile(
 			content: file_get_contents(filename: $uploadedFile['tmp_name']),
 			filePath: $filePath
@@ -226,7 +234,7 @@ class AttachmentsController extends Controller
 
 
 	/**
-	 * Adds information about the uploaded file to the appropriate Attachment fields. And removes fields we do not want to post.
+	 * Adds information about the uploaded file to the appropriate Attachment fields. Inclusive share link.
 	 *
 	 * @param array $data The form-data fields and their values (/request body) that we are going to update before posting the Attachment.
 	 * @param array $uploadedFile Information about the uploaded file from the request body.
@@ -237,7 +245,7 @@ class AttachmentsController extends Controller
 	 */
 	private function AddFileInfoToData(array $data, array $uploadedFile, string $filePath): array
 	{
-		// Update Attachment data
+		// Update Attachment data.
 		$currentUser = $this->userSession->getUser();
 		$userId = $currentUser ? $currentUser->getUID() : 'Guest';
 		$data['reference'] = "$userId/$filePath";
@@ -247,19 +255,13 @@ class AttachmentsController extends Controller
 		$data['title'] = $explodedName[0];
 		$data['extension'] = end(array: $explodedName);
 
-		// Create ShareLink
+		// Create ShareLink.
 		$shareLink = $this->fileService->createShareLink(path: $filePath);
 		if (empty($data['accessUrl']) === true) {
 			$data['accessUrl'] = $shareLink;
 		}
-		$data['downloadUrl'] =  "$shareLink/download";
-
-		// Remove fields we should never post
-		unset($data['id']);
-		foreach($data as $key => $value) {
-			if(str_starts_with(haystack: $key, needle: '_')) {
-				unset($data[$key]);
-			}
+		if (empty($data['downloadUrl']) === true) {
+			$data['downloadUrl'] =  "$shareLink/download";
 		}
 
 		return $data;
@@ -274,26 +276,40 @@ class AttachmentsController extends Controller
 	 */
     public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
     {
-		// Check if a file was uploaded
-		$uploadedFile = $this->checkUploadedFile();
-		if ($uploadedFile instanceof JSONResponse) {
-			return $uploadedFile;
+		$data = $this->request->getParams();
+		// Uploaded _file and downloadURL are mutually exclusive.
+		if (empty($data['downloadUrl']) === true) {
+			// Check if a file was uploaded.
+			$uploadedFile = $this->checkUploadedFile();
+			if ($uploadedFile instanceof JSONResponse) {
+				return $uploadedFile;
+			}
 		}
 
-		// Get form-data field/request body.
-		$data = $this->checkRequestBody();
+		// Get form-data field/request body and validate the input.
+		$data = $this->checkRequestBody($data);
 		if ($data instanceof JSONResponse) {
 			return $data;
 		}
 
-		// Handle saving the uploaded file in NextCloud
-		$filePath = $this->handleFile(uploadedFile: $uploadedFile);
-		if ($filePath instanceof JSONResponse) {
-			return $filePath;
+		if (empty($uploadedFile) === false) {
+			// Handle saving the uploaded file in NextCloud.
+			$filePath = $this->handleFile(uploadedFile: $uploadedFile);
+			if ($filePath instanceof JSONResponse) {
+				return $filePath;
+			}
+
+			// Update Attachment data, inclusive share link.
+			$data = $this->AddFileInfoToData(data: $data, uploadedFile: $uploadedFile, filePath: $filePath);
 		}
 
-		// Update Attachment data
-		$data = $this->AddFileInfoToData(data: $data, uploadedFile: $uploadedFile, filePath: $filePath);
+		// Remove fields we should never post.
+		unset($data['id']);
+		foreach($data as $key => $value) {
+			if(str_starts_with(haystack: $key, needle: '_')) {
+				unset($data[$key]);
+			}
+		}
 
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
 			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
@@ -312,7 +328,6 @@ class AttachmentsController extends Controller
 			config: $dbConfig
 		);
 
-        // get post from requests
         return new JSONResponse($returnData);
     }
 
@@ -325,7 +340,7 @@ class AttachmentsController extends Controller
     {
 		$data = $this->request->getParams();
 
-		// Remove fields we should never post
+		// Remove fields we should never post.
 		unset($data['id']);
 		foreach($data as $key => $value) {
 			if(str_starts_with(haystack: $key, needle: '_')) {
@@ -352,7 +367,6 @@ class AttachmentsController extends Controller
 			config: $dbConfig
 		);
 
-		// get post from requests
 		return new JSONResponse($returnData);
     }
 
@@ -372,8 +386,10 @@ class AttachmentsController extends Controller
 		}
 
 		// Todo: are we sure this is the best way to do this (how do we save the full path to this file in nextCloud)
-//		$publicationFolder = '(' . $this->request->getHeader('Publication-Id') . ') '
-//			. $this->request->getHeader('Publication-Title');
+//		$publicationFolder = $this->fileService->getPublicationFolderName(
+//			publicationId: $this->request->getHeader('Publication-Id'),
+//			publicationTitle: $this->request->getHeader('Publication-Title')
+//		);
 //		$this->fileService->deleteFile(filePath: "Attachments/$publicationFolder" . $attachment['title'] . '.' . $attachment['extension']);
 		$filePath = explode(separator: '/', string: $attachment['reference']);
 		array_shift(array: $filePath);
@@ -398,7 +414,6 @@ class AttachmentsController extends Controller
 			config: $dbConfig
 		);
 
-		// get post from requests
 		return new JSONResponse($returnData);
     }
 }

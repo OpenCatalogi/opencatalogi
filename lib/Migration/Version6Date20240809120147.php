@@ -18,7 +18,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * FIXME Auto-generated migration step: Please modify to your needs!
  */
-class Version6Date20240808085441 extends SimpleMigrationStep {
+class Version6Date20240809120147 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
@@ -40,26 +40,21 @@ class Version6Date20240808085441 extends SimpleMigrationStep {
 		 */
 		$schema = $schemaClosure();
 
-		if($schema->hasTable(tableName: 'catalogi') === true) {
-			$table = $schema->getTable(tableName: 'catalogi');
+		if($schema->hasTable(tableName: 'listings') === true) {
+			$table = $schema->getTable(tableName: 'listings');
 
-			if($table->hasColumn(name: 'organization') === false) {
+			if($table->hasColumn(name: 'organization') === true) {
+				$column = $table->dropColumn('organization');
+			}
+			if($table->hasColumn(name: 'organisation') === false) {
 				$table->addColumn(
-					name: 'organization',
+					name: 'organisation',
 					typeName: Types::STRING,
 					options: [
 						'notNull' => false,
 						'default' => null
 					]);
-			}
-			if($table->hasColumn(name: 'metadata') === false) {
-				$metadata = $table->addColumn(
-					name: 'metadata',
-					typeName: Types::JSON,
-					options: [
-						'notNull' => false,
-					]);
-				$metadata->setDefault('{}');
+                $output->info('organisation should be added to listing');    
 			}
 
 		}

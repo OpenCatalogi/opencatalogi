@@ -93,16 +93,19 @@ export default {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify(publicationStore.attachmentItem),
+					body: JSON.stringify({
+						...publicationStore.attachmentItem,
+						published: publicationStore.attachmentItem.published === '' ? null : publicationStore.attachmentItem.published,
+					}),
+
 				},
 			)
 				.then((response) => {
 					this.loading = false
 					this.success = response.ok
 					// Lets refresh the catalogiList
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
+					if (publicationStore.publicationItem) {
+						publicationStore.getPublicationAttachments(publicationStore.publicationItem?.id)
 					}
 					response.json().then((data) => {
 						publicationStore.setAttachmentItem(data)

@@ -6,17 +6,17 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 	<NcModal
 		v-if="navigationStore.modal === 'addDirectory'"
 		ref="modalRef"
-		label-id="addListingModal"
+		label-id="addDirectoryModal"
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
 			Je directory bevat alle bij jouw installatie bekende catalogi. Om nieuwe catalogi te ontdekken heb je de directory van een andere (externe) installatie nodig. Nadat deze is opgegeven zullen de twee installaties een federatief netwerk vormen en catalogi blijven uitwisselen.
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
-					<p>Listing succesvol toegevoegd</p>
+					<p>Directory succesvol toegevoegd</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het toevoegen van Listing</p>
+					<p>Er is iets fout gegaan bij het toevoegen van Directory</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="error && !success" type="error">
 					<p>{{ error }}</p>

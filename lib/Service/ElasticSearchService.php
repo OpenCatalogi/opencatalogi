@@ -91,7 +91,7 @@ class ElasticSearchService
 		}
 	}
 
-	public function parseFilter(string $name, array $filter): array
+	public function parseFilter(string $name, array|string $filter): array
 	{
 
 		if(is_array($filter) === false) {
@@ -149,7 +149,6 @@ class ElasticSearchService
 		}
 
 		if(isset($filters['.catalogi']) === true) {
-//			var_dump($filters['.catalogi']);
 			$body['query']['bool']['must'][] = [
 				'match' => [
 					'catalogi._id' => [

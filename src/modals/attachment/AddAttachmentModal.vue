@@ -9,6 +9,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		@close="navigationStore.setModal(false)">
 		<div class="modal__content">
 			<h2>Bijlage toevoegen</h2>
+
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
 					<p>Bijlage succesvol toegevoegd</p>
@@ -21,7 +22,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
+				<NcTextField :disabled="(files && true) || loading"
 					label="Titel"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.title"
@@ -38,33 +39,50 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Toegangs URL"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.accessUrl" />
-				<NcTextField :disabled="loading"
+				<NcTextField :disabled="(files && true) || loading"
 					label="Download URL"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.downloadUrl" />
-				<div class="addFileButtonGroup">
-					<NcButton v-if="success === null && !files"
-						:disabled="loading"
-						type="primary"
-						@click="openFileUpload()">
-						<template #icon>
-							<Plus :size="20" />
-						</template>
-						Bestand toevoegen
-					</NcButton>
+				<div class="addFileContainer" :class="checkIfDisabled() && 'addFileContainer--disabled'">
+					<div :ref="!checkIfDisabled() && 'dropZoneRef'" class="filesListDragDropNotice">
+						<div class="filesListDragDropNoticeWrapper">
+							<div class="filesListDragDropNoticeWrapperIcon">
+								<TrayArrowDown :size="48" />
+								<h3 class="filesListDragDropNoticeTitle">
+									Sleep bestanden hierheen om ze te uploaden
+								</h3>
+							</div>
 
-					<NcButton v-if="success === null && files"
-						:disabled="loading"
-						type="primary"
-						@click="reset()">
-						<template #icon>
-							<Minus :size="20" />
-						</template>
-						<span v-for="file of files" :key="file.name">{{ file.name }}</span>
-					</NcButton>
+							<h3 class="filesListDragDropNoticeTitle">
+								Of
+							</h3>
+
+							<div class="filesListDragDropNoticeTitle">
+								<NcButton v-if="success === null && !files"
+									:disabled="checkIfDisabled() || loading"
+									type="primary"
+									@click="openFileUpload()">
+									<template #icon>
+										<Plus :size="20" />
+									</template>
+									Bestand toevoegen
+								</NcButton>
+
+								<NcButton v-if="success === null && files"
+									:disabled="checkIfDisabled() || loading"
+									type="primary"
+									@click="reset()">
+									<template #icon>
+										<Minus :size="20" />
+									</template>
+									<span v-for="file of files" :key="file.name">{{ file.name }}</span>
+								</NcButton>
+							</div>
+						</div>
+					</div>
 				</div>
 				<NcButton v-if="success === null"
-					:disabled="!publicationStore.attachmentItem.title || !files || loading"
+					:disabled="loading"
 					type="primary"
 					@click="addAttachment()">
 					<template #icon>
@@ -80,14 +98,18 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 
 <script>
 import { NcButton, NcLoadingIcon, NcModal, NcNoteCard, NcTextArea, NcTextField } from '@nextcloud/vue'
-import { useFileDialog } from '@vueuse/core'
+import { useFileSelection } from './../../composables/UseFileSelection.js'
+
+import { ref } from 'vue'
 
 import Minus from 'vue-material-design-icons/Minus.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import TrayArrowDown from 'vue-material-design-icons/TrayArrowDown.vue'
 
 import axios from 'axios'
 
-const { files, open: openFileUpload, reset } = useFileDialog()
+const dropZoneRef = ref()
+const { openFileUpload, files, reset, setFiles } = useFileSelection({ allowMultiple: false, dropzone: dropZoneRef })
 
 export default {
 	name: 'AddAttachmentModal',
@@ -98,8 +120,13 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
-		// Icons
-		Plus,
+	},
+	props: {
+		dropFiles: {
+			type: Array,
+			required: false,
+			default: null,
+		},
 	},
 	data() {
 		return {
@@ -108,12 +135,25 @@ export default {
 			error: false,
 		}
 	},
+	watch: {
+		dropFiles: {
+			handler(addedFiles) {
+				publicationStore.attachmentFile && setFiles(addedFiles)
+			},
+			deep: true,
+		},
+	},
 	mounted() {
 		publicationStore.setAttachmentItem([])
 	},
 	methods: {
+
 		closeModal() {
 			navigationStore.modal = false
+		},
+		checkIfDisabled() {
+			if (publicationStore.attachmentItem.downloadUrl || publicationStore.attachmentItem.title) return true
+			return false
 		},
 		addAttachment() {
 			this.loading = true
@@ -121,6 +161,7 @@ export default {
 
 			axios.post('/index.php/apps/opencatalogi/api/attachments', {
 				...(publicationStore.attachmentItem),
+				published: null,
 				_file: files.value ? files.value[0] : '',
 			}, {
 				headers: {
@@ -131,15 +172,44 @@ export default {
 					'Publication-Title': publicationStore.publicationItem.title,
 				},
 			}).then((response) => {
-				this.loading = false
-				this.success = true
-				// Lets refresh the attachment list
-				if (publicationStore.publicationItem?.id) {
-					publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-					// @todo update the publication item
-				}
-				// store.refreshCatalogiList()
 
+				this.success = true
+				reset()
+				// Lets refresh the attachment list
+				if (publicationStore.publicationItem) {
+					publicationStore.getPublicationAttachments(publicationStore.publicationItem?.id)
+
+					fetch(
+						`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
+						{
+							method: 'PUT',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								...publicationStore.publicationItem,
+								attachments: [...publicationStore.publicationItem.attachments, response.data.id],
+								catalogi: publicationStore.publicationItem.catalogi.id,
+								metaData: publicationStore.publicationItem.metaData.id,
+							}),
+						},
+					)
+						.then((response) => {
+							this.loading = false
+
+							// Lets refresh the publicationList
+							publicationStore.refreshPublicationList()
+							response.json().then((data) => {
+								publicationStore.setPublicationItem(data)
+							})
+
+						})
+						.catch((err) => {
+							this.error = err
+							this.loading = false
+						})
+				// store.refreshCatalogiList()
+				}
 				publicationStore.setAttachmentItem(response)
 
 				// Wait for the user to read the feedback then close the model
@@ -150,7 +220,7 @@ export default {
 				}, 2000)
 			})
 				.catch((err) => {
-					this.error = err
+					this.error = err.response?.data?.error ?? err
 					this.loading = false
 				})
 		},
@@ -164,8 +234,11 @@ export default {
     text-align: center;
 }
 
-.addFileButtonGroup{
+.addFileContainer{
 	margin-block-end: var(--OC-margin-20);
+}
+.addFileContainer--disabled{
+	opacity: 0.4;
 }
 
 .zaakDetailsContainer {

@@ -33,7 +33,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						Metadata toevoegen
+						Publicatie type toevoegen
 					</NcActionButton>
 				</NcActions>
 			</div>
@@ -81,7 +81,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				class="loadingIcon"
 				:size="64"
 				appearance="dark"
-				name="Metadata aan het laden" />
+				name="Publicatie typen aan het laden" />
 		</ul>
 	</NcAppContentList>
 </template>

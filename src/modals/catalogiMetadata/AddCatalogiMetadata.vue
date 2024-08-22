@@ -8,7 +8,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 		label-id="addCatalogModal"
 		@close="closeModal">
 		<div class="modal__content">
-			<h2>Metadata toevoegen aan Catalogus</h2>
+			<h2>Publicatie type toevoegen aan Catalogus</h2>
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
 					<p>Catalogus succesvol toegevoegd</p>
@@ -23,7 +23,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			<div v-if="success === null" class="form-group">
 				<NcSelect v-bind="metaData"
 					v-model="metaData.value"
-					input-label="MetaData"
+					input-label="Publicatie type"
 					:loading="metaDataLoading"
 					required />
 			</div>

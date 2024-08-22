@@ -4,8 +4,8 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 
 <template>
 	<NcAppSidebar
-		name="Listing"
-		subname="Listing Summery">
+		:name="directoryStore.listingItem?.title || 'Geen listing' "
+		:subname="directoryStore.listingItem?.organisation?.title">
 		<NcEmptyContent v-if="!directoryStore.listingItem.id || navigationStore.selected != 'directory'"
 			class="detailContainer"
 			name="Geen listing"
@@ -29,23 +29,57 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			</template>
 		</NcEmptyContent>
 		<NcAppSidebarTab v-if="directoryStore.listingItem.id && navigationStore.selected === 'directory'"
+			id="detail-tab"
+			name="Details"
+			:order="1">
+			<template #icon>
+				<InformationSlabSymbol :size="20" />
+			</template>
+			<div class="container">
+				<div>
+					<b>Samenvatting:</b>
+					<span>{{ directoryStore.listingItem?.summery }}</span>
+				</div>
+				<div>
+					<b>Status:</b>
+					<span>{{ directoryStore.listingItem?.status }}</span>
+				</div>
+				<div>
+					<b>Last synchronysation:</b>
+					<span>{{ directoryStore.listingItem?.lastSync }}</span>
+				</div>
+				<div>
+					<b>Directory:</b>
+					<span>{{ directoryStore.listingItem?.directory }}</span>
+				</div>
+				<div>
+					<b>Zoeken:</b>
+					<span>{{ directoryStore.listingItem?.search }}</span>
+				</div>
+				<div>
+					<b>Beschrijving:</b>
+					<span>{{ directoryStore.listingItem?.description }}</span>
+				</div>
+			</div>
+		</NcAppSidebarTab>
+		<NcAppSidebarTab v-if="directoryStore.listingItem.id && navigationStore.selected === 'directory'"
 			id="settings-tab"
 			name="Configuratie"
-			:order="1">
+			:order="2">
 			<template #icon>
 				<CogOutline :size="20" />
 			</template>
-			<NcCheckboxRadioSwitch type="switch">
+			<NcCheckboxRadioSwitch :checked.sync="directoryStore.listingItem.available" type="switch">
 				Beschickbaar maken voor mijn zoek opdrachten
 			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch type="switch">
+			<NcCheckboxRadioSwitch :checked.sync="directoryStore.listingItem.default" type="switch">
 				Standaard mee nemen in de beantwoording van mijn zoekopdrachten
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="directoryStore.listingItem.id && navigationStore.selected === 'directory'"
 			id="metdata-tab"
-			name="Metadata"
-			:order="2">
+			name="Publicatie typen"
+			:order="3">
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
@@ -64,6 +98,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import InformationSlabSymbol from 'vue-material-design-icons/InformationSlabSymbol.vue'
 
 export default {
 	name: 'DirectorySideBar',
@@ -79,6 +114,7 @@ export default {
 		HelpCircleOutline,
 		CogOutline,
 		FileTreeOutline,
+		InformationSlabSymbol,
 	},
 	data() {
 		return {

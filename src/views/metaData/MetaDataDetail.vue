@@ -55,41 +55,47 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Eigenschappen" active>
-					<NcListItem v-for="(value, key, i) in metadataStore.metaDataItem.properties"
-						:key="`${key}${i}`"
-						:name="key"
-						:bold="false"
-						:details="value.type ?? 'Onbekend'"
-						:force-display-actions="true">
-						<template #icon>
-							<CircleOutline :class="metadataStore.metadataDataKey === key && 'selectedZaakIcon'"
-								disable-menu
-								:size="44" />
-						</template>
-						<template #subname>
-							{{ value.description }}
-						</template>
-						<template #actions>
-							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setModal('editMetadataDataModal')">
-								<template #icon>
-									<Pencil :size="20" />
-								</template>
-								Bewerken
-							</NcActionButton>
-							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('copyMetaDataProperty')">
-								<template #icon>
-									<ContentCopy :size="20" />
-								</template>
-								Kopiëren
-							</NcActionButton>
-							<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('deleteMetaDataProperty')">
-								<template #icon>
-									<Delete :size="20" />
-								</template>
-								Verwijderen
-							</NcActionButton>
-						</template>
-					</NcListItem>
+					<div v-if="Object.entries(metadataStore.metaDataItem.properties).length > 0">
+						<NcListItem v-for="(value, key, i) in metadataStore.metaDataItem.properties"
+							:key="`${key}${i}`"
+							:name="key"
+							:bold="false"
+							:details="value.type ?? 'Onbekend'"
+							:force-display-actions="true">
+							<template #icon>
+								<CircleOutline :class="metadataStore.metadataDataKey === key && 'selectedZaakIcon'"
+									disable-menu
+									:size="44" />
+							</template>
+							<template #subname>
+								{{ value.description }}
+							</template>
+							<template #actions>
+								<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setModal('editMetadataDataModal')">
+									<template #icon>
+										<Pencil :size="20" />
+									</template>
+									Bewerken
+								</NcActionButton>
+								<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('copyMetaDataProperty')">
+									<template #icon>
+										<ContentCopy :size="20" />
+									</template>
+									Kopiëren
+								</NcActionButton>
+								<NcActionButton @click="metadataStore.setMetadataDataKey(key); navigationStore.setDialog('deleteMetaDataProperty')">
+									<template #icon>
+										<Delete :size="20" />
+									</template>
+									Verwijderen
+								</NcActionButton>
+							</template>
+						</NcListItem>
+					</div>
+
+					<div v-if="Object.entries(metadataStore.metaDataItem.properties).length <= 0">
+						Nog geen eigenschappen toegevoegd
+					</div>
 				</BTab>
 				<BTab title="Logging">
 					<table width="100%">

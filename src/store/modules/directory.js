@@ -11,7 +11,7 @@ export const useDirectoryStore = defineStore(
 		actions: {
 			setListingItem(listingItem) {
 				this.listingItem = listingItem && new Listing(listingItem)
-				console.log('Active directory item set to ' + listingItem && listingItem.id)
+				console.log('Active directory item set to ' + listingItem.id)
 			},
 			setListingList(listingList) {
 				this.listingList = listingList.map(
@@ -35,7 +35,10 @@ export const useDirectoryStore = defineStore(
 							response.json().then(
 								(data) => {
 									this.listingList = data.results.map(
-										(listingItem) => new Listing(listingItem),
+										(listingItem) => {
+											listingItem.organisation = listingItem?.organisation ? JSON.parse(listingItem.organisation) : null
+											return new Listing(listingItem)
+										},
 									)
 								},
 							)

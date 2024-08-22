@@ -6,6 +6,7 @@ use OCA\OpenCatalogi\Db\Publication;
 use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\DB\Types;
 use OCP\IDBConnection;
 
 class PublicationMapper extends QBMapper
@@ -19,39 +20,228 @@ class PublicationMapper extends QBMapper
 	{
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('*')
-			->from('publications')
+		$qb->select(
+			'p.*',
+					'c.id AS catalogi_id',
+					'c.title AS catalogi_title',
+					'c.summary AS catalogi_summary',
+					'c.description AS catalogi_description',
+					'c.image AS catalogi_image',
+					'c.search AS catalogi_search',
+					'c.listed AS catalogi_listed',
+					'c.organisation AS catalogi_organisation',
+					'c.metadata AS catalogi_metadata',
+					'm.id AS metadata_id',
+					'm.title AS metadata_title',
+					'm.version AS metadata_version',
+					'm.description AS metadata_description',
+					'm.required AS metadata_required',
+					'm.properties AS metadata_properties',
+			)
+			->from('publications', 'p')
+			->leftJoin('p', 'catalogi', 'c', 'p.catalogi = c.id')
+			->leftJoin('p', 'metadata', 'm', 'p.meta_data = m.id')
 			->where(
-				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+				$qb->expr()->eq('p.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
 
-		return $this->findEntity(query: $qb);
+		return $this->findEntityCustom(query: $qb);
 	}
 
-	public function findAll(
-		?int $limit = null,
-		?int $offset = null,
-		?array $filters = [],
-		?array $searchConditions = [],
-		?array $searchParams = [],
-    	?array $sort = []
-	): array {
+	/**
+	 * Returns a db result and throws exceptions when there are more or less
+	 * results CUSTOM FOR JOINS
+	 *
+	 * @param IQueryBuilder $query
+	 * @return Entity the entity
+	 * @psalm-return T the entity
+	 * @throws Exception
+	 * @throws MultipleObjectsReturnedException if more than one item exist
+	 * @throws DoesNotExistException if the item does not exist
+	 * @since 14.0.0
+	 */
+	protected function findEntityCustom(IQueryBuilder $query): Entity {
+		return $this->mapRowToEntityCustom($this->findOneQuery($query));
+	}
+
+	/**
+	 *  CUSTOM FOR JOINS
+	 */
+	protected function mapRowToEntityCustom(array $row): Entity {
+		unset($row['DOCTRINE_ROWNUM']); // remove doctrine/dbal helper column
+
+		// Map the Catalogi fields to a sub-array
+		$catalogiData = [
+			'id' => $row['catalogi_id'] ?? null,
+			'title' => $row['catalogi_title'] ?? null,
+			'summary' => $row['catalogi_summary'] ?? null,
+			'description' => $row['catalogi_description'] ?? null,
+			'image' => $row['catalogi_image'] ?? null,
+			'search' => $row['catalogi_search'] ?? null,
+			'listed' => $row['catalogi_listed'] ?? null,
+			'organisation' => $row['catalogi_organisation'] ?? null,
+			'metadata' => $row['catalogi_metadata'] ?? null,
+		];
+
+		$catalogiIsEmpty = true;
+		foreach ($catalogiData as $key => $value) {
+			if ($value !== null) {
+				$catalogiIsEmpty = false;
+			}
+
+			if (array_key_exists("catalogi_$key", $row) === true) {
+				unset($row["catalogi_$key"]);
+			}
+		}
+
+		// Map the MetaData fields to a sub-array
+		$metaDataData = [
+			'id' => $row['metadata_id'] ?? null,
+			'title' => $row['metadata_title'] ?? null,
+			'version' => $row['metadata_version'] ?? null,
+			'description' => $row['metadata_description'] ?? null,
+			'required' => $row['metadata_required'] ?? null,
+			'properties' => $row['metadata_properties'] ?? null,
+		];
+
+		$metaDataIsEmpty = true;
+		foreach ($metaDataData as $key => $value) {
+			if ($value !== null) {
+				$metaDataIsEmpty = false;
+			}
+
+			if (array_key_exists("metadata_$key", $row) === true) {
+				unset($row["metadata_$key"]);
+			}
+		}
+
+		$row['catalogi'] = $catalogiIsEmpty === true ? null : json_encode(Catalog::fromRow($catalogiData)->jsonSerialize());
+		$row['metaData'] = $metaDataIsEmpty === true ? null : json_encode(MetaData::fromRow($metaDataData)->jsonSerialize());
+
+		return \call_user_func($this->entityClass .'::fromRow', $row);
+	}
+
+	/**
+	 * Runs a sql query and returns an array of entities CUSTOM FOR JOINS
+	 *
+	 * @param IQueryBuilder $query
+	 * @return Entity[] all fetched entities
+	 * @psalm-return T[] all fetched entities
+	 * @throws Exception
+	 * @since 14.0.0
+	 */
+	protected function findEntitiesCustom(IQueryBuilder $query): array {
+		$result = $query->executeQuery();
+		try {
+			$entities = [];
+			while ($row = $result->fetch()) {
+				$entities[] = $this->mapRowToEntityCustom($row);
+			}
+			return $entities;
+		} finally {
+			$result->closeCursor();
+		}
+	}
+
+	private function parseComplexFilter(IQueryBuilder $queryBuilder, array $filter, string $name): IQueryBuilder
+	{
+		foreach($filter as $key => $value) {
+			switch($key) {
+				case '>=':
+				case 'after':
+					$queryBuilder->andWhere($queryBuilder->expr()->gte($name, $queryBuilder->createNamedParameter($value)));
+					break;
+				case '>':
+				case 'strictly_after':
+					$queryBuilder->andWhere($queryBuilder->expr()->gt($name, $queryBuilder->createNamedParameter($value)));
+					break;
+				case '<=':
+				case 'before':
+					$queryBuilder->andWhere($queryBuilder->expr()->lte($name, $queryBuilder->createNamedParameter($value)));
+					break;
+				case '<':
+				case 'strictly_before':
+					$queryBuilder->andWhere($queryBuilder->expr()->lt($name, $queryBuilder->createNamedParameter($value)));
+					break;
+				default:
+					$queryBuilder->andWhere($queryBuilder->expr()->eq(x: $name, y: $queryBuilder->createNamedParameter($filter)));
+			}
+		}
+
+		return $queryBuilder;
+	}
+
+	private function addFilters(IQueryBuilder $queryBuilder, array $filters): IQueryBuilder
+	{
+		foreach($filters as $key => $filter) {
+			if(is_array($filter) === false) {
+				$queryBuilder->andWhere($queryBuilder->expr()->eq($key, $queryBuilder->createNamedParameter($filter)));
+				$queryBuilder->setParameter($key, $filter);
+				continue;
+			}
+
+			$queryBuilder = $this->parseComplexFilter(queryBuilder: $queryBuilder, filter: $filter, name: $key);
+		}
+
+		return $queryBuilder;
+	}
+
+	public function count(?array $filters = [], ?array $searchConditions = [], ?array $searchParams = []): int
+	{
+
+
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('*')
-			->from('publications')
+		$qb->selectAlias($qb->createFunction('COUNT(*)'), 'count')
+			->from('publications');
+
+
+		$qb = $this->addFilters(queryBuilder: $qb, filters: $filters);
+
+
+		if (!empty($searchConditions)) {
+			$qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
+			foreach ($searchParams as $param => $value) {
+				$qb->setParameter($param, $value);
+			}
+		}
+
+		$cursor = $qb->execute();
+		$row = $cursor->fetch();
+		$cursor->closeCursor();
+
+		return $row['count'];
+	}
+
+	public function findAll(?int $limit = null, ?int $offset = null, ?array $filters = [], ?array $searchConditions = [], ?array $searchParams = [], ?array $sort = []): array
+	{
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select(
+				'p.*',
+				'c.id AS catalogi_id',
+				'c.title AS catalogi_title',
+				'c.summary AS catalogi_summary',
+				'c.description AS catalogi_description',
+				'c.image AS catalogi_image',
+				'c.search AS catalogi_search',
+				'c.listed AS catalogi_listed',
+				'c.organisation AS catalogi_organisation',
+				'c.metadata AS catalogi_metadata',
+				'm.id AS metadata_id',
+				'm.title AS metadata_title',
+				'm.version AS metadata_version',
+				'm.description AS metadata_description',
+				'm.required AS metadata_required',
+				'm.properties AS metadata_properties',
+			)
+			->from('publications', 'p')
+			->leftJoin('p', 'catalogi', 'c', 'p.catalogi = c.id')
+			->leftJoin('p', 'metadata', 'm', 'p.meta_data = m.id')
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
-        foreach($filters as $filter => $value) {
-			if ($value === 'IS NOT NULL') {
-				$qb->andWhere($qb->expr()->isNotNull($filter));
-			} elseif ($value === 'IS NULL') {
-				$qb->andWhere($qb->expr()->isNull($filter));
-			} else {
-				$qb->andWhere($qb->expr()->eq($filter, $qb->createNamedParameter($value)));
-			}
-        }
+		$qb = $this->addFilters(queryBuilder: $qb, filters: $filters);
 
         if (empty($searchConditions) === false) {
             $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
@@ -66,8 +256,9 @@ class PublicationMapper extends QBMapper
 				$qb->addOrderBy($field, $direction);
 			}
 		}
-		
-		return $this->findEntities(query: $qb);
+
+		// Use the existing findEntities method to fetch and map the results
+		return $this->findEntitiesCustom($qb);
 	}
 
 	public function createFromArray(array $object): Publication
@@ -75,9 +266,9 @@ class PublicationMapper extends QBMapper
 		$publication = new Publication();
 		$publication->hydrate(object: $object);
 
-//		var_dump($publication->getTitle());
+		$publication = $this->insert(entity: $publication);
 
-		return $this->insert(entity: $publication);
+		return $this->find($publication->getId());
 	}
 
 	public function updateFromArray(int $id, array $object): Publication
@@ -85,6 +276,8 @@ class PublicationMapper extends QBMapper
 		$publication = $this->find(id: $id);
 		$publication->hydrate(object: $object);
 
-		return $this->update($publication);
+		$publication = $this->update($publication);
+
+		return $this->find($publication->getId());
 	}
 }
