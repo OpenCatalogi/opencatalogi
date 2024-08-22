@@ -119,11 +119,11 @@ jobs:
       #Step 2: Create the .tar.gz archive
       - name: Create ZIP
         run: |
-          zip -r ../packadges/packadge.zip .  
+          zip -r ../packadges/opencatalogi.zip .  
           
       - name: Create Tarball
         run: |
-          tar -czf ../packadges/packadge.tar.gz .      
+          tar -czf ../packadges/opencatalogi.tar.gz .      
                 
         # Step 10: Create a new release on GitHub
       - name: Upload Release
@@ -132,8 +132,8 @@ jobs:
           # bodyFile: 'opencatalogi/changelog.md'
           artifacts: |
             LICENSE.md
-            ../packadges/packadge.zip
-            ../packadges/packadge.tar.gz
+            ../packadges/opencatalogi.zip
+            ../packadges/opencatalogi.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.version }}
         # Documentation: https://github.com/ncipollo/release-action
