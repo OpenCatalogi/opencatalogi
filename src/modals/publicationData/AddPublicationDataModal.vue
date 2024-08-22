@@ -31,6 +31,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							v-model="value"
 							type="date"
 							label="Waarde"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 
@@ -38,6 +40,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							v-model="value"
 							type="time"
 							label="Waarde"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 
@@ -45,6 +49,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							v-model="value"
 							type="datetime"
 							label="Waarde"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 
@@ -52,6 +58,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							:value.sync="value"
 							label="Email"
 							type="email"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 
@@ -59,12 +67,16 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							:value.sync="value"
 							label="IDN-Email"
 							type="email"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 
 						<NcTextField v-else-if="getSelectedMetadataProperty.format === 'regex'"
 							:value.sync="value"
 							label="Waarde (regex)"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 
@@ -72,6 +84,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							:value.sync="value"
 							type="password"
 							label="Wachtwoord"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 
@@ -79,56 +93,68 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							:value.sync="value"
 							type="tel"
 							label="Telefoon nummer"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 
 						<NcTextField v-else
 							:value.sync="value"
 							label="Waarde"
+							:error="!verifyInput.success"
+							:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
 							:disabled="loading"
 							:loading="loading" />
 					</div>
 
 					<!-- TYPE : NUMBER -->
 					<NcInputField v-else-if="getSelectedMetadataProperty.type === 'number'"
-						:disabled="loading"
+						:value.sync="value"
 						type="number"
 						step="any"
 						label="Nummer"
-						:value.sync="value"
-						:loading="loading"
-						@input="(elem) => verifyInput(elem.target.value)" />
+						required
+						:error="!verifyInput.success"
+						:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
+						:disabled="loading"
+						:loading="loading" />
 
 					<!-- TYPE : INTEGER -->
 					<NcInputField v-else-if="getSelectedMetadataProperty.type === 'integer'"
-						:disabled="loading"
+						:value.sync="value"
 						type="number"
 						step="1"
 						label="Integer"
-						:value.sync="value"
-						:loading="loading"
-						@input="(elem) => verifyInput(elem.target.value)" />
+						required
+						:error="!verifyInput.success"
+						:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
+						:disabled="loading"
+						:loading="loading" />
 
 					<!-- TYPE : OBJECT -->
 					<NcTextArea v-else-if="getSelectedMetadataProperty.type === 'object'"
-						:disabled="loading"
-						label="Object"
 						:value.sync="value"
-						:loading="loading"
-						@input="(elem) => verifyInput(elem.target.value)" />
+						label="Object"
+						:error="!verifyInput.success"
+						:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
+						:disabled="loading"
+						:loading="loading" />
 
 					<!-- TYPE : ARRAY -->
 					<NcTextArea v-else-if="getSelectedMetadataProperty.type === 'array'"
-						:disabled="loading"
-						label="Waarde lijst (split op ,)"
 						:value.sync="value"
-						:loading="loading"
-						@input="(elem) => verifyInput(elem.target.value)" />
+						label="Waarde lijst (splitst op ,)"
+						:error="!verifyInput.success"
+						:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
+						:disabled="loading"
+						:loading="loading" />
 
 					<!-- TYPE : BOOLEAN -->
 					<NcCheckboxRadioSwitch v-else-if="getSelectedMetadataProperty.type === 'boolean'"
-						:disabled="loading"
 						:checked.sync="value"
+						:error="!verifyInput.success"
+						:helper-text="!verifyInput.success ? verifyInput.helperText : ''"
+						:disabled="loading"
 						:loading="loading">
 						Waarde
 					</NcCheckboxRadioSwitch>
@@ -139,7 +165,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<NcButton v-if="success === null"
 					:disabled="loading
 						|| !eigenschappen.value?.id
-						|| ( getSelectedMetadataProperty.type !== 'boolean' && !value )
+						|| !verifyInput.success
 					"
 					type="primary"
 					@click="AddPublicatieEigenschap()">
@@ -252,6 +278,234 @@ export default {
 					})),
 			}
 		},
+		/**
+		 * Takes the value the user types in and tests it against various rules from `getSelectedMetadataProperty`.
+		 * Which then returns a success boolean and a helper text containing the error message when success is false.
+		 *
+		 * @see getSelectedMetadataProperty
+		 */
+		verifyInput() {
+			const selectedProperty = this.getSelectedMetadataProperty
+			if (!selectedProperty) return {}
+
+			let schema = z.any()
+
+			// TYPE
+			if (selectedProperty.type === 'string') {
+				schema = z.string()
+			}
+			if (selectedProperty.type === 'number') {
+				schema = z.number()
+			}
+			if (selectedProperty.type === 'integer') {
+				schema = z.number()
+			}
+			if (selectedProperty.type === 'object') {
+				schema = z.string().refine((val) => {
+					try {
+						JSON.parse(val)
+						return true
+					} catch (error) {
+						return false
+					}
+				}, 'Dit is niet een geldige object')
+			}
+			if (selectedProperty.type === 'array') {
+				schema = z.array(z.string())
+			}
+			if (selectedProperty.type === 'boolean') {
+				schema = z.boolean()
+			}
+			if (selectedProperty.type === 'dictionary') {
+				schema = z.string() // its not known what a dictionary is yet, so this is here as a little failsafe
+			}
+
+			// FORMAT - you only want format to be used on strings, this may change in the future
+			if (selectedProperty.type === 'string') {
+				if (selectedProperty.format === 'date') {
+					schema = schema.datetime()
+				}
+				if (selectedProperty.format === 'time') {
+					schema = schema.datetime()
+				}
+				if (selectedProperty.format === 'date-time') {
+					schema = schema.datetime()
+				}
+				if (selectedProperty.format === 'url') {
+					schema = schema.url({ message: 'Dit is geen geldige URL' })
+				}
+				if (selectedProperty.format === 'uri') {
+					schema = schema.url({ message: 'Dit is geen geldige URI' })
+				}
+				if (selectedProperty.format === 'uuid') {
+					schema = schema.uuid({ message: 'Dit is geen geldige UUID' })
+				}
+				if (selectedProperty.format === 'email') {
+					schema = schema.email({ message: 'Dit is geen geldige Email' })
+				}
+				if (selectedProperty.format === 'idn-email') {
+					schema = schema.email({ message: 'Dit is geen geldige Email' })
+				}
+				if (selectedProperty.format === 'ipv4') {
+					schema = schema.ip({ version: 'v4', message: 'Dit is geen geldige ipv4' })
+				}
+				if (selectedProperty.format === 'ipv6') {
+					schema = schema.ip({ version: 'v6', message: 'Dit is geen geldige ipv6' })
+				}
+				// TODO: add 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer'
+				// because I have no clue what these are currently
+				if (selectedProperty.format === 'regex') {
+					schema = schema.refine((val) => {
+						try {
+							RegExp(val)
+							return true
+						} catch (error) {
+							return false
+						}
+					}, 'Dit is niet een geldige regex')
+				}
+				if (selectedProperty.format === 'binary') {
+					schema = schema.regex(/^[0|1]*$/g, 'Dit is geen geldige binair')
+				}
+				if (selectedProperty.format === 'byte') {
+					schema = schema.regex(/^([0|1]{8})*$/g, 'Dit is geen geldige byte')
+				}
+				if (selectedProperty.format === 'rsin') {
+					schema = schema.regex(/^(\d{9})$/g, 'Dit is geen geldige RSIN-nummer')
+				}
+				if (selectedProperty.format === 'rsin') {
+					schema = schema.regex(/^(\d{8})$/g, 'Dit is geen geldige KVK-nummer')
+				}
+				if (selectedProperty.format === 'bsn') {
+					schema = schema.regex(/^(\d{9})$/g, 'Dit is geen geldige BSN-nummer')
+				}
+				if (selectedProperty.format === 'oidn') {
+					schema = schema.regex(/^\d{8,12}$/g, 'Dit is geen geldige OIDN-nummer')
+				}
+				// TODO: add a telephone number validation check
+				// preferably with https://www.npmjs.com/package/validator if this gets accepted in https://conductionworkspace.slack.com/archives/C02UCLKQ8F2/p1724338484855979
+			}
+
+			// GENERIC RULES
+			if (selectedProperty.pattern) {
+				// check is the regex given is valid to avoid any issues
+				let isValidRegex = false
+				try {
+					RegExp(selectedProperty.pattern)
+					isValidRegex = true
+				} catch (err) {
+					isValidRegex = false
+				}
+
+				if (isValidRegex) {
+					const regexPattern = new RegExp(selectedProperty.pattern)
+
+					schema = schema.refine((val) => {
+						if (Array.isArray(val)) {
+							// Validate each string in the array
+							return val.every((item) => regexPattern.test(item))
+						} else {
+							// Validate single string
+							return regexPattern.test(val)
+						}
+					}, { message: 'Voldoet niet aan het vereiste patroon' })
+				}
+			}
+			// number / integer
+			if (selectedProperty.type === 'number' || selectedProperty.type === 'integer') {
+				// exclusiveMin / exclusiveMax are a boolean, which you can add to a number to add 1 (e.g: 1 + true = 2),
+				// this is a stupid simple way to implement what the stoplight is expecting
+				// https://conduction.stoplight.io/docs/open-catalogi/5og7tj13bkzj5-create-metadata
+				if (selectedProperty.minimum) {
+					const minimum = selectedProperty.minimum
+					schema = schema.min(minimum + selectedProperty.exclusiveMin, { message: `Minimaal ${minimum + selectedProperty.exclusiveMin}` })
+				}
+				if (selectedProperty.maximum) {
+					const maximum = selectedProperty.maximum
+					schema = schema.max(maximum - selectedProperty.exclusiveMax, { message: `Maximaal ${maximum - selectedProperty.exclusiveMax}` })
+				}
+				if (selectedProperty.multipleOf) {
+					const multipleOf = selectedProperty.multipleOf
+					schema = schema.refine((val) => val % multipleOf === 0, `${this.value} is niet een veelvoud van ${multipleOf}`)
+				}
+			} else if (selectedProperty.type === 'array') { // TYPE : ARRAY
+				if (selectedProperty.minItems) {
+					const minItems = selectedProperty.minItems
+					schema = schema.min(minItems, { message: `Minimale hoeveelheid: ${minItems}` })
+				}
+				if (selectedProperty.maxItems) {
+					const maxItems = selectedProperty.maxItems
+					schema = schema.max(maxItems, { message: `Maximale hoeveelheid: ${maxItems}` })
+				}
+			} else { // Anything else
+				if (selectedProperty.minLength) {
+					const minLength = selectedProperty.minLength
+					schema = schema.min(minLength, { message: `Minimale lengte: ${minLength}` })
+				}
+				if (selectedProperty.maxLength) {
+					const maxLength = selectedProperty.maxLength
+					schema = schema.max(maxLength, { message: `Maximale lengte: ${maxLength}` })
+				}
+			}
+
+			// REQUIRED CHECK
+			if (selectedProperty.required) {
+				if (selectedProperty.type === 'array') {
+					schema = schema.and(
+						// explanation:
+						// if ANY item in the array is not an empty string, it passes
+						z.custom((val) => val.some((item) => item.trim() !== ''), { message: 'Deze veld is verplicht' }),
+					)
+				} else if (selectedProperty.type === 'number') {
+					// finite says that ANY number between infinite and -infinite is allowed
+					// But NaN is not
+					schema = schema.finite({ message: 'Deze veld is verplicht' })
+				} else if (selectedProperty.type === 'integer') {
+					schema = schema.finite({ message: 'Deze veld is verplicht' })
+				} else {
+					schema = schema.min(1, { message: 'Deze veld is verplicht' })
+				}
+			}
+			if (!selectedProperty.required) {
+				// As the value can NEVER be omitted in this code, which is what `.optional()` does
+				// I add a `or()` method with a literal empty array / string to act as optional values
+
+				// this array check gives me nightmares, I think it works but please don't touch it
+				if (selectedProperty.type === 'array') {
+					schema = schema.or( // an empty array is always parsed as ['']
+						z.custom((val) => val.length === 1 && val[0].trim() === ''),
+					)
+				} else if (selectedProperty.type === 'number') {
+					schema = schema.or(z.nan())
+				} else if (selectedProperty.type === 'integer') {
+					schema = schema.or(z.nan())
+				} else {
+					schema = schema.or(z.literal(''))
+				}
+			}
+
+			// RUN TESTS
+			let result
+			switch (selectedProperty.type) {
+			case 'array':{
+				result = schema.safeParse(this.value.split(/ *, */g)) // split on , to make an array
+				break
+			}
+			case 'number':
+			case 'integer':{
+				result = schema.safeParse(parseFloat(this.value))
+				break
+			}
+			default: {
+				result = schema.safeParse(this.value)
+			}
+			}
+
+			return {
+				success: result.success,
+				helperText: result?.error?.[0]?.message || result?.error?.issues?.[0].message || false,
+			}
+		},
 	},
 	watch: {
 		getSelectedMetadataProperty(newVal) {
@@ -309,34 +563,17 @@ export default {
 				break
 			}
 
+			case 'number':
+			case 'integer': {
+				console.log('Set default value to Number ', prop.default)
+				this.value = prop.default || 0
+				break
+			}
+
 			default:
 				console.log('Set default value to ', prop.default)
 				this.value = prop.default
 				break
-			}
-		},
-		/**
-		 * Takes the value of a input element and tests it against various rules from `getSelectedMetadataProperty`.
-		 * Which then returns a success boolean and a helper text containing the error message when success is false.
-		 *
-		 * @param {string} value the value to be verified
-		 * @see getSelectedMetadataProperty
-		 */
-		verifyInput(value) {
-			let schema = z.any()
-
-			// TODO: add more validations
-			// 'duration' format needs to have a max length of 10
-			// and more, all based on the format
-			if (this.getSelectedMetadataProperty.pattern) {
-				schema = schema.regex(this.getSelectedMetadataProperty.pattern, { message: 'Voldoet niet aan het vereiste patroon' })
-			}
-
-			const result = schema.safeParse(value)
-
-			return {
-				success: result.success,
-				helperText: result?.error || false,
 			}
 		},
 		AddPublicatieEigenschap() {
