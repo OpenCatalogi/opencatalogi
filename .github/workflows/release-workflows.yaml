@@ -104,7 +104,7 @@ jobs:
             src \
             templates \
             vendor \
-            package/opencatalogi/
+            package/opencatalogi
       
       # Step 12: Create the ZIP archive with code in opencatalogi directory
       - name: Create ZIP
