@@ -41,12 +41,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							:disabled="loading"
 							:loading="loading" />
 
-						<NcTextField v-else-if="getSelectedMetadataProperty.format === 'duration'"
-							:value.sync="value"
-							label="Waarde"
-							:disabled="loading"
-							:loading="loading" />
-
 						<NcDateTimePicker v-else-if="getSelectedMetadataProperty.format === 'date-time'"
 							v-model="value"
 							type="datetime"
@@ -54,30 +48,16 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							:disabled="loading"
 							:loading="loading" />
 
-						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'url'"
-							:value.sync="value"
-							label="Waarde"
-							type="url"
-							:disabled="loading"
-							:loading="loading" />
-
-						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'uri'"
-							:value.sync="value"
-							label="Waarde"
-							type="url"
-							:disabled="loading"
-							:loading="loading" />
-
 						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'email'"
 							:value.sync="value"
-							label="Waarde"
+							label="Email"
 							type="email"
 							:disabled="loading"
 							:loading="loading" />
 
 						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'idn-email'"
 							:value.sync="value"
-							label="Waarde"
+							label="IDN-Email"
 							type="email"
 							:disabled="loading"
 							:loading="loading" />
@@ -91,14 +71,14 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'password'"
 							:value.sync="value"
 							type="password"
-							label="Waarde"
+							label="Wachtwoord"
 							:disabled="loading"
 							:loading="loading" />
 
 						<NcInputField v-else-if="getSelectedMetadataProperty.format === 'telephone'"
 							:value.sync="value"
 							type="tel"
-							label="Waarde"
+							label="Telefoon nummer"
 							:disabled="loading"
 							:loading="loading" />
 
@@ -275,7 +255,6 @@ export default {
 	},
 	watch: {
 		getSelectedMetadataProperty(newVal) {
-			// eslint-disable-next-line no-console
 			console.log('new selected metadata property', newVal)
 			this.setDefaultValue(newVal)
 		},
@@ -308,13 +287,15 @@ export default {
 
 			case 'object': {
 				console.log('Set default value to Object ', prop.default)
-				this.value = Object.parse(prop.default)
+				this.value = typeof prop.default === 'object'
+					? JSON.stringify(prop.default)
+					: prop.default
 				break
 			}
 
 			case 'array': {
 				console.log('Set default value to Array ', prop.default)
-				this.value = prop.default.join(', ')
+				this.value = prop.default.join(', ') || ''
 				break
 			}
 
@@ -361,7 +342,7 @@ export default {
 			this.loading = true
 
 			const bodyData = publicationStore.publicationItem
-			bodyData.data[this.eigenschappen.value?.label] = this.data
+			bodyData.data[this.eigenschappen.value?.label] = this.value
 			delete bodyData.publicationDate
 
 			fetch(
