@@ -81,8 +81,7 @@ jobs:
       - name: Remove files and folders that are part of development and then move te remaining files to the openatalogi sub folder
         run: |
           find . -type f \( \
-            -name '*.git*' \
-            -o -name '.coverage-frontend*' \
+            -name '.coverage-frontend*' \
             -o -name '*.specs.ts*' \
             -o -name '*.mocks.ts*' \
             -o -name '*.babelrc' \
