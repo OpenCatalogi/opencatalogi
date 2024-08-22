@@ -99,10 +99,10 @@ jobs:
           cd package && tar -czf ../opencatalogi.tar.gz opencatalogi    
 
       # Step 14: Remove the package directory after creating archives and before freezing the code in an realease
-      - name: Clean up package directory
+      - name: Clean up package directory and add dev files
         run: |
           cd package && rm -rf vendor js node_modules 
-          cd ../ && cp -r docs tests .babelrc .estlintrc.js  package/opencatalogi/     
+          cd ../ && cp -r docs tests .babelrc package/opencatalogi/     
 
       # Step 12: Create the ZIP archive with code in opencatalogi directory
       - name: Create ZIP
