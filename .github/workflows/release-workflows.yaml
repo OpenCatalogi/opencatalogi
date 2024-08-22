@@ -104,11 +104,11 @@ jobs:
       #Step 2: Create the .tar.gz archive
       - name: Create ZIP
         run: |
-          zip -r opencatalogi.zip /packadge  
+          zip -r opencatalogi.zip packadge  
           
       - name: Create Tarball
         run: |
-          tar -czf opencatalogi.tar.gz /packadge      
+          tar -czf opencatalogi.tar.gz packadge      
                 
         # Step 10: Create a new release on GitHub
       - name: Upload Release
@@ -116,7 +116,7 @@ jobs:
         with:
           # bodyFile: 'opencatalogi/changelog.md'
           artifacts: |
-            LICENSE.md
+            packadge/LICENSE.md
             opencatalogi.zip
             opencatalogi.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
