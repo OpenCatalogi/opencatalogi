@@ -150,7 +150,7 @@ export default {
 				const shouldCopyMetadata = Object.entries(newValue)[0][1]
 				if (shouldCopyMetadata === true) {
 					this.copyMetadata(metadataUrl)
-				} else if (shouldCopyMetadata === false) {
+				} else if (shouldCopyMetadata === false && metadataUrl) {
 					this.deleteMetadata(metadataUrl)
 				}
 			},
@@ -206,7 +206,8 @@ export default {
 				.then((response) => {
 					metadataStore.refreshMetaDataList()
 					response.json().then((data) => {
-						this.createMetadata(data)
+						const metaDataSources = metadataStore.metaDataList.map((metaData) => metaData.source)
+						if (!metaDataSources.includes(data.source)) this.createMetadata(data)
 					})
 					this.loading = false
 				})
