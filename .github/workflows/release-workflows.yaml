@@ -15,7 +15,33 @@ jobs:
         # Documentation: https://github.com/actions/checkout
         # Explanation: This step checks out the source code from the GitHub repository, ensuring that the workflow has access to the latest version of the code.
          # Step 2: Prepare the signing certificate and key
-      
+ 
+      # Step 3: Install Node.js dependencies using npm
+      - name: Install npm dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x' # Specify Node.js version
+        # Documentation: https://github.com/actions/setup-node
+        # Explanation: This step sets up a Node.js environment and installs the project's dependencies listed in the `package.json` file using npm.
+
+      # Step 2: Install PHP extensions
+      - name: Set up PHP and install extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip, gd
+        # Documentation: https://github.com/shivammathur/setup-php
+        # Explanation: This step sets up PHP 7.4 and installs the required extensions (`zip` and `gd`) that are necessary for your Composer dependencies.
+
+      # Step 3: Build the node dependencies
+      - run: npm ci
+        # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
+        # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
+
+      # Step 3: Build composer dependencies
+      - run: composer i --no-dev
+        # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
+
       - name: Prepare Signing Certificate and Key
         run: |
           echo "${{ secrets.NEXTCLOUD_SIGNING_CERT }}" > signing-cert.crt
@@ -38,36 +64,15 @@ jobs:
           openssl smime -sign -in nexcloud-release.tar.gz -out nexcloud-release-signed.tar.gz -signer signing-cert.crt -inkey signing-key.key -outform PEM
 
 
-      # Step 2: Install PHP extensions
-      - name: Set up PHP and install extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: zip, gd
-        # Documentation: https://github.com/shivammathur/setup-php
-        # Explanation: This step sets up PHP 7.4 and installs the required extensions (`zip` and `gd`) that are necessary for your Composer dependencies.
-
-      # Step 3: Install Node.js dependencies using npm
-      - name: Install npm dependencies
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x' # Specify Node.js version
-        # Documentation: https://github.com/actions/setup-node
-        # Explanation: This step sets up a Node.js environment and installs the project's dependencies listed in the `package.json` file using npm.
-
-      # Step 3: Build the node_modules
-      - run: npm install
-        # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
-        # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
 
       # Step 3: Webpack the whole thing
-      - run: npm run build
+      # - run: npm run build
 
       # Step 4: Install PHP dependencies using Composer
-      - name: Install Composer dependencies
-        run: composer install --no-progress --no-interaction --prefer-dist --ignore-platform-req=ext-zip --ignore-platform-req=ext-gd
-        env:
-          COMPOSER_ROOT_VERSION: 2.7.7
+      #- name: Install Composer dependencies
+      #  run: composer install --no-progress --no-interaction --prefer-dist --ignore-platform-req=ext-zip --ignore-platform-req=ext-gd
+      #  env:
+      #    COMPOSER_ROOT_VERSION: 2.7.7
         # Documentation: https://getcomposer.org/doc/03-cli.md#install
         # Explanation: This step runs `composer install` to install the PHP dependencies required for the project. It also ignores platform requirements for `ext-zip` and `ext-gd` to avoid issues if extensions are not detected correctly in the environment.
 
