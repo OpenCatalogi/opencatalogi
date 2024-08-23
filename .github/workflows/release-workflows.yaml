@@ -12,48 +12,37 @@ jobs:
         with:
           ref: ${{ github.head_ref }}   # Checkout the correct branch name
           fetch-depth: 0                # Fetch the whole repo history
-        # Documentation: https://github.com/actions/checkout
-        # Explanation: This step checks out the source code from the GitHub repository, ensuring that the workflow has access to the latest version of the code.
-         # Step 2: Prepare the signing certificate and key
- 
-      # Step 3: Install Node.js dependencies using npm
-      - name: Install npm dependencies
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x' # Specify Node.js version
-        # Documentation: https://github.com/actions/setup-node
-        # Explanation: This step sets up a Node.js environment and installs the project's dependencies listed in the `package.json` file using npm.
 
-      # Step 2: Install PHP extensions
-      - name: Set up PHP and install extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: zip, gd
-        # Documentation: https://github.com/shivammathur/setup-php
-        # Explanation: This step sets up PHP 7.4 and installs the required extensions (`zip` and `gd`) that are necessary for your Composer dependencies.
-
-      # Step 3: Build the node dependencies
-      - run: npm ci
-        # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
-        # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
-
-      # Step 3: Build the node dependencies
-      - run: npm build
-        # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
-        # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
-
-      # Step 3: Build composer dependencies
-      - run: composer i --no-dev
-        # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
-
+      # Step 2: Prepare the signing certificate and key
       - name: Prepare Signing Certificate and Key
         run: |
           echo "${{ secrets.NEXTCLOUD_SIGNING_CERT }}" > signing-cert.crt
           echo "${{ secrets.NEXTCLOUD_SIGNING_KEY }}" > signing-key.key
 
-      # Step 9: Copy the files into the package directory, excluding .git and package itself
-     - name: Copy the package files into the package
+      # Step 3: Install Node.js dependencies using npm
+      - name: Install npm dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x' # Specify Node.js version
+
+      # Step 4: Install PHP extensions
+      - name: Set up PHP and install extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip, gd
+
+      # Step 5: Build the node dependencies
+      - run: npm ci
+
+      # Step 6: Build the node dependencies
+      - run: npm build
+
+      # Step 7: Build composer dependencies
+      - run: composer i --no-dev
+
+      # Step 8: Copy the files into the package directory, excluding .git and package itself
+      - name: Copy the package files into the package
         run: |
           mkdir -p package/opencatalogi
           rsync -av --progress \
@@ -93,85 +82,63 @@ jobs:
             --exclude='.nvmrc' \
             ./ package/opencatalogi/
 
-      # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
+      # Step 9: Create the TAR.GZ archive with code in opencatalogi directory
       - name: Create Tarball
         run: |
           cd package && tar -czf ../nexcloud-release.tar.gz opencatalogi    
- 
-      # Step 6: Sign the TAR.GZ archive
+
+      # Step 10: Sign the TAR.GZ file with OpenSSL
       - name: Sign the TAR.GZ file with OpenSSL
         run: |
           openssl smime -sign -in nexcloud-release.tar.gz -out nexcloud-release-signed.tar.gz -signer signing-cert.crt -inkey signing-key.key -outform PEM
 
-
-
-      # Step 3: Webpack the whole thing
-      # - run: npm run build
-
-      # Step 4: Install PHP dependencies using Composer
-      #- name: Install Composer dependencies
-      #  run: composer install --no-progress --no-interaction --prefer-dist --ignore-platform-req=ext-zip --ignore-platform-req=ext-gd
-      #  env:
-      #    COMPOSER_ROOT_VERSION: 2.7.7
-        # Documentation: https://getcomposer.org/doc/03-cli.md#install
-        # Explanation: This step runs `composer install` to install the PHP dependencies required for the project. It also ignores platform requirements for `ext-zip` and `ext-gd` to avoid issues if extensions are not detected correctly in the environment.
-
-      # Step 5: Generate Git version information
+      # Step 11: Generate Git version information
       - name: Git Version
         id: version
         uses: codacy/git-version@2.7.1
         with:
           release-branch: main
-        # Documentation: https://github.com/marketplace/actions/git-version
-        # Explanation: This step calculates the version of the software based on the Git tags and branch information, storing the result in the `version` output.
 
-      # Step 6: Extract repository description
+      # Step 12: Extract repository description
       - name: Extract repository description
         id: repo-description
         run: |
           description=$(jq -r '.description' <(curl -s https://api.github.com/repos/${{ github.repository }}))
           echo "REPO_DESCRIPTION=$description" >> $GITHUB_ENV
-        # Documentation: https://docs.github.com/en/rest/reference/repos#get-a-repository
-        # Explanation: This step retrieves the description of the GitHub repository using the GitHub API and stores it in the environment variables.
 
-      # Step 7: Run Changelog CI
+      # Step 13: Run Changelog CI
       - name: Run Changelog CI
         if: github.ref == 'refs/heads/master'
         uses: saadmk11/changelog-ci@v1.1.2
         with:
           release_version: ${{ steps.version.outputs.version }}
           config_file: changelog-ci-config.json
-        # Documentation: https://github.com/saadmk11/changelog-ci
-        # Explanation: This step generates a changelog for the current release using the Changelog CI tool.
 
-      # Step 8: Output the version
+      # Step 14: Output the version
       - name: Use the version
         run: |
           echo ${{ steps.version.outputs.version }}
-        # Explanation: This step outputs the calculated version number to the console for reference.
 
-      # Step 9: Copy the files into the package directory, excluding .git and package itself
+      # Step 15: Copy the files into the package directory, excluding .git and package itself
       - name: Copy the package files into the package
         run: |
           mkdir -p package/opencatalogi
           rsync -av --progress --exclude='package' --exclude='.git' ./ package/opencatalogi/
-      #    cp -r README.md CHANGELOG.md LICENSE.md psalm.xml package.json package-lock.json openapi.json composer.json composer.lock appinfo css img js lib node_modules src templates vendor package/opencatalogi/
-      
-      # Step 12: Create the ZIP archive with code in opencatalogi directory
+
+      # Step 16: Create the ZIP archive with code in opencatalogi directory
       - name: Create ZIP
         run: |
           cd package && zip -r ../opencatalogi-build.zip opencatalogi
 
-      # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
+      # Step 17: Create the TAR.GZ archive with code in opencatalogi directory
       - name: Create Tarball
         run: |
           cd package && tar -czf ../opencatalogi-build.tar.gz opencatalogi    
-                
-        # Step 10: Create a new release on GitHub
+
+      # Step 18: Create a new release on GitHub
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
         with:
-          # bodyFile: 'opencatalogi/changelog.md'
           artifacts: |
             LICENSE.md
             nexcloud-release.tar.gz
@@ -180,5 +147,3 @@ jobs:
             opencatalogi-build.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.version }}
-        # Documentation: https://github.com/ncipollo/release-action
-        # Explanation: This step creates a new release on GitHub, uploading the generated release files, and tagging the release with the calculated version.
