@@ -53,10 +53,45 @@ jobs:
           echo "${{ secrets.NEXTCLOUD_SIGNING_KEY }}" > signing-key.key
 
       # Step 9: Copy the files into the package directory, excluding .git and package itself
-      - name: Copy the package files into the package
+     - name: Copy the package files into the package
         run: |
           mkdir -p package/opencatalogi
-          rsync -av --progress --exclude='package' --exclude='.git'  --exclude='package-lock.json' --exclude='composer.lock' --exclude='src' --exclude='node_modules' ./ package/opencatalogi/
+          rsync -av --progress \
+            --exclude='package' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.vscode' \
+            --exclude='docker' \
+            --exclude='docs' \
+            --exclude='node_modules' \
+            --exclude='src' \
+            --exclude='test' \
+            --exclude='package-lock.json' \
+            --exclude='composer.lock' \
+            --exclude='composer-setup.php' \
+            --exclude='.phpunit.result.cache' \
+            --exclude='phpmd.xml' \
+            --exclude='signing-key.key' \
+            --exclude='package.json' \
+            --exclude='composer.json' \
+            --exclude='coverage.txt' \
+            --exclude='signing-cert.crt' \
+            --exclude='docker-compose.yml' \
+            --exclude='webpack.config.js' \
+            --exclude='.prettierrc' \
+            --exclude='psalm.xml' \
+            --exclude='phpunit.xml' \
+            --exclude='tsconfig.json' \
+            --exclude='changelog-ci-config.json' \
+            --exclude='jest.config.js' \
+            --exclude='.gitattributes' \
+            --exclude='.php-cs-fixer.dist.php' \
+            --exclude='.gitignore' \
+            --exclude='.eslintrc.js' \
+            --exclude='stylelint.config.js' \
+            --exclude='.babelrc' \
+            --exclude='.nvmrc' \
+            ./ package/opencatalogi/
 
       # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
       - name: Create Tarball
