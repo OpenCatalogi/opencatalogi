@@ -37,6 +37,7 @@ Create a [feature request](https://github.com/OpenCatalogi/.github/issues/new/ch
 	<bugs>https://github.com/OpenCatalogi/.github/issues</bugs>
     <repository type="git">https://github.com/ConductionNL/opencatalogi.git</repository>
 
+	<screenshot>https://raw.githubusercontent.com/ConductionNL/opencatalogi/master/docs/assets/logo.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/ConductionNL/opencatalogi/master/docs/screenshots/1.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/ConductionNL/opencatalogi/master/docs/screenshots/2.png</screenshot>
     
