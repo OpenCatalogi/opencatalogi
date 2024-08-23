@@ -38,6 +38,11 @@ jobs:
         # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
         # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
 
+      # Step 3: Build the node dependencies
+      - run: npm build
+        # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
+        # Explanation: This step runs `npm install` to install the Node.js dependencies required for the project.
+
       # Step 3: Build composer dependencies
       - run: composer i --no-dev
         # Documentation: https://docs.npmjs.com/cli/v7/commands/npm-install
@@ -51,7 +56,7 @@ jobs:
       - name: Copy the package files into the package
         run: |
           mkdir -p package/opencatalogi
-          rsync -av --progress --exclude='package' --exclude='.git' ./ package/opencatalogi/
+          rsync -av --progress --exclude='package' --exclude='.git'  --exclude='package-lock.json' --exclude='composer.lock' --exclude='src' --exclude='node_modules' ./ package/opencatalogi/
 
       # Step 13: Create the TAR.GZ archive with code in opencatalogi directory
       - name: Create Tarball
@@ -136,8 +141,8 @@ jobs:
             LICENSE.md
             nexcloud-release.tar.gz
             nexcloud-release-signed.tar.gz
-            opencatalogi-code.zip
-            opencatalogi-code.tar.gz
+            opencatalogi-build.zip
+            opencatalogi-build.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.version }}
         # Documentation: https://github.com/ncipollo/release-action
