@@ -5,7 +5,7 @@
 	<name>OpenCatalogi</name>
 	<summary>The OpenCatalogi Nextcloud app provides a framework for federated catalogi to work together in an open data ecosystem</summary>
 	<description>This application is a full-stack application for maintaining publications, metadata and catalogi. Administration of users and organisations is also included.</description>
-	<version>0.6.0</version>
+	<version>0.6.1</version>
 	<licence>agpl</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
 	<namespace>OpenCatalogi</namespace>
