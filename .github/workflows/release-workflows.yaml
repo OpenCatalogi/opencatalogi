@@ -90,7 +90,7 @@ jobs:
       # Step 10: Sign the TAR.GZ file with OpenSSL
       - name: Sign the TAR.GZ file with OpenSSL
         run: |
-          openssl dgst -sha512 -sign signing-key.key nexcloud-release.tar.gz -out nexcloud-release.signature | openssl base64
+          openssl dgst -sha512 -sign signing-key.key nexcloud-release.tar.gz | openssl base64 -out nexcloud-release.signature
 
       # Step 11: Generate Git version information
       - name: Git Version
