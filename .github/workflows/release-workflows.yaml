@@ -36,7 +36,7 @@ jobs:
       - run: npm ci
 
       # Step 6: Build the node dependencies
-      - run: npm build
+      - run: npm run build
 
       # Step 7: Build composer dependencies
       - run: composer i --no-dev
