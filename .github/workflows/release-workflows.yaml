@@ -142,7 +142,7 @@ jobs:
           artifacts: |
             LICENSE.md
             nexcloud-release.tar.gz
-            nexcloud-release.signiture
+            nexcloud-release.signature
             opencatalogi-build.zip
             opencatalogi-build.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
