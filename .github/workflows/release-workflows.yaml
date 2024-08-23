@@ -90,7 +90,7 @@ jobs:
       # Step 10: Sign the TAR.GZ file with OpenSSL
       - name: Sign the TAR.GZ file with OpenSSL
         run: |
-          openssl smime -sign -in nexcloud-release.tar.gz -out nexcloud-release-signed.tar.gz -signer signing-cert.crt -inkey signing-key.key -outform PEM
+          openssl smime -sign -in nexcloud-release.tar.gz -out nexcloud-release.signiture -signer signing-cert.crt -inkey signing-key.key -outform PEM
 
       # Step 11: Generate Git version information
       - name: Git Version
@@ -142,7 +142,7 @@ jobs:
           artifacts: |
             LICENSE.md
             nexcloud-release.tar.gz
-            nexcloud-release-signed.tar.gz
+            nexcloud-release.signiture
             opencatalogi-build.zip
             opencatalogi-build.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
