@@ -23,12 +23,12 @@ services:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
 
-  init-ubuntu:
-    image: ubuntu
-    command: sh /home/ubuntu/docker/init-ubuntu.sh
-    volumes:
-      - ./docker:/home/ubuntu/docker
-      - .:/home/ubuntu/app
+#  init-ubuntu:
+#    image: ubuntu
+#    command: sh /home/ubuntu/docker/init-ubuntu.sh
+#    volumes:
+#      - ./docker:/home/ubuntu/docker
+#      - .:/home/ubuntu/app
 
   nextcloud:
     user: root
@@ -42,14 +42,13 @@ services:
       - db
     volumes:
       - nextcloud:/var/www/html:rw
-      - ./custom_apps:/var/www/html/custom_apps
-      - .:/var/www/html/custom_apps/opencatalogi
+      - ./custom-apps:/var/www/html/custom_apps
     environment:
       - MYSQL_PASSWORD='!ChangeMe!'
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_HOST=db
       - TZ=Europe/Amsterdam
-    depends_on:
-      init-ubuntu:
-        condition: service_completed_successfully
+#    depends_on:
+#      init-ubuntu:
+#        condition: service_completed_successfully
