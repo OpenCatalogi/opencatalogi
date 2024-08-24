@@ -132,16 +132,6 @@ jobs:
           mkdir -p package/opencatalogi
           rsync -av --progress --exclude='package' --exclude='.git' ./ package/opencatalogi/
 
-      # Step 16: Create the ZIP archive with code in opencatalogi directory
-      - name: Create ZIP
-        run: |
-          cd package && zip -r ../opencatalogi-build.zip opencatalogi
-
-      # Step 17: Create the TAR.GZ archive with code in opencatalogi directory
-      - name: Create Tarball
-        run: |
-          cd package && tar -czf ../opencatalogi-build.tar.gz opencatalogi    
-
       # Step 18: Create a new release on GitHub
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
