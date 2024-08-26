@@ -334,20 +334,36 @@ export default {
 					schema = schema.datetime()
 				}
 				if (selectedProperty.format === 'uuid') {
-					schema = schema.uuid({ message: 'Dit is geen geldige UUID' })
-					// schema = schema.refine(validator.isUUID, { message: 'Dit is geen geldige UUID' })
+					// schema = schema.uuid({ message: 'Dit is geen geldige UUID' })
+					schema = schema.refine(validator.isUUID, { message: 'Dit is geen geldige UUID' })
 				}
 				if (selectedProperty.format === 'email') {
-					schema = schema.email({ message: 'Dit is geen geldige Email' })
+					// schema = schema.email({ message: 'Dit is geen geldige Email' })
+					schema = schema.refine(validator.isEmail, { message: 'Dit is geen geldige Email' })
 				}
 				if (selectedProperty.format === 'idn-email') {
-					schema = schema.email({ message: 'Dit is geen geldige Email' })
+					// schema = schema.email({ message: 'Dit is geen geldige Email' })
+					schema = schema.refine(validator.isEmail, { message: 'Dit is geen geldige IDN-Email' })
+				}
+				if (selectedProperty.format === 'hostname') {
+					schema = schema.regex(
+						/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9-]*[A-Za-z0-9])$/g,
+						{ message: 'Dit is geen geldige hostname' },
+					)
+				}
+				if (selectedProperty.format === 'idn-hostname') {
+					schema = schema.regex(
+						/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9-]*[A-Za-z0-9])$/g,
+						{ message: 'Dit is geen geldige IDN-hostname' },
+					)
 				}
 				if (selectedProperty.format === 'ipv4') {
-					schema = schema.ip({ version: 'v4', message: 'Dit is geen geldige ipv4' })
+					// schema = schema.ip({ version: 'v4', message: 'Dit is geen geldige ipv4' })
+					schema = schema.refine((val) => validator.isIP(val, 4), { message: 'Dit is geen geldige ipv4' })
 				}
 				if (selectedProperty.format === 'ipv6') {
-					schema = schema.ip({ version: 'v6', message: 'Dit is geen geldige ipv6' })
+					// schema = schema.ip({ version: 'v6', message: 'Dit is geen geldige ipv6' })
+					schema = schema.refine((val) => validator.isIP(val, 6), { message: 'Dit is geen geldige ipv6' })
 				}
 				if (selectedProperty.format === 'url') {
 					schema = schema.refine(
@@ -356,19 +372,39 @@ export default {
 					)
 				}
 				if (selectedProperty.format === 'uri') {
-					schema = schema.url({ message: 'Dit is geen geldige URI' })
+					// schema = schema.url({ message: 'Dit is geen geldige URI' })
+					schema = schema.refine(
+						(val) => validator.isURL(val, { require_protocol: true }),
+						{ message: 'Dit is geen geldige URI' },
+					)
 				}
 				if (selectedProperty.format === 'uri-reference') {
-					schema = schema.url({ message: 'Dit is geen geldige URI-reference' })
+					// schema = schema.url({ message: 'Dit is geen geldige URI-reference' })
+					schema = schema.refine(
+						(val) => validator.isURL(val, { require_protocol: true }),
+						{ message: 'Dit is geen geldige URI-reference' },
+					)
 				}
 				if (selectedProperty.format === 'iri') {
-					schema = schema.url({ message: 'Dit is geen geldige IRI' })
+					// schema = schema.url({ message: 'Dit is geen geldige IRI' })
+					schema = schema.refine(
+						(val) => validator.isURL(val, { require_protocol: true }),
+						{ message: 'Dit is geen geldige IRI' },
+					)
 				}
 				if (selectedProperty.format === 'iri-reference') {
-					schema = schema.url({ message: 'Dit is geen geldige IRI-reference' })
+					// schema = schema.url({ message: 'Dit is geen geldige IRI-reference' })
+					schema = schema.refine(
+						(val) => validator.isURL(val, { require_protocol: true }),
+						{ message: 'Dit is geen geldige IRI-reference' },
+					)
 				}
 				if (selectedProperty.format === 'uri-template') {
-					schema = schema.url({ message: 'Dit is geen geldige URI-template' })
+					// schema = schema.url({ message: 'Dit is geen geldige URI-template' })
+					schema = schema.refine(
+						(val) => validator.isURL(val, { require_protocol: true }),
+						{ message: 'Dit is geen geldige URI-template' },
+					)
 				}
 				if (selectedProperty.format === 'json-pointer') {
 					schema = schema.refine((val) => {
@@ -411,8 +447,6 @@ export default {
 				if (selectedProperty.format === 'telephone') {
 					schema = schema.refine(validator.isMobilePhone, { message: 'Dit is geen geldige telephone-nummer' })
 				}
-				// TODO: add a telephone number validation check
-				// preferably with https://www.npmjs.com/package/validator if this gets accepted in https://conductionworkspace.slack.com/archives/C02UCLKQ8F2/p1724338484855979
 			}
 
 			// GENERIC RULES
@@ -492,7 +526,7 @@ export default {
 				} else if (selectedProperty.type === 'integer') {
 					schema = schema.finite({ message: 'Deze veld is verplicht' })
 				} else {
-					schema = schema.min
+					schema = schema.min // .min() does not exist after .refine(), this has been reported at https://github.com/colinhacks/zod/issues/3725
 						? schema.min(1, { message: 'Deze veld is verplicht' })
 						: schema.refine(val => val.length >= 1, { message: 'Deze veld is verplicht' })
 				}
