@@ -278,10 +278,6 @@ export default {
 			this.updateNormalSearch()
 		},
 		setActive(publication) {
-
-			console.log('item', publicationStore.publicationItem)
-			console.log('metadata', publicationStore.publicationMetaData)
-
 			if (JSON.stringify(publicationStore.publicationItem) === JSON.stringify(publication)) {
 				publicationStore.setPublicationItem(false)
 				publicationStore.setPublicationMetaData(false)
