@@ -207,7 +207,6 @@ import {
 	NcSelect,
 } from '@nextcloud/vue'
 import { z } from 'zod'
-// eslint-disable-next-line n/no-missing-import
 import validator from 'validator'
 
 // icons
