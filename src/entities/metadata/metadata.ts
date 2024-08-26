@@ -6,6 +6,7 @@ export class Metadata implements TMetadata {
 	public id: string
 	public title: string
 	public description: string
+	public summary: string
 	public version: string
 	public required: string[]
 	public properties: Record<string, {
@@ -46,6 +47,7 @@ export class Metadata implements TMetadata {
 		this.id = data?.id?.toString() || ''
 		this.title = data?.title || ''
 		this.description = data?.description || ''
+		this.summary = data?.summary || ''
 		this.version = data?.version || ''
 		this.required = data?.required || []
 		// backend (PHP) doesn't know objects so it will return an array if empty
