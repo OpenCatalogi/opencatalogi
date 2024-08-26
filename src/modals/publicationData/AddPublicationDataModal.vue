@@ -202,6 +202,8 @@ import {
 	NcSelect,
 } from '@nextcloud/vue'
 import { z } from 'zod'
+// eslint-disable-next-line n/no-missing-import
+import validator from 'validator'
 
 // icons
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -331,14 +333,9 @@ export default {
 				if (selectedProperty.format === 'date-time') {
 					schema = schema.datetime()
 				}
-				if (selectedProperty.format === 'url') {
-					schema = schema.url({ message: 'Dit is geen geldige URL' })
-				}
-				if (selectedProperty.format === 'uri') {
-					schema = schema.url({ message: 'Dit is geen geldige URI' })
-				}
 				if (selectedProperty.format === 'uuid') {
 					schema = schema.uuid({ message: 'Dit is geen geldige UUID' })
+					// schema = schema.refine(validator.isUUID, { message: 'Dit is geen geldige UUID' })
 				}
 				if (selectedProperty.format === 'email') {
 					schema = schema.email({ message: 'Dit is geen geldige Email' })
@@ -352,8 +349,37 @@ export default {
 				if (selectedProperty.format === 'ipv6') {
 					schema = schema.ip({ version: 'v6', message: 'Dit is geen geldige ipv6' })
 				}
-				// TODO: add 'uri-reference', 'iri', 'iri-reference', 'uri-template', 'json-pointer'
-				// because I have no clue what these are currently
+				if (selectedProperty.format === 'url') {
+					schema = schema.refine(
+						(val) => validator.isURL(val, { require_protocol: true }),
+						{ message: 'Dit is geen geldige URL' },
+					)
+				}
+				if (selectedProperty.format === 'uri') {
+					schema = schema.url({ message: 'Dit is geen geldige URI' })
+				}
+				if (selectedProperty.format === 'uri-reference') {
+					schema = schema.url({ message: 'Dit is geen geldige URI-reference' })
+				}
+				if (selectedProperty.format === 'iri') {
+					schema = schema.url({ message: 'Dit is geen geldige IRI' })
+				}
+				if (selectedProperty.format === 'iri-reference') {
+					schema = schema.url({ message: 'Dit is geen geldige IRI-reference' })
+				}
+				if (selectedProperty.format === 'uri-template') {
+					schema = schema.url({ message: 'Dit is geen geldige URI-template' })
+				}
+				if (selectedProperty.format === 'json-pointer') {
+					schema = schema.refine((val) => {
+						try {
+							JSON.parse(val)
+							return true
+						} catch (error) {
+							return false
+						}
+					}, 'Dit is niet een geldige json-pointer')
+				}
 				if (selectedProperty.format === 'regex') {
 					schema = schema.refine((val) => {
 						try {
@@ -381,6 +407,9 @@ export default {
 				}
 				if (selectedProperty.format === 'oidn') {
 					schema = schema.regex(/^\d{8,12}$/g, 'Dit is geen geldige OIDN-nummer')
+				}
+				if (selectedProperty.format === 'telephone') {
+					schema = schema.refine(validator.isMobilePhone, { message: 'Dit is geen geldige telephone-nummer' })
 				}
 				// TODO: add a telephone number validation check
 				// preferably with https://www.npmjs.com/package/validator if this gets accepted in https://conductionworkspace.slack.com/archives/C02UCLKQ8F2/p1724338484855979
@@ -463,7 +492,9 @@ export default {
 				} else if (selectedProperty.type === 'integer') {
 					schema = schema.finite({ message: 'Deze veld is verplicht' })
 				} else {
-					schema = schema.min(1, { message: 'Deze veld is verplicht' })
+					schema = schema.min
+						? schema.min(1, { message: 'Deze veld is verplicht' })
+						: schema.refine(val => val.length >= 1, { message: 'Deze veld is verplicht' })
 				}
 			}
 			if (!selectedProperty.required) {
