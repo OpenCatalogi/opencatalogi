@@ -19,6 +19,9 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					<p>{{ error }}</p>
 				</NcNoteCard>
 			</div>
+			<NcNoteCard v-if="getSelectedMetadataProperty?.deprecated || false" type="warning">
+				<p>Deze eigenschap staat gemarkeerd als afgeschaft, hij zal bij een komende versie van het onderliggende publicatie type waarschijnlijk komen te vervallen.</p>
+			</NcNoteCard>
 			<div v-if="success === null" class="form-group">
 				<NcSelect v-bind="mapMetadataEigenschappen"
 					v-model="eigenschappen.value"
@@ -160,6 +163,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					</NcCheckboxRadioSwitch>
 				</div>
 			</div>
+
+			{{ verifyInput }}
 
 			<span class="flex-horizontal">
 				<NcButton v-if="success === null"
@@ -552,6 +557,13 @@ export default {
 			// RUN TESTS
 			let result
 			switch (selectedProperty.type) {
+			case 'string':{
+				if (['date', 'time', 'date-time'].includes(selectedProperty.format)) {
+					console.log(this.value)
+					result = schema.safeParse(new Date(this.value).toISOString())
+				} else result = schema.safeParse(this.value)
+				break
+			}
 			case 'array':{
 				result = schema.safeParse(this.value.split(/ *, */g)) // split on , to make an array
 				break
@@ -595,8 +607,16 @@ export default {
 			switch (prop.type) {
 			case 'string': {
 				if (prop.format === 'date' || prop.format === 'time' || prop.format === 'date-time') {
-					console.log('Set default value to Date ', prop.default)
-					this.value = new Date(prop.default || '')
+					let isValidDate
+					try {
+						Date('fdsfs')
+						isValidDate = true
+					} catch (e) {
+						isValidDate = false
+					}
+
+					console.log('Set default value to Date ', isValidDate ? prop.default : '')
+					this.value = new Date(isValidDate ? prop.default : '')
 					break
 				} else {
 					console.log('Set default value to ', prop.default)
