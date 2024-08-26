@@ -149,7 +149,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					Default waarde
 				</NcCheckboxRadioSwitch>
 
-				<!-- TYPE : STRING -->
+				<!-- TYPE : DICTIONARY -->
 				<NcTextField v-else-if="metadata.properties[metadataStore.metadataDataKey].type === 'dictionary'"
 					:disabled="loading"
 					label="Default waarde"
