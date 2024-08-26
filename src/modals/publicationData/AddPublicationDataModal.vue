@@ -164,8 +164,6 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</div>
 			</div>
 
-			{{ verifyInput }}
-
 			<span class="flex-horizontal">
 				<NcButton v-if="success === null"
 					:disabled="loading
@@ -558,8 +556,7 @@ export default {
 			switch (selectedProperty.type) {
 			case 'string':{
 				if (['date', 'time', 'date-time'].includes(selectedProperty.format)) {
-					console.log(this.value)
-					result = schema.safeParse(new Date(this.value).toISOString())
+					result = schema.safeParse(this.value.toISOString())
 				} else result = schema.safeParse(this.value)
 				break
 			}
@@ -606,16 +603,10 @@ export default {
 			switch (prop.type) {
 			case 'string': {
 				if (prop.format === 'date' || prop.format === 'time' || prop.format === 'date-time') {
-					let isValidDate
-					try {
-						Date('fdsfs')
-						isValidDate = true
-					} catch (e) {
-						isValidDate = false
-					}
+					const isValidDate = !isNaN(new Date(prop.default))
 
 					console.log('Set default value to Date ', isValidDate ? prop.default : '')
-					this.value = new Date(isValidDate ? prop.default : '')
+					this.value = new Date(isValidDate ? prop.default : new Date())
 					break
 				} else {
 					console.log('Set default value to ', prop.default)
