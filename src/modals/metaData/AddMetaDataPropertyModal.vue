@@ -323,12 +323,12 @@ export default {
 		}
 	},
 	computed: {
-		computedObjectToBeWatched() {
+		metadataProperty() {
 			return Object.assign({}, this.properties)
 		},
 	},
 	watch: {
-		computedObjectToBeWatched: {
+		metadataProperty: {
 			deep: true,
 			handler(newVal, oldVal) {
 				if (newVal.type !== oldVal.type) {

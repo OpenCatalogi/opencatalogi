@@ -314,6 +314,24 @@ export default {
 			hasUpdated: false,
 		}
 	},
+	computed: {
+		metadataProperty() {
+			return Object.assign({}, this.metadata.properties[metadataStore.metadataDataKey] && this.metadata.properties[metadataStore.metadataDataKey])
+		},
+	},
+	watch: {
+		metadataProperty: {
+			deep: true,
+			handler(newVal, oldVal) {
+				if (newVal.type !== oldVal.type) {
+
+					if (newVal.type === 'boolean' && newVal.default === 'true') this.metadata.properties[metadataStore.metadataDataKey].default = true
+					if (newVal.type === 'boolean' && newVal.default !== 'true') this.metadata.properties[metadataStore.metadataDataKey].default = false
+					if (newVal.type !== 'boolean' && oldVal.type === 'boolean') this.metadata.properties[metadataStore.metadataDataKey].default = ''
+				}
+			},
+		},
+	},
 	updated() {
 		if (navigationStore.modal === 'editMetadataDataModal' && this.hasUpdated) {
 			if (this.dataKey !== metadataStore.metadataDataKey) this.hasUpdated = false
