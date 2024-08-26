@@ -107,6 +107,7 @@ export class Metadata implements TMetadata {
 		const schema = z.object({
 			title: z.string().min(1), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
 			description: z.string(),
+			summary: z.string(),
 			version: z.string(),
 			required: z.string().array(),
 			properties: z.record(propertiesDataSchema), // z.record allows for any amount of any keys, with specific type for value validation
