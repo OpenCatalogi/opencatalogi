@@ -87,7 +87,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:active="publicationStore.publicationItem.id === publication.id"
 					:details="publication?.status"
 					:counter-number="publication?.attachmentCount.toString()"
-					@click="publicationStore.setPublicationItem(publication)">
+					@click="setActive(publication)">
 					<template #icon>
 						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
 						<ArchiveOutline v-if="publication.status === 'archived'" :size="44" />
@@ -277,15 +277,21 @@ export default {
 			}
 			this.updateNormalSearch()
 		},
+		setActive(publication) {
+			if (JSON.stringify(publicationStore.publicationItem) === JSON.stringify(publication)) {
+				publicationStore.setPublicationItem(false)
+				publicationStore.setPublicationMetaData(false)
+			} else { publicationStore.setPublicationItem(publication) }
+		},
 	},
 }
 </script>
 <style>
-.listHeader{
+.listHeader {
 	display: flex;
 }
 
-.refresh{
+.refresh {
 	margin-block-start: 11px !important;
     margin-block-end: 11px !important;
     margin-inline-end: 10px;

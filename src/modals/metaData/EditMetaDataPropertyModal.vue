@@ -23,7 +23,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 			<div v-if="success === null && metadata.properties[metadataStore.metadataDataKey]" class="form-group">
 				<NcTextField
 					:disabled="loading"
-					label="Title"
+					label="Title*"
 					required
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].title" />
 
@@ -43,7 +43,115 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					label="Patroon (regex)"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].pattern" />
 
-				<NcTextField :disabled="loading"
+				<NcTextField v-if="!metadata.properties[metadataStore.metadataDataKey].type"
+					:disabled="loading"
+					label="Default waarde"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].default" />
+
+				<!-- TYPE : STRING -->
+				<div v-if="metadata.properties[metadataStore.metadataDataKey].type === 'string'">
+					<NcDateTimePicker v-if="metadata.properties[metadataStore.metadataDataKey].format === 'date'"
+						v-model="metadata.properties[metadataStore.metadataDataKey].default"
+						type="date"
+						label="Default waarde"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcDateTimePicker v-else-if="metadata.properties[metadataStore.metadataDataKey].format === 'time'"
+						v-model="metadata.properties[metadataStore.metadataDataKey].default"
+						type="time"
+						label="Default waarde"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcDateTimePicker v-else-if="metadata.properties[metadataStore.metadataDataKey].format === 'date-time'"
+						v-model="metadata.properties[metadataStore.metadataDataKey].default"
+						type="datetime"
+						label="Default waarde"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcInputField v-else-if="metadata.properties[metadataStore.metadataDataKey].format === 'email'"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+						type="email"
+						label="Default waarde (Email)"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcInputField v-else-if="metadata.properties[metadataStore.metadataDataKey].format === 'idn-email'"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+						type="email"
+						label="Default waarde (Email)"
+						helper-text="email"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcTextField v-else-if="metadata.properties[metadataStore.metadataDataKey].format === 'regex'"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+						label="Default waarde (Regex)"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcInputField v-else-if="metadata.properties[metadataStore.metadataDataKey].format === 'password'"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+						type="password"
+						label="Default waarde (Wachtwoord)"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcInputField v-else-if="metadata.properties[metadataStore.metadataDataKey].format === 'telephone'"
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+						type="tel"
+						label="Default waarde (Telefoonnummer)"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcTextField v-else
+						:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+						label="Default waarde"
+						:disabled="loading"
+						:loading="loading" />
+				</div>
+
+				<!-- TYPE : NUMBER -->
+				<NcInputField v-else-if="metadata.properties[metadataStore.metadataDataKey].type === 'number'"
+					:disabled="loading"
+					type="number"
+					step="any"
+					label="Default waarde"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+					:loading="loading" />
+				<!-- TYPE : INTEGER -->
+				<NcInputField v-else-if="metadata.properties[metadataStore.metadataDataKey].type === 'integer'"
+					:disabled="loading"
+					type="number"
+					step="1"
+					label="Default waarde"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+					:loading="loading" />
+				<!-- TYPE : OBJECT -->
+				<NcTextArea v-else-if="metadata.properties[metadataStore.metadataDataKey].type === 'object'"
+					:disabled="loading"
+					label="Default waarde"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+					:loading="loading" />
+				<!-- TYPE : ARRAY -->
+				<NcTextArea v-else-if="metadata.properties[metadataStore.metadataDataKey].type === 'array'"
+					:disabled="loading"
+					label="Waarde lijst (split op ,)"
+					:value.sync="metadata.properties[metadataStore.metadataDataKey].default"
+					:loading="loading" />
+				<!-- TYPE : BOOLEAN -->
+				<NcCheckboxRadioSwitch v-else-if="metadata.properties[metadataStore.metadataDataKey].type === 'boolean'"
+					:disabled="loading"
+					:checked.sync="metadata.properties[metadataStore.metadataDataKey].default"
+					:loading="loading">
+					Default waarde
+				</NcCheckboxRadioSwitch>
+
+				<!-- TYPE : DICTIONARY -->
+				<NcTextField v-else-if="metadata.properties[metadataStore.metadataDataKey].type === 'dictionary'"
+					:disabled="loading"
 					label="Default waarde"
 					:value.sync="metadata.properties[metadataStore.metadataDataKey].default" />
 
@@ -122,8 +230,8 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				</div>
 			</div>
 
-			<NcButton v-if="success === null"
-				:disabled="loading"
+			<NcButton v-if="success === null && metadata.properties[metadataStore.metadataDataKey]"
+				:disabled="!metadata.properties[metadataStore.metadataDataKey].title || !metadata.properties[metadataStore.metadataDataKey].type || loading"
 				type="primary"
 				@click="updateMetadata(metadata.id)">
 				<template #icon>
@@ -147,6 +255,9 @@ import {
 	NcCheckboxRadioSwitch,
 	NcNoteCard,
 	NcLoadingIcon,
+	NcDateTimePicker,
+	NcInputField,
+	NcTextArea,
 } from '@nextcloud/vue'
 
 // icons
@@ -162,6 +273,9 @@ export default {
 		NcButton,
 		NcNoteCard,
 		NcLoadingIcon,
+		NcDateTimePicker,
+		NcInputField,
+		NcTextArea,
 	},
 	data() {
 		return {
@@ -190,7 +304,7 @@ export default {
 			},
 			dataKey: '',
 			typeOptions: {
-				inputLabel: 'Type',
+				inputLabel: 'Type*',
 				multiple: false,
 				options: ['string', 'number', 'integer', 'object', 'array', 'boolean', 'dictionary'],
 			},
@@ -205,6 +319,24 @@ export default {
 			successMessage: '',
 			hasUpdated: false,
 		}
+	},
+	computed: {
+		metadataProperty() {
+			return Object.assign({}, this.metadata.properties[metadataStore.metadataDataKey] && this.metadata.properties[metadataStore.metadataDataKey])
+		},
+	},
+	watch: {
+		metadataProperty: {
+			deep: true,
+			handler(newVal, oldVal) {
+				if (newVal.type !== oldVal.type) {
+
+					if (newVal.type === 'boolean' && newVal.default === 'true') this.metadata.properties[metadataStore.metadataDataKey].default = true
+					if (newVal.type === 'boolean' && newVal.default !== 'true') this.metadata.properties[metadataStore.metadataDataKey].default = false
+					if (newVal.type !== 'boolean' && oldVal.type === 'boolean') this.metadata.properties[metadataStore.metadataDataKey].default = ''
+				}
+			},
+		},
 	},
 	updated() {
 		if (navigationStore.modal === 'editMetadataDataModal' && this.hasUpdated) {

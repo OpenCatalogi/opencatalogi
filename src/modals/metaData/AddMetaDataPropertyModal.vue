@@ -18,15 +18,13 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 
 			<div v-if="!success" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Eigenschap naam"
-					required
+					label="Eigenschap naam*"
 					:error="checkIfTitleIsUnique(properties.name)"
 					:helper-text="checkIfTitleIsUnique(properties.name) ? 'Deze naam is al in gebruik. Kies een andere naam.' : ''"
 					:value.sync="properties.name" />
 
 				<NcTextField :disabled="loading"
-					label="Titel"
-					required
+					label="Titel*"
 					:value.sync="properties.title" />
 
 				<NcTextField :disabled="loading"
@@ -44,7 +42,115 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					label="Patroon (regex)"
 					:value.sync="properties.pattern" />
 
-				<NcTextField :disabled="loading"
+				<NcTextField v-if="!properties.type"
+					:disabled="loading || !properties.type"
+					label="Default waarde"
+					:value.sync="properties.default" />
+
+				<!-- TYPE : STRING -->
+				<div v-if="properties.type === 'string'">
+					<NcDateTimePicker v-if="properties.format === 'date'"
+						v-model="properties.default"
+						type="date"
+						label="Default waarde"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcDateTimePicker v-else-if="properties.format === 'time'"
+						v-model="properties.default"
+						type="time"
+						label="Default waarde"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcDateTimePicker v-else-if="properties.format === 'date-time'"
+						v-model="properties.default"
+						type="datetime"
+						label="Default waarde"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcInputField v-else-if="properties.format === 'email'"
+						:value.sync="properties.default"
+						type="email"
+						label="Default waarde (Email)"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcInputField v-else-if="properties.format === 'idn-email'"
+						:value.sync="properties.default"
+						type="email"
+						label="Default waarde (Email)"
+						helper-text="email"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcTextField v-else-if="properties.format === 'regex'"
+						:value.sync="properties.default"
+						label="Default waarde (Regex)"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcInputField v-else-if="properties.format === 'password'"
+						:value.sync="properties.default"
+						type="password"
+						label="Default waarde (Wachtwoord)"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcInputField v-else-if="properties.format === 'telephone'"
+						:value.sync="properties.default"
+						type="tel"
+						label="Default waarde (Telefoonnummer)"
+						:disabled="loading"
+						:loading="loading" />
+
+					<NcTextField v-else
+						:value.sync="properties.default"
+						label="Default waarde"
+						:disabled="loading"
+						:loading="loading" />
+				</div>
+
+				<!-- TYPE : NUMBER -->
+				<NcInputField v-else-if="properties.type === 'number'"
+					:disabled="loading"
+					type="number"
+					step="any"
+					label="Default waarde"
+					:value.sync="properties.default"
+					:loading="loading" />
+				<!-- TYPE : INTEGER -->
+				<NcInputField v-else-if="properties.type === 'integer'"
+					:disabled="loading"
+					type="number"
+					step="1"
+					label="Default waarde"
+					:value.sync="properties.default"
+					:loading="loading" />
+				<!-- TYPE : OBJECT -->
+				<NcTextArea v-else-if="properties.type === 'object'"
+					:disabled="loading"
+					label="Default waarde"
+					:value.sync="properties.default"
+					:loading="loading" />
+				<!-- TYPE : ARRAY -->
+				<NcTextArea v-else-if="properties.type === 'array'"
+					:disabled="loading"
+					label="Waarde lijst (split op ,)"
+					:value.sync="properties.default"
+					:loading="loading" />
+				<!-- TYPE : BOOLEAN -->
+				<NcCheckboxRadioSwitch v-else-if="properties.type === 'boolean'"
+					:disabled="loading"
+					:checked.sync="properties.default"
+					:loading="loading">
+					Default waarde
+				</NcCheckboxRadioSwitch>
+
+				<!-- TYPE : STRING -->
+				<NcTextField v-else-if="properties.type === 'dictionary'"
+					:disabled="loading || !properties.type"
 					label="Default waarde"
 					:value.sync="properties.default" />
 
@@ -161,6 +267,8 @@ import {
 	NcInputField,
 	NcNoteCard,
 	NcLoadingIcon,
+	NcDateTimePicker,
+	NcTextArea,
 } from '@nextcloud/vue'
 
 // icons
@@ -177,6 +285,8 @@ export default {
 		NcButton,
 		NcNoteCard,
 		NcLoadingIcon,
+		NcDateTimePicker,
+		NcTextArea,
 	},
 	data() {
 		return {
@@ -203,7 +313,7 @@ export default {
 				maxItems: 0,
 			},
 			typeOptions: {
-				inputLabel: 'Type',
+				inputLabel: 'Type*',
 				multiple: false,
 				options: ['string', 'number', 'integer', 'object', 'array', 'boolean', 'dictionary'],
 			},
@@ -217,6 +327,22 @@ export default {
 			error: false,
 			hasUpdated: false,
 		}
+	},
+	computed: {
+		metadataProperty() {
+			return Object.assign({}, this.properties)
+		},
+	},
+	watch: {
+		metadataProperty: {
+			deep: true,
+			handler(newVal, oldVal) {
+				if (newVal.type !== oldVal.type) {
+					if (newVal.type === 'boolean') this.properties.default = false
+					if (newVal.type !== 'boolean' && oldVal.type === 'boolean') this.properties.default = ''
+				}
+			},
+		},
 	},
 	methods: {
 		addMetadata() {
