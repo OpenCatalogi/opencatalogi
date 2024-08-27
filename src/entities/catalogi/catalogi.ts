@@ -1,5 +1,6 @@
 import { SafeParseReturnType, z } from 'zod'
 import { TCatalogi } from './catalogi.types'
+import { TOrganisation } from '../organisation'
 
 export class Catalogi implements TCatalogi {
 
@@ -9,7 +10,7 @@ export class Catalogi implements TCatalogi {
 	public description: string
 	public image: string
 	public listed: boolean
-	public organisation: string
+	public organisation: TOrganisation
 
 	public metadata: string[]
 
@@ -25,7 +26,7 @@ export class Catalogi implements TCatalogi {
 		this.description = data?.description || ''
 		this.image = data?.image || ''
 		this.listed = data?.listed || false
-		this.organisation = data.organisation || ''
+		this.organisation = data.organisation || null
 		this.metadata = (Array.isArray(data.metadata) && data.metadata) || []
 	}
 
@@ -38,7 +39,15 @@ export class Catalogi implements TCatalogi {
 			description: z.string().max(2555),
 			image: z.string().max(255),
 			listed: z.boolean(),
-			organisation: z.string(),
+			organisation: z.object({
+				title: z.string().min(1),
+				summary: z.string().min(1),
+				description: z.string(),
+				oin: z.string(),
+				tooi: z.string(),
+				rsin: z.string(),
+				pki: z.string(),
+			}),
 			metadata: z.string().array(),
 		})
 
