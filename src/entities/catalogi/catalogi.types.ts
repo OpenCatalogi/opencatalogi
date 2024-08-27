@@ -1,3 +1,5 @@
+import { TOrganisation } from '../organisation'
+
 export type TCatalogi = {
     id: string
     title: string
@@ -5,6 +7,6 @@ export type TCatalogi = {
     description: string
     image: string
     listed: boolean
-    organisation: string
+    organisation: TOrganisation
     metadata: string[]
 }

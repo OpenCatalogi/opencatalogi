@@ -18,7 +18,16 @@ export const mockPublicationsData = (): TPublication[] => [
 			description: 'a really really long description about this catalogus',
 			image: 'string',
 			listed: false,
-			organisation: '23',
+			organisation: {
+				id: '1',
+				title: 'Decat',
+				summary: 'a short form summary',
+				description: 'a really really long description about this organisation',
+				oin: 'string',
+				tooi: 'string',
+				rsin: 'string',
+				pki: 'string',
+			},
 			metadata: ['1', '3'],
 		},
 		metaData: { // full data
@@ -167,7 +176,16 @@ export const mockPublicationsData = (): TPublication[] => [
 			image: 'string',
 			// @ts-expect-error -- listed needs to be a boolean
 			listed: 0.2,
-			organisation: '23',
+			organisation: {
+				id: '1',
+				title: 'Decat',
+				summary: 'a short form summary',
+				description: 'a really really long description about this organisation',
+				oin: 'string',
+				tooi: 'string',
+				rsin: 'string',
+				pki: 'string',
+			},
 			metadata: ['1', '3'],
 		},
 		metaData: { // full data
