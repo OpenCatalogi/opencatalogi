@@ -19,11 +19,11 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		</div>
 		<div v-if="success === null" class="wrapper">
 			<NcTextField :disabled="loading"
-				label="Titel *"
+				label="Titel*"
 				required
 				:value.sync="publicationItem.title" />
 			<NcTextField :disabled="loading"
-				label="Samenvatting *"
+				label="Samenvatting*"
 				required
 				:value.sync="publicationItem.summary" />
 			<NcTextArea :disabled="loading"

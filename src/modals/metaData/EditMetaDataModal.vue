@@ -30,7 +30,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 					:disabled="loading"
 					:value.sync="metadataStore.metaDataItem.version" />
 				<NcTextField
-					label="Samenvatting *"
+					label="Samenvatting*"
 					required="true"
 					:disabled="loading"
 					:value.sync="metadataStore.metaDataItem.summary" />
