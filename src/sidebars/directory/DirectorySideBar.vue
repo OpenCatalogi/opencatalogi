@@ -100,7 +100,6 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 			<div v-if="!loading">
 				<NcCheckboxRadioSwitch v-for="(metadataSingular, i) in directoryStore.listingItem.metadata"
 					:key="`${metadataSingular}${i}`"
-					:disabled="metaDataloading"
 					:checked.sync="checkedMetadata[metadataSingular]"
 					type="switch">
 					{{ metadataSingular }}
@@ -136,7 +135,6 @@ export default {
 			checkedMetadata: {},
 			listing: '',
 			loading: false,
-			metaDataloading: false,
 			syncLoading: false,
 		}
 	},
