@@ -75,6 +75,8 @@ class PublicationsController extends Controller
 	/**
      * @NoAdminRequired
      * @NoCSRFRequired
+	 * 	 * @PublicPage
+
      */
     public function page(?string $getParameter)
     {
@@ -211,6 +213,7 @@ class PublicationsController extends Controller
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
+	 * @PublicPage
      */
     public function show(string|int $id, ObjectService $objectService): JSONResponse
     {
