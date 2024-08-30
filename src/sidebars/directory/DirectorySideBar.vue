@@ -36,6 +36,14 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 				<InformationSlabSymbol :size="20" />
 			</template>
 			<div class="container">
+                <div v-if="directoryStore.listingItem.organisation">
+                    <CertificateOutline class="orgCertIcon"s :size="20" />
+                    <p>Deze organisatie is niet gevalideerd met een certificaat.</p>
+                </div>
+                <div v-if="!directoryStore.listingItem.organisation">
+                    <CertificateOutline class="orgCertIcon"s :size="20" />
+                    <p>Deze listing heeft geen organisatie.</p>
+                </div>
 				<div>
 					<b>Samenvatting:</b>
 					<span>{{ directoryStore.listingItem?.summery }}</span>
@@ -119,6 +127,7 @@ import DatabaseSyncOutline from 'vue-material-design-icons/DatabaseSyncOutline.v
 import CogOutline from 'vue-material-design-icons/CogOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import InformationSlabSymbol from 'vue-material-design-icons/InformationSlabSymbol.vue'
+import CertificateOutline from 'vue-material-design-icons/CertificateOutline.vue'
 
 export default {
 	name: 'DirectorySideBar',
@@ -302,5 +311,11 @@ export default {
 .syncButton {
 	margin-block-start: 15px;
 	width: 100% !important;
+}
+
+.orgCertIcon {
+    float: left;
+    margin-block-start: 4px;
+    margin-inline-end: 10px;
 }
 </style>
