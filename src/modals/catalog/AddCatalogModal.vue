@@ -22,10 +22,9 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			</div>
 			<div v-if="success === null" class="form-group">
 				<NcTextField :disabled="loading"
-					label="Titel"
+					label="Titel*"
 					maxlength="255"
-					:value.sync="catalogi.title"
-					required />
+					:value.sync="catalogi.title" />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"

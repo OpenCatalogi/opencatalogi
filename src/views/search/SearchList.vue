@@ -1,5 +1,5 @@
 <script setup>
-import { searchStore } from '../../store/store.js'
+import { searchStore, metadataStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -9,7 +9,7 @@ import { searchStore } from '../../store/store.js'
 			:key="`${result}${i}`"
 			:name="result.title || 'Geen titel'"
 			:subname="result.summary || 'Geen samenvatting'"
-			:details="result.metaData?.title || 'Geen metadata'"
+			:details="getMetaDataTitle(result.metaData) || 'Geen metadata'"
 			:bold="false"
 			:force-display-actions="true"
 			:counter-number="result.attachment_count || 0">
@@ -43,10 +43,21 @@ export default {
 		ListBoxOutline,
 		OpenInNew,
 	},
+	mounted() {
+		metadataStore.refreshMetaDataList()
+	},
 	methods: {
 		openLink(link, type = '') {
 			window.open(link, type)
 		},
+
+		getMetaDataTitle(source) {
+			if (!metadataStore.metaDataList) return
+			const metaDataObject = metadataStore.metaDataList.find((metaData) => metaData.source === source)
+
+			return metaDataObject?.title
+		},
+
 	},
 }
 </script>

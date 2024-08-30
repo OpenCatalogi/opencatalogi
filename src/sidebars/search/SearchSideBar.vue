@@ -37,7 +37,7 @@ import { searchStore, metadataStore, catalogiStore } from '../../store/store.js'
 			<NcCheckboxRadioSwitch v-for="(metaData, i) in metadataStore.metaDataList"
 				:key="`${metaData}${i}`"
 				type="switch"
-				:checked.sync="searchStore.metadata[metaData.id]">
+				:checked.sync="searchStore.metadata[metaData.source]">
 				{{ metaData.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>

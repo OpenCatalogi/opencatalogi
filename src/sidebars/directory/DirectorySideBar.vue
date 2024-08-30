@@ -150,7 +150,7 @@ export default {
 				const shouldCopyMetadata = Object.entries(newValue)[0][1]
 				if (shouldCopyMetadata === true) {
 					this.copyMetadata(metadataUrl)
-				} else if (shouldCopyMetadata === false && metadataUrl) {
+				} else if (shouldCopyMetadata === false && metadataUrl && metadataStore.metaDataList.length > 0) {
 					this.deleteMetadata(metadataUrl)
 				}
 			},
@@ -197,6 +197,7 @@ export default {
 		},
 		copyMetadata(metadataUrl) {
 			this.loading = true
+
 			fetch(
 				metadataUrl,
 				{
@@ -210,14 +211,17 @@ export default {
 						if (!metaDataSources.includes(data.source)) this.createMetadata(data)
 					})
 					this.loading = false
+
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
+
 				})
 		},
 		createMetadata(data) {
 			this.loading = true
+
 			data.title = 'KOPIE: ' + data.title
 
 			if (Object.keys(data.properties).length === 0) {
@@ -238,15 +242,19 @@ export default {
 				},
 			)
 				.then((response) => {
+					metadataStore.refreshMetaDataList()
 					this.loading = false
+
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
+
 				})
 		},
 		deleteMetadata(metadataUrl) {
 			this.loading = true
+
 			const metadataId = this.getMetadataId(metadataUrl)
 
 			fetch(
@@ -260,10 +268,14 @@ export default {
 			)
 				.then(() => {
 					this.loading = false
+
+					metadataStore.refreshMetaDataList()
+
 				})
 				.catch((err) => {
 					this.error = err
 					this.loading = false
+
 				})
 		},
 		synDirectroy() {
