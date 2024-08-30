@@ -95,6 +95,9 @@ class SearchController extends Controller
 		$filters = $this->request->getParams();
 		unset($filters['_route']);
 
+        // Status must be always published when searching for publications
+        $filters['status'] = 'published';
+
         $fieldsToSearch = ['p.title', 'p.description', 'p.summary'];
 
 		if($this->config->hasKey($this->appName, 'elasticLocation') === false
@@ -210,7 +213,13 @@ class SearchController extends Controller
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 		) {
 			try {
-				return new JSONResponse($this->publicationMapper->find(id: (int) $id));
+                $result = $this->publicationMapper->find(id: (int) $id);
+
+                if (isset($result['status']) === true && $result['status'] === 'published') {
+                    return new JSONResponse(data: $result);
+                } else {
+                    return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+                }
 			} catch (DoesNotExistException $exception) {
 				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
 			}
@@ -223,8 +232,11 @@ class SearchController extends Controller
 		$filters['_id'] = (string) $id;
 
 		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
-
-        return new JSONResponse($result);
+        if (isset($result['status']) === true && $result['status'] === 'published') {
+            return new JSONResponse(data: $result);
+        } else {
+            return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+        }
     }
 
 }
