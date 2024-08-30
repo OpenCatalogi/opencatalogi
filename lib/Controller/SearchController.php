@@ -215,7 +215,7 @@ class SearchController extends Controller
 			try {
                 $result = $this->publicationMapper->find(id: (int) $id);
 
-                if (isset($result['status']) === true && $result['status'] === 'published') {
+                if ($result->getStatus() !== null && $result->getStatus() === 'published') {
                     return new JSONResponse(data: $result);
                 } else {
                     return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
