@@ -1,11 +1,21 @@
 name: Release Workflow
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   release-management:
     runs-on: ubuntu-latest
     steps:
+    
+      - name: Set app env
+        run: |
+          # Split and keep last
+          echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+          echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
       # Step 1: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -90,7 +100,7 @@ jobs:
       # Step 10: Sign the TAR.GZ file with OpenSSL
       - name: Sign the TAR.GZ file with OpenSSL
         run: |
-          openssl smime -sign -in nexcloud-release.tar.gz -out nexcloud-release-signed.tar.gz -signer signing-cert.crt -inkey signing-key.key -outform PEM
+          openssl dgst -sha512 -sign signing-key.key nexcloud-release.tar.gz | openssl base64 -out nexcloud-release.signature
 
       # Step 11: Generate Git version information
       - name: Git Version
@@ -125,16 +135,6 @@ jobs:
           mkdir -p package/opencatalogi
           rsync -av --progress --exclude='package' --exclude='.git' ./ package/opencatalogi/
 
-      # Step 16: Create the ZIP archive with code in opencatalogi directory
-      - name: Create ZIP
-        run: |
-          cd package && zip -r ../opencatalogi-build.zip opencatalogi
-
-      # Step 17: Create the TAR.GZ archive with code in opencatalogi directory
-      - name: Create Tarball
-        run: |
-          cd package && tar -czf ../opencatalogi-build.tar.gz opencatalogi    
-
       # Step 18: Create a new release on GitHub
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
@@ -142,8 +142,28 @@ jobs:
           artifacts: |
             LICENSE.md
             nexcloud-release.tar.gz
-            nexcloud-release-signed.tar.gz
+            nexcloud-release.signature
             opencatalogi-build.zip
             opencatalogi-build.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.version }}
+
+      - name: Attach tarball to github release
+        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # v2
+        id: attach_to_release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: nexcloud-release.tar.gz
+          asset_name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
+
+      - name: Upload app to Nextcloud appstore
+        uses: nextcloud-releases/nextcloud-appstore-push-action@a011fe619bcf6e77ddebc96f9908e1af4071b9c1 # v1
+        with:
+          app_name: ${{ env.APP_NAME }}
+          appstore_token: ${{ secrets.NEXTCLOUD_APPSTORE_TOKEN }}
+          download_url: ${{ steps.attach_to_release.outputs.browser_download_url }}
+          app_private_key: ${{ secrets.NEXTCLOUD_SIGNING_KEY }}
+      
+
