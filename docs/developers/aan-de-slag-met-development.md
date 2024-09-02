@@ -26,62 +26,9 @@ De Ontwikkelpartijen van [Core](https://documentatie.opencatalogi.nl/Docs/Projec
 
 ![alt text](feature_flow.png)
 
-## Known issues
-
-Iedere applicatie heeft technical debt, hier open en eerlijk over zijn helpt developers die willen bijdragen. Op dit moment hebben wij de volgende aandachtspunten waar we aan werken
-
-* Test coverage frontend is te laag (is 70% zou 80%) moeten zijn
-* Test coverage backend is te laag (is 60% zou 80%) moeten zijn
-* Op de frontend bevaten de stores nog busnes logica die naar apparte services moet worden verplaats
-
 ## Application development
 
 Omdat de applicatie is ontwikkeld met Nextcloud, is er uitgebreide informatie te vinden in de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer_manual/index.html) zelf. Dit geldt zowel voor de lay-out van de app als voor de vele componenten die eraan toegevoegd kunnen worden. Tijdens de ontwikkeling van de OpenCatalogi-app is het *documentation-first* principe gehanteerd, waarbij de ontwikkelaars eerst de [Nextcloud-documentatie](https://docs.nextcloud.com/server/latest/developer_manual/index.html) hebben geraadpleegd.
-
-### Gebruikersdocumentatie
-
-We gebruiken Gitbook voor de gebruikersdocumentatie. Features binnen de app zouden zo veel mogelijk direct moeten doorverwijzen naar deze documentatie.
-
-Ook voor de documentatie wordt een linter gebruikt namelijk [remarklint](https://github.com/remarkjs/remark-lint).
-
-De commando's om deze linter in de CLI te gebruiken zijn [hier te vinden](https://github.com/remarkjs/remark-lint?tab=readme-ov-file#what-is-this) voor een uitgebreide output in de terminal.
-
-### Performance
-
-Voor een goede gebruikers ervaring voor zowel bezoekers als medewerkers is het belangrijk dat dat de applicatie snel reageerd, we streven daarbij naar een performance van rond de 100 miliseconde (1/10) van een seconde. Maar overall zou de performance odner de 200 miliseconde moeten blijven. Acties die langer dan een seconde duren zijn reden om een purrl request te weigeren.
-
-## API Development
-
-De ontwikkeling van de API wordt bijgehouden met de documentatietool [Stoplight.io](https://stoplight.io/), die automatisch een [OpenAPI Specificatie (OAS)](https://www.noraonline.nl/wiki/FS:Openapi-specification#:~:text=Een%20OpenAPI%20Specification%20\(OAS\)%20beschrijft,er%20achter%20de%20API%20schuilgaat.) genereert uit de documentatie. De Stoplight voor OpenCatalogi is [hier](https://conduction.stoplight.io/docs/open-catalogi/6yuj08rgf7w44-open-catalogi-api) te vinden.
-
-## Frontend Development
-
-### Storage en Typing
-
-Om gegevens deelbaar te maken tussen de verschillende Vue-componenten maken we gebruik van [statemanagement](https://vuejs.org/guide/scaling-up/state-management) waarbij we het Action, State, View patroon van Vue zelf volgen. Omdat de applicatie ingewikkeld begint te worden stappen we daarbij over van [simple state management](https://vuejs.org/guide/scaling-up/state-management#simple-state-management-with-reactivity-api) naar [Pinia](https://pinia.vuejs.org/), de door Vue zelf geadviseerde opvolger van [Vuex](https://vuejs.org/guide/scaling-up/state-management#pinia).
-
-Daarnaast gebruiken we Typescript voor het definiëren van entities.
-
-### Modals
-
-* Er mag altijd slechts één modal actief zijn.
-* Modals moeten abstract en overal bereikbaar zijn.
-* Modals moeten geplaatst worden in de map src/modals.
-* Modals moeten getriggerd worden via de state (zodat knoppen die modal openen overal plaatsbaar zijn).
-* Modals moeten geïmporteerd worden via `/src/modals/Modals.vue`.
-
-### Views
-
-* Views moeten dezelfde bestandsnaam hebben als de geëxporteerde naam en een correlatie hebben met de map waarin het bestand zich bevindt.
-* Bijvoorbeeld, als het bestand een detailpagina is en het zich in de map `publications` bevindt, moet het bestand de naam `PublicationDetail.vue` hebben.
-
-## Documentatie van next cloud
-
-Het is goed om bij development kennnis te nemen/hebben van de volgende gebruikte Nextcloud onderdelen:
-
-* [Icons](https://pictogrammers.com/library/mdi/)
-* [Layout](https://docs.nextcloud.com/server/latest/developer_manual/design/layout.html)-
-* [Componenten](https://nextcloud-vue-components.netlify.app/)
 
 ## Kwaliteit, Stabiliteit en Veiligheid
 
@@ -156,7 +103,7 @@ composer audit
 
 ![alt text](composer_audit.png)
 
-Voor beide geldt dat het aantal acceptabele critical vulnerabilities in *production packadges* 0 is.
+Voor beide geldt dat het aantal acceptabele critical vulnerabilities 0 is.
 
 ### Gebruikersdocumentatie
 

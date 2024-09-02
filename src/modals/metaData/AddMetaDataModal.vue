@@ -89,6 +89,7 @@ export default {
 				title: '',
 				version: '',
 				description: '',
+				summary: '',
 				required: '',
 			}
 			navigationStore.setModal(false)
