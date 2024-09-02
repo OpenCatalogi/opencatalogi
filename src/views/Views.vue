@@ -42,10 +42,5 @@ export default {
 		Search,
 		NcAppContent,
 	},
-	data() {
-		return {
-
-		}
-	},
 }
 </script>

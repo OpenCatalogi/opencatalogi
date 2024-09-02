@@ -61,7 +61,7 @@ Create a [feature request](https://github.com/OpenCatalogi/.github/issues/new/ch
 	<navigations>
 		<navigation>
 			<id>opencatalogi</id>
-			<name>OpenCatalogi</name>
+			<name>Catalogi</name>
 			<route>opencatalogi.dashboard.page</route>
 			<icon>app.svg</icon>
 			<type>link</type>

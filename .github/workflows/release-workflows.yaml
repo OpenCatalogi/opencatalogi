@@ -1,6 +1,9 @@
 name: Release Workflow
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   release-management:
