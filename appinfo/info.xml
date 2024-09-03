@@ -2,24 +2,66 @@
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>opencatalogi</id>
-	<name>Open Catalogi</name>
-	<summary>The Open Catalogi next cloud app provides a framework for federated catalogouses to work together in an open data ecosystem</summary>
-	<description>Hmmm what could we say</description>
-	<version>0.6.0</version>
+	<name>OpenCatalogi</name>
+	<summary>Framework for federated catalogi to work togethe</summary>
+	<description><![CDATA[📰 A OpenCatalogi App for Nextcloud
+
+The OpenCatalogi Nextcloud app provides a framework for federated catalogi to work together in an open data ecosystem
+
+- 📲 Synchronize your sources with multiple catalogi
+- 🔄 Automatic publications of your open data
+- 🆓 Free and open source under EUPL
+
+**System Cron is currently required for this app to work**
+
+Requirements can be found [here](https://conduction.gitbook.io/opencatalogi-nextcloud/installatie)
+
+The Roadmap is available [here](https://github.com/orgs/OpenCatalogi/projects/1/views/2)
+
+Create a [bug report](https://github.com/OpenCatalogi/.github/issues/new/choose)
+
+Create a [feature request](https://github.com/OpenCatalogi/.github/issues/new/choose)
+    ]]></description>
+	<version>0.6.5</version>
 	<licence>agpl</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
+	<author mail="info@acato.nl" homepage="https://acato.nl/">Acato</author>	
 	<namespace>OpenCatalogi</namespace>
-	<category>workflow</category>
-	<bugs>https://github.com/ConductionNL/ZaakAfhandelApp/issues</bugs>
-	<dependencies>
-		<nextcloud min-version="26" max-version="30"/>
-	</dependencies><background-jobs>
+    <documentation>
+        <user>https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers</user>
+        <admin>https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders</admin>
+        <developer>https://conduction.gitbook.io/opencatalogi-nextcloud/developers</developer>
+    </documentation>
+    <category>integration</category>
+    <website>https://documentatie.opencatalogi.nl/</website>
+	<bugs>https://github.com/OpenCatalogi/.github/issues</bugs>
+    <repository type="git">https://github.com/ConductionNL/opencatalogi.git</repository>
+
+	<screenshot>https://raw.githubusercontent.com/ConductionNL/opencatalogi/master/docs/assets/logo.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/ConductionNL/opencatalogi/master/docs/screenshots/1.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/ConductionNL/opencatalogi/master/docs/screenshots/2.png</screenshot>
+    
+   	<dependencies>
+        <php min-version="8.0" min-int-size="64"/>
+        <database min-version="10">pgsql</database>
+        <database>sqlite</database>
+        <database min-version="8.0">mysql</database>
+		
+        <lib>curl</lib>
+        <lib>zip</lib>
+
+        <owncloud max-version="0" min-version="0"/>
+		<nextcloud min-version="28" max-version="30"/>
+	</dependencies>
+
+	<background-jobs>
 		<job>OCA\OpenCatalogi\Cron\DirectorySync</job>
 	</background-jobs>
+
 	<navigations>
 		<navigation>
 			<id>opencatalogi</id>
-			<name>Open Catalogi</name>
+			<name>Catalogi</name>
 			<route>opencatalogi.dashboard.page</route>
 			<icon>app.svg</icon>
 			<type>link</type>
