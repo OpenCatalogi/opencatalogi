@@ -44,7 +44,7 @@
 		"adbario/php-dot-notation": "^3.3.0",
 		"bamarni/composer-bin-plugin": "^1.8",
 		"elasticsearch/elasticsearch": "^v8.14.0",
-		"guzzlehttp/guzzle": "^7.0",
+		"guzzlehttp/guzzle": "^7.0",		
 		"mpdf/mpdf": "^8.2",
 		"symfony/twig-bundle": "^6.4",
 		"symfony/uid": "^6.4"

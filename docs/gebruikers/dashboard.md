@@ -18,7 +18,6 @@ Op het dashboard van OpenCatalogi vindt u handige informatie die je meteen verde
 1. **Zoekverkeer** Het aantal zoekvragen dat er afgelopen maand aan jouw index (geheel van catalogi) is gesteld.
 2. **Metadata** De verdeling over metadata-types van jouw publicaties
 3. **Status** De verdeling over statustypes van jouw publicaties
-4. **Catalogi** De verdeling over catalogi van jouw publicaties
 
 ![app menu](../assets/oc_dashboard.png)
 

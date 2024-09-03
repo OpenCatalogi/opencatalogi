@@ -1,8 +1,6 @@
-# Catalogus
+# Catalogi
 
-Een catalogus is een verzameling van [publicaties](../gebruikers/publicaties.md). Ze vormen doorgaans een logische versameling rondom een onderwer (bijvoorbeeld WOO) maar kunnen ook worden gebruikt om onderscheid te maken in toegans rechten.
-
-Publicaties behoren dus altijd tot één catalogus en iedere catalogus tot één organisatie. Het is echter wel mogelijk om in één catalogus meerdere [publicatie typen](../beheerders/metadata.md) te ondersteunen. Binnen de softwarecatalogus worden bijvoorbeeld publiccodes (componenten, code, etc.) als diensten beschikbaar gesteld en binnen de WOO meerdere KOOP/TOOI-typen.
+Een catalogus is een verzameling van publicaties. Publicaties behoren dus altijd tot één catalogus en iedere catalogus tot één organisatie. Het is echter wel mogelijk om in één catalogus meerdere metadatatypen te ondersteunen. Binnen de softwarecatalogus worden bijvoorbeeld publiccodes (componenten, code, etc.) als diensten beschikbaar gesteld en binnen de Woo meerdere KOOP/TOOI-typen.
 
 > Catalogi zijn onderdeel van de [OpenCatalogi-Standaard](https://github.com/OpenCatalogi/.github/blob/main/docs/Standaard.md) en gebaseerd op het [catalogue object](https://conduction.stoplight.io/docs/open-catalogi/pk8bsjw0539dv-catalogue).
 

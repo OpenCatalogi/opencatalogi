@@ -18,3 +18,6 @@ Deze documentatie is bedoeld voor diverse doelgroepen:
 Voor meer informatie over OpenCatalogi en onze gemeenschappelijke inspanningen, bezoek onze [GitHub-pagina](https://github.com/OpenCatalogi) of de officiële website op [OpenCatalogi.nl](https://opencatalogi.nl).
 
 Veel succes met het gebruik van de app. Voor vragen of bijdragen, neem gerust contact met ons op via support@conduction.nl.
+
+## Handmatig installeren
+Onder releases vind u de laatste handmatige commit
