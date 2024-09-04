@@ -19,7 +19,6 @@
 		<DepublishPublicationDialog />
 		<DeleteCatalogDialog />
 		<DeleteCatalogiMetadata />
-		<DepublishPublicationDialog />
 		<ArchivePublicationDialog />
 		<ViewLogDialog />
 		<DeleteOrganisationDialog />
