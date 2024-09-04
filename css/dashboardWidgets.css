@@ -1,0 +1,12 @@
+.icon-catalogi-widget {
+  background-image: url("../img/app-dark.svg");
+  filter: var(--background-invert-if-dark);
+}
+
+body.theme--dark .icon-catalogi-widget {
+  background-image: url("../img/app.svg");
+}
+
+body .icon-open-in-app {
+  background-image: url("../img/open-in-app.svg");
+}
