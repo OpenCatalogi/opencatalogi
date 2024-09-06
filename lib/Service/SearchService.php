@@ -262,6 +262,28 @@ class SearchService
 			}
 		}
 
+		// Handle additional filters with comma-separated values (for OR conditions)
+		foreach ($filters as $key => $value) {
+			if ($key === '_search') {
+				continue; // Skip _search field
+			}
+
+			// Check if the filter value contains commas, meaning multiple values (OR conditions)
+			if (strpos($value, ',') !== false) {
+				$values = explode(',', $value); // Split the comma-separated values into an array
+				$orConditions = [];
+				foreach ($values as $i => $val) {
+					$paramKey = ":{$key}_$i"; // Generate unique parameter key
+					$orConditions[] = "$key = $paramKey";
+					$searchParams[$paramKey] = trim($val); // Add each value to the search params
+				}
+				$searchConditions[] = '(' . implode(' OR ', $orConditions) . ')';
+			} else {
+				$searchConditions[] = "$key = :$key";
+				$searchParams[":$key"] = $value;
+			}
+		}
+
 		return $searchConditions;
 
 	}//end createMongoDBSearchFilter()

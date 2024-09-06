@@ -207,12 +207,19 @@ class PublicationMapper extends QBMapper
 
 		$qb = $this->addFilters(queryBuilder: $qb, filters: $filters);
 
-        if (empty($searchConditions) === false) {
-            $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
-            foreach ($searchParams as $param => $value) {
-                $qb->setParameter($param, $value);
-            }
-        }
+
+        // Add search conditions
+		if (!empty($searchConditions)) {
+			// Conditions between different filters should be AND
+			foreach ($searchConditions as $condition) {
+				$qb->andWhere($condition);
+			}
+
+			// Set parameters for the search conditions
+			foreach ($searchParams as $param => $value) {
+				$qb->setParameter($param, $value);
+			}
+		}
 
 		if (empty($sort) === false) {
 			foreach ($sort as $field => $direction) {
@@ -220,6 +227,10 @@ class PublicationMapper extends QBMapper
 				$qb->addOrderBy($field, $direction);
 			}
 		}
+
+		var_dump($qb->getSQL());
+		var_dump($searchParams);  // Ensure all expected parameters have values
+		var_dump($searchConditions);  // Ensure conditions are correctly built
 
 		// Use the existing findEntities method to fetch and map the results
 		return $this->findEntitiesCustom($qb);
