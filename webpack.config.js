@@ -21,6 +21,10 @@ webpackConfig.entry = {
 		import: path.join(__dirname, 'src', 'catalogiWidget.js'),
 		filename: appId + '-catalogiWidget.js',
 	},
+	unpublishedPublicationsWidget: {
+		import: path.join(__dirname, 'src', 'unpublishedPublicationsWidget.js'),
+		filename: appId + '-unpublishedPublicationsWidget.js',
+	},
 }
 
 webpackConfig.resolve = {

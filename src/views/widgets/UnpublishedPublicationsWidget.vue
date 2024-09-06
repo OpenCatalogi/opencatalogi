@@ -1,5 +1,5 @@
 <script setup>
-import { catalogiStore, navigationStore } from '../../store/store.js'
+import { navigationStore, publicationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -25,12 +25,11 @@ import { NcDashboardWidget, NcEmptyContent } from '@nextcloud/vue'
 import FolderIcon from 'vue-material-design-icons/Folder.vue'
 
 export default {
-	name: 'CatalogiWidget',
+	name: 'UnpublishedPublicationsWidget',
 
 	components: {
 		NcDashboardWidget,
 		NcEmptyContent,
-
 	},
 
 	props: {
@@ -45,7 +44,7 @@ export default {
 			loading: false,
 			itemMenu: {
 				show: {
-					text: 'Catalogus bekijken',
+					text: 'Publicatie bekijken',
 					icon: 'icon-open-in-app',
 				},
 			},
@@ -54,11 +53,11 @@ export default {
 
 	computed: {
 		items() {
-			return catalogiStore.catalogiList.map((catalogi) => ({
-				id: catalogi.id,
-				mainText: catalogi.title,
-				subText: catalogi.summary,
-				avatarUrl: this.getTheme() === 'light' ? '/apps-extra/opencatalogi/img/database-outline.svg' : '/apps-extra/opencatalogi/img/database-outline_light.svg',
+			return publicationStore.publicationList.filter((publication) => publication.status === 'Concept').map((publication) => ({
+				id: publication.id,
+				mainText: publication.title,
+				subText: publication.summary,
+				avatarUrl: this.getTheme() === 'light' ? '/apps-extra/opencatalogi/img/database-eye-outline.svg' : '/apps-extra/opencatalogi/img/database-eye-outline_light.svg',
 			}))
 		},
 	},
@@ -71,9 +70,9 @@ export default {
 			navigationStore.setSelected('publication'); navigationStore.setSelectedCatalogus(item.id)
 			window.open('/index.php/apps/opencatalogi', '_self')
 		},
-		fetchData(search = null) {
+		fetchData() {
 			this.loading = true
-			catalogiStore.refreshCatalogiList(search)
+			publicationStore.refreshPublicationList()
 				.then(() => {
 					this.loading = false
 				})
