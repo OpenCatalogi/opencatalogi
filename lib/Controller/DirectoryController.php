@@ -51,6 +51,7 @@ class DirectoryController extends Controller
 	public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
 	{
 		$filters = $this->request->getParams();
+		unset($filters['_route']);
         $fieldsToSearch = ['summary'];
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
