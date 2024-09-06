@@ -50,6 +50,7 @@ class ThemesController extends Controller
 	public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
 	{
         $filters = $this->request->getParams();
+		unset($filters['_route']);
         $fieldsToSearch = ['title', 'description', 'summary'];
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false

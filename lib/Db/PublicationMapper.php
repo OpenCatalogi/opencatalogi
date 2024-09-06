@@ -207,10 +207,31 @@ class PublicationMapper extends QBMapper
 
 		$qb = $this->addFilters(queryBuilder: $qb, filters: $filters);
 
-        if (empty($searchConditions) === false) {
-            $qb->andWhere('(' . implode(' OR ', $searchConditions) . ')');
+        // Add search conditions
+        if (!empty($searchConditions)) {
+            foreach ($searchConditions as $condition) {
+                $qb->andWhere($condition);
+            }
+    
+            // Bind all parameters at once using setParameters()
+            $paramBindings = [];
             foreach ($searchParams as $param => $value) {
-                $qb->setParameter($param, $value);
+                // Handle catalogi parameters explicitly as integers
+                if (strpos($param, ':catalogi_') === 0) {
+                    $paramBindings[$param] = [$value, \PDO::PARAM_INT];
+                } else {
+                    // For all other parameters, bind normally
+                    $paramBindings[$param] = $value;
+                }
+            }
+    
+            // Use setParameters to bind all at once
+            foreach ($paramBindings as $param => $binding) {
+                if (is_array($binding) === true) {
+                    $qb->setParameter($param, $binding[0], $binding[1]);  // Bind with type
+                } else {
+                    $qb->setParameter($param, $binding);  // Bind normally
+                }
             }
         }
 
@@ -220,7 +241,6 @@ class PublicationMapper extends QBMapper
 				$qb->addOrderBy($field, $direction);
 			}
 		}
-
 		// Use the existing findEntities method to fetch and map the results
 		return $this->findEntitiesCustom($qb);
 	}

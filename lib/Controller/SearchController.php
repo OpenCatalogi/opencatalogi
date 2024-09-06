@@ -99,7 +99,7 @@ class SearchController extends Controller
 			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
 		) {
 			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
-			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch, searchParams: $searchParams);
 
 			$limit = 30;
 			$offset = 0;

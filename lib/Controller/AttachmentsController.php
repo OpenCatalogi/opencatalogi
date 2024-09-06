@@ -107,6 +107,7 @@ class AttachmentsController extends Controller
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
 		$filters = $this->request->getParams();
+		unset($filters['_route']);
 
 		foreach($filters as $key => $value) {
 			if(str_starts_with($key, '_')) {

@@ -115,7 +115,8 @@ class PublicationsController extends Controller
     public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
     {
         $filters = $this->request->getParams();
-        $fieldsToSearch = ['title', 'description', 'summary'];
+		unset($filters['_route']);
+        $fieldsToSearch = ['p.title', 'p.description', 'p.summary'];
 
 		if($this->config->hasKey($this->appName, 'mongoStorage') === false
 			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'

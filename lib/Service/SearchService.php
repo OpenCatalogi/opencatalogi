@@ -248,20 +248,64 @@ class SearchService
 	/**
 	 * This function creates mysql search conditions based on given filters from request.
 	 *
-	 * @param array $filters 	    Query parameters from request.
-	 * @param array $fieldsToSearch Fields to search on in sql.
+	 * @param array      $filters 	     Query parameters from request.
+	 * @param array      $fieldsToSearch Fields to search on in sql.
+	 * @param array|null $searchParams   Search params for sql.
 	 *
 	 * @return array $searchConditions
 	 */
-	public function createMySQLSearchConditions(array $filters, array $fieldsToSearch): array
+	public function createMySQLSearchConditions(array &$filters, array $fieldsToSearch, ?array &$searchParams = []): array
 	{
 		$searchConditions = [];
 		if (isset($filters['_search']) === true) {
 			foreach ($fieldsToSearch as $field) {
-				$searchConditions[] = "LOWER($field) LIKE :search";
+                if (isset($searchConditions[0]) === true) {
+                    $searchConditions[0] = $searchConditions[0] . " OR LOWER($field) LIKE :search";
+                } else {
+				    $searchConditions[] = "LOWER($field) LIKE :search";
+                }
 			}
+            if (isset($searchConditions[0]) === true) {
+                $searchConditions[0] = "($searchConditions[0])";
+            }
 		}
 
+        foreach ($filters as $key => $value) {
+            if ($key === '_search') {
+                continue; // Skip _search field
+            }
+        
+            // Skip if the filter value is empty or null
+            if (empty($value) === true) {
+                continue;
+            }
+        
+            // Check if the filter value contains commas, meaning multiple values (OR conditions)
+            if (is_string($value) === true && strpos($value, ',') !== false) {
+                $values = explode(',', $value); // Split the comma-separated values into an array
+                $orConditions = [];
+        
+                foreach ($values as $i => $val) {
+                    $paramKey = "{$key}_$i"; // Generate unique parameter key
+                    $orConditions[] = "$key = :$paramKey";
+                    $searchParams[$paramKey] = trim($val); // Add each value to the search params
+                }
+        
+                // Only add the condition if we have valid values to search for
+                if (empty($orConditions) === false) {
+                    $searchConditions[] = '(' . implode(' OR ', $orConditions) . ')';
+                }
+
+                // Unset to prevent sql errors because of double filtering.
+                unset($filters[$key]);
+            }
+        }
+        
+        // Ensure that search conditions and params exist before proceeding
+        if (empty($searchConditions) === true) {
+            // Handle the case where no search conditions are generated
+            $searchConditions[] = '1=1'; // Default condition to avoid breaking the SQL query
+        }
 		return $searchConditions;
 
 	}//end createMongoDBSearchFilter()
