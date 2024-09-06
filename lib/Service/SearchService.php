@@ -276,12 +276,12 @@ class SearchService
             }
         
             // Skip if the filter value is empty or null
-            if (empty($value)) {
+            if (empty($value) === true) {
                 continue;
             }
         
             // Check if the filter value contains commas, meaning multiple values (OR conditions)
-            if (is_string($value) && strpos($value, ',') !== false) {
+            if (is_string($value) === true && strpos($value, ',') !== false) {
                 $values = explode(',', $value); // Split the comma-separated values into an array
                 $orConditions = [];
         
@@ -292,7 +292,7 @@ class SearchService
                 }
         
                 // Only add the condition if we have valid values to search for
-                if (!empty($orConditions)) {
+                if (empty($orConditions) === false) {
                     $searchConditions[] = '(' . implode(' OR ', $orConditions) . ')';
                 }
 
@@ -302,7 +302,7 @@ class SearchService
         }
         
         // Ensure that search conditions and params exist before proceeding
-        if (empty($searchConditions)) {
+        if (empty($searchConditions) === true) {
             // Handle the case where no search conditions are generated
             $searchConditions[] = '1=1'; // Default condition to avoid breaking the SQL query
         }

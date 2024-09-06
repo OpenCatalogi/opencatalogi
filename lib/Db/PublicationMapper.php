@@ -227,7 +227,7 @@ class PublicationMapper extends QBMapper
     
             // Use setParameters to bind all at once
             foreach ($paramBindings as $param => $binding) {
-                if (is_array($binding)) {
+                if (is_array($binding) === true) {
                     $qb->setParameter($param, $binding[0], $binding[1]);  // Bind with type
                 } else {
                     $qb->setParameter($param, $binding);  // Bind normally
