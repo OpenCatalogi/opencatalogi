@@ -125,29 +125,18 @@ export const usePublicationStore = defineStore('publication', {
 					},
 				)
 		},
-		getConceptAttachments() { // @todo this might belong in a service?
-			fetch(
-				'/index.php/apps/opencatalogi/api/attachments?status=concept',
-				{
-					method: 'GET',
-				},
+		async getConceptAttachments(options = {}) { // @todo this might belong in a service?
+			const response = await fetch('/index.php/apps/opencatalogi/api/attachments?status=concept',
+				{ method: 'GET' },
 			)
-				.then(
-					(response) => {
-						response.json().then(
-							(data) => {
-								this.conceptAttachments = data
-								return data
-							},
-						)
-					},
-				)
-				.catch(
-					(err) => {
-						console.error(err)
-						return err
-					},
-				)
+
+			const rawData = await response.json()
+
+			const data = rawData.results.map((attachmentItem) => new Attachment(attachmentItem))
+
+			options.doNotSetStore !== true && (this.conceptAttachments = data)
+
+			return { response, data }
 		},
 		// @todo why does the following run through the store? -- because its impossible with props, and its vital information for the modal.
 		setPublicationDataKey(publicationDataKey) {
