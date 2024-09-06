@@ -248,12 +248,13 @@ class SearchService
 	/**
 	 * This function creates mysql search conditions based on given filters from request.
 	 *
-	 * @param array $filters 	    Query parameters from request.
-	 * @param array $fieldsToSearch Fields to search on in sql.
+	 * @param array      $filters 	     Query parameters from request.
+	 * @param array      $fieldsToSearch Fields to search on in sql.
+	 * @param array|null $searchParams   Search params for sql.
 	 *
 	 * @return array $searchConditions
 	 */
-	public function createMySQLSearchConditions(array $filters, array $fieldsToSearch): array
+	public function createMySQLSearchConditions(array &$filters, array $fieldsToSearch, ?array &$searchParams = []): array
 	{
 		$searchConditions = [];
 		if (isset($filters['_search']) === true) {
@@ -262,28 +263,46 @@ class SearchService
 			}
 		}
 
-		// Handle additional filters with comma-separated values (for OR conditions)
-		foreach ($filters as $key => $value) {
-			if ($key === '_search') {
-				continue; // Skip _search field
-			}
+        foreach ($filters as $key => $value) {
+            if ($key === '_search') {
+                continue; // Skip _search field
+            }
+        
+            // Skip if the filter value is empty or null
+            if (empty($value)) {
+                continue;
+            }
+        
+            // Check if the filter value contains commas, meaning multiple values (OR conditions)
+            if (is_string($value) && strpos($value, ',') !== false) {
+                $values = explode(',', $value); // Split the comma-separated values into an array
+                $orConditions = [];
+        
+                foreach ($values as $i => $val) {
+                    $paramKey = "{$key}_$i"; // Generate unique parameter key
+                    $orConditions[] = "$key = :$paramKey";
+                    $searchParams[$paramKey] = trim($val); // Add each value to the search params
+                }
+        
+                // Only add the condition if we have valid values to search for
+                if (!empty($orConditions)) {
+                    $searchConditions[] = '(' . implode(' OR ', $orConditions) . ')';
+                }
 
-			// Check if the filter value contains commas, meaning multiple values (OR conditions)
-			if (strpos($value, ',') !== false) {
-				$values = explode(',', $value); // Split the comma-separated values into an array
-				$orConditions = [];
-				foreach ($values as $i => $val) {
-					$paramKey = ":{$key}_$i"; // Generate unique parameter key
-					$orConditions[] = "$key = $paramKey";
-					$searchParams[$paramKey] = trim($val); // Add each value to the search params
-				}
-				$searchConditions[] = '(' . implode(' OR ', $orConditions) . ')';
-			} else {
-				$searchConditions[] = "$key = :$key";
-				$searchParams[":$key"] = $value;
-			}
-		}
-
+                // Unset to prevent sql errors because of double filtering.
+                unset($filters[$key]);
+            } else {
+                // Handle single value filter
+                $searchConditions[] = "$key = :$key";
+                $searchParams[":$key"] = $value;
+            }
+        }
+        
+        // Ensure that search conditions and params exist before proceeding
+        if (empty($searchConditions)) {
+            // Handle the case where no search conditions are generated
+            $searchConditions[] = '1=1'; // Default condition to avoid breaking the SQL query
+        }
 		return $searchConditions;
 
 	}//end createMongoDBSearchFilter()

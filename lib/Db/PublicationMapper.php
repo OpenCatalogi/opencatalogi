@@ -207,19 +207,33 @@ class PublicationMapper extends QBMapper
 
 		$qb = $this->addFilters(queryBuilder: $qb, filters: $filters);
 
-
         // Add search conditions
-		if (!empty($searchConditions)) {
-			// Conditions between different filters should be AND
-			foreach ($searchConditions as $condition) {
-				$qb->andWhere($condition);
-			}
-
-			// Set parameters for the search conditions
-			foreach ($searchParams as $param => $value) {
-				$qb->setParameter($param, $value);
-			}
-		}
+        if (!empty($searchConditions)) {
+            foreach ($searchConditions as $condition) {
+                $qb->andWhere($condition);
+            }
+    
+            // Bind all parameters at once using setParameters()
+            $paramBindings = [];
+            foreach ($searchParams as $param => $value) {
+                // Handle catalogi parameters explicitly as integers
+                if (strpos($param, ':catalogi_') === 0) {
+                    $paramBindings[$param] = [$value, \PDO::PARAM_INT];
+                } else {
+                    // For all other parameters, bind normally
+                    $paramBindings[$param] = $value;
+                }
+            }
+    
+            // Use setParameters to bind all at once
+            foreach ($paramBindings as $param => $binding) {
+                if (is_array($binding)) {
+                    $qb->setParameter($param, $binding[0], $binding[1]);  // Bind with type
+                } else {
+                    $qb->setParameter($param, $binding);  // Bind normally
+                }
+            }
+        }
 
 		if (empty($sort) === false) {
 			foreach ($sort as $field => $direction) {
@@ -227,11 +241,6 @@ class PublicationMapper extends QBMapper
 				$qb->addOrderBy($field, $direction);
 			}
 		}
-
-		var_dump($qb->getSQL());
-		var_dump($searchParams);  // Ensure all expected parameters have values
-		var_dump($searchConditions);  // Ensure conditions are correctly built
-
 		// Use the existing findEntities method to fetch and map the results
 		return $this->findEntitiesCustom($qb);
 	}
