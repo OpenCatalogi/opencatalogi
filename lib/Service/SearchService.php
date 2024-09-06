@@ -259,8 +259,15 @@ class SearchService
 		$searchConditions = [];
 		if (isset($filters['_search']) === true) {
 			foreach ($fieldsToSearch as $field) {
-				$searchConditions[] = "LOWER($field) LIKE :search";
+                if (isset($searchConditions[0]) === true) {
+                    $searchConditions[0] = $searchConditions[0] . " OR LOWER($field) LIKE :search";
+                } else {
+				    $searchConditions[] = "LOWER($field) LIKE :search";
+                }
 			}
+            if (isset($searchConditions[0]) === true) {
+                $searchConditions[0] = "($searchConditions[0])";
+            }
 		}
 
         foreach ($filters as $key => $value) {
@@ -291,10 +298,6 @@ class SearchService
 
                 // Unset to prevent sql errors because of double filtering.
                 unset($filters[$key]);
-            } else {
-                // Handle single value filter
-                $searchConditions[] = "$key = :$key";
-                $searchParams[":$key"] = $value;
             }
         }
         
