@@ -8,7 +8,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		:item-menu="itemMenu"
 		@show="onShow">
 		<template #empty-content>
-			<NcEmptyContent :title="t('opencatalogi', 'No gifs found')">
+			<NcEmptyContent :title="t('opencatalogi', 'Geen concept bijlagen gevonden')">
 				<template #icon>
 					<FolderIcon />
 				</template>
