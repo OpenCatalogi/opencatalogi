@@ -72,6 +72,8 @@
 import { NcAppContent } from '@nextcloud/vue'
 import VueApexCharts from 'vue-apexcharts'
 
+import { getTheme } from '../../services/getTheme.js'
+
 export default {
 	name: 'DashboardIndex',
 	components: {
@@ -85,7 +87,7 @@ export default {
 				month: {
 					options: {
 						theme: {
-							mode: this.getTheme(),
+							mode: getTheme(),
 							monochrome: {
 								enabled: true,
 								color: '#079cff',
@@ -120,7 +122,7 @@ export default {
 				hour: {
 					options: {
 						theme: {
-							mode: this.getTheme(),
+							mode: getTheme(),
 							monochrome: {
 								enabled: true,
 								color: '#079cff',
@@ -158,7 +160,7 @@ export default {
 				month: {
 					options: {
 						theme: {
-							mode: this.getTheme(),
+							mode: getTheme(),
 							monochrome: {
 								enabled: true,
 								color: '#079cff',
@@ -194,17 +196,6 @@ export default {
 
 			topFivePublications: ['1', '3', '5', '7', '23'],
 		}
-	},
-	methods: {
-		getTheme() {
-			if (document.body.hasAttribute('data-theme-light')) {
-				return 'light'
-			}
-			if (document.body.hasAttribute('data-theme-default')) {
-				return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
-			}
-			return 'dark'
-		},
 	},
 }
 </script>

@@ -101,29 +101,18 @@ export const usePublicationStore = defineStore('publication', {
 					},
 				)
 		},
-		getConceptPublications() { // @todo this might belong in a service?
-			fetch(
-				'/index.php/apps/opencatalogi/api/publications?status=concept',
-				{
-					method: 'GET',
-				},
+		async getConceptPublications(options = {}) { // @todo this might belong in a service?
+			const response = await fetch('/index.php/apps/opencatalogi/api/publications?status=concept',
+				{ method: 'GET' },
 			)
-				.then(
-					(response) => {
-						response.json().then(
-							(data) => {
-								this.conceptPublications = data
-								return data
-							},
-						)
-					},
-				)
-				.catch(
-					(err) => {
-						console.error(err)
-						return err
-					},
-				)
+
+			const rawData = await response.json()
+
+			const data = rawData.results.map((publicationItem) => new Publication(publicationItem))
+
+			options.doNotSetStore !== true && (this.conceptPublications = data)
+
+			return { response, data }
 		},
 		async getConceptAttachments(options = {}) { // @todo this might belong in a service?
 			const response = await fetch('/index.php/apps/opencatalogi/api/attachments?status=concept',

@@ -24,6 +24,8 @@ import { NcDashboardWidget, NcEmptyContent } from '@nextcloud/vue'
 // Icons
 import FolderIcon from 'vue-material-design-icons/Folder.vue'
 
+import { getTheme } from '../../services/getTheme.js'
+
 export default {
 	name: 'CatalogiWidget',
 
@@ -58,7 +60,7 @@ export default {
 				id: catalogi.id,
 				mainText: catalogi.title,
 				subText: catalogi.summary,
-				avatarUrl: this.getTheme() === 'light' ? '/apps-extra/opencatalogi/img/database-outline.svg' : '/apps-extra/opencatalogi/img/database-outline_light.svg',
+				avatarUrl: getTheme() === 'light' ? '/apps-extra/opencatalogi/img/database-outline.svg' : '/apps-extra/opencatalogi/img/database-outline_light.svg',
 			}))
 		},
 	},
@@ -77,15 +79,6 @@ export default {
 				.then(() => {
 					this.loading = false
 				})
-		},
-		getTheme() {
-			if (document.body.hasAttribute('data-theme-light')) {
-				return 'light'
-			}
-			if (document.body.hasAttribute('data-theme-default')) {
-				return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
-			}
-			return 'dark'
 		},
 	},
 }

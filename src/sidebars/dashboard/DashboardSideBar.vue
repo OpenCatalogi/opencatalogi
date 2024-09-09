@@ -23,9 +23,9 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 				<ListBoxOutline :size="20" />
 			</template>
 			Welke publicaties vereisen uw aandacht?
-			<NcListItem v-for="(publication, i) in publicationStore.conceptPublications.results"
+			<NcListItem v-for="(publication, i) in publicationStore.conceptPublications"
 				:key="`${publication}${i}`"
-				:name="publication.name ?? publication.title"
+				:name="publication.title"
 				:bold="false"
 				:force-display-actions="true"
 				:active="publicationStore.publicationItem.id === publication.id"
@@ -65,7 +65,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard v-if="!publicationStore.conceptPublications?.results?.length > 0" type="success">
+			<NcNoteCard v-if="!publicationStore.conceptPublications?.length > 0" type="success">
 				<p>Er zijn op dit moment geen publicaties die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>
@@ -74,9 +74,9 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 				<FileOutline :size="20" />
 			</template>
 			Welke bijlagen vereisen uw aandacht?
-			<NcListItem v-for="(attachment, i) in publicationStore.conceptAttachments.results"
+			<NcListItem v-for="(attachment, i) in publicationStore.conceptAttachments"
 				:key="`${attachment}${i}`"
-				:name="attachment.name ?? attachment.title"
+				:name="attachment.title"
 				:bold="false"
 				:force-display-actions="true"
 				:active="publicationStore.attachmentItem.id === attachment.id"
@@ -110,7 +110,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 					</NcActionButton>
 				</template>
 			</NcListItem>
-			<NcNoteCard v-if="!publicationStore.conceptAttachments?.results?.length > 0" type="success">
+			<NcNoteCard v-if="!publicationStore.conceptAttachments?.length > 0" type="success">
 				<p>Er zijn op dit moment geen bijlagen die uw aandacht vereisen</p>
 			</NcNoteCard>
 		</NcAppSidebarTab>

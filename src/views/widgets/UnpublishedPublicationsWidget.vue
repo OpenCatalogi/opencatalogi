@@ -24,6 +24,8 @@ import { NcDashboardWidget, NcEmptyContent } from '@nextcloud/vue'
 // Icons
 import FolderIcon from 'vue-material-design-icons/Folder.vue'
 
+import { getTheme } from '../../services/getTheme.js'
+
 export default {
 	name: 'UnpublishedPublicationsWidget',
 
@@ -57,7 +59,7 @@ export default {
 				id: publication.id,
 				mainText: publication.title,
 				subText: publication.summary,
-				avatarUrl: this.getTheme() === 'light' ? '/apps-extra/opencatalogi/img/database-eye-outline.svg' : '/apps-extra/opencatalogi/img/database-eye-outline_light.svg',
+				avatarUrl: getTheme() === 'light' ? '/apps-extra/opencatalogi/img/database-eye-outline.svg' : '/apps-extra/opencatalogi/img/database-eye-outline_light.svg',
 			}))
 		},
 	},
@@ -76,15 +78,6 @@ export default {
 				.then(() => {
 					this.loading = false
 				})
-		},
-		getTheme() {
-			if (document.body.hasAttribute('data-theme-light')) {
-				return 'light'
-			}
-			if (document.body.hasAttribute('data-theme-default')) {
-				return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
-			}
-			return 'dark'
 		},
 	},
 }
