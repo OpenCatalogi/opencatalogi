@@ -274,23 +274,23 @@ class SearchService
             if ($key === '_search') {
                 continue; // Skip _search field
             }
-        
+
             // Skip if the filter value is empty or null
             if (empty($value) === true) {
                 continue;
             }
-        
+
             // Check if the filter value contains commas, meaning multiple values (OR conditions)
             if (is_string($value) === true && strpos($value, ',') !== false) {
                 $values = explode(',', $value); // Split the comma-separated values into an array
                 $orConditions = [];
-        
+
                 foreach ($values as $i => $val) {
                     $paramKey = "{$key}_$i"; // Generate unique parameter key
                     $orConditions[] = "$key = :$paramKey";
                     $searchParams[$paramKey] = trim($val); // Add each value to the search params
                 }
-        
+
                 // Only add the condition if we have valid values to search for
                 if (empty($orConditions) === false) {
                     $searchConditions[] = '(' . implode(' OR ', $orConditions) . ')';
@@ -300,7 +300,7 @@ class SearchService
                 unset($filters[$key]);
             }
         }
-        
+
         // Ensure that search conditions and params exist before proceeding
         if (empty($searchConditions) === true) {
             // Handle the case where no search conditions are generated
@@ -323,6 +323,9 @@ class SearchService
             if (str_starts_with($key, '_')) {
                 unset($filters[$key]);
             }
+			if($key === 'search') {
+				unset($filters[$key]);
+			}
         }
 
 		return $filters;
