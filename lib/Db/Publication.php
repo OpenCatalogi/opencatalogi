@@ -149,4 +149,8 @@ class Publication extends Entity implements JsonSerializable
 
 		return $array;
 	}
+
+    public function getStatus(): ?string {
+        return $this->status;
+    }
 }

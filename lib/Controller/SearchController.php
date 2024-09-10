@@ -7,6 +7,7 @@ use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Response;
@@ -14,6 +15,8 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
+use OCA\OpenCatalogi\Service\ObjectService;
+
 class SearchController extends Controller
 {
 
@@ -93,6 +96,9 @@ class SearchController extends Controller
 		$filters = $this->request->getParams();
 		unset($filters['_route']);
 
+        // Status must be always published when searching for publications
+        $filters['status'] = 'published';
+
         $fieldsToSearch = ['p.title', 'p.description', 'p.summary'];
 
 		if($this->config->hasKey($this->appName, 'elasticLocation') === false
@@ -157,15 +163,46 @@ class SearchController extends Controller
         return new JSONResponse($data);
     }
 
+
+
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
-	public function show(string|int $id, SearchService $searchService): JSONResponse
+	public function show(string|int $id, SearchService $searchService, ObjectService $objectService): JSONResponse
 	{
 		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
 		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
 		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+		if($this->config->hasKey($this->appName, 'elasticLocation') === false
+			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
+		) {
+			if ($this->config->hasKey($this->appName, 'mongoStorage') === false
+				|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+			) {
+				try {
+					$object = $this->publicationMapper->find(id: (int) $id);
+
+					if($object->getStatus() === 'published') {
+						return new JSONResponse($object->jsonSerialize());
+					}
+					throw new DoesNotExistException('object not published');
+				} catch (DoesNotExistException $exception) {
+					return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+				}
+			}
+
+			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+			$filters['_id'] = (string) $id;
+
+			$result = $objectService->findObject(filters: $filters, config: $dbConfig);
+
+			return new JSONResponse($result);
+		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
@@ -173,18 +210,18 @@ class SearchController extends Controller
 
 		$filters = ['_id' => (string) $id];
 
-        $requiredElasticConfig = ['location', 'key', 'index'];
-        $missingFields = null;
-        foreach ($requiredElasticConfig as $key) {
-            if (isset($elasticConfig[$key]) === false) {
-                $missingFields .= "$key ";
-            }
-        }
+		$requiredElasticConfig = ['location', 'key', 'index'];
+		$missingFields = null;
+		foreach ($requiredElasticConfig as $key) {
+			if (isset($elasticConfig[$key]) === false) {
+				$missingFields .= "$key ";
+			}
+		}
 
-        if ($missingFields !== null) {
-            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
-            return new JSONResponse(['message' => $errorMessage], 403);
-        }
+		if ($missingFields !== null) {
+			$errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+			return new JSONResponse(['message' => $errorMessage], 403);
+		}
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 
@@ -194,4 +231,5 @@ class SearchController extends Controller
 
 		return new JSONResponse(data: ['error' => ['code' => 404, 'message' => 'the requested resource could not be found']], statusCode: 404);
 	}
+
 }

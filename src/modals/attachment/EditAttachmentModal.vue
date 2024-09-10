@@ -34,6 +34,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					label="Beschrijving"
 					maxlength="255"
 					:value.sync="publicationStore.attachmentItem.description" />
+				<NcSelect v-bind="labelOptions"
+					v-model="publicationStore.attachmentItem.labels" />
 				<NcTextField :disabled="loading"
 					label="Toegangs URL"
 					maxlength="255"
@@ -59,7 +61,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcModal, NcTextField, NcTextArea, NcNoteCard, NcLoadingIcon, NcSelect } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 
 export default {
@@ -71,6 +73,7 @@ export default {
 		NcButton,
 		NcNoteCard,
 		NcLoadingIcon,
+		NcSelect,
 		// Icons
 		ContentSaveOutline,
 	},
@@ -80,6 +83,11 @@ export default {
 			loading: false,
 			success: null,
 			error: false,
+			labelOptions: {
+				inputLabel: 'Labels',
+				multiple: true,
+				options: ['Besluit', 'Convenant', 'Document', 'Informatieverzoek', 'Inventarisatielijst'],
+			},
 		}
 	},
 	methods: {

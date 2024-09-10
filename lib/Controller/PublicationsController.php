@@ -150,6 +150,7 @@ class PublicationsController extends Controller
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
+	 * @PublicPage
 	 */
 	public function attachments(string|int $id, ObjectService $objectService, ?array $publication = null): JSONResponse
 	{

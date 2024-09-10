@@ -210,9 +210,10 @@ import { ref } from 'vue'
 									:key="`${attachment}${i}`"
 									:name="attachment.name ?? attachment?.title"
 									:bold="false"
-									:active="publicationStore.attachmentId === attachment.id"
+									:active="publicationStore.attachmentItem.id === attachment.id"
 									:force-display-actions="true"
-									:details="(attachment?.published && attachment?.published <= getTime) ? 'Gepubliceerd' : 'Niet gepubliceerd'">
+									:details="(attachment?.published && attachment?.published <= getTime) ? 'Gepubliceerd' : 'Niet gepubliceerd'"
+									@click="setActiveAttachment(attachment)">
 									<template #icon>
 										<CheckCircle v-if="attachment?.published && attachment?.published <= getTime"
 											:class="attachment?.published <= getTime && 'publishedIcon'"
@@ -293,8 +294,8 @@ import { ref } from 'vue'
 								:name="key"
 								:bold="false"
 								:force-display-actions="true"
-								@click="publicationStore.setPublicationDataKey(key)
-								">
+								:active="publicationStore.publicationDataKey === key"
+								@click="setActiveDataKey(key)">
 								<template #icon>
 									<CircleOutline
 										:class="publicationStore.publicationDataKey === key && 'selectedZaakIcon'"
@@ -595,6 +596,19 @@ export default {
 		},
 		openLink(url, type = '') {
 			window.open(url, type)
+		},
+
+		setActiveAttachment(attachment) {
+			if (JSON.stringify(publicationStore.attachmentItem) === JSON.stringify(attachment)) {
+				publicationStore.setAttachmentItem(false)
+			} else { publicationStore.setAttachmentItem(attachment) }
+
+		},
+		setActiveDataKey(dataKey) {
+			if (publicationStore.publicationDataKey === dataKey) {
+				publicationStore.setPublicationDataKey(false)
+			} else { publicationStore.setPublicationDataKey(dataKey) }
+
 		},
 
 	},
