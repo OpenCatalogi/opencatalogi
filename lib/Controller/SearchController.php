@@ -182,7 +182,12 @@ class SearchController extends Controller
 				|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
 			) {
 				try {
-					return new JSONResponse($this->publicationMapper->find(id: (int) $id));
+					$object = $this->publicationMapper->find(id: (int) $id);
+
+					if($object->getStatus() === 'published') {
+						return new JSONResponse($object->jsonSerialize());
+					}
+					throw new DoesNotExistException('object not published');
 				} catch (DoesNotExistException $exception) {
 					return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
 				}
