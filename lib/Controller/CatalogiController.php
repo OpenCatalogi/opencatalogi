@@ -31,7 +31,7 @@ class CatalogiController extends Controller
      */
     public function page(?string $getParameter): TemplateResponse
     {
-        return new TemplateResponse($this->appName, 'CatalogiIndex', []);
+        return new TemplateResponse($this->appName, 'index', []);
     }
 
     /**

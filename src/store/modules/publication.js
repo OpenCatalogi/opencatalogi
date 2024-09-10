@@ -101,53 +101,31 @@ export const usePublicationStore = defineStore('publication', {
 					},
 				)
 		},
-		getConceptPublications() { // @todo this might belong in a service?
-			fetch(
-				'/index.php/apps/opencatalogi/api/publications?status=concept',
-				{
-					method: 'GET',
-				},
+		async getConceptPublications(options = {}) { // @todo this might belong in a service?
+			const response = await fetch('/index.php/apps/opencatalogi/api/publications?status=concept',
+				{ method: 'GET' },
 			)
-				.then(
-					(response) => {
-						response.json().then(
-							(data) => {
-								this.conceptPublications = data
-								return data
-							},
-						)
-					},
-				)
-				.catch(
-					(err) => {
-						console.error(err)
-						return err
-					},
-				)
+
+			const rawData = await response.json()
+
+			const data = rawData.results.map((publicationItem) => new Publication(publicationItem))
+
+			options.doNotSetStore !== true && (this.conceptPublications = data)
+
+			return { response, data }
 		},
-		getConceptAttachments() { // @todo this might belong in a service?
-			fetch(
-				'/index.php/apps/opencatalogi/api/attachments?status=concept',
-				{
-					method: 'GET',
-				},
+		async getConceptAttachments(options = {}) { // @todo this might belong in a service?
+			const response = await fetch('/index.php/apps/opencatalogi/api/attachments?status=concept',
+				{ method: 'GET' },
 			)
-				.then(
-					(response) => {
-						response.json().then(
-							(data) => {
-								this.conceptAttachments = data
-								return data
-							},
-						)
-					},
-				)
-				.catch(
-					(err) => {
-						console.error(err)
-						return err
-					},
-				)
+
+			const rawData = await response.json()
+
+			const data = rawData.results.map((attachmentItem) => new Attachment(attachmentItem))
+
+			options.doNotSetStore !== true && (this.conceptAttachments = data)
+
+			return { response, data }
 		},
 		// @todo why does the following run through the store? -- because its impossible with props, and its vital information for the modal.
 		setPublicationDataKey(publicationDataKey) {

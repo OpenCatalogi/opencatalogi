@@ -17,6 +17,18 @@ webpackConfig.entry = {
 		import: path.join(__dirname, 'src', 'main.js'),
 		filename: appId + '-main.js',
 	},
+	catalogiWidget: {
+		import: path.join(__dirname, 'src', 'catalogiWidget.js'),
+		filename: appId + '-catalogiWidget.js',
+	},
+	unpublishedPublicationsWidget: {
+		import: path.join(__dirname, 'src', 'unpublishedPublicationsWidget.js'),
+		filename: appId + '-unpublishedPublicationsWidget.js',
+	},
+	unpublishedAttachmentsWidget: {
+		import: path.join(__dirname, 'src', 'unpublishedAttachmentsWidget.js'),
+		filename: appId + '-unpublishedAttachmentsWidget.js',
+	},
 }
 
 webpackConfig.resolve = {
