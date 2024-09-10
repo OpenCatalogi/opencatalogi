@@ -7,6 +7,7 @@ use OCA\OpenCatalogi\Db\PublicationMapper;
 use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Response;
@@ -162,81 +163,68 @@ class SearchController extends Controller
         return new JSONResponse($data);
     }
 
+
+
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * 
-	 * Temporally disabled do to copy and paste
 	 */
-	// public function show(string|int $id, SearchService $searchService): JSONResponse
-	// {
-	// 	$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-	// 	$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-	// 	$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+	public function show(string|int $id, SearchService $searchService, ObjectService $objectService): JSONResponse
+	{
+		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
 
-	// 	$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-	// 	$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-	// 	$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-	// 	$filters = ['_id' => (string) $id];
-
-    //     $requiredElasticConfig = ['location', 'key', 'index'];
-    //     $missingFields = null;
-    //     foreach ($requiredElasticConfig as $key) {
-    //         if (isset($elasticConfig[$key]) === false) {
-    //             $missingFields .= "$key ";
-    //         }
-    //     }
-
-    //     if ($missingFields !== null) {
-    //         $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
-    //         return new JSONResponse(['message' => $errorMessage], 403);
-    //     }
-
-	// 	$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
-
-	// 	if(count($data['results']) > 0) {
-	// 		return new JSONResponse($data['results'][0]);
-	// 	}
-
-	// 	return new JSONResponse(data: ['error' => ['code' => 404, 'message' => 'the requested resource could not be found']], statusCode: 404);
-	// }
-
-	/**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-	 * @PublicPage
-     */
-	public function show(string|int $id, ObjectService $objectService): JSONResponse
-    {
-		if ($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+		if($this->config->hasKey($this->appName, 'elasticLocation') === false
+			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
 		) {
-			try {
-                $result = $this->publicationMapper->find(id: (int) $id);
-
-                if ($result->getStatus() !== null && $result->getStatus() === 'published') {
-                    return new JSONResponse(data: $result);
-                } else {
-                    return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
-                }
-			} catch (DoesNotExistException $exception) {
-				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+			if ($this->config->hasKey($this->appName, 'mongoStorage') === false
+				|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+			) {
+				try {
+					return new JSONResponse($this->publicationMapper->find(id: (int) $id));
+				} catch (DoesNotExistException $exception) {
+					return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+				}
 			}
+
+			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+			$filters['_id'] = (string) $id;
+
+			$result = $objectService->findObject(filters: $filters, config: $dbConfig);
+
+			return new JSONResponse($result);
 		}
 
 		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
 		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
 		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
 
-		$filters['_id'] = (string) $id;
+		$filters = ['_id' => (string) $id];
 
-		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
-        if (isset($result['status']) === true && $result['status'] === 'published') {
-            return new JSONResponse(data: $result);
-        } else {
-            return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
-        }
-    }
+		$requiredElasticConfig = ['location', 'key', 'index'];
+		$missingFields = null;
+		foreach ($requiredElasticConfig as $key) {
+			if (isset($elasticConfig[$key]) === false) {
+				$missingFields .= "$key ";
+			}
+		}
+
+		if ($missingFields !== null) {
+			$errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+			return new JSONResponse(['message' => $errorMessage], 403);
+		}
+
+		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
+
+		if(count($data['results']) > 0) {
+			return new JSONResponse($data['results'][0]);
+		}
+
+		return new JSONResponse(data: ['error' => ['code' => 404, 'message' => 'the requested resource could not be found']], statusCode: 404);
+	}
 
 }
