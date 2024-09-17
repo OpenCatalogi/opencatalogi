@@ -142,8 +142,8 @@ class DirectoryService
 		$directories = [];
 		//@todo get unique direcotries form the database
 		$directories[] = 'https://directory.opencatalogi.nl/apps/opencatalogi/api/directory';
-		foreach($directories as $key -> $directory){
-			$result = $this->fetchFromExternalDirectory([], $directory, true);
+		foreach($directories as $key=>$directory){
+			$result = $this->fetchFromExternalDirectory(url: $directory,  update: true);
 			$results = array_merge_recursive($results, $result);
 		}
 
@@ -159,15 +159,28 @@ class DirectoryService
  		$result = $this->client->get(uri: $url);
 
 		if(str_contains(haystack: $result->getHeader('Content-Type')[0], needle: 'application/json') === false) {
-			$result = $this->client->get(uri: rtrim(string: $url, characters: '/').'/apps/opencatalogi/api/directory');
+			$result = $this->client->get(uri: $url = rtrim(string: $url, characters: '/').'/apps/opencatalogi/api/directory');
 		}
 
 		$results = json_decode(json: $result->getBody()->getContents(), associative: true);
 
 		$addedDirectories = [];
+		$catalogs 		  = [];
 
 		foreach($results['results'] as $record) {
+			$catalogs[] = $record['catalogId'];
 			$addedDirectories[] = $this->createDirectoryFromResult(result: $record, update: $update);
+
+		}
+
+
+		$localListings = $this->listingMapper->findAll(filters: ['directory' => $url]);
+//		var_dump($catalogs, $url, count($localListings));
+
+		foreach($localListings as $localListing) {
+			if(in_array(needle: $localListing->getCatalogId(), haystack: $catalogs) === false) {
+				$this->listingMapper->delete($localListing);
+			}
 		}
 
 		return $addedDirectories;
