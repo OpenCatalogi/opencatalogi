@@ -110,13 +110,19 @@ class SearchController extends Controller
 
 			$limit = 30;
 			$offset = 0;
+			$page = 0;
 
 			if(isset($filters['_limit']) === true) {
 				$limit = $filters['_limit'];
 			}
 
-			if(isset($filters['_page']) === true) {
+			if (isset($filters['_page']) === true) {
+				$page = $filters['_page'];
 				$offset = ($limit * ($filters['_page'] - 1));
+			}
+
+			if (isset($filters['_page']) === false) {
+				$page = (floor($offset / $limit) + 1);
 			}
 
 			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
@@ -130,7 +136,7 @@ class SearchController extends Controller
 				'facets'  => [],
 				'count' => count($results),
 				'limit' => $limit,
-				'page' => isset($filters['_page']) === true ? $filters['_page'] : 1,
+				'page' => $page,
 				'pages' =>  $pages === 0 ? 1 : $pages,
 				'total' => $total
 			]);
