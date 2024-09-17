@@ -11,6 +11,7 @@
 /node_modules/
 /js/
 /custom_apps/
+/custom-apps/
 /config/
 
 /coverage/

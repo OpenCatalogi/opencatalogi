@@ -75,7 +75,7 @@ class DirectoryService
 			$result = $this->client->post(uri: $url, options: ['json' => $catalog, 'http_errors' => false]);
 		}
 
-		$externalDirectories = $this->fetchFromExternalDirectory(url: $url);
+		$externalDirectories = $this->fetchFromExternalDirectory(url: $url, update: true);
 
 		if($result !== null) {
 			return $result->getStatusCode();
@@ -143,7 +143,7 @@ class DirectoryService
 		//@todo get unique direcotries form the database
 		$directories[] = 'https://directory.opencatalogi.nl/apps/opencatalogi/api/directory';
 		foreach($directories as $key -> $directory){
-			$result = $this->fetchFromExternalDirectory([], $directory, true); 
+			$result = $this->fetchFromExternalDirectory([], $directory, true);
 			$results = array_merge_recursive($results, $result);
 		}
 
