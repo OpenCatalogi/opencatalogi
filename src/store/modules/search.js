@@ -34,7 +34,7 @@ export const useSearchStore = defineStore('search', {
 				...(enabledCatalogiIds[0] && { catalogi: enabledCatalogiIds }),
 			}).toString()
 
-			fetch('/index.php/apps/opencatalogi/api/search?' + searchParams,
+			fetch('/index.php/apps/opencatalogi/api/search/internal?' + searchParams,
 				{
 					method: 'GET',
 				},

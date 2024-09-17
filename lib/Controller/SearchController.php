@@ -80,6 +80,7 @@ class SearchController extends Controller
     }
 
     /**
+	 * @CORS
      * @PublicPage
 	 * @NoCSRFRequired
      */
@@ -100,6 +101,96 @@ class SearchController extends Controller
         $filters['status'] = 'published';
 
         $fieldsToSearch = ['p.title', 'p.description', 'p.summary'];
+
+		if($this->config->hasKey($this->appName, 'elasticLocation') === false
+			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
+		) {
+			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
+			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch, searchParams: $searchParams);
+
+			$limit = 30;
+			$offset = 0;
+			$page = 0;
+
+			if(isset($filters['_limit']) === true) {
+				$limit = $filters['_limit'];
+			}
+
+			if (isset($filters['_page']) === true) {
+				$page = $filters['_page'];
+				$offset = ($limit * ($filters['_page'] - 1));
+			}
+
+			if (isset($filters['_page']) === false) {
+				$page = (floor($offset / $limit) + 1);
+			}
+
+			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+
+			$total   = $this->publicationMapper->count($filters);
+			$results = $this->publicationMapper->findAll(limit: $limit, offset: $offset, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams);
+			$pages   = (int) ceil($total / $limit);
+
+			return new JSONResponse([
+				'results' => $results,
+				'facets'  => [],
+				'count' => count($results),
+				'limit' => $limit,
+				'page' => $page,
+				'pages' =>  $pages === 0 ? 1 : $pages,
+				'total' => $total
+			]);
+		}
+
+		//@TODO: find a better way to get query params. This fixes it for now.
+		$keys   = array_keys(array: $filters);
+		$values = array_values(array: $filters);
+
+		$keys = str_replace('_', '.', $keys);
+
+		$filters = array_combine(keys: $keys, values: $values);
+
+        $requiredElasticConfig = ['location', 'key', 'index'];
+        $missingFields = null;
+        foreach ($requiredElasticConfig as $key) {
+            if (isset($elasticConfig[$key]) === false || empty($elasticConfig[$key])) {
+                $missingFields .= "$key, ";
+            }
+        }
+
+        if ($missingFields !== null) {
+            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+            $response = new JSONResponse(data: ['code' => 403, 'message' => $errorMessage], statusCode: 403);
+
+            return $response;
+        }
+
+		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
+
+        return new JSONResponse($data);
+    }
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 */
+	public function indexInternal(SearchService $searchService): JSONResponse
+	{
+		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters = $this->request->getParams();
+		unset($filters['_route']);
+
+		// Status must be always published when searching for publications
+		$filters['status'] = 'published';
+
+		$fieldsToSearch = ['p.title', 'p.description', 'p.summary'];
 
 		if($this->config->hasKey($this->appName, 'elasticLocation') === false
 			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
@@ -143,25 +234,95 @@ class SearchController extends Controller
 
 		$filters = array_combine(keys: $keys, values: $values);
 
-        $requiredElasticConfig = ['location', 'key', 'index'];
-        $missingFields = null;
-        foreach ($requiredElasticConfig as $key) {
-            if (isset($elasticConfig[$key]) === false || empty($elasticConfig[$key])) {
-                $missingFields .= "$key, ";
-            }
-        }
+		$requiredElasticConfig = ['location', 'key', 'index'];
+		$missingFields = null;
+		foreach ($requiredElasticConfig as $key) {
+			if (isset($elasticConfig[$key]) === false || empty($elasticConfig[$key])) {
+				$missingFields .= "$key, ";
+			}
+		}
 
-        if ($missingFields !== null) {
-            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
-            $response = new JSONResponse(data: ['code' => 403, 'message' => $errorMessage], statusCode: 403);
+		if ($missingFields !== null) {
+			$errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+			$response = new JSONResponse(data: ['code' => 403, 'message' => $errorMessage], statusCode: 403);
 
-            return $response;
-        }
+			return $response;
+		}
 
 		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
 
-        return new JSONResponse($data);
-    }
+		return new JSONResponse($data);
+	}
+
+
+
+	/**
+	 * @CORS
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 */
+	public function show(string|int $id, SearchService $searchService, ObjectService $objectService): JSONResponse
+	{
+		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
+		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
+		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+
+		if($this->config->hasKey($this->appName, 'elasticLocation') === false
+			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
+		) {
+			if ($this->config->hasKey($this->appName, 'mongoStorage') === false
+				|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
+			) {
+				try {
+					$object = $this->publicationMapper->find(id: (int) $id);
+
+					if($object->getStatus() === 'published') {
+						return new JSONResponse($object->jsonSerialize());
+					}
+					throw new DoesNotExistException('object not published');
+				} catch (DoesNotExistException $exception) {
+					return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
+				}
+			}
+
+			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+			$filters['_id'] = (string) $id;
+
+			$result = $objectService->findObject(filters: $filters, config: $dbConfig);
+
+			return new JSONResponse($result);
+		}
+
+		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
+		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
+		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+
+		$filters = ['_id' => (string) $id];
+
+		$requiredElasticConfig = ['location', 'key', 'index'];
+		$missingFields = null;
+		foreach ($requiredElasticConfig as $key) {
+			if (isset($elasticConfig[$key]) === false) {
+				$missingFields .= "$key ";
+			}
+		}
+
+		if ($missingFields !== null) {
+			$errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
+			return new JSONResponse(['message' => $errorMessage], 403);
+		}
+
+		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
+
+		if(count($data['results']) > 0) {
+			return new JSONResponse($data['results'][0]);
+		}
+
+		return new JSONResponse(data: ['error' => ['code' => 404, 'message' => 'the requested resource could not be found']], statusCode: 404);
+	}
 
 
 
@@ -169,7 +330,7 @@ class SearchController extends Controller
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 */
-	public function show(string|int $id, SearchService $searchService, ObjectService $objectService): JSONResponse
+	public function showInternal(string|int $id, SearchService $searchService, ObjectService $objectService): JSONResponse
 	{
 		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
 		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
