@@ -175,7 +175,11 @@ export default {
 				.then((response) => {
 					response.json().then((data) => {
 						publicationStore.setPublicationItem(data)
-						this.publicationItem = publicationStore.publicationItem
+						this.publicationItem = {
+							...publicationStore.publicationItem,
+							published: new Date(publicationStore.publicationItem.published),
+						}
+
 					})
 					this.loading = false
 				})

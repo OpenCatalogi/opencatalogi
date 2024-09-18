@@ -36,14 +36,14 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 				<InformationSlabSymbol :size="20" />
 			</template>
 			<div class="container">
-                <div v-if="directoryStore.listingItem.organisation">
-                    <CertificateOutline class="orgCertIcon"s :size="20" />
-                    <p>Deze organisatie is niet gevalideerd met een certificaat.</p>
-                </div>
-                <div v-if="!directoryStore.listingItem.organisation">
-                    <CertificateOutline class="orgCertIcon"s :size="20" />
-                    <p>Deze listing heeft geen organisatie.</p>
-                </div>
+				<div v-if="directoryStore.listingItem.organisation">
+					<CertificateOutline class="orgCertIcon" :size="20" />
+					<p>Deze organisatie is niet gevalideerd met een certificaat.</p>
+				</div>
+				<div v-if="!directoryStore.listingItem.organisation">
+					<CertificateOutline class="orgCertIcon" :size="20" />
+					<p>Deze listing heeft geen organisatie.</p>
+				</div>
 				<div>
 					<b>Samenvatting:</b>
 					<span>{{ directoryStore.listingItem?.summery }}</span>
@@ -108,9 +108,9 @@ import { navigationStore, directoryStore, metadataStore } from '../../store/stor
 			<div v-if="!loading">
 				<NcCheckboxRadioSwitch v-for="(metadataSingular, i) in directoryStore.listingItem.metadata"
 					:key="`${metadataSingular}${i}`"
-					:checked.sync="checkedMetadata[metadataSingular]"
+					:checked.sync="checkedMetadataObject[metadataSingular]"
 					type="switch">
-					{{ metadataSingular }}
+					{{ metadataSingular.title ?? metadataSingular.source ?? metadataSingular }}
 				</NcCheckboxRadioSwitch>
 			</div>
 			<NcLoadingIcon v-if="loading" :size="20" />
@@ -141,7 +141,8 @@ export default {
 	},
 	data() {
 		return {
-			checkedMetadata: {},
+			checkedMetadataObject: {},
+			switchedListing: false,
 			listing: '',
 			loading: false,
 			syncLoading: false,
@@ -151,24 +152,52 @@ export default {
 		listingItem() {
 			return directoryStore.listingItem
 		},
+		checkedMetadata() {
+			return Object.assign({}, this.checkedMetadataObject)
+		},
 	},
 	watch: {
 		checkedMetadata: {
 			handler(newValue, oldValue) {
-				const metadataUrl = Object.entries(newValue)[0][0]
-				const shouldCopyMetadata = Object.entries(newValue)[0][1]
-				if (shouldCopyMetadata === true) {
-					this.copyMetadata(metadataUrl)
-				} else if (shouldCopyMetadata === false && metadataUrl && metadataStore.metaDataList.length > 0) {
-					this.deleteMetadata(metadataUrl)
+				// Set new and old values to objects
+				const newValueObject = Object.entries(newValue)
+				let oldValueObject = Object.entries(oldValue)
+
+				// Checks if listing is switched
+				if (this.switchedListing === true) {
+					oldValueObject = []
+					this.switchedListing = false
 				}
+
+				newValueObject.map((value, idx) => {
+					// If oldValueObject does not exist it means we have selected new listing and not updated a switch so we return
+					if (!oldValueObject.length) return {}
+
+					// Checks which switch has been updated by checking the old value of that switch
+					if (value[1] !== oldValueObject[idx][1]) {
+
+						// Sets metadataUrl and shouldCopyMetaData with the right values
+						const metadataUrl = value[0]
+						const shouldCopyMetadata = value[1]
+
+						if (shouldCopyMetadata === true) {
+							this.copyMetadata(metadataUrl)
+						} else if (shouldCopyMetadata === false && metadataUrl && metadataStore.metaDataList.length > 0) {
+							this.deleteMetadata(metadataUrl)
+						}
+					}
+					return {}
+
+				})
+
 			},
 			deep: true,
 		},
 		listingItem: {
-			handler(newValue, oldValue) {
+			handler(newValue) {
 				if (newValue !== false && metadataStore?.metaDataList) {
 					this.loading = true
+					this.switchedListing = true
 					this.checkMetadataSwitches()
 				}
 			},
@@ -199,7 +228,7 @@ export default {
 					// Check if the metadata URL exists in the metadataStore.metaDataList
 					const exists = metadataStore.metaDataList.some(metaData => metaData.source === metadataUrl)
 					// Update the checkedMetadata reactive state
-					this.$set(this.checkedMetadata, metadataUrl, exists)
+					this.$set(this.checkedMetadataObject, metadataUrl, exists)
 				})
 			}
 			this.loading = false

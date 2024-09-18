@@ -42,9 +42,9 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				<NcListItem v-for="(catalogus, i) in catalogiStore.catalogiList"
 					:key="`${catalogus}${i}`"
 					:name="catalogus.title"
+					:details="catalogus.listed ? 'Publiek vindbaar' : 'Niet publiek vindbaar'"
 					:active="catalogiStore.catalogiItem?.id === catalogus?.id"
-					:details="'1h'"
-					:counter-number="44"
+					:counter-number="catalogus.metadata.length || '0'"
 					:force-display-actions="true"
 					@click="catalogiStore.setCatalogiItem(catalogus)">
 					<template #icon>
