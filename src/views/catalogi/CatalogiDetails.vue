@@ -88,9 +88,6 @@ import { catalogiStore, metadataStore, navigationStore, organisationStore } from
 		</div>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
-				<BTab title="Toegang">
-					Publiek of alleen bepaalde rollen
-				</BTab>
 				<BTab title="Publicatie typen">
 					<div v-if="catalogiStore.catalogiItem?.metadata.length > 0 && !metadataLoading">
 						<NcListItem v-for="(url, i) in catalogiStore.catalogiItem?.metadata"
@@ -124,6 +121,9 @@ import { catalogiStore, metadataStore, navigationStore, organisationStore } from
 					<div v-if="catalogiStore.catalogiItem?.metadata.length === 0">
 						Geen publicatie typen gevonden
 					</div>
+				</BTab>
+				<BTab title="Toegang">
+					Publiek of alleen bepaalde rollen
 				</BTab>
 			</BTabs>
 		</div>
@@ -194,13 +194,9 @@ export default {
 		// check if catalogiItem is not false
 		catalogiStore.catalogiItem && this.fetchData(catalogiStore.catalogiItem?.id)
 
-		this.catalogiStore.catalogiItem.organisation && this.fetchOrganization(catalogiStore.catalogiItem.organisation)
+		catalogiStore.catalogiItem.organisation && this.fetchOrganization(catalogiStore.catalogiItem.organisation)
 
 		this.metadataLoading = true
-		metadataStore.refreshMetaDataList()
-			.then(() => {
-				this.metadataLoading = false
-			})
 	},
 	methods: {
 		fetchData(catalogId) {
@@ -215,6 +211,10 @@ export default {
 					response.json().then((data) => {
 						catalogiStore.setCatalogiItem(data)
 						this.catalogi = catalogiStore.catalogiItem
+						metadataStore.refreshMetaDataList()
+							.then(() => {
+								this.metadataLoading = false
+							})
 					})
 					this.loading = false
 				})
