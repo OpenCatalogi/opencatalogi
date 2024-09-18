@@ -136,12 +136,42 @@ class DirectoryService
 		}
 	}
 
+	/**
+	 * array_map function for fetching a directory for a listing.
+	 *
+	 * @param Listing $listing
+	 * @return string
+	 */
+	private function getDirectory(Listing $listing): string
+	{
+		return $listing->getDirectory();
+	}
+
+	/**
+	 * Get all directories to scan.
+	 *
+	 * @return array
+	 */
+	private function getDirectories(): array
+	{
+		$listings = $this->listingMapper->findAll();
+
+		$directories = array_map(callback: [$this, 'getDirectory'], array: $listings);
+
+		return array_unique(array: $directories);
+	}
+
+	/**
+	 * Run a synchronisation based on cron
+	 *
+	 * @return array
+	 */
 	public function doCronSync(): array {
 
 		$results = [];
 		$directories = [];
 		//@todo get unique direcotries form the database
-		$directories[] = 'https://directory.opencatalogi.nl/apps/opencatalogi/api/directory';
+		$directories = $this->getDirectories();
 		foreach($directories as $key=>$directory){
 			$result = $this->fetchFromExternalDirectory(url: $directory,  update: true);
 			$results = array_merge_recursive($results, $result);
