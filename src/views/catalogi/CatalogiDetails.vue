@@ -1,5 +1,5 @@
 <script setup>
-import { catalogiStore, metadataStore, navigationStore } from '../../store/store.js'
+import { catalogiStore, metadataStore, navigationStore, organisationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -55,7 +55,37 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<span>{{ catalogi.summary }}</span>
+		<div class="container">
+			<div class="catalogDetailGrid">
+				<div>
+					<b>Samenvatting:</b>
+					<span>{{ catalogi.summary }}</span>
+				</div>
+				<div class="catalogDetailGridOrganisation">
+					<b class="catalogDetailGridOrganisationTitle">Organisatie:</b>
+					<span v-if="organisationLoading">Loading...</span>
+
+					<div v-if="!organisation">
+						Geen organisatie
+					</div>
+					<div v-if="organisation">
+						<div v-if="!organisationLoading" class="buttonLinkContainer">
+							<span>{{ organisation?.title }}</span>
+							<NcActions>
+								<NcActionLink :aria-label="`got to ${organisation?.title}`"
+									:name="organisation?.title"
+									@click="goToOrganisation()">
+									<template #icon>
+										<OpenInApp :size="20" />
+									</template>
+									{{ organisation?.title }}
+								</NcActionLink>
+							</NcActions>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
 				<BTab title="Toegang">
@@ -106,6 +136,7 @@ import {
 	NcActionButton,
 	NcLoadingIcon,
 	NcListItem,
+	NcActionLink,
 } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
@@ -124,6 +155,7 @@ export default {
 		NcActionButton,
 		NcLoadingIcon,
 		NcListItem,
+		NcActionLink,
 	},
 	props: {
 		catalogiItem: {
@@ -134,6 +166,8 @@ export default {
 	data() {
 		return {
 			catalogi: false,
+			organisation: [],
+			organisationLoading: false,
 			loading: false,
 			upToDate: false,
 			metadataLoading: false,
@@ -149,6 +183,7 @@ export default {
 					// check if newCatalogiItem is not false
 					newCatalogiItem && this.fetchData(newCatalogiItem?.id)
 					this.upToDate = true
+					newCatalogiItem?.organisation ? this.fetchOrganization(newCatalogiItem?.organisation) : this.organisation = false
 				}
 			},
 			deep: true,
@@ -158,6 +193,8 @@ export default {
 		this.catalogi = catalogiStore.catalogiItem
 		// check if catalogiItem is not false
 		catalogiStore.catalogiItem && this.fetchData(catalogiStore.catalogiItem?.id)
+
+		this.catalogiStore.catalogiItem.organisation && this.fetchOrganization(catalogiStore.catalogiItem.organisation)
 
 		this.metadataLoading = true
 		metadataStore.refreshMetaDataList()
@@ -186,9 +223,30 @@ export default {
 					this.loading = false
 				})
 		},
+		fetchOrganization(organisationId, loading) {
+			if (loading) { this.organisationLoading = true }
+
+			fetch(`/index.php/apps/opencatalogi/api/organisations/${organisationId}`, {
+				method: 'GET',
+			})
+				.then((response) => {
+					response.json().then((data) => {
+						this.organisation = data
+					})
+					if (loading) { this.organisationLoading = false }
+				})
+				.catch((err) => {
+					console.error(err)
+					if (loading) { this.organisationLoading = false }
+				})
+		},
 		filteredMetadata(source) {
 			if (this.metadataLoading) return null
 			return metadataStore.metaDataList.filter((metadata) => metadata?.source === source)[0]
+		},
+		goToOrganisation() {
+			organisationStore.setOrganisationItem(this.organisation)
+			navigationStore.setSelected('organisations')
 		},
 		openLink(url, type = '') {
 			window.open(url, type)
@@ -264,5 +322,24 @@ h4 {
 .flex-hor {
     display: flex;
     gap: 4px;
+}
+
+.buttonLinkContainer {
+	display: flex;
+	align-items: center;
+}
+
+.catalogDetailGrid {
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+.catalogDetailGridOrganisation {
+	display: flex;
+    align-items: center;
+}
+
+.catalogDetailGridOrganisationTitle {
+	margin-inline-end: 1ch;
 }
 </style>

@@ -43,8 +43,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 					:key="`${catalogus}${i}`"
 					:name="catalogus.title"
 					:active="catalogiStore.catalogiItem?.id === catalogus?.id"
-					:details="'1h'"
-					:counter-number="44"
+					:counter-number="catalogus.metadata.length || '0'"
 					:force-display-actions="true"
 					@click="catalogiStore.setCatalogiItem(catalogus)">
 					<template #icon>
