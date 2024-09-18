@@ -223,7 +223,6 @@ export default {
 	},
 	computed: {
 		filteredMetadataOptions() {
-			console.log(this.catalogiList)
 			if (!this.catalogiList?.length) return {}
 			if (!this.catalogi?.options?.length) return {}
 			if (!this.catalogi?.value.id) return {}
@@ -261,7 +260,6 @@ export default {
 		},
 	},
 	updated() {
-		console.log('updated', this.hasUpdated)
 		if (navigationStore.modal === 'publicationAdd' && !this.hasUpdated) {
 
 			this.fetchCatalogi()
