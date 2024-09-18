@@ -171,7 +171,7 @@ export default {
 
 				newValueObject.map((value, idx) => {
 					// If oldValueObject does not exist it means we have selected new listing and not updated a switch so we return
-					if (oldValueObject.length === 0) return {}
+					if (!oldValueObject.length) return {}
 
 					// Checks which switch has been updated by checking the old value of that switch
 					if (value[1] !== oldValueObject[idx][1]) {

@@ -89,7 +89,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				<!-- STAGE 2 -->
 				<div v-if="catalogi?.value?.id && !metaData?.value?.id">
 					<p>Publicaties worden gedefineerd door <a @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/metadata', '_blank')">publicatie typen</a>, van welk publicatie type wit u een publicatie aanmaken?</p>
-					<div v-if="filteredMetadataOptions.options?.length === 0">
+					<div v-if="!filteredMetadataOptions.options?.length">
 						<p>
 							<strong>Er zijn nog geen publicatieTypes toegevoegd aan deze Catalogus.</strong>
 						</p>
@@ -97,7 +97,7 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							<strong>Voeg een publicatieType toe om een publicatie aan te maken.</strong>
 						</p>
 					</div>
-					<div v-if="filteredMetadataOptions.options?.length !== 0">
+					<div v-if="filteredMetadataOptions.options?.length > 0">
 						<NcSelect v-bind="filteredMetadataOptions"
 							v-model="metaData.value"
 							input-label="Publicatie type*"
