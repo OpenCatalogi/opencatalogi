@@ -7,7 +7,7 @@ use OCP\BackgroundJob\TimedJob;
 use OCP\AppFramework\Utility\ITimeFactory;
 
 /**
- * 
+ *
  * Docs: https://docs.nextcloud.com/server/latest/developer_manual/basics/backgroundjobs.html
  */
 class DirectorySync extends TimedJob {
@@ -28,6 +28,6 @@ class DirectorySync extends TimedJob {
     protected function run($arguments) {
         $this->directoryService->doCronSync();
     }
-        
+
 
 }
