@@ -189,7 +189,8 @@ class DirectoryService
  		$result = $this->client->get(uri: $url);
 
 		if(str_contains(haystack: $result->getHeader('Content-Type')[0], needle: 'application/json') === false) {
-			$result = $this->client->get(uri: $url = rtrim(string: $url, characters: '/').'/apps/opencatalogi/api/directory');
+			$url = rtrim(string: $url, characters: '/').'/apps/opencatalogi/api/directory';
+			$result = $this->client->get(uri: $url);
 		}
 
 		$results = json_decode(json: $result->getBody()->getContents(), associative: true);
