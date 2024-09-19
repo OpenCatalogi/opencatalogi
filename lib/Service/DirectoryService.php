@@ -169,8 +169,6 @@ class DirectoryService
 	public function doCronSync(): array {
 
 		$results = [];
-		$directories = [];
-		//@todo get unique direcotries form the database
 		$directories = $this->getDirectories();
 		foreach($directories as $key=>$directory){
 			$result = $this->fetchFromExternalDirectory(url: $directory,  update: true);
