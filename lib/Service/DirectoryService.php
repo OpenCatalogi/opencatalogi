@@ -205,7 +205,6 @@ class DirectoryService
 
 
 		$localListings = $this->listingMapper->findAll(filters: ['directory' => $url]);
-//		var_dump($catalogs, $url, count($localListings));
 
 		foreach($localListings as $localListing) {
 			if(in_array(needle: $localListing->getCatalogId(), haystack: $catalogs) === false) {

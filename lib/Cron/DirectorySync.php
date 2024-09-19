@@ -19,14 +19,13 @@ class DirectorySync extends TimedJob {
         $this->directoryService = $directoryService;
 
         // Run once an hour
-        $this->setInterval(30);
+        $this->setInterval(3600);
 
         // Only run one instance of this job at a time
         $this->setAllowParallelRuns(false);
     }
 
     protected function run($arguments) {
-		var_dump('runSync');
         $this->directoryService->doCronSync();
     }
 
