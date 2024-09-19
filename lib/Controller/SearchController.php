@@ -113,11 +113,11 @@ class SearchController extends Controller
 			$page = 0;
 
 			if(isset($filters['_limit']) === true) {
-				$limit = $filters['_limit'];
+				$limit = (int) $filters['_limit'];
 			}
 
 			if (isset($filters['_page']) === true) {
-				$page = $filters['_page'];
+				$page = (int) $filters['_page'];
 				$offset = ($limit * ($filters['_page'] - 1));
 			}
 
