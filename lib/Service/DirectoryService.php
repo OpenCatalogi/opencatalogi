@@ -136,14 +136,42 @@ class DirectoryService
 		}
 	}
 
+	/**
+	 * array_map function for fetching a directory for a listing.
+	 *
+	 * @param Listing $listing
+	 * @return string
+	 */
+	private function getDirectory(Listing $listing): string
+	{
+		return $listing->getDirectory();
+	}
+
+	/**
+	 * Get all directories to scan.
+	 *
+	 * @return array
+	 */
+	private function getDirectories(): array
+	{
+		$listings = $this->listingMapper->findAll();
+
+		$directories = array_map(callback: [$this, 'getDirectory'], array: $listings);
+
+		return array_unique(array: $directories);
+	}
+
+	/**
+	 * Run a synchronisation based on cron
+	 *
+	 * @return array
+	 */
 	public function doCronSync(): array {
 
 		$results = [];
-		$directories = [];
-		//@todo get unique direcotries form the database
-		$directories[] = 'https://directory.opencatalogi.nl/apps/opencatalogi/api/directory';
-		foreach($directories as $key -> $directory){
-			$result = $this->fetchFromExternalDirectory([], $directory, true);
+		$directories = $this->getDirectories();
+		foreach($directories as $key=>$directory){
+			$result = $this->fetchFromExternalDirectory(url: $directory,  update: true);
 			$results = array_merge_recursive($results, $result);
 		}
 
@@ -159,15 +187,28 @@ class DirectoryService
  		$result = $this->client->get(uri: $url);
 
 		if(str_contains(haystack: $result->getHeader('Content-Type')[0], needle: 'application/json') === false) {
-			$result = $this->client->get(uri: rtrim(string: $url, characters: '/').'/apps/opencatalogi/api/directory');
+			$url = rtrim(string: $url, characters: '/').'/apps/opencatalogi/api/directory';
+			$result = $this->client->get(uri: $url);
 		}
 
 		$results = json_decode(json: $result->getBody()->getContents(), associative: true);
 
 		$addedDirectories = [];
+		$catalogs 		  = [];
 
 		foreach($results['results'] as $record) {
+			$catalogs[] = $record['catalogId'];
 			$addedDirectories[] = $this->createDirectoryFromResult(result: $record, update: $update);
+
+		}
+
+
+		$localListings = $this->listingMapper->findAll(filters: ['directory' => $url]);
+
+		foreach($localListings as $localListing) {
+			if(in_array(needle: $localListing->getCatalogId(), haystack: $catalogs) === false) {
+				$this->listingMapper->delete($localListing);
+			}
 		}
 
 		return $addedDirectories;
