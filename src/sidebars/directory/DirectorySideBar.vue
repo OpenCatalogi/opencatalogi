@@ -325,6 +325,7 @@ export default {
 				},
 			)
 				.then(() => {
+					directoryStore.refreshListingList()
 					this.syncLoading = false
 				})
 				.catch((err) => {
