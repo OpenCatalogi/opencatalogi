@@ -58,7 +58,7 @@ class ValidationService
 	public function getCatalog (string $id): array
 	{
 		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') !== false
-			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') === '1'
+			&& $this->config->getValueString(app: $this->appName, key: 'mongoStorage') === '1'
 		) {
 			$filter = ['id' => $id, '_schema' => 'catalog'];
 
