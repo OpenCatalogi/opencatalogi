@@ -33,13 +33,13 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 				style="min-width: unset; width: 100%;"
 				input-label="Catalogus*"
 				:loading="catalogiLoading"
-				:disabled="catalogiLoading" />
+				:disabled="catalogiLoading || loading" />
 			<NcSelect v-bind="filteredMetadataOptions"
 				v-model="metaData.value"
 				style="min-width: unset; width: 100%;"
 				input-label="Publicatie type*"
 				:loading="metaDataLoading"
-				:disabled="metaDataLoading || !catalogi.value?.id" />
+				:disabled="metaDataLoading || loading || !catalogi.value?.id" />
 			<NcTextField :disabled="loading"
 				label="Titel*"
 				:value.sync="publicationItem.title" />
