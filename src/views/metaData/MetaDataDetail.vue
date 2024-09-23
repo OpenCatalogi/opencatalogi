@@ -9,7 +9,7 @@ import { navigationStore, metadataStore } from '../../store/store.js'
 				<h1 class="h1">
 					{{ metadata.title }}
 				</h1>
-				<span>{{ metadata.description }}</span>
+				<span>{{ metadata.description || metadata.summary }}</span>
 			</div>
 
 			<NcActions :disabled="loading"

@@ -89,10 +89,10 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:counter-number="publication?.attachmentCount.toString()"
 					@click="setActive(publication)">
 					<template #icon>
-						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
-						<ArchiveOutline v-if="publication.status === 'archived'" :size="44" />
-						<Pencil v-if="publication.status === 'concept'" :size="44" />
-						<AlertOutline v-if="publication.status === 'retracted'" :size="44" />
+						<ListBoxOutline v-if="publication.status.toLowerCase() === 'published'" :size="44" />
+						<ArchiveOutline v-if="publication.status.toLowerCase() === 'archived'" :size="44" />
+						<Pencil v-if="publication.status.toLowerCase() === 'concept'" :size="44" />
+						<AlertOutline v-if="publication.status.toLowerCase() === 'retracted'" :size="44" />
 					</template>
 					<template #subname>
 						{{ publication?.summary }}
@@ -227,7 +227,7 @@ export default {
 		filteredPublications() {
 			if (!publicationStore?.publicationList) return []
 			return publicationStore.publicationList.filter((publication) => {
-				return publication.catalogi?.id?.toString() === navigationStore.selectedCatalogus?.toString()
+				return publication.catalogi?.id?.toString() ?? publication.catalogi?.toString() === navigationStore.selectedCatalogus?.toString()
 			})
 		},
 	},
