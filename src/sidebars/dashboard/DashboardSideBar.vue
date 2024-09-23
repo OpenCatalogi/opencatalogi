@@ -59,7 +59,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 						</h3>
 
 						<div class="filesListDragDropNoticeTitle">
-							<NcButton v-if="success === null && !files"
+							<NcButton v-if="!files"
 								:disabled="loading"
 								type="primary"
 								@click="openFileUpload()">
@@ -69,7 +69,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 								Bestand toevoegen
 							</NcButton>
 
-							<NcButton v-if="success === null && files"
+							<NcButton v-if="files"
 								:disabled="loading"
 								type="primary"
 								@click="reset()">
@@ -83,8 +83,7 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 				</div>
 			</div>
 
-			<NcButton v-if="success === null"
-				:disabled="!publicationItem.title || !publicationItem.summary || !catalogi.value?.id || !metaData.value?.id"
+			<NcButton :disabled="!publicationItem.title || !publicationItem.summary || !catalogi.value?.id || !metaData.value?.id || loading"
 				style="margin-top: 0.5rem;"
 				type="primary"
 				@click="addPublication()">
@@ -94,6 +93,18 @@ import { navigationStore, searchStore, publicationStore } from '../../store/stor
 				</template>
 				Toevoegen
 			</NcButton>
+
+			<div v-if="success !== null || error">
+				<NcNoteCard v-if="success" type="success">
+					<p>Publicatie succesvol toegevoegd</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="!success" type="error">
+					<p>Er is iets fout gegaan bij het toevoegen van publicatie</p>
+				</NcNoteCard>
+				<NcNoteCard v-if="error" type="error">
+					<p>{{ error }}</p>
+				</NcNoteCard>
+			</div>
 		</NcAppSidebarTab>
 
 		<NcAppSidebarTab id="settings-tab" name="Publicaties" :order="3">
@@ -220,7 +231,8 @@ import TrayArrowDown from 'vue-material-design-icons/TrayArrowDown.vue'
 import { useFileSelection } from '../../composables/UseFileSelection.js'
 import { ref } from 'vue'
 import axios from 'axios'
-import { Publication } from '@/entities/index.js'
+
+import { Publication } from '../../entities/index.js'
 
 const dropZoneRef = ref()
 const { openFileUpload, files, reset } = useFileSelection({ allowMultiple: false, dropzone: dropZoneRef })
@@ -314,7 +326,7 @@ export default {
 				this.catalogi.value = []
 				this.metaData.value = []
 			}
-			this.success = null
+			this.error = null
 		},
 		fetchCatalogi() {
 			this.catalogiLoading = true
@@ -361,6 +373,7 @@ export default {
 			this.loading = true
 			this.error = false
 
+			// create the publication
 			fetch(
 				'/index.php/apps/opencatalogi/api/publications',
 				{
@@ -379,13 +392,17 @@ export default {
 					this.loading = false
 					this.success = response.ok
 
+					// if response is ok, and files exist, we add the attachment
 					const publicationItem = new Publication(await response.json())
-					if (response.ok) this.addAttachment(publicationItem)
+					if (response.ok && files.value) this.addAttachment(publicationItem)
 
 					// Lets refresh the publicationList
 					publicationStore.refreshPublicationList()
 					// Wait for the user to read the feedback then close the model
 					setTimeout(this.cleanup, 2000)
+					if (!files.value && files.value.length === 0) {
+						setTimeout(this.success = null, 2000)
+					}
 				})
 				.catch((err) => {
 					this.error = err
@@ -399,6 +416,8 @@ export default {
 
 			axios.post('/index.php/apps/opencatalogi/api/attachments', {
 				published: null,
+				summary: '',
+				license: '',
 				_file: files.value ? files.value[0] : '',
 			}, {
 				headers: {
@@ -409,51 +428,50 @@ export default {
 					'Publication-Title': publicationItem.title,
 				},
 			}).then((response) => {
-
-				this.success = true
+				this.success = response.status
 				reset()
 				// Lets refresh the attachment list
-				if (publicationItem) {
-					publicationStore.getPublicationAttachments(publicationItem?.id)
 
-					fetch(
-						`/index.php/apps/opencatalogi/api/publications/${publicationItem.id}`,
-						{
-							method: 'PUT',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-							body: JSON.stringify({
-								...publicationItem,
-								attachments: [...publicationItem.attachments, response.data.id],
-								catalogi: publicationItem.catalogi.id,
-								metaData: publicationItem.metaData,
-							}),
+				publicationStore.getPublicationAttachments(publicationItem?.id)
+
+				fetch(
+					`/index.php/apps/opencatalogi/api/publications/${publicationItem.id}`,
+					{
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
 						},
-					)
-						.then((response) => {
-							this.loading = false
+						body: JSON.stringify({
+							...publicationItem,
+							attachments: [...publicationItem.attachments, response.data.id],
+							catalogi: publicationItem.catalogi.id,
+							metaData: publicationItem.metaData,
+						}),
+					},
+				)
+					.then((response) => {
+						this.success = response.ok
+						this.loading = false
 
-							// Lets refresh the publicationList
-							publicationStore.refreshPublicationList()
-							response.json().then((data) => {
-								publicationStore.setPublicationItem(data)
-							})
+						// Lets refresh the publicationList
+						publicationStore.refreshPublicationList()
+						response.json().then((data) => {
+							publicationStore.setPublicationItem(data)
+						})
 
-						})
-						.catch((err) => {
-							this.error = err
-							this.loading = false
-						})
+					})
+					.catch((err) => {
+						this.error = err
+						this.loading = false
+					})
 				// store.refreshCatalogiList()
-				}
+
 				publicationStore.setAttachmentItem(response)
 
 				// Wait for the user to read the feedback then close the model
 				const self = this
 				setTimeout(function() {
 					self.success = null
-					navigationStore.setModal(false)
 				}, 2000)
 			})
 				.catch((err) => {
