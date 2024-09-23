@@ -485,7 +485,7 @@ export default {
 
 <style lang="css">
 .dashboardSidebar .addFileContainer{
-	margin-block-end: var(--OC-margin-20);
+	margin-block: var(--OC-margin-20);
 }
 .dashboardSidebar .filesListDragDropNoticeWrapper{
 	padding-block: 2rem;
