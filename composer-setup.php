@@ -269,7 +269,7 @@ function checkPlatform(&$warnings, $quiet, $disableTls, $install)
         unset($warnings['openssl']);
     }
 
-    if (!empty($errors)) {
+    if (empty($errors) === false) {
         // Composer-Setup.exe uses "Some settings" to flag platform errors
         out('Some settings on your machine make Composer unable to work properly.', 'error');
         out('Make sure that you fix the issues listed below and run this script again:', 'error');
@@ -517,7 +517,7 @@ function outputIssues($issues)
  */
 function showWarnings($warnings)
 {
-    if (!empty($warnings)) {
+    if (empty($warnings) === false) {
         out('Some settings on your machine may cause stability issues with Composer.', 'error');
         out('If you encounter issues, try to change the following:', 'error');
         outputIssues($warnings);
@@ -1347,7 +1347,7 @@ class HttpClient {
     {
         $this->disableTls = $disableTls;
         if ($this->disableTls === false) {
-            if (!empty($cafile) && !is_dir($cafile)) {
+            if (empty($cafile) === false && is_dir($cafile) === false) {
                 if (!is_readable($cafile) || !validateCaFile(file_get_contents($cafile))) {
                     throw new RuntimeException('The configured cafile (' .$cafile. ') was not valid or could not be read.');
                 }
@@ -1506,7 +1506,7 @@ class HttpClient {
         }
 
         // Prefer CGI_HTTP_PROXY if available
-        if (!empty($_SERVER['CGI_HTTP_PROXY'])) {
+        if (empty($_SERVER['CGI_HTTP_PROXY']) === false) {
             $proxy = parse_url($_SERVER['CGI_HTTP_PROXY']);
         }
 
@@ -1516,8 +1516,8 @@ class HttpClient {
         }
 
         // Remove proxy if URL matches no_proxy directive
-        if (!empty($_SERVER['NO_PROXY']) || !empty($_SERVER['no_proxy']) && parse_url($url, PHP_URL_HOST)) {
-            $pattern = new NoProxyPattern(!empty($_SERVER['no_proxy']) ? $_SERVER['no_proxy'] : $_SERVER['NO_PROXY']);
+        if (empty($_SERVER['NO_PROXY']) === false || empty($_SERVER['no_proxy']) === false && parse_url($url, PHP_URL_HOST) === true) {
+            $pattern = new NoProxyPattern(empty($_SERVER['no_proxy']) === false ? $_SERVER['no_proxy'] : $_SERVER['NO_PROXY']);
             if ($pattern->test($url)) {
                 unset($proxy);
             }

@@ -23,7 +23,7 @@ alt Feature-aanvraag goedgekeurd
     end note
 
     Ontwikkelingspartij -> Ontwikkelingspartij: Forkt de codebase
-    Ontwikkelingspartij -> Ontwikkelingspartij: Bouwt de feature
+    Ontwikkelingspartij -> Ontwikkelingspartij: Bouwt de feature op de fork
     Ontwikkelingspartij -> Beheerderspartij: Maakt PR met verwijzing naar het issue-nummer
     note right of Beheerderspartij
      Code wordt bij voorkeur terug geleverd aan de centrale codebase

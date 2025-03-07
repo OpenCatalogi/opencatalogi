@@ -3,12 +3,10 @@ import { publicationStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcDialog
-		v-if="navigationStore.dialog === 'deleteAttachment'"
-		name="Bijlage verwijderen"
+	<NcDialog name="Bijlage verwijderen"
 		:can-close="false">
 		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.attachmentItem.name ?? publicationStore.attachmentItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ publicationStore.attachmentItem?.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<NcNoteCard v-if="succes" type="success">
 			<p>Bijlage succesvol verwijderd</p>
@@ -61,7 +59,6 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
 			succes: false,
 			error: false,
@@ -70,33 +67,18 @@ export default {
 	methods: {
 		DeleteAttachment() {
 			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/attachments/${publicationStore.attachmentItem.id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				},
-			)
+
+			publicationStore.deleteFile(publicationStore.publicationItem.id, publicationStore.attachmentItem.title)
 				.then((response) => {
 					this.loading = false
-					this.succes = true
-					// Lets refresh the attachment list
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
-					}
-					// Wait for the user to read the feedback then close the model
-					const self = this
-					setTimeout(function() {
-						self.succes = false
-						publicationStore.setAttachmentItem(false)
+					this.succes = response.status === 200
+
+					publicationStore.getPublicationAttachments(publicationStore.publicationItem.id, { page: publicationStore.currentPage, limit: publicationStore.limit })
+
+					setTimeout(() => {
 						navigationStore.setDialog(false)
 					}, 2000)
-				})
-				.catch((err) => {
-					this.error = err
+				}).finally(() => {
 					this.loading = false
 				})
 		},

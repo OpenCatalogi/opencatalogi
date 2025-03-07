@@ -76,7 +76,7 @@ export default {
 		DeleteCatalog() {
 			this.loading = true
 			fetch(
-				`/index.php/apps/opencatalogi/api/themes/${themeStore.themeItem.id}`,
+				`/index.php/apps/opencatalogi/api/objects/theme/${themeStore.themeItem.id}`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -87,7 +87,7 @@ export default {
 				.then((response) => {
 					this.loading = false
 					this.succes = true
-					// Lets refresh the catalogiList
+					// Let's refresh the catalogiList
 					themeStore.refreshThemeList()
 					themeStore.setThemeItem(false)
 					// Wait for the user to read the feedback then close the model

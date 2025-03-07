@@ -1,25 +1,33 @@
-/* eslint-disable no-console */
+/* eslint-disable n/no-missing-import */
+/* eslint-disable import/no-unresolved */
+/* eslint-disable import/extensions */
+// fk these rules above here
+
 // The store script handles app wide variables (or state), for the use of these variables and there governing concepts read the design.md
 import pinia from '../pinia.js'
-import { useCatalogiStore } from './modules/catalogi.js'
-import { useConfigurationStore } from './modules/configuration.js'
-import { useDirectoryStore } from './modules/directory.js'
-import { useMetadataStore } from './modules/metadata.js'
-import { useNavigationStore } from './modules/navigation.js'
-import { useOrganisationStore } from './modules/organisation.js'
-import { usePublicationStore } from './modules/publication.js'
-import { useSearchStore } from './modules/search.js'
-import { useThemeStore } from './modules/theme.js'
+import { useCatalogiStore } from './modules/catalogi'
+import { useConfigurationStore } from './modules/configuration'
+import { useDirectoryStore } from './modules/directory'
+import { useNavigationStore } from './modules/navigation'
+import { usePublicationTypeStore } from './modules/publicationType'
+import { useOrganizationStore } from './modules/organization'
+import { usePublicationStore } from './modules/publication'
+import { useSearchStore } from './modules/search'
+import { useThemeStore } from './modules/theme'
+import { usePageStore } from './modules/page'
+import { useMenuStore } from './modules/menu'
 
 const navigationStore = useNavigationStore(pinia)
 const searchStore = useSearchStore(pinia)
 const catalogiStore = useCatalogiStore(pinia)
 const directoryStore = useDirectoryStore(pinia)
-const metadataStore = useMetadataStore(pinia)
+const publicationTypeStore = usePublicationTypeStore(pinia)
 const publicationStore = usePublicationStore(pinia)
-const organisationStore = useOrganisationStore(pinia)
+const organizationStore = useOrganizationStore(pinia)
 const themeStore = useThemeStore(pinia)
 const configurationStore = useConfigurationStore(pinia)
+const pageStore = usePageStore(pinia)
+const menuStore = useMenuStore(pinia)
 
 export {
 	// generic
@@ -28,9 +36,11 @@ export {
 	// feature-specific
 	catalogiStore,
 	directoryStore,
-	metadataStore,
+	publicationTypeStore,
 	publicationStore,
-	organisationStore,
+	organizationStore,
 	themeStore,
 	configurationStore,
+	pageStore,
+	menuStore,
 }

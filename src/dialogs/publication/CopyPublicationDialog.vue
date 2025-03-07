@@ -7,24 +7,29 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		v-if="navigationStore.dialog === 'copyPublication'"
 		name="Publicatie kopieren"
 		:can-close="false">
-		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> kopiëren?
+		<div v-if="success !== null || error">
+			<NcNoteCard v-if="success" type="success">
+				<p>Publicatie succesvol gekopieerd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="!success" type="error">
+				<p>Er is iets fout gegaan bij het kopiëren van Publicatie</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+		</div>
+		<p v-if="success === null">
+			Wil je <b>{{ publicationStore.publicationItem?.title }}</b> kopiëren?
 		</p>
-		<NcNoteCard v-if="succes" type="success">
-			<p>Publicatie succesvol gekopieerd</p>
-		</NcNoteCard>
-		<NcNoteCard v-if="error" type="error">
-			<p>{{ error }}</p>
-		</NcNoteCard>
 		<template #actions>
 			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
+				{{ success !== null ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 			<NcButton
-				v-if="!succes"
+				v-if="success === null"
 				:disabled="loading"
 				type="primary"
 				@click="CopyPublication()">
@@ -43,6 +48,7 @@ import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import { Publication } from '../../entities/index.js'
 
 export default {
 	name: 'CopyPublicationDialog',
@@ -57,46 +63,41 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
 	methods: {
 		CopyPublication() {
 			this.loading = true
-			publicationStore.publicationItem.title = 'KOPIE: ' + publicationStore.publicationItem.title
-			if (Object.keys(publicationStore.publicationItem.data).length === 0) {
-				delete publicationStore.publicationItem.data
+
+			const publicationClone = { ...publicationStore.publicationItem }
+
+			publicationClone.title = 'KOPIE: ' + publicationClone.title
+			if (Object.keys(publicationClone.data).length === 0) {
+				delete publicationClone.data
 			}
-			delete publicationStore.publicationItem.id
-			delete publicationStore.publicationItem._id
-			publicationStore.publicationItem.status = 'concept'
-			fetch(
-				'/index.php/apps/opencatalogi/api/publications',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(publicationStore.publicationItem),
-				},
-			)
-				.then((response) => {
+			delete publicationClone.id
+			delete publicationClone._id
+			publicationClone.status = 'Concept'
+
+			const publicationItem = new Publication({
+				...publicationClone,
+				catalog: publicationClone.catalog.id ?? publicationClone.catalog,
+				publicationType: publicationClone.publicationType,
+			})
+
+			publicationStore.addPublication(publicationItem)
+				.then(({ response }) => {
 					this.loading = false
-					this.succes = true
-					// Lets refresh the catalogiList
-					publicationStore.refreshPublicationList()
-					response.json().then((data) => {
-						publicationStore.setPublicationItem(data)
-					})
+					this.success = response.ok
+
 					navigationStore.setSelected('publication')
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
-						publicationStore.setPublicationItem(false)
+						self.success = null
 						navigationStore.setDialog(false)
 					}, 2000)
 				})

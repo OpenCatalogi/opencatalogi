@@ -1,10 +1,13 @@
-***
-
+---
 description: >-
-Op deze pagina worden de systeemeisen weergegeven voor de verschillende
-clients waarvoor gekozen kan worden. Let op. Niet elke client heeft alle
-functionaliteit
----------------
+  Op deze pagina worden de systeemeisen weergegeven voor de verschillende
+  clients waarvoor gekozen kan worden. Let op. Niet elke client heeft alle
+  functionaliteit.
+---
+
+# Systeemeisen voor Nextcloud
+
+***
 
 ## Systeemeisen voor Nextcloud
 

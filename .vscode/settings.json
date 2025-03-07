@@ -10,14 +10,19 @@
         "Matadata",
         "nextcloud",
         "opencatalogi",
-        "organisation",
-        "Organisation",
-        "organisations",
-        "Organisations",
+        "organization",
+        "Organization",
+        "organizations",
+        "Organizations",
         "pinia",
         "Toegangs"
     ],
     "[javascript]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "javascript.preferences.importModuleSpecifier": "relative",
+    "javascript.preferences.importModuleSpecifierEnding": "js",
 }

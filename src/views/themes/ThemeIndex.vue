@@ -8,7 +8,7 @@ import { navigationStore, searchStore, themeStore } from '../../store/store.js'
 			<ThemeList :search="searchStore.search" />
 		</template>
 		<template #default>
-			<NcEmptyContent v-if="!themeStore.themeItem.id || navigationStore.selected != 'themes'"
+			<NcEmptyContent v-if="!themeStore.themeItem?.id || navigationStore.selected != 'themes'"
 				class="detailContainer"
 				name="Geen thema"
 				description="Nog geen thema geselecteerd">
@@ -21,7 +21,7 @@ import { navigationStore, searchStore, themeStore } from '../../store/store.js'
 					</NcButton>
 				</template>
 			</NcEmptyContent>
-			<ThemeDetail v-if="themeStore.themeItem.id && navigationStore.selected === 'themes'" :theme-item="themeStore.themeItem" />
+			<ThemeDetail v-if="themeStore.themeItem?.id && navigationStore.selected === 'themes'" :theme-item="themeStore.themeItem" />
 		</template>
 	</NcAppContent>
 </template>

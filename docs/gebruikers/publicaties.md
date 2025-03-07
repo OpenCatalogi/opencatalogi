@@ -2,14 +2,6 @@
 
 Publicaties zijn onderdeel van de [Open Catalogi Standaard](https://github.com/OpenCatalogi/.github/blob/main/docs/Standaard.md) en gebaseerd op het [publication object](https://conduction.stoplight.io/docs/open-catalogi/9bebd6bf4fe35-publication). Publicaties kennen eigenschappen zoals gedefinieerd in een publicatietype en kunnen worden gekoppeld aan bijlagen
 
-Een publicatie representeerd iets wat je wilt publiceren, het beschrijft de handeling van publiceren en de spelregels waaronder iets gepubliceerd wordt.het is een soort "verpakking" of "omhulsel" dat zowel de kerngegevens (data) als aanvullende informatie over die gegevens (metadata) bevat.
-
-Stel je voor dat je een foto hebt. De foto zelf is de data, terwijl de informatie zoals wanneer de foto is genomen, de resolutie van de foto, de camera-instellingen, en de locatie waar de foto is genomen, de metadata vormen. Een publicatie zou in dit geval zowel de foto als al deze aanvullende informatie samen in één pakketje verpakken, zodat je deze als een geheel kunt behandelen en doorzoeken.
-
-Met andere woorden, een publiatie maakt het mogelijk om zowel de data als de bijbehorende metadata op een gestandaardiseerde manier te bewaren en te verwerken, zonder dat je deze informatie telkens apart hoeft te beheren. Dit is handig omdat je zo alle relevante informatie bij elkaar hebt, wat zorgt voor meer context en daarmee een betere interpretatie van de data.
-
-Publicaties zijn altijd onderdeel van een collectie in de vorm van een [catalogus](../beheerders/catalogi.md) en behoren tot een [publicatie type](../beheerders/metadata.md) dit laatste zorgt ervoor dat ze voorspelbaar zijn. e.g. fotos hebben altijd een waarde resulutie.
-
 ## Publicaties toevoegen
 
 Publicaties kunnen worden toegevoegd via:
@@ -42,29 +34,11 @@ Na het opslaan van de publicatie, is deze zichtbaar onder de catalogi "Woo". Om 
 
 Onder is een voorbeeld van een publicatie en de Actie-mogelijkheden.
 
-<figure><img src="../.assets/oc_publicatie_acties.png" alt="" width="375"><figcaption></figcaption></figure>
-
-![alt text](image-1.png)
-
-## Acties
-
-![alt text](image.png)
-
-## Bijlagen
-
-In het merendeel van de gevallen wordt een publicatie opgemaakt om bestanden te delen (bijvoorbeeld vanuit een woo verzoek). Deze bestanden vormen de informatie in de publicaite en worden aan een publicatie gekoppels als bijlagen. Een bijlage kan zowel onderdeel zijn van de publicatie (er in worden geupload) als elders staan (er wordt naar verwezen).
-
-Naast een bestand kan een bijlage (per verwijzing) bijvoorbeeld ook een website of artikel op een website zijn.
-
-![alt text](image-3.png)
-
 ## Eigenschappen
 
-Een tweede manier om informatie op te nemen in een publicaite is via eigenschappen. Eigenschappen zijn voor gedefineerde opties (via [publicatie type](../beheerders/metadata.md)) waar een waarde aan kan worden toegekend.
+@todo
 
 ## Bijlagen
-
-![alt text](image-2.png)
 
 Publicaties hebben vaak bijlagen, zoals een verslag of een besluit. Deze zijn eenvoudig toe te voegen door op de Actie-knop te klikken bij een geselecteerde publicatie, of de drie bolletjes naast een publicatie. Dit opent de Bijlage toevoegen modal.
 

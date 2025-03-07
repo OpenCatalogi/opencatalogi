@@ -1,68 +1,99 @@
 <script setup>
-import { navigationStore, publicationStore } from '../../store/store.js'
+import { navigationStore, publicationStore, organizationStore } from '../../store/store.js'
 </script>
 <template>
-	<NcModal v-if="navigationStore.modal === 'editPublication'"
-		ref="modalRef"
-		label-id="editPublicationModal"
-		@close="navigationStore.setModal(false)">
-		<div class="modal__content">
-			<h2>Edit publication</h2>
-			<div v-if="success !== null || error">
-				<NcNoteCard v-if="success" type="success">
-					<p>Publicatie succesvol bewerkt</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="error" type="error">
-					<p>{{ error }}</p>
-				</NcNoteCard>
-			</div>
-			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
-					label="Titel *"
-					required
-					:value.sync="publicationItem.title" />
-				<NcTextField :disabled="loading"
-					label="Samenvatting *"
-					required
-					:value.sync="publicationItem.summary" />
-				<NcTextArea :disabled="loading"
-					label="Beschrijving"
-					:value.sync="publicationItem.description" />
-				<NcTextField :disabled="loading"
-					label="Reference"
-					:value.sync="publicationItem.reference" />
-				<NcTextField :disabled="loading"
-					label="Categorie"
-					:value.sync="publicationItem.category" />
-				<NcTextField :disabled="loading"
-					label="Portaal"
-					:value.sync="publicationItem.portal" />
-				<span>
-					<p>Publicatie datum</p>
-					<NcDateTimePicker v-model="publicationItem.published"
-						:disabled="loading"
-						label="Publicatie datum" />
-				</span>
-				<span class="EPM-horizontal">
-					<NcCheckboxRadioSwitch :disabled="loading"
-						label="Featured"
-						:checked.sync="publicationItem.featured">
-						Featured
-					</NcCheckboxRadioSwitch>
-				</span>
-				<NcTextField :disabled="loading"
-					label="Image"
-					:value.sync="publicationItem.image" />
-				<b>Juridisch</b>
-				<NcTextField :disabled="loading"
-					label="Licentie"
-					:value.sync="publicationItem.license" />
-			</div>
+	<NcDialog v-if="navigationStore.modal === 'editPublication'"
+		name="Bewerk Publicatie"
+		size="normal"
+		:can-close="false">
+		<div v-if="success !== null || error">
+			<NcNoteCard v-if="success" type="success">
+				<p>Publicatie succesvol bewerkt</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="!success" type="error">
+				<p>Er is iets fout gegaan bij het bewerken van Publicatie</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+		</div>
+		<div v-if="success === null" class="wrapper">
+			<NcTextField :disabled="loading"
+				label="Titel*"
+				required
+				:value.sync="publicationItem.title"
+				:error="!!inputValidation.fieldErrors?.['title']"
+				:helper-text="inputValidation.fieldErrors?.['title']?.[0]" />
+			<NcTextField :disabled="loading"
+				label="Samenvatting*"
+				required
+				:value.sync="publicationItem.summary"
+				:error="!!inputValidation.fieldErrors?.['summary']"
+				:helper-text="inputValidation.fieldErrors?.['summary']?.[0]" />
+			<NcTextArea :disabled="loading"
+				label="Beschrijving"
+				:value.sync="publicationItem.description"
+				:error="!!inputValidation.fieldErrors?.['description']"
+				:helper-text="inputValidation.fieldErrors?.['description']?.[0]" />
+			<NcTextField :disabled="loading"
+				label="Kenmerk"
+				:value.sync="publicationItem.reference"
+				:error="!!inputValidation.fieldErrors?.['reference']"
+				:helper-text="inputValidation.fieldErrors?.['reference']?.[0]" />
+			<NcTextField :disabled="loading"
+				label="Categorie"
+				:value.sync="publicationItem.category"
+				:error="!!inputValidation.fieldErrors?.['category']"
+				:helper-text="inputValidation.fieldErrors?.['category']?.[0]" />
+			<NcTextField :disabled="loading"
+				label="Portaal"
+				:value.sync="publicationItem.portal"
+				:error="!!inputValidation.fieldErrors?.['portal']"
+				:helper-text="inputValidation.fieldErrors?.['portal']?.[0]" />
+			<p>Publicatie datum</p>
+			<NcDateTimePicker v-model="publicationItem.published"
+				:disabled="loading"
+				label="Publicatie datum" />
+			<NcCheckboxRadioSwitch :disabled="loading"
+				label="Featured"
+				:checked.sync="publicationItem.featured">
+				Uitgelicht
+			</NcCheckboxRadioSwitch>
+			<NcTextField :disabled="loading"
+				label="Image"
+				:value.sync="publicationItem.image"
+				:error="!!inputValidation.fieldErrors?.['image']"
+				:helper-text="inputValidation.fieldErrors?.['image']?.[0]" />
+			<b>Juridisch</b>
+			<NcTextField :disabled="loading"
+				label="Licentie"
+				:value.sync="publicationItem.license"
+				:error="!!inputValidation.fieldErrors?.['license']"
+				:helper-text="inputValidation.fieldErrors?.['license']?.[0]" />
+			<NcSelect v-bind="organizations"
+				v-model="organizations.value"
+				input-label="Organisatie"
+				:loading="organizationsLoading"
+				:disabled="loading" />
+		</div>
+		<template #actions>
+			<NcButton
+				@click="navigationStore.setModal(false)">
+				<template #icon>
+					<Cancel :size="20" />
+				</template>
+				{{ success ? 'Sluiten' : 'Annuleer' }}
+			</NcButton>
+			<NcButton
+				@click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/gebruikers/publicaties', '_blank')">
+				<template #icon>
+					<Help :size="20" />
+				</template>
+				Help
+			</NcButton>
 			<NcButton v-if="success === null"
-				:disabled="!publicationItem.title || !publicationItem.summary"
+				v-tooltip="inputValidation.errorMessages?.[0]"
+				:disabled="!inputValidation.success || loading"
 				type="primary"
 				@click="updatePublication()">
 				<template #icon>
@@ -71,8 +102,8 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</template>
 				Opslaan
 			</NcButton>
-		</div>
-	</NcModal>
+		</template>
+	</NcDialog>
 </template>
 
 <script>
@@ -81,17 +112,21 @@ import {
 	NcCheckboxRadioSwitch,
 	NcDateTimePicker,
 	NcLoadingIcon,
-	NcModal,
+	NcDialog,
 	NcNoteCard,
 	NcTextArea,
 	NcTextField,
+	NcSelect,
 } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import Cancel from 'vue-material-design-icons/Cancel.vue'
+import Help from 'vue-material-design-icons/Help.vue'
+import { Publication } from '../../entities/index.js'
 
 export default {
 	name: 'EditPublicationModal',
 	components: {
-		NcModal,
+		NcDialog,
 		NcTextField,
 		NcTextArea,
 		NcCheckboxRadioSwitch,
@@ -99,8 +134,11 @@ export default {
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
+		NcSelect,
 		// Icons
 		ContentSaveOutline,
+		Cancel,
+		Help,
 	},
 	data() {
 		return {
@@ -116,14 +154,18 @@ export default {
 				featured: false,
 				published: '',
 				license: '',
-				catalogi: '',
-				metaData: '',
+				catalog: '',
+				publicationType: '',
 			},
 			catalogi: {
 				value: [],
 				options: [],
 			},
-			metaData: {
+			publicationType: {
+				value: [],
+				options: [],
+			},
+			organizations: {
 				value: [],
 				options: [],
 			},
@@ -131,9 +173,33 @@ export default {
 			success: null,
 			error: false,
 			catalogiLoading: false,
-			metaDataLoading: false,
+			publicationTypeLoading: false,
 			hasUpdated: false,
 		}
+	},
+	computed: {
+		inputValidation() {
+			const testClass = new Publication({
+				...this.publicationItem,
+				catalog: this.publicationItem.catalog.id ?? this.publicationItem.catalog,
+				anonymization: {
+					...this.publicationItem.anonymization,
+					anonymized: this.publicationItem.anonymization?.anonymized === 'true',
+				},
+				publicationType: this.publicationItem.publicationType.id ?? this.publicationItem.publicationType,
+				published: this.publicationItem.published !== '' ? new Date(this.publicationItem.published).toISOString() : new Date().toISOString(),
+				organization: this.organizations.value?.id,
+
+			})
+
+			const result = testClass.validate()
+
+			return {
+				success: result.success,
+				errorMessages: result?.error?.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`) || [],
+				fieldErrors: result?.error?.formErrors?.fieldErrors || {},
+			}
+		},
 	},
 	mounted() {
 		// publicationStore.publicationItem can be false, so only assign publicationStore.publicationItem to publicationItem if its NOT false
@@ -142,28 +208,26 @@ export default {
 	updated() {
 		if (navigationStore.modal === 'editPublication' && this.hasUpdated) {
 			if (this.publicationItem.id === publicationStore.publicationItem.id) return
+			this.fetchOrganizations()
 			this.hasUpdated = false
 		}
 		if (navigationStore.modal === 'editPublication' && !this.hasUpdated) {
 			publicationStore.publicationItem && (this.publicationItem = publicationStore.publicationItem)
 			this.fetchData(publicationStore.publicationItem.id)
+			this.fetchOrganizations()
 			this.hasUpdated = true
 		}
 	},
 	methods: {
 		fetchData(id) {
 			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${id}`,
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						publicationStore.setPublicationItem(data)
-						this.publicationItem = publicationStore.publicationItem
-					})
+
+			publicationStore.getOnePublication(id)
+				.then(({ data }) => {
+					this.publicationItem = {
+						...data,
+						published: new Date(data.published),
+					}
 					this.loading = false
 				})
 				.catch((err) => {
@@ -171,29 +235,55 @@ export default {
 					this.loading = false
 				})
 		},
+		fetchOrganizations() {
+			this.organizationsLoading = true
+
+			organizationStore.getAllOrganization()
+				.then(({ response, data }) => {
+					const selectedOrganization = data.filter((org) => org?.id.toString() === publicationStore.publicationItem?.organization.toString())[0] || null
+
+					this.organizations = {
+						options: data.map((organization) => ({
+							id: organization.id,
+							label: organization.title,
+						})),
+						value: selectedOrganization
+							? {
+								id: selectedOrganization?.id,
+								label: selectedOrganization?.title,
+							}
+							: null,
+					}
+
+					this.organizationsLoading = false
+				})
+				.catch((err) => {
+					console.error(err)
+					this.organizationsLoading = false
+				})
+		},
 		updatePublication() {
 			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						...this.publicationItem,
-						id: this.publicationItem.id.toString(),
-					}),
+
+			const publicationItem = new Publication({
+				...this.publicationItem,
+				catalog: this.publicationItem.catalog.id ?? this.publicationItem.catalog,
+				anonymization: {
+					...this.publicationItem.anonymization,
+					anonymized: this.publicationItem.anonymization?.anonymized === 'true',
 				},
-			)
-				.then((response) => {
+				publicationType: this.publicationItem.publicationType.id ?? this.publicationItem.publicationType,
+				published: this.publicationItem.published !== '' ? new Date(this.publicationItem.published).toISOString() : new Date().toISOString(),
+				organization: this.organizations.value?.id,
+			})
+
+			delete publicationItem['@self']
+
+			publicationStore.editPublication(publicationItem)
+				.then(({ response }) => {
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the catalogiList
-					publicationStore.refreshPublicationList()
-					response.json().then((data) => {
-						publicationStore.setPublicationItem(data)
-					})
+
 					navigationStore.setSelected('publication')
 
 					const self = this
@@ -207,30 +297,17 @@ export default {
 					this.loading = false
 				})
 		},
+		openLink(url, type = '') {
+			window.open(url, type)
+		},
 	},
 }
 </script>
 
 <style>
-.modal__content {
-  margin: var(--OC-margin-50);
-  text-align: center;
+.dialog__content {
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
-.zaakDetailsContainer {
-  margin-block-start: var(--OC-margin-20);
-  margin-inline-start: var(--OC-margin-20);
-  margin-inline-end: var(--OC-margin-20);
-}
-
-.success {
-  color: green;
-}
-
-.EPM-horizontal {
-    display: flex;
-    gap: 4px;
-    flex-direction: row;
-    align-items: center;
-}
 </style>

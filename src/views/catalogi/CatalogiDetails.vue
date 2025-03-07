@@ -1,5 +1,5 @@
 <script setup>
-import { catalogiStore, metadataStore, navigationStore } from '../../store/store.js'
+import { catalogiStore, publicationTypeStore, navigationStore, organizationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -41,11 +41,11 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 					</template>
 					Catalogus bekijken
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('addCatalogiMetadata')">
+				<NcActionButton @click="navigationStore.setModal('addCatalogiPublicationType')">
 					<template #icon>
 						<Plus :size="20" />
 					</template>
-					Metadata toevoegen
+					Publicatietype toevoegen
 				</NcActionButton>
 				<NcActionButton @click="navigationStore.setDialog('deleteCatalog')">
 					<template #icon>
@@ -55,17 +55,44 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<span>{{ catalogi.summary }}</span>
+		<div class="container">
+			<div class="catalogDetailGrid">
+				<div>
+					<b>Samenvatting:</b>
+					<span>{{ catalogi.summary }}</span>
+				</div>
+				<div class="catalogDetailGridOrganization">
+					<b class="catalogDetailGridOrganizationTitle">Organisatie:</b>
+					<span v-if="organizationLoading">Loading...</span>
+
+					<div v-if="!organization">
+						Geen organisatie
+					</div>
+					<div v-if="organization">
+						<div v-if="!organizationLoading" class="buttonLinkContainer">
+							<span>{{ organization?.title }}</span>
+							<NcActions>
+								<NcActionLink :aria-label="`got to ${organization?.title}`"
+									:name="organization?.title"
+									@click="goToOrganization()">
+									<template #icon>
+										<OpenInApp :size="20" />
+									</template>
+									{{ organization?.title }}
+								</NcActionLink>
+							</NcActions>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="tabContainer">
 			<BTabs content-class="mt-3" justified>
-				<BTab title="Toegang">
-					Publiek of alleen bepaalde rollen
-				</BTab>
-				<BTab title="Metadata">
-					<div v-if="catalogiStore.catalogiItem?.metadata.length > 0 && !metadataLoading">
-						<NcListItem v-for="(value) in catalogiStore.catalogiItem?.metadata"
-							:key="`${value}`"
-							:name="filteredMetadata(value)?.title || 'loading...'"
+				<BTab title="Publicatietypes">
+					<div v-if="catalogiStore.catalogiItem?.publicationTypes.length > 0 && !publicationTypeLoading">
+						<NcListItem v-for="(id, i) in catalogiStore.catalogiItem?.publicationTypes"
+							:key="id + i"
+							:name="filteredPublicationType(id)?.title || 'loading...'"
 							:bold="false"
 							:force-display-actions="true">
 							<template #icon>
@@ -73,16 +100,16 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 									:size="44" />
 							</template>
 							<template #subname>
-								{{ filteredMetadata(value)?.description }}
+								{{ filteredPublicationType(id)?.description }}
 							</template>
 							<template #actions>
-								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setSelected('metaData')">
+								<NcActionButton @click="publicationTypeStore.setPublicationTypeItem(filteredPublicationType(id)); navigationStore.setSelected('publicationType')">
 									<template #icon>
 										<OpenInApp :size="20" />
 									</template>
-									Bekijk Metadata
+									Bekijk publicatietype
 								</NcActionButton>
-								<NcActionButton @click="metadataStore.setMetaDataItem(filteredMetadata(value)); navigationStore.setDialog('deleteCatalogiMetadata')">
+								<NcActionButton @click="publicationTypeStore.setPublicationTypeItem(filteredPublicationType(id)); navigationStore.setDialog('deleteCatalogiPublicationType')">
 									<template #icon>
 										<Delete :size="20" />
 									</template>
@@ -91,9 +118,12 @@ import { catalogiStore, metadataStore, navigationStore } from '../../store/store
 							</template>
 						</NcListItem>
 					</div>
-					<div v-if="catalogiStore.catalogiItem?.metadata.length === 0">
-						Geen Metadata gevonden
+					<div v-if="catalogiStore.catalogiItem?.publicationTypes.length === 0">
+						Geen publicatietypes gevonden
 					</div>
+				</BTab>
+				<BTab title="Toegang">
+					Publiek of alleen bepaalde rollen
 				</BTab>
 			</BTabs>
 		</div>
@@ -106,6 +136,7 @@ import {
 	NcActionButton,
 	NcLoadingIcon,
 	NcListItem,
+	NcActionLink,
 } from '@nextcloud/vue'
 import { BTabs, BTab } from 'bootstrap-vue'
 
@@ -124,6 +155,7 @@ export default {
 		NcActionButton,
 		NcLoadingIcon,
 		NcListItem,
+		NcActionLink,
 	},
 	props: {
 		catalogiItem: {
@@ -134,21 +166,37 @@ export default {
 	data() {
 		return {
 			catalogi: false,
+			organization: [],
+			organizationLoading: false,
 			loading: false,
 			upToDate: false,
-			metadataLoading: false,
+			publicationTypeLoading: false,
 		}
 	},
 	watch: {
 		catalogiItem: {
 			handler(newCatalogiItem, oldCatalogiItem) {
-				// why this? because when you fetch a new item it changes the reference to said item, which in return causes it to fetch again (a.k.a. infinite loop)
-				// run the fetch only once to update the item
 				if (!this.upToDate || JSON.stringify(newCatalogiItem) !== JSON.stringify(oldCatalogiItem)) {
 					this.catalogi = newCatalogiItem
-					// check if newCatalogiItem is not false
-					newCatalogiItem && this.fetchData(newCatalogiItem?.id)
+					if (newCatalogiItem) {
+						this.loading = true
+						catalogiStore.getOneCatalogi(newCatalogiItem.id)
+							.then(() => {
+								this.catalogi = catalogiStore.catalogiItem
+								this.loading = false
+							})
+					}
 					this.upToDate = true
+					if (newCatalogiItem?.organization) {
+						this.organizationLoading = true
+						organizationStore.getOneOrganization(newCatalogiItem.organization)
+							.then(() => {
+								this.organization = organizationStore.organizationItem
+								this.organizationLoading = false
+							})
+					} else {
+						this.organization = false
+					}
 				}
 			},
 			deep: true,
@@ -156,39 +204,40 @@ export default {
 	},
 	mounted() {
 		this.catalogi = catalogiStore.catalogiItem
-		// check if catalogiItem is not false
-		catalogiStore.catalogiItem && this.fetchData(catalogiStore.catalogiItem?.id)
+		if (catalogiStore.catalogiItem) {
+			this.loading = true
+			catalogiStore.getOneCatalogi(catalogiStore.catalogiItem.id)
+				.then(() => {
+					this.catalogi = catalogiStore.catalogiItem
+					this.loading = false
+				})
+		}
 
-		this.metadataLoading = true
-		metadataStore.refreshMetaDataList()
+		if (catalogiStore.catalogiItem.organization) {
+			this.organizationLoading = true
+			organizationStore.getOneOrganization(catalogiStore.catalogiItem.organization)
+				.then(() => {
+					this.organization = organizationStore.organizationItem
+					this.organizationLoading = false
+				})
+		}
+
+		this.publicationTypeLoading = true
+		publicationTypeStore.refreshPublicationTypeList()
 			.then(() => {
-				this.metadataLoading = false
+				this.publicationTypeLoading = false
 			})
 	},
 	methods: {
-		fetchData(catalogId) {
-			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${catalogId}`,
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						catalogiStore.setCatalogiItem(data)
-						this.catalogi = catalogiStore.catalogiItem
-					})
-					this.loading = false
-				})
-				.catch((err) => {
-					console.error(err)
-					this.loading = false
-				})
+		filteredPublicationType(id) {
+			if (this.publicationTypeLoading) return null
+			return publicationTypeStore.publicationTypeList.filter((publicationType) => {
+				return publicationType?.id === id
+			})[0]
 		},
-		filteredMetadata(id) {
-			if (this.metadataLoading) return null
-			return metadataStore.metaDataList.filter((metadata) => metadata?.id.toString() === id.toString())[0]
+		goToOrganization() {
+			organizationStore.setOrganizationItem(this.organization)
+			navigationStore.setSelected('organizations')
 		},
 		openLink(url, type = '') {
 			window.open(url, type)
@@ -264,5 +313,24 @@ h4 {
 .flex-hor {
     display: flex;
     gap: 4px;
+}
+
+.buttonLinkContainer {
+	display: flex;
+	align-items: center;
+}
+
+.catalogDetailGrid {
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+.catalogDetailGridOrganization {
+	display: flex;
+    align-items: center;
+}
+
+.catalogDetailGridOrganizationTitle {
+	margin-inline-end: 1ch;
 }
 </style>

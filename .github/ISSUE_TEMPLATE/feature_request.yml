@@ -1,0 +1,70 @@
+name: 💡 Feature Request
+description: Suggest an idea for OpenCatalogi
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new feature!
+        Please fill out the form below to help us understand your request.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear description of what the problem is.
+      placeholder: "I'm always frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: A clear description of any alternative solutions or features you've considered.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## MoSCoW Prioritization
+        We use the MoSCoW method to prioritize features:
+        - **Must Have**: Critical for the solution to be a success
+        - **Should Have**: Important but not vital
+        - **Could Have**: Nice to have if resources permit
+        - **Won't Have**: Not priority for this time box
+        
+        Learn more about MoSCoW:
+        - [MoSCoW Prioritization](https://www.productplan.com/glossary/moscow-prioritization/)
+        - [Wikipedia - MoSCoW method](https://en.wikipedia.org/wiki/MoSCoW_method)
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: MoSCoW Priority
+      description: How would you prioritize this feature?
+      options:
+        - Must Have
+        - Should Have
+        - Could Have
+        - Won't Have (this time)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: support
+    attributes:
+      label: How would you like to support this feature?
+      description: We welcome different forms of contribution to help implement this feature
+      options:
+        - label: I would like to implement this feature myself (we'll provide guidance and support)
+        - label: I can provide financial support for the development hours (approximately €90/hour)
+        - label: I can help with testing and acceptance of the feature
+        - label: I cannot provide support at this time

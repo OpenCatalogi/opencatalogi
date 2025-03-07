@@ -1,5 +1,5 @@
 <script setup>
-import { searchStore } from '../../store/store.js'
+import { searchStore, publicationTypeStore, catalogiStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -23,15 +23,23 @@ import { searchStore } from '../../store/store.js'
 			<template #icon>
 				<DatabaseOutline :size="20" />
 			</template>
-			<NcCheckboxRadioSwitch type="switch">
-				Catalogi naam
+			<NcCheckboxRadioSwitch v-for="(catalogiItem, i) in catalogiStore.catalogiList"
+				:key="`${catalogiItem}${i}`"
+				type="switch"
+				:checked.sync="searchStore.catalogi[catalogiItem.id]">
+				{{ catalogiItem.title || 'Geen titel' }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
-		<NcAppSidebarTab id="share-tab" name="Metadata" :order="3">
+		<NcAppSidebarTab id="share-tab" name="Publicatietype" :order="3">
 			<template #icon>
 				<FileTreeOutline :size="20" />
 			</template>
-			Metadata tab content
+			<NcCheckboxRadioSwitch v-for="(publicationTypes, i) in publicationTypeStore.publicationTypeList"
+				:key="`${publicationTypes}${i}`"
+				type="switch"
+				:checked.sync="searchStore.publicationType[publicationTypes.id]">
+				{{ publicationTypes.title || 'Geen titel' }}
+			</NcCheckboxRadioSwitch>
 		</NcAppSidebarTab>
 	</NcAppSidebar>
 </template>
@@ -41,6 +49,7 @@ import { NcAppSidebar, NcAppSidebarTab, NcTextField, NcNoteCard, NcCheckboxRadio
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import DatabaseOutline from 'vue-material-design-icons/DatabaseOutline.vue'
 import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
+import { debounce } from 'lodash'
 
 export default {
 	name: 'SearchSideBar',
@@ -54,11 +63,48 @@ export default {
 		DatabaseOutline,
 		FileTreeOutline,
 	},
+	props: {
+		search: {
+			type: String,
+			required: true,
+		},
+		publicationType: {
+			type: Object,
+			required: true,
+		},
+		catalogi: {
+			type: Object,
+			required: true,
+		},
+	},
 	data() {
 		return {
-
 			starred: false,
 		}
+	},
+	watch: {
+		search: 'debouncedSearch',
+		publicationType: {
+			handler() {
+				this.debouncedSearch()
+			},
+			deep: true,
+		},
+		catalogi: {
+			handler() {
+				this.debouncedSearch()
+			},
+			deep: true,
+		},
+	},
+	mounted() {
+		publicationTypeStore.refreshPublicationTypeList()
+		catalogiStore.refreshCatalogiList()
+	},
+	methods: {
+		debouncedSearch: debounce(function() {
+			searchStore.getSearchResults()
+		}, 500),
 	},
 }
 </script>

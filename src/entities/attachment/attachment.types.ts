@@ -7,6 +7,7 @@ export type TAttachment = {
 	labels: string[]
 	accessUrl: string
 	downloadUrl: string
+    status: 'Concept' | 'Published' | 'Withdrawn' | 'Archived' | 'Revised' | 'Rejected'
 	type: string
 	extension: string
 	size: string

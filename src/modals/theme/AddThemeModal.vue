@@ -25,20 +25,31 @@ import { navigationStore, themeStore } from '../../store/store.js'
 					<NcTextField
 						:disabled="loading"
 						label="Titel"
-						:value.sync="theme.title" />
+						:value.sync="theme.title"
+						:error="!!inputValidation.fieldErrors?.['title']"
+						:helper-text="inputValidation.fieldErrors?.['title']?.[0]" />
 					<NcTextField
 						:disabled="loading"
 						label="Samenvatting"
-						:value.sync="theme.summary" />
+						:value.sync="theme.summary"
+						:error="!!inputValidation.fieldErrors?.['summary']"
+						:helper-text="inputValidation.fieldErrors?.['summary']?.[0]" />
 					<NcTextArea
 						:disabled="loading"
 						label="Beschrijving"
-						:value.sync="theme.description" />
+						:value.sync="theme.description"
+						:error="!!inputValidation.fieldErrors?.['description']"
+						:helper-text="inputValidation.fieldErrors?.['description']?.[0]" />
+					<NcTextField :disabled="loading"
+						label="Image"
+						:value.sync="theme.image"
+						:error="!!inputValidation.fieldErrors?.['image']"
+						:helper-text="inputValidation.fieldErrors?.['image']?.[0]" />
 				</div>
 			</div>
-			<NcButton
-				v-if="success === null"
-				:disabled="!theme.title || loading"
+			<NcButton v-if="success === null"
+				v-tooltip="inputValidation.errorMessages?.[0]"
+				:disabled="!inputValidation.success || loading"
 				type="primary"
 				@click="addTheme()">
 				<template #icon>
@@ -62,6 +73,8 @@ import {
 } from '@nextcloud/vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { Theme } from '../../entities/index.js'
+
 export default {
 	name: 'AddThemeModal',
 	components: {
@@ -80,6 +93,7 @@ export default {
 				title: '',
 				summary: '',
 				description: '',
+				image: '',
 			},
 
 			errorCode: '',
@@ -89,6 +103,21 @@ export default {
 			success: null,
 			error: false,
 		}
+	},
+	computed: {
+		inputValidation() {
+			const themeItem = new Theme({
+				...this.theme,
+			})
+
+			const result = themeItem.validate()
+
+			return {
+				success: result.success,
+				errorMessages: result?.error?.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`) || [],
+				fieldErrors: result?.error?.formErrors?.fieldErrors || {},
+			}
+		},
 	},
 	updated() {
 		if (navigationStore.modal === 'themeAdd' && !this.hasUpdated) {
@@ -107,39 +136,28 @@ export default {
 		addTheme() {
 			this.loading = true
 			this.error = false
-			fetch('/index.php/apps/opencatalogi/api/themes', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					...this.theme,
-				}),
+
+			const themeItem = new Theme({
+				...this.theme,
 			})
-				.then((response) => {
+
+			themeStore.addTheme(themeItem)
+				.then(({ response }) => {
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the themeList
-					themeStore.refreshThemeList()
-					response.json().then((data) => {
-						themeStore.setThemeList(data)
-					})
-					navigationStore.setSelected('themes')
+
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.success = null
 						navigationStore.setModal(false)
+						self.success = null
+						self.hasUpdated = false
 						self.theme = {
 							title: '',
 							summary: '',
 							description: '',
-							oin: '',
-							tooi: '',
-							rsin: '',
-							pki: '',
+							image: '',
 						}
-						self.hasUpdated = false
 					}, 2000)
 				})
 				.catch((err) => {

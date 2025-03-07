@@ -31,19 +31,19 @@ import { navigationStore, themeStore } from '../../store/store.js'
 					</template>
 					Help
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('editTheme')">
+				<NcActionButton @click="themeStore.setThemeItem(theme); navigationStore.setModal('editTheme')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('copyTheme')">
+				<NcActionButton @click="themeStore.setThemeItem(theme); navigationStore.setDialog('copyTheme')">
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
 					Kopiëren
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('deleteTheme')">
+				<NcActionButton @click="themeStore.setThemeItem(theme); navigationStore.setDialog('deleteTheme')">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -60,6 +60,10 @@ import { navigationStore, themeStore } from '../../store/store.js'
 				<div>
 					<b>Beschrijving:</b>
 					<span>{{ theme.description }}</span>
+				</div>
+				<div>
+					<b>Afbeelding:</b>
+					<span>{{ theme.image }}</span>
 				</div>
 			</div>
 		</div>
@@ -103,7 +107,7 @@ export default {
 			prive: false,
 			loading: false,
 			catalogiLoading: false,
-			metaDataLoading: false,
+			publicationTypeLoading: false,
 			hasUpdated: false,
 			userGroups: [
 				{
@@ -152,7 +156,7 @@ export default {
 	},
 	methods: {
 		fetchData(id) {
-			fetch(`/index.php/apps/opencatalogi/api/themes/${id}`, {
+			fetch(`/index.php/apps/opencatalogi/api/objects/theme/${id}`, {
 				method: 'GET',
 			})
 				.then((response) => {

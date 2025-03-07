@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { TOrganization } from '../organization'
+
 export type TListing = {
     id: string
     catalogusId: string
@@ -12,4 +15,6 @@ export type TListing = {
 	lastSync: string | Date
 	available: boolean
 	default: boolean
+	organization: string|TOrganization
+	publicationTypes: any[]
 }

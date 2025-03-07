@@ -2,7 +2,7 @@ import { Attachment } from './attachment'
 import { TAttachment } from './attachment.types'
 
 export const mockAttachmentsData = (): TAttachment[] => [
-	{ // full data
+	{
 		id: '1',
 		reference: 'ref1',
 		title: 'test 1',
@@ -24,6 +24,7 @@ export const mockAttachmentsData = (): TAttachment[] => [
 		published: new Date(2022, 9, 14).toISOString(),
 		modified: new Date(2022, 11, 2).toISOString(),
 		license: 'MIT',
+		status: 'Concept',
 	},
 	{
 		id: '2',
@@ -47,8 +48,9 @@ export const mockAttachmentsData = (): TAttachment[] => [
 		published: '',
 		modified: '',
 		license: 'MIT',
+		status: 'Concept',
 	},
-	{ // invalid data
+	{
 		id: '3',
 		reference: 'ref3',
 		title: 'test 3',
@@ -72,6 +74,7 @@ export const mockAttachmentsData = (): TAttachment[] => [
 		published: new Date(2022, 9, 14).toISOString(),
 		modified: new Date(2022, 11, 2).toISOString(),
 		license: 'MIT',
+		status: 'Concept',
 	},
 ]
 

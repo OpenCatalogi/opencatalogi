@@ -9,9 +9,8 @@ export class Catalogi implements TCatalogi {
 	public description: string
 	public image: string
 	public listed: boolean
-	public organisation: string
-
-	public metadata: string[]
+	public organization: string
+	public publicationTypes: string[]
 
 	constructor(data: TCatalogi) {
 		this.hydrate(data)
@@ -25,21 +24,23 @@ export class Catalogi implements TCatalogi {
 		this.description = data?.description || ''
 		this.image = data?.image || ''
 		this.listed = data?.listed || false
-		this.organisation = data.organisation || ''
-		this.metadata = (Array.isArray(data.metadata) && data.metadata) || []
+		this.organization = data.organization || ''
+		this.publicationTypes = (Array.isArray(data.publicationTypes) && data.publicationTypes) || []
 	}
 
 	/* istanbul ignore next */
 	public validate(): SafeParseReturnType<TCatalogi, unknown> {
 		// https://conduction.stoplight.io/docs/open-catalogi/l89lv7ocvq848-create-catalog
 		const schema = z.object({
-			title: z.string().min(1).max(255), // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
-			summary: z.string().min(1).max(255),
-			description: z.string().max(2555),
-			image: z.string().max(255),
+			title: z.string()
+				.min(1, 'is verplicht') // .min(1) on a string functionally works the same as a nonEmpty check (SHOULD NOT BE COMBINED WITH .OPTIONAL())
+				.max(255, 'kan niet langer dan 255 zijn'),
+			summary: z.string().max(255, 'kan niet langer dan 255 zijn'),
+			description: z.string().max(2555, 'kan niet langer dan 2555 zijn'),
+			image: z.string().max(255, 'kan niet langer dan 255 zijn'),
 			listed: z.boolean(),
-			organisation: z.string(),
-			metadata: z.string().array(),
+			organization: z.number().or(z.string()).or(z.null()),
+			publicationTypes: z.string().array(),
 		})
 
 		const result = schema.safeParse({

@@ -7,10 +7,12 @@
 /* Pages */
 
 .pageHeader {
-	margin-block-start: var(--app-navigation-padding);
-    margin-inline-start: calc(var(--default-clickable-area) + var(--app-navigation-padding)* 2);
-    min-height: var(--default-clickable-area);
-    line-height: var(--default-clickable-area);
+  margin-block-start: var(--app-navigation-padding);
+  margin-inline-start: calc(
+    var(--default-clickable-area) + var(--app-navigation-padding) * 2
+  );
+  min-height: var(--default-clickable-area);
+  line-height: var(--default-clickable-area);
 }
 
 /* Lists */
@@ -23,6 +25,12 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+.emptyListHeader {
+  margin-block-start: var(--OC-margin-10);
+  margin-inline-start: var(--OC-margin-10);
+  margin-inline-end: var(--OC-margin-10);
+}
+
 .searchField {
   padding-inline-start: 65px;
   padding-inline-end: 20px;
@@ -30,7 +38,7 @@
   margin-block-end: 11px !important;
 }
 
-.selectedZaakIcon>svg {
+.selectedZaakIcon > svg {
   fill: white;
 }
 
@@ -88,22 +96,24 @@
   overflow: auto;
 }
 
+.tabPanelFileUpload {
+  margin-block-end: 15px !important;
+}
 
 .detailGrid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.publishedIcon>svg {
+.publishedIcon > svg {
   fill: var(--color-success);
 }
-.warningIcon>svg {
+.warningIcon > svg {
   fill: var(--color-warning);
 }
 
-
 /* Modals */
-.form-group > *  {
+.form-group > * {
   margin-block-end: 10px;
 }
 
@@ -122,3 +132,83 @@
   color: var(--color-error);
 }
 
+/* File drag and drop */
+
+.filesListDragDropNotice {
+  width: 100%;
+  min-height: 113px;
+  margin: 0;
+  user-select: none;
+  color: var(--color-text-maxcontrast);
+  background-color: var(--color-main-background);
+  border-color: #000;
+}
+
+.filesListDragDropNoticeWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: fit-content;
+  max-height: 70%;
+  padding: 0 5vw;
+  border: 2px var(--color-border-dark) dashed;
+  border-radius: var(--border-radius-large);
+}
+
+.filesListDragDropNoticeWrapperIcon {
+  display: flex;
+}
+
+.filesListDragDropNoticeTitle {
+  margin: 12px 0;
+}
+
+.filesListDragDropNoticeTitle {
+  margin-left: 16px;
+  color: inherit;
+}
+
+/* CodeMirror */
+.codeMirrorContainer {
+  margin-block-start: 6px;
+  text-align: left;
+}
+
+.prettifyButton {
+  margin-block-start: 10px;
+}
+
+.codeMirrorContainer * .cm-content {
+  border-radius: 0 !important;
+  border: none !important;
+}
+.codeMirrorContainer * .cm-editor {
+  outline: none !important;
+}
+.codeMirrorContainer.light > .vue-codemirror {
+  border: 1px dotted silver;
+}
+.codeMirrorContainer.dark > .vue-codemirror {
+  border: 1px dotted grey;
+}
+
+/* value text color */
+.codeMirrorContainer.light * .cm-content *::selection {
+  color: inherit !important;
+  background-color: #add6ff80 !important;
+}
+.codeMirrorContainer.dark * .cm-content *::selection {
+  color: inherit !important;
+  background-color: #add6ff26 !important;
+}
+
+/* value text color */
+.codeMirrorContainer.dark :deep(.ͼ2 .cm-activeLine) {
+  background-color: #add6ff26;
+}
+
+/* text cursor */
+.codeMirrorContainer :deep(.cm-content) * {
+  cursor: text !important;
+}

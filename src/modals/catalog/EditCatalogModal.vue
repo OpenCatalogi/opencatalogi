@@ -1,5 +1,5 @@
 <script setup>
-import { catalogiStore, navigationStore } from '../../store/store.js'
+import { catalogiStore, navigationStore, organizationStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -24,29 +24,35 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				<NcTextField :disabled="loading"
 					label="Titel"
 					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.title"
-					required />
+					:value.sync="catalogiItem.title"
+					:error="!!inputValidation.fieldErrors?.['title']"
+					:helper-text="inputValidation.fieldErrors?.['title']?.[0]" />
 				<NcTextField :disabled="loading"
 					label="Samenvatting"
 					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.summary" />
+					:value.sync="catalogiItem.summary"
+					:error="!!inputValidation.fieldErrors?.['summary']"
+					:helper-text="inputValidation.fieldErrors?.['summary']?.[0]" />
 				<NcTextField :disabled="loading"
 					label="Beschrijving"
 					maxlength="255"
-					:value.sync="catalogiStore.catalogiItem.description" />
+					:value.sync="catalogiItem.description"
+					:error="!!inputValidation.fieldErrors?.['description']"
+					:helper-text="inputValidation.fieldErrors?.['description']?.[0]" />
 				<NcCheckboxRadioSwitch :disabled="loading"
 					label="Publiek vindbaar"
-					:checked.sync="catalogiStore.catalogiItem.listed">
+					:checked.sync="catalogiItem.listed">
 					Publiek vindbaar
 				</NcCheckboxRadioSwitch>
-				<NcSelect v-bind="organisations"
-					v-model="organisations.value"
+				<NcSelect v-bind="organizations"
+					v-model="organizations.value"
 					input-label="Organisatie"
-					:loading="organisationsLoading"
+					:loading="organizationsLoading"
 					:disabled="loading" />
 			</div>
 			<NcButton v-if="success === null"
-				:disabled="loading"
+				v-tooltip="inputValidation.errorMessages?.[0]"
+				:disabled="loading || !inputValidation.success"
 				type="primary"
 				class="ecm-submit-button"
 				@click="editCatalog()">
@@ -63,6 +69,8 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 <script>
 import { NcButton, NcModal, NcTextField, NcNoteCard, NcLoadingIcon, NcCheckboxRadioSwitch, NcSelect } from '@nextcloud/vue'
 import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+
+import { Catalogi } from '../../entities/index.js'
 
 export default {
 	name: 'EditCatalogModal',
@@ -85,15 +93,31 @@ export default {
 				description: '',
 				image: '',
 				listed: false,
-				organisation: '',
+				organization: '',
 			},
 			loading: false,
 			success: null,
 			error: false,
-			organisations: {},
-			organisationsLoading: false,
+			organizations: {},
+			organizationsLoading: false,
 			hasUpdated: false,
 		}
+	},
+	computed: {
+		inputValidation() {
+			const catalogiItem = new Catalogi({
+				...this.catalogiItem,
+				organization: this.organizations.value?.id,
+			})
+
+			const result = catalogiItem.validate()
+
+			return {
+				success: result.success,
+				errorMessages: result?.error?.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`) || [],
+				fieldErrors: result?.error?.formErrors?.fieldErrors || {},
+			}
+		},
 	},
 	mounted() {
 		// catalogiStore.catalogiItem can be false, so only assign catalogiStore.catalogiItem to catalogiItem if its NOT false
@@ -107,7 +131,7 @@ export default {
 		if (navigationStore.modal === 'editCatalog' && !this.hasUpdated) {
 			catalogiStore.catalogiItem && (this.catalogiItem = catalogiStore.catalogiItem)
 			this.fetchData(catalogiStore.catalogiItem.id)
-			this.fetchOrganisations()
+			this.fetchOrganizations()
 			this.hasUpdated = true
 		}
 	},
@@ -117,17 +141,10 @@ export default {
 		},
 		fetchData(id) {
 			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${id}`,
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						catalogiStore.setCatalogiItem(data)
-						this.catalogiItem = catalogiStore.catalogiItem
-					})
+
+			catalogiStore.getOneCatalogi(id)
+				.then(({ response, data }) => {
+					this.catalogiItem = data
 					this.loading = false
 				})
 				.catch((err) => {
@@ -135,59 +152,47 @@ export default {
 					this.loading = false
 				})
 		},
-		fetchOrganisations() {
-			this.organisationsLoading = true
-			fetch('/index.php/apps/opencatalogi/api/organisations', {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-						const selectedOrganisation = data.results.filter((org) => org?.id.toString() === catalogiStore.catalogiItem?.organisation.toString())[0] || null
+		fetchOrganizations() {
+			this.organizationsLoading = true
 
-						this.organisations = {
-							options: data.results.map((organisation) => ({
-								id: organisation.id,
-								label: organisation.title,
-							})),
-							value: selectedOrganisation
-								? {
-									id: selectedOrganisation?.id,
-									label: selectedOrganisation?.title,
-								}
-								: null,
-						}
-					})
-					this.organisationsLoading = false
+			organizationStore.getAllOrganization()
+				.then(({ response, data }) => {
+					const selectedOrganization = data.filter((org) => org?.id.toString() === catalogiStore.catalogiItem?.organization.toString())[0] || null
+
+					this.organizations = {
+						options: data.map((organization) => ({
+							id: organization.id,
+							label: organization.title,
+						})),
+						value: selectedOrganization
+							? {
+								id: selectedOrganization?.id,
+								label: selectedOrganization?.title,
+							}
+							: null,
+					}
+
+					this.organizationsLoading = false
 				})
 				.catch((err) => {
 					console.error(err)
-					this.organisationsLoading = false
+					this.organizationsLoading = false
 				})
 		},
 		editCatalog() {
 			this.loading = true
 			this.error = false
-			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						...catalogiStore.catalogiItem,
-						organisation: this.organisations?.value?.id,
-					}),
-				},
-			)
-				.then((response) => {
+
+			const CatalogiItem = new Catalogi({
+				...this.catalogiItem,
+				organization: this.organizations.value?.id,
+			})
+
+			catalogiStore.editCatalogi(CatalogiItem)
+				.then(({ response }) => {
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the catalogiList
-					catalogiStore.refreshCatalogiList()
-					response.json().then((data) => {
-						catalogiStore.setCatalogiItem(data)
-					})
+
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {

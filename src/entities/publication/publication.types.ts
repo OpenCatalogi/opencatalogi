@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: double check this type for correct properties and optionals when stoplight updates - https://conduction.stoplight.io/docs/open-catalogi/fee989a9c8e3f-publication
 
-import { TAttachment } from '../attachment'
+import { TCatalogi, TPublicationType } from '../'
 
 export type TPublication = {
     id: string
@@ -13,11 +14,11 @@ export type TPublication = {
 	portal: string
 	featured: boolean
     schema: string
-    status: 'Concept' | 'Published' | 'Withdrawn' | 'Archived' | 'revised' | 'Rejected'
-    attachments: TAttachment[]
-    attachmentCount: number
+    source: string
+    status: 'Concept' | 'Published' | 'Withdrawn' | 'Archived' | 'Revised' | 'Rejected'
+    organization: string
     themes: string[]
-    data: Record<string, any>
+    data: Record<string, unknown>
     anonymization: {
         anonymized: boolean
         results: string
@@ -36,6 +37,7 @@ export type TPublication = {
         type: 'Point' | 'LineString' | 'Polygon' | 'MultiPoint' | 'MultiLineString' | 'MultiPolygon'
         coordinates: [number, number]
     }
-    catalogi: string
-    metaData: string
+    '@self'?: object
+    catalog: TCatalogi | any
+    publicationType: string | TPublicationType
 }

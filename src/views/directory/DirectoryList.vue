@@ -42,7 +42,10 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 				:key="`${listing}${i}`"
 				:name="listing.name ?? listing.title"
 				:active="directoryStore.listingItem?.id === listing?.id"
-				@click="directoryStore.setListingItem(listing)">
+				:details="listing.organization?.title || 'Geen organisatie'"
+				:counter-number="listing.publicationTypes?.length || '0'"
+				:force-display-actions="true"
+				@click="setActive(listing)">
 				<template #icon>
 					<LayersOutline :class="directoryStore.listingItem?.id === listing?.id && 'selectedIcon'"
 						disable-menu
@@ -61,7 +64,7 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			name="Listings aan het laden" />
 
 		<NcEmptyContent
-			v-if="!directoryStore.listingList?.length > 0"
+			v-if="!directoryStore.listingList?.length > 0 && !loading"
 			class="detailContainer"
 			name="Geen Listings"
 			description="Je directory of zoek opdracht bevat nog geen listings, wil je een externe directory toevoegen?">
@@ -155,6 +158,11 @@ export default {
 		}, 500),
 		openLink(url, type = '') {
 			window.open(url, type)
+		},
+		setActive(listing) {
+			if (JSON.stringify(directoryStore.listingItem) === JSON.stringify(listing)) {
+				directoryStore.setListingItem(false)
+			} else { directoryStore.setListingItem(listing) }
 		},
 	},
 }

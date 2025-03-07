@@ -33,7 +33,7 @@ import { navigationStore, themeStore } from '../../store/store.js'
 						<template #icon>
 							<Plus :size="20" />
 						</template>
-						Theme toevoegen
+						Thema toevoegen
 					</NcActionButton>
 				</NcActions>
 			</div>
@@ -43,9 +43,9 @@ import { navigationStore, themeStore } from '../../store/store.js'
 					:name="theme.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="themeStore.themeItem.id === theme.id"
+					:active="themeStore.themeItem?.id === theme.id"
 					:details="theme?.status"
-					@click="themeStore.setThemeItem(theme)">
+					@click="setActive(theme)">
 					<template #icon>
 						<ShapeOutline :size="44" />
 					</template>
@@ -80,6 +80,10 @@ import { navigationStore, themeStore } from '../../store/store.js'
 				class="loadingIcon"
 				appearance="dark"
 				name="Themas aan het laden" />
+
+			<div v-if="!filteredThemes.length" class="emptyListHeader">
+				Er zijn nog geen thema's gedefinieerd.
+			</div>
 		</ul>
 	</NcAppContentList>
 </template>
@@ -165,6 +169,11 @@ export default {
 		}, 500),
 		openLink(url, type = '') {
 			window.open(url, type)
+		},
+		setActive(theme) {
+			if (JSON.stringify(themeStore.themeItem) === JSON.stringify(theme)) {
+				themeStore.setThemeItem(false)
+			} else { themeStore.setThemeItem(theme) }
 		},
 	},
 }

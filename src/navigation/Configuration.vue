@@ -153,7 +153,7 @@
 					</NcNoteCard>
 				</div>
 			</NcAppSettingsSection>
-			<NcAppSettingsSection id="organisation" name="Rolen en Rechten" doc-url="zaakafhandel.app">
+			<NcAppSettingsSection id="organization" name="Rolen en Rechten" doc-url="zaakafhandel.app">
 				<template #icon>
 					<AccountLockOpenOutline :size="20" />
 				</template>
@@ -162,9 +162,9 @@
 					Hier kunt u de details voor uw organisatie instellen.
 				</p>
 
-				<NcTextField id="organisationName" :value.sync="configuration.organisationName" />
-				<NcTextField id="organisationOin" :value.sync="configuration.organisationOin" />
-				<NcTextArea id="organisationPki" :value.sync="configuration.organisationPki" />
+				<NcTextField id="organizationName" :value.sync="configuration.organizationName" />
+				<NcTextField id="organizationOin" :value.sync="configuration.organizationOin" />
+				<NcTextArea id="organizationPki" :value.sync="configuration.organizationPki" />
 
 				<NcButton aria-label="Opslaan"
 					type="primary"
@@ -236,9 +236,9 @@ export default {
 			elastic_location: '',
 			elastic_key: '',
 			loading: true,
-			organisation_name: '',
-			organisation_oin: '',
-			organisation_pki: '',
+			organization_name: '',
+			organization_oin: '',
+			organization_pki: '',
 			configuration: {
 				federationActive: true,
 				federationListed: false,
@@ -254,9 +254,9 @@ export default {
 				mongodbLocation: '',
 				mongodbKey: '',
 				mongodbCluster: '',
-				organisationName: '',
-				organisationOin: '',
-				organisationPki: '',
+				organizationName: '',
+				organizationOin: '',
+				organizationPki: '',
 			},
 			configurationSuccess: -1,
 			feedbackPosition: '',

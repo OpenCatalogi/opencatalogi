@@ -7,24 +7,29 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		v-if="navigationStore.dialog === 'archivePublication'"
 		name="Publicatie archiveren"
 		:can-close="false">
-		<p v-if="!succes">
-			Wil je <b>{{ publicationStore.publicationItem.name ?? publicationStore.publicationItem.title }}</b> archiveren? Dit betekend dat de publicatie wordt de gepubliceerd en niet langer vindbaar is. Bij de eerste volgende gelegenheid wordt de publicatie <b>automatisch</b> over gebracht naar het digitaal archief.
+		<div v-if="success !== null || error">
+			<NcNoteCard v-if="success" type="success">
+				<p>Publicatie succesvol gearchiveerd</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="!success" type="error">
+				<p>Er is iets fout gegaan bij het archiveren van Publicatie</p>
+			</NcNoteCard>
+			<NcNoteCard v-if="error" type="error">
+				<p>{{ error }}</p>
+			</NcNoteCard>
+		</div>
+		<p v-if="success === null">
+			Wil je <b>{{ publicationStore.publicationItem?.title }}</b> archiveren? Dit betekend dat de publicatie wordt de gepubliceerd en niet langer vindbaar is. Bij de eerste volgende gelegenheid wordt de publicatie <b>automatisch</b> over gebracht naar het digitaal archief.
 		</p>
-		<NcNoteCard v-if="succes" type="success">
-			<p>Publicatie succesvol gearchiveerd</p>
-		</NcNoteCard>
-		<NcNoteCard v-if="error" type="error">
-			<p>{{ error }}</p>
-		</NcNoteCard>
 		<template #actions>
 			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
 				<template #icon>
 					<Cancel :size="20" />
 				</template>
-				{{ succes ? 'Sluiten' : 'Annuleer' }}
+				{{ success !== null ? 'Sluiten' : 'Annuleer' }}
 			</NcButton>
 			<NcButton
-				v-if="!succes"
+				v-if="success === null"
 				:disabled="loading"
 				icon="Delete"
 				type="primary"
@@ -44,6 +49,7 @@ import { NcButton, NcDialog, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
 
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
+import { Publication } from '../../entities/index.js'
 
 export default {
 	name: 'ArchivePublicationDialog',
@@ -58,37 +64,31 @@ export default {
 	},
 	data() {
 		return {
-
 			loading: false,
-			succes: false,
+			success: null,
 			error: false,
 		}
 	},
 	methods: {
 		ArchivePublication() {
 			this.loading = true
-			publicationStore.publicationItem.status = 'archived'
-			fetch(
-				`/index.php/apps/opencatalogi/api/publications/${publicationStore.publicationItem.id}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(publicationStore.publicationItem),
-				},
-			)
-				.then((response) => {
+			publicationStore.publicationItem.status = 'Archived'
+
+			const catalogiItem = new Publication({
+				...publicationStore.publicationItem,
+				catalog: publicationStore.publicationItem.catalog.id ?? publicationStore.publicationItem.catalog,
+				publicationType: publicationStore.publicationItem.publicationType,
+			})
+
+			publicationStore.editPublication(catalogiItem)
+				.then(({ response }) => {
 					this.loading = false
-					this.succes = true
-					// Lets refresh the catalogiList
-					publicationStore.refreshPublicationList()
-					publicationStore.getConceptPublications()
+					this.success = response.ok
+
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {
-						self.succes = false
-						publicationStore.setPublicationItem(false)
+						self.success = null
 						navigationStore.setDialog(false)
 					}, 2000)
 				})

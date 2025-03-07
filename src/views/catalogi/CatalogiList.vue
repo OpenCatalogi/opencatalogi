@@ -42,11 +42,11 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				<NcListItem v-for="(catalogus, i) in catalogiStore.catalogiList"
 					:key="`${catalogus}${i}`"
 					:name="catalogus.title"
+					:details="catalogus.listed ? 'Publiek vindbaar' : 'Niet publiek vindbaar'"
 					:active="catalogiStore.catalogiItem?.id === catalogus?.id"
-					:details="'1h'"
-					:counter-number="44"
+					:counter-number="catalogus.publicationTypes.length || '0'"
 					:force-display-actions="true"
-					@click="catalogiStore.setCatalogiItem(catalogus)">
+					@click="setActive(catalogus)">
 					<template #icon>
 						<DatabaseOutline :class="catalogiStore.catalogiItem?.id === catalogus.id && 'selectedZaakIcon'"
 							disable-menu
@@ -68,11 +68,11 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 							</template>
 							Catalogus bekijken
 						</NcActionButton>
-						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setModal('addCatalogiMetadata')">
+						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setModal('addCatalogiPublicationType')">
 							<template #icon>
 								<Plus :size="20" />
 							</template>
-							Metadata toevoegen
+							Publicatietype toevoegen
 						</NcActionButton>
 						<NcActionButton @click="catalogiStore.setCatalogiItem(catalogus); navigationStore.setDialog('deleteCatalog')">
 							<template #icon>
@@ -89,6 +89,10 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 				:size="64"
 				appearance="dark"
 				name="Zaken aan het laden" />
+
+			<div v-if="!catalogiStore.catalogiList.length" class="emptyListHeader">
+				Er zijn nog geen catalogi gedefinieerd.
+			</div>
 		</ul>
 	</NcAppContentList>
 </template>
@@ -168,6 +172,11 @@ export default {
 		}, 500),
 		openLink(url, type = '') {
 			window.open(url, type)
+		},
+		setActive(catalog) {
+			if (JSON.stringify(catalogiStore.catalogiItem) === JSON.stringify(catalog)) {
+				catalogiStore.setCatalogiItem(false)
+			} else { catalogiStore.setCatalogiItem(catalog) }
 		},
 	},
 }

@@ -20,7 +20,7 @@ import { catalogiStore, navigationStore } from '../../store/store.js'
 			</NcNoteCard>
 		</div>
 		<p v-if="success === null">
-			Wil je <b>{{ catalogiStore.catalogiItem.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+			Wil je <b>{{ catalogiStore.catalogiItem?.title }}</b> definitief verwijderen? Deze actie kan niet ongedaan worden gemaakt.
 		</p>
 		<template #actions>
 			<NcButton :disabled="loading" icon="" @click="navigationStore.setDialog(false)">
@@ -72,21 +72,12 @@ export default {
 	methods: {
 		DeleteCatalog() {
 			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/catalogi/${catalogiStore.catalogiItem.id}`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				},
-			)
-				.then((response) => {
+
+			catalogiStore.deleteCatalogi(catalogiStore.catalogiItem.id)
+				.then(({ response }) => {
 					this.loading = false
 					this.success = response.ok
-					// Lets refresh the catalogiList
-					catalogiStore.refreshCatalogiList()
-					catalogiStore.setCatalogiItem(false)
+
 					// Wait for the user to read the feedback then close the model
 					const self = this
 					setTimeout(function() {

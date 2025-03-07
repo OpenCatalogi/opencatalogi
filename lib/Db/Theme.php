@@ -8,18 +8,26 @@ use OCP\AppFramework\Db\Entity;
 
 class Theme extends Entity implements JsonSerializable
 {
-
-	protected ?string $title 	   = null;
-	protected ?string $summary     = null;
+	protected ?string $uuid = null;
+	protected ?string $uri = null;
+	protected ?string $version = '0.0.1';
+	protected ?string $title = null;
+	protected ?string $summary = null;
 	protected ?string $description = null;
-	protected ?string $image       = null;
+	protected ?string $image = null;
+	protected ?DateTime $updated = null;
+	protected ?DateTime $created = null;
 
 	public function __construct() {
+		$this->addType(fieldName: 'uuid', type: 'string');
+		$this->addType(fieldName: 'uri', type: 'string');
+		$this->addType(fieldName: 'version', type: 'string');
 		$this->addType(fieldName: 'title', type: 'string');
 		$this->addType(fieldName: 'summary', type: 'string');
 		$this->addType(fieldName: 'description', type: 'string');
 		$this->addType(fieldName: 'image', type: 'string');
-
+		$this->addType(fieldName: 'updated', type: 'datetime');
+		$this->addType(fieldName: 'created', type: 'datetime');
 	}
 
 	public function getJsonFields(): array
@@ -35,7 +43,15 @@ class Theme extends Entity implements JsonSerializable
 	{
 		$jsonFields = $this->getJsonFields();
 
-		foreach($object as $key => $value) {
+		// Remove any fields that start with an underscore
+		// These are typically internal fields that shouldn't be updated directly
+		foreach ($object as $key => $value) {
+			if (str_starts_with($key, '_')) {
+				unset($object[$key]);
+			}
+		}
+
+		foreach ($object as $key => $value) {
 			if (in_array($key, $jsonFields) === true && $value === []) {
 				$value = null;
 			}
@@ -45,7 +61,7 @@ class Theme extends Entity implements JsonSerializable
 			try {
 				$this->$method($value);
 			} catch (\Exception $exception) {
-//				var_dump("Error writing $key");
+				// Handle or log the exception as needed
 			}
 		}
 
@@ -56,10 +72,15 @@ class Theme extends Entity implements JsonSerializable
 	{
 		$array = [
 			'id' => $this->id,
+			'uri' => $this->uri,
+			'uuid' => $this->uuid,
+			'version' => $this->version,
 			'title' => $this->title,
 			'summary' => $this->summary,
 			'description' => $this->description,
 			'image' => $this->image,
+			'updated' => $this->updated?->format('c'),
+			'created' => $this->created?->format('c'),
 		];
 
 		$jsonFields = $this->getJsonFields();

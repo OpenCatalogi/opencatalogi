@@ -84,15 +84,14 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					:name="publication.title"
 					:bold="false"
 					:force-display-actions="true"
-					:active="publicationStore.publicationItem.id === publication.id"
+					:active="publicationStore.publicationItem?.id === publication.id"
 					:details="publication?.status"
-					:counter-number="publication?.attachmentCount.toString()"
-					@click="publicationStore.setPublicationItem(publication)">
+					@click="setActive(publication)">
 					<template #icon>
-						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
-						<ArchiveOutline v-if="publication.status === 'archived'" :size="44" />
-						<Pencil v-if="publication.status === 'concept'" :size="44" />
-						<AlertOutline v-if="publication.status === 'retracted'" :size="44" />
+						<ListBoxOutline v-if="_.upperFirst(publication.status) === 'Published'" :size="44" />
+						<ArchiveOutline v-if="_.upperFirst(publication.status) === 'Archived'" :size="44" />
+						<Pencil v-if="_.upperFirst(publication.status) === 'Concept'" :size="44" />
+						<AlertOutline v-if="_.upperFirst(publication.status) === 'Withdrawn'" :size="44" />
 					</template>
 					<template #subname>
 						{{ publication?.summary }}
@@ -110,13 +109,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							</template>
 							Kopiëren
 						</NcActionButton>
-						<NcActionButton v-if="publication.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
+						<NcActionButton v-if="_.upperFirst(publication.status) !== 'Published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
 							<template #icon>
 								<Publish :size="20" />
 							</template>
 							Publiceren
 						</NcActionButton>
-						<NcActionButton v-if="publication.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
+						<NcActionButton v-if="_.upperFirst(publication.status) === 'Published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
 							<template #icon>
 								<PublishOff :size="20" />
 							</template>
@@ -140,6 +139,12 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 							</template>
 							Bijlage toevoegen
 						</NcActionButton>
+						<NcActionButton @click="navigationStore.setModal('addPublicationTheme')">
+							<template #icon>
+								<ShapeOutline :size="20" />
+							</template>
+							Thema toevoegen
+						</NcActionButton>
 						<NcActionButton class="publicationsList-actionsDelete" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('deletePublication')">
 							<template #icon>
 								<Delete :size="20" />
@@ -155,12 +160,16 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				class="loadingIcon"
 				appearance="dark"
 				name="Publicaties aan het laden" />
+
+			<div v-if="!filteredPublications.length" class="emptyListHeader">
+				Er zijn nog geen publicaties gedefinieerd.
+			</div>
 		</ul>
 	</NcAppContentList>
 </template>
 <script>
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActionRadio, NcActionCheckbox, NcActionInput, NcActionCaption, NcActionSeparator, NcActions } from '@nextcloud/vue'
-import { debounce } from 'lodash'
+import _ from 'lodash'
 
 // Icons
 import Magnify from 'vue-material-design-icons/Magnify.vue'
@@ -178,6 +187,7 @@ import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
 import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+import ShapeOutline from 'vue-material-design-icons/ShapeOutline.vue'
 
 export default {
 	name: 'PublicationList',
@@ -227,7 +237,7 @@ export default {
 		filteredPublications() {
 			if (!publicationStore?.publicationList) return []
 			return publicationStore.publicationList.filter((publication) => {
-				return publication.catalogi.toString() === navigationStore.selectedCatalogus.toString()
+				return (publication.catalogi?.id?.toString() ?? publication.catalog?.toString()) === navigationStore.selectedCatalogus?.toString()
 			})
 		},
 	},
@@ -252,7 +262,7 @@ export default {
 					this.loading = false
 				})
 		},
-		debouncedFetchData: debounce(function() {
+		debouncedFetchData: _.debounce(function() {
 			this.fetchData()
 		}, 500),
 		updateSortOrder(value) {
@@ -261,10 +271,10 @@ export default {
 		updateNormalSearch() {
 			this.normalSearch = []
 			if (this.conceptChecked) {
-				this.normalSearch.push({ key: 'status', value: 'concept' })
+				this.normalSearch.push({ key: 'status', value: 'Concept' })
 			}
 			if (this.gepubliceerdChecked) {
-				this.normalSearch.push({ key: 'status', value: 'published' })
+				this.normalSearch.push({ key: 'status', value: 'Published' })
 			}
 		},
 		handleCheckboxChange(key, event) {
@@ -277,15 +287,21 @@ export default {
 			}
 			this.updateNormalSearch()
 		},
+		setActive(publication) {
+			if (JSON.stringify(publicationStore.publicationItem) === JSON.stringify(publication)) {
+				publicationStore.setPublicationItem(false)
+				publicationStore.setPublicationPublicationType(false)
+			} else { publicationStore.setPublicationItem(publication) }
+		},
 	},
 }
 </script>
 <style>
-.listHeader{
+.listHeader {
 	display: flex;
 }
 
-.refresh{
+.refresh {
 	margin-block-start: 11px !important;
     margin-block-end: 11px !important;
     margin-inline-end: 10px;
