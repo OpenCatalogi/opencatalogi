@@ -1,0 +1,282 @@
+openapi: 3.0.0
+info:
+  title: Open Register API
+  description: API voor het beheren van registers, objecten, bestanden en schema's binnen Open Register.
+  version: 1.0.0
+servers:
+  - url: /api
+paths:
+  /registers:
+    get:
+      summary: Haal alle registers op
+      operationId: getRegisters
+      responses:
+        '200':
+          description: Lijst van registers
+    post:
+      summary: Voeg een nieuw register toe
+      operationId: createRegister
+      responses:
+        '201':
+          description: Register aangemaakt
+  /registers/{id}:
+    put:
+      summary: Werk een bestaand register bij
+      operationId: updateRegister
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Register bijgewerkt
+    get:
+      summary: Haal een specifiek register op
+      operationId: getRegister
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Register gegevens
+  /schemas:
+    get:
+      summary: Haal alle schema's op
+      operationId: getSchemas
+      responses:
+        '200':
+          description: Lijst van schema's
+    post:
+      summary: Voeg een nieuw schema toe
+      operationId: createSchema
+      responses:
+        '201':
+          description: Schema aangemaakt
+  /objects:
+    get:
+      summary: Haal alle objecten op
+      operationId: getObjects
+      responses:
+        '200':
+          description: Lijst van objecten
+  /objects/{id}/lock:
+    post:
+      summary: Vergrendel een object
+      operationId: lockObject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Object vergrendeld
+  /objects/{id}/unlock:
+    post:
+      summary: Ontgrendel een object
+      operationId: unlockObject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Object ontgrendeld
+  /objects/{id}/relations:
+    get:
+      summary: Haal de relaties van een object op
+      operationId: getObjectRelations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lijst van gerelateerde objecten
+  /objects/{id}/logs:
+    get:
+      summary: Haal logs van een object op
+      operationId: getObjectLogs
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lijst van logs
+  /objects/{id}/audit-trails:
+    get:
+      summary: Haal audit trails van een object op
+      operationId: getObjectAuditTrails
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lijst van audit trails
+  /objects/{id}/files:
+    get:
+      summary: Haal de bestanden van een object op
+      operationId: getObjectFiles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lijst van bestanden
+  /objects/{id}/revert:
+    post:
+      summary: Zet een object terug naar een vorige staat
+      operationId: revertObject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                datetime:
+                  type: string
+                  format: date-time
+                auditTrailId:
+                  type: string
+                version:
+                  type: string
+                overwriteVersion:
+                  type: boolean
+      responses:
+        '200':
+          description: Object teruggezet
+  /files:
+    get:
+      summary: Haal alle bestanden op
+      operationId: getFiles
+      responses:
+        '200':
+          description: Lijst van bestanden
+components:
+  schemas:
+    Register:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+    Schema:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        properties:
+          type: object
+    Object:
+      type: object
+      properties:
+        id:
+          type: string
+        uuid:
+          type: string
+        uri:
+          type: string
+        version:
+          type: string
+        register:
+          type: string
+        schema:
+          type: string
+        object:
+          type: object
+        files:
+          type: array
+          items:
+            type: string
+        relations:
+          type: array
+          items:
+            type: string
+        textRepresentation:
+          type: string
+        locked:
+          type: object
+          properties:
+            user:
+              type: string
+            process:
+              type: string
+            created:
+              type: string
+              format: date-time
+            duration:
+              type: integer
+            expiration:
+              type: string
+              format: date-time
+        owner:
+          type: string
+        authorization:
+          type: object
+        updated:
+          type: string
+          format: date-time
+        created:
+          type: string
+          format: date-time
+        folder:
+          type: string
+    ObjectAuditTrail:
+      type: object
+      properties:
+        id:
+          type: string
+        object_id:
+          type: string
+        action:
+          type: string
+        user:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    File:
+      type: object
+      properties:
+        id:
+          type: string
+        filename:
+          type: string
+        downloadUrl:
+          type: string
+          format: uri

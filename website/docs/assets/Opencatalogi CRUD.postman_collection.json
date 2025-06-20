@@ -1,0 +1,553 @@
+{
+	"info": {
+		"_postman_id": "f1d14358-ccc2-4650-9851-e46e2fb666e5",
+		"name": "Opencatalogi CRUD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9365542",
+		"_collection_link": "https://conduction.postman.co/workspace/Gateway~7f74e723-2263-4ee5-855f-a2ea9cce0681/collection/9365542-f1d14358-ccc2-4650-9851-e46e2fb666e5?action=share&source=collection_link&creator=9365542"
+	},
+	"item": [
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "General Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/search",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"search"
+							],
+							"query": [
+								{
+									"key": "_search",
+									"value": "bijzondere bijstand",
+									"description": "General search query",
+									"disabled": true
+								},
+								{
+									"key": "_queries[]",
+									"value": "data.status",
+									"description": "Define fields that should be returned with the facets (example field to be replaced)",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "Kubus bijzondere bijstand",
+									"description": "Filter on specific fields.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get specific object",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/search/fa393c4e-3fc2-4787-ab43-fd58ce190fb4",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"search",
+								"fa393c4e-3fc2-4787-ab43-fd58ce190fb4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Directory",
+			"item": [
+				{
+					"name": "List directory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/directory",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"directory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Directory",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Test\",\r\n    \"summary\": \"Test directory for federation\",\r\n    \"description\": \"Test directory for federation\",\r\n    \"search\": \"https://api.common-gateway.commonground.nu/api/search\",\r\n    \"directory\": \"https://eo9d4l3y6q4y2vt.m.pipedream.net\",\r\n    \"metadata\": [\r\n        \"http://example.com\"\r\n    ],\r\n    \"status\": \"200\",\r\n    \"lastSync\": \"2019-08-24T14:15:22Z\",\r\n    \"default\": false,\r\n    \"available\": true,\r\n    \"_schema\": \"directory\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{environment}}/api/directory",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"directory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Directory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/directory/96e12db1-897b-41e1-a08d-acb4e2be040b",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"directory",
+								"96e12db1-897b-41e1-a08d-acb4e2be040b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Directory",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/directory/96e12db1-897b-41e1-a08d-acb4e2be040b",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"directory",
+								"96e12db1-897b-41e1-a08d-acb4e2be040b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Publication",
+			"item": [
+				{
+					"name": "List publications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/publications",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Publication",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Woningoppervlaktes\",\r\n    \"reference\": \"test1234\",\r\n    \"description\": \"Woningoppervlaktes geeft het gebruiksoppervlakte aan woningen per gebied, geclassificeerd ten behoeve van het bepalen van de benodigde parkeercapaciteit.\",\r\n    \"summary\": \"Woningoppervlaktes geeft het gebruiksoppervlakte aan woningen per gebied, geclassificeerd ten behoeve van het bepalen van de benodigde parkeercapaciteit.\",\r\n    \"catalogi\": \"7a048bfd-210f-4e93-a1e8-5aa9261740b7\",\r\n    \"metaData\": \"468f440f-7af0-453a-8d5f-ffe644ab0673\",\r\n    \"organization\": null,\r\n    \"data\": {\r\n        \"id\": \"33f88aa9-6ac0-4f6c-967e-ecf787fd6a3d\",\r\n        \"reference\": \"https:\\/\\/catalogus-rotterdam.dataplatform.nl\\/dataset\\/voorlopige-energielabels-met-bag-kenmerken\",\r\n        \"title\": \"Input voor OpenCatalogi\",\r\n        \"summary\": \"Dit is een selectie van high-value datasets in DCAT-AP 2.0 standaard x\",\r\n        \"category\": \"Dataset\",\r\n        \"portal\": \"https:\\/\\/catalogus-rotterdam.dataplatform.nl\\/dataset\\/voorlopige-energielabels-met-bag-kenmerken\",\r\n        \"published\": \"2020-04-07\",\r\n        \"modified\": \"2020-12-29\",\r\n        \"featured\": false,\r\n        \"schema\": \"https:\\/\\/openwoo.app\\/schemas\\/metadata.dcat_catalog.schema.json\",\r\n        \"status\": \"published\",\r\n        \"license\": \"CC0 1.0\",\r\n        \"attachments\": [\r\n            {\r\n                \"id\": \"ba9e5f64-f6ee-4c62-99bd-e9176372f4c2\",\r\n                \"title\": \"woningoppervlaktes feature layer\",\r\n                \"description\": \"ESRI feature layer met woningoppervlaktes per TIR-buurt en per TIR-blok.\",\r\n                \"license\": \"notspecified\",\r\n                \"type\": \"API\",\r\n                \"published\": \"24-12-2020\",\r\n                \"modified\": \"30 december 2020, 11:55 (UTC+01:00)\",\r\n                \"accessURL\": \"https:\\/\\/services.arcgis.com\\/zP1tGdLpGvt2qNJ6\\/arcgis\\/rest\\/services\\/Woningoppervlaktes\\/FeatureServer\",\r\n                \"downloadURL\": \"https:\\/\\/services.arcgis.com\\/zP1tGdLpGvt2qNJ6\\/arcgis\\/rest\\/services\\/Woningoppervlaktes\\/FeatureServer\"\r\n            }\r\n        ],\r\n        \"attachmentCount\": 1,\r\n        \"themes\": [\r\n            \"SODA\",\r\n            \"kennisloods\",\r\n            \"mobiliteit\",\r\n            \"oppervlakte\",\r\n            \"oppervlaktes\",\r\n            \"parkeercapaciteit\",\r\n            \"parkeren\",\r\n            \"soda verblijfsobject\",\r\n            \"verblijfsobjecten\",\r\n            \"woning\",\r\n            \"woningen\",\r\n            \"woningoppervlakte\",\r\n            \"woningoppervlaktes\"\r\n        ],\r\n        \"data\": {\r\n            \"spatial\": \"[55500,428647,101033,447000]\",\r\n            \"contactPoint\": {\r\n                \"name\": \"gemeente Rotterdam, Stadsontwikkeling, SODA\",\r\n                \"email\": \"dataSO@rotterdam.nl\"\r\n            },\r\n            \"qualifiedAttribution\": {\r\n                \"responsible\": {\r\n                    \"name\": \"gemeente Rotterdam, Stadsontwikkeling, SODA\",\r\n                    \"email\": \"dataSO@rotterdam.nl\"\r\n                },\r\n                \"role\": {\r\n                    \"name\": \"beheerder\"\r\n                }\r\n            },\r\n            \"accrualPeriodicity\": \"onregelmatig\"\r\n        },\r\n        \"anonymization\": {\r\n            \"anonymized\": true\r\n        },\r\n        \"language\": {\r\n            \"code\": \"nl-nl\",\r\n            \"level\": \"A1\"\r\n        }\r\n    },\r\n    \"attachments\": [\r\n        {\r\n            \"id\": \"ba9e5f64-f6ee-4c62-99bd-e9176372f4c2\",\r\n            \"title\": \"woningoppervlaktes feature layer\",\r\n            \"description\": \"ESRI feature layer met woningoppervlaktes per TIR-buurt en per TIR-blok.\",\r\n            \"license\": \"notspecified\",\r\n            \"type\": \"API\",\r\n            \"published\": \"24-12-2020\",\r\n            \"modified\": \"30 december 2020, 11:55 (UTC+01:00)\",\r\n            \"accessURL\": \"https:\\/\\/services.arcgis.com\\/zP1tGdLpGvt2qNJ6\\/arcgis\\/rest\\/services\\/Woningoppervlaktes\\/FeatureServer\",\r\n            \"downloadURL\": \"https:\\/\\/services.arcgis.com\\/zP1tGdLpGvt2qNJ6\\/arcgis\\/rest\\/services\\/Woningoppervlaktes\\/FeatureServer\"\r\n        }\r\n    ],\r\n    \"attachmentCount\": 1,\r\n    \"license\": \"notspecified\",\r\n    \"modified\": \"2020-12-29\",\r\n    \"publicationDate\": \"2020-04-07\",\r\n    \"status\": \"published\",\r\n    \"featured\": false,\r\n    \"portal\": \"https:\\/\\/catalogus-rotterdam.dataplatform.nl\\/dataset\\/voorlopige-energielabels-met-bag-kenmerken\",\r\n    \"category\": \"Dataset\",\r\n    \"image\": \"https:\\/\\/dev.opencatalogi.nl\\/static\\/logo_OpenCatalogi-8b1b0a001c3f37dae4d3f69b5964ec72.png\",\r\n    \"schema\": \"publications\",\r\n    \"themes\": null,\r\n    \"anonymization\": null,\r\n    \"languageObject\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{environment}}/api/publications",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Publication",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/publications/1",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Publication",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Test woningoppervlakte\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{environment}}/api/publications/1",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Directory",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/publications/3",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attachment",
+			"item": [
+				{
+					"name": "List publications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/publications",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Publication",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Woningoppervlaktes\",\r\n    \"reference\": \"test1234\",\r\n    \"description\": \"Woningoppervlaktes geeft het gebruiksoppervlakte aan woningen per gebied, geclassificeerd ten behoeve van het bepalen van de benodigde parkeercapaciteit.\",\r\n    \"summary\": \"Woningoppervlaktes geeft het gebruiksoppervlakte aan woningen per gebied, geclassificeerd ten behoeve van het bepalen van de benodigde parkeercapaciteit.\",\r\n    \"catalogi\": \"7a048bfd-210f-4e93-a1e8-5aa9261740b7\",\r\n    \"metaData\": \"468f440f-7af0-453a-8d5f-ffe644ab0673\",\r\n    \"organization\": null,\r\n    \"data\": {\r\n        \"id\": \"33f88aa9-6ac0-4f6c-967e-ecf787fd6a3d\",\r\n        \"reference\": \"https:\\/\\/catalogus-rotterdam.dataplatform.nl\\/dataset\\/voorlopige-energielabels-met-bag-kenmerken\",\r\n        \"title\": \"Input voor OpenCatalogi\",\r\n        \"summary\": \"Dit is een selectie van high-value datasets in DCAT-AP 2.0 standaard x\",\r\n        \"category\": \"Dataset\",\r\n        \"portal\": \"https:\\/\\/catalogus-rotterdam.dataplatform.nl\\/dataset\\/voorlopige-energielabels-met-bag-kenmerken\",\r\n        \"published\": \"2020-04-07\",\r\n        \"modified\": \"2020-12-29\",\r\n        \"featured\": false,\r\n        \"schema\": \"https:\\/\\/openwoo.app\\/schemas\\/metadata.dcat_catalog.schema.json\",\r\n        \"status\": \"published\",\r\n        \"license\": \"CC0 1.0\",\r\n        \"attachments\": [\r\n            {\r\n                \"id\": \"ba9e5f64-f6ee-4c62-99bd-e9176372f4c2\",\r\n                \"title\": \"woningoppervlaktes feature layer\",\r\n                \"description\": \"ESRI feature layer met woningoppervlaktes per TIR-buurt en per TIR-blok.\",\r\n                \"license\": \"notspecified\",\r\n                \"type\": \"API\",\r\n                \"published\": \"24-12-2020\",\r\n                \"modified\": \"30 december 2020, 11:55 (UTC+01:00)\",\r\n                \"accessURL\": \"https:\\/\\/services.arcgis.com\\/zP1tGdLpGvt2qNJ6\\/arcgis\\/rest\\/services\\/Woningoppervlaktes\\/FeatureServer\",\r\n                \"downloadURL\": \"https:\\/\\/services.arcgis.com\\/zP1tGdLpGvt2qNJ6\\/arcgis\\/rest\\/services\\/Woningoppervlaktes\\/FeatureServer\"\r\n            }\r\n        ],\r\n        \"attachmentCount\": 1,\r\n        \"themes\": [\r\n            \"SODA\",\r\n            \"kennisloods\",\r\n            \"mobiliteit\",\r\n            \"oppervlakte\",\r\n            \"oppervlaktes\",\r\n            \"parkeercapaciteit\",\r\n            \"parkeren\",\r\n            \"soda verblijfsobject\",\r\n            \"verblijfsobjecten\",\r\n            \"woning\",\r\n            \"woningen\",\r\n            \"woningoppervlakte\",\r\n            \"woningoppervlaktes\"\r\n        ],\r\n        \"data\": {\r\n            \"spatial\": \"[55500,428647,101033,447000]\",\r\n            \"contactPoint\": {\r\n                \"name\": \"gemeente Rotterdam, Stadsontwikkeling, SODA\",\r\n                \"email\": \"dataSO@rotterdam.nl\"\r\n            },\r\n            \"qualifiedAttribution\": {\r\n                \"responsible\": {\r\n                    \"name\": \"gemeente Rotterdam, Stadsontwikkeling, SODA\",\r\n                    \"email\": \"dataSO@rotterdam.nl\"\r\n                },\r\n                \"role\": {\r\n                    \"name\": \"beheerder\"\r\n                }\r\n            },\r\n            \"accrualPeriodicity\": \"onregelmatig\"\r\n        },\r\n        \"anonymization\": {\r\n            \"anonymized\": true\r\n        },\r\n        \"language\": {\r\n            \"code\": \"nl-nl\",\r\n            \"level\": \"A1\"\r\n        }\r\n    },\r\n    \"attachments\": [\r\n        {\r\n            \"id\": \"ba9e5f64-f6ee-4c62-99bd-e9176372f4c2\",\r\n            \"title\": \"woningoppervlaktes feature layer\",\r\n            \"description\": \"ESRI feature layer met woningoppervlaktes per TIR-buurt en per TIR-blok.\",\r\n            \"license\": \"notspecified\",\r\n            \"type\": \"API\",\r\n            \"published\": \"24-12-2020\",\r\n            \"modified\": \"30 december 2020, 11:55 (UTC+01:00)\",\r\n            \"accessURL\": \"https:\\/\\/services.arcgis.com\\/zP1tGdLpGvt2qNJ6\\/arcgis\\/rest\\/services\\/Woningoppervlaktes\\/FeatureServer\",\r\n            \"downloadURL\": \"https:\\/\\/services.arcgis.com\\/zP1tGdLpGvt2qNJ6\\/arcgis\\/rest\\/services\\/Woningoppervlaktes\\/FeatureServer\"\r\n        }\r\n    ],\r\n    \"attachmentCount\": 1,\r\n    \"license\": \"notspecified\",\r\n    \"modified\": \"2020-12-29\",\r\n    \"publicationDate\": \"2020-04-07\",\r\n    \"status\": \"published\",\r\n    \"featured\": false,\r\n    \"portal\": \"https:\\/\\/catalogus-rotterdam.dataplatform.nl\\/dataset\\/voorlopige-energielabels-met-bag-kenmerken\",\r\n    \"category\": \"Dataset\",\r\n    \"image\": \"https:\\/\\/dev.opencatalogi.nl\\/static\\/logo_OpenCatalogi-8b1b0a001c3f37dae4d3f69b5964ec72.png\",\r\n    \"schema\": \"publications\",\r\n    \"themes\": null,\r\n    \"anonymization\": null,\r\n    \"languageObject\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{environment}}/api/publications",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Publication",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/publications/1",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Publication",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Test woningoppervlakte\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{environment}}/api/publications/1",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Directory",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/publications/3",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Catalogi",
+			"item": [
+				{
+					"name": "List Catalogi",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/catalogi",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"catalogi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Catalogi",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"DCAT\",\r\n    \"reference\": \"test1234\",\r\n    \"description\": \"Test voor DCAT objecten.\",\r\n    \"summary\": \"Test voor DCAT objecten.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{environment}}/api/catalogi",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"catalogi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Publication",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/publications/1",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Publication",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Test woningoppervlakte\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{environment}}/api/publications/1",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"publications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Catalog",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{environment}}/api/directory/96e12db1-897b-41e1-a08d-acb4e2be040b",
+							"host": [
+								"{{environment}}"
+							],
+							"path": [
+								"api",
+								"directory",
+								"96e12db1-897b-41e1-a08d-acb4e2be040b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "admin",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "environment",
+			"value": "http://nextcloud.local/index.php/apps/opencatalogi",
+			"type": "string"
+		}
+	]
+}

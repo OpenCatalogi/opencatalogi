@@ -1,11 +1,11 @@
 <script setup>
-import { navigationStore, catalogiStore, publicationStore } from '../store/store.js'
+import { navigationStore, objectStore, catalogStore } from '../store/store.js'
 </script>
 
 <template>
 	<NcAppNavigation>
 		<NcAppNavigationList>
-			<NcAppNavigationNew text="Publicatie Aanmaken" @click="navigationStore.setModal('publicationAdd'); navigationStore.setTransferData('ignore selectedCatalogus')">
+			<NcAppNavigationNew text="Publicatie Aanmaken" @click="navigationStore.setModal('objectModal'); navigationStore.setTransferData('ignore selectedCatalogus'); objectStore.setActiveObject('publication', null)">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
@@ -15,10 +15,10 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<Finance :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem v-for="(catalogus, i) in catalogiStore.catalogiList"
+			<NcAppNavigationItem v-for="(catalogus, i) in objectStore.getCollection('catalog').results"
 				:key="`${catalogus}${i}`"
 				:name="catalogus?.title"
-				:active="catalogus.id === navigationStore.selectedCatalogus && navigationStore.selected === 'publication'"
+				:active="catalogus?.id?.toString() === objectStore.getActiveObject('catalog')?.id?.toString() && navigationStore.selected === 'publication'"
 				@click="switchCatalogus(catalogus)">
 				<template #icon>
 					<DatabaseEyeOutline :size="20" />
@@ -37,14 +37,19 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 		</NcAppNavigationList>
 
 		<NcAppNavigationSettings>
+			<NcAppNavigationItem :active="navigationStore.selected === 'organizations'" name="Organisaties" @click="navigationStore.setSelected('organizations')">
+				<template #icon>
+					<OfficeBuildingOutline :size="20" />
+				</template>
+			</NcAppNavigationItem>
 			<NcAppNavigationItem :active="navigationStore.selected === 'catalogi'" name="Catalogi" @click="navigationStore.setSelected('catalogi')">
 				<template #icon>
 					<DatabaseCogOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="navigationStore.selected === 'organisations'" name="Organisaties" @click="navigationStore.setSelected('organisations')">
+			<NcAppNavigationItem :active="navigationStore.selected === 'glossary'" name="Glossary" @click="navigationStore.setSelected('glossary')">
 				<template #icon>
-					<OfficeBuildingOutline :size="20" />
+					<FormatListBulleted :size="20" />
 				</template>
 			</NcAppNavigationItem>
 			<NcAppNavigationItem :active="navigationStore.selected === 'themes'" name="Thema's" @click="navigationStore.setSelected('themes')">
@@ -52,18 +57,21 @@ import { navigationStore, catalogiStore, publicationStore } from '../store/store
 					<ShapeOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
+			<NcAppNavigationItem :active="navigationStore.selected === 'pages'" name="Page's" @click="navigationStore.setSelected('pages')">
+				<template #icon>
+					<Web :size="20" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem :active="navigationStore.selected === 'menus'" name="Menu's" @click="navigationStore.setSelected('menus')">
+				<template #icon>
+					<MenuClose :size="20" />
+				</template>
+			</NcAppNavigationItem>
 			<NcAppNavigationItem :active="navigationStore.selected === 'directory'" name="Directory" @click="navigationStore.setSelected('directory')">
 				<template #icon>
 					<LayersOutline :size="20" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem :active="navigationStore.selected === 'metaData'" name="Publicatie typen" @click="navigationStore.setSelected('metaData')">
-				<template #icon>
-					<FileTreeOutline :size="20" />
-				</template>
-			</NcAppNavigationItem>
-
-			<Configuration />
 		</NcAppNavigationSettings>
 	</NcAppNavigation>
 </template>
@@ -77,9 +85,6 @@ import {
 	NcAppNavigationSettings,
 } from '@nextcloud/vue'
 
-// Configuration
-import Configuration from './Configuration.vue'
-
 // Icons
 
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -87,11 +92,13 @@ import DatabaseEyeOutline from 'vue-material-design-icons/DatabaseEyeOutline.vue
 import DatabaseCogOutline from 'vue-material-design-icons/DatabaseCogOutline.vue'
 import LayersSearchOutline from 'vue-material-design-icons/LayersSearchOutline.vue'
 import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import Finance from 'vue-material-design-icons/Finance.vue'
 import BookOpenVariantOutline from 'vue-material-design-icons/BookOpenVariantOutline.vue'
 import OfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
 import ShapeOutline from 'vue-material-design-icons/ShapeOutline.vue'
+import Web from 'vue-material-design-icons/Web.vue'
+import MenuClose from 'vue-material-design-icons/MenuClose.vue'
+import FormatListBulleted from 'vue-material-design-icons/FormatListBulleted.vue'
 
 export default {
 	name: 'MainMenu',
@@ -102,18 +109,19 @@ export default {
 		NcAppNavigationItem,
 		NcAppNavigationNew,
 		NcAppNavigationSettings,
-		Configuration,
 		// icons
 		Plus,
 		DatabaseEyeOutline,
 		DatabaseCogOutline,
 		LayersSearchOutline,
 		LayersOutline,
-		FileTreeOutline,
 		Finance,
 		BookOpenVariantOutline,
 		OfficeBuildingOutline,
 		ShapeOutline,
+		Web,
+		MenuClose,
+		FormatListBulleted,
 	},
 	data() {
 		return {
@@ -127,9 +135,9 @@ export default {
 			elastic_location: '',
 			elastic_key: '',
 			loading: true,
-			organisation_name: '',
-			organisation_oin: '',
-			organisation_pki: '',
+			organization_name: '',
+			organization_oin: '',
+			organization_pki: '',
 			configuration: {
 				external: false,
 				drcLocation: '',
@@ -142,24 +150,21 @@ export default {
 				mongodbLocation: '',
 				mongodbKey: '',
 				mongodbCluster: '',
-				organisationName: '',
-				organisationOin: '',
-				organisationPki: '',
+				organizationName: '',
+				organizationOin: '',
+				organizationPki: '',
 			},
 			configurationSuccess: -1,
 			feedbackPosition: '',
 			debounceTimeout: false,
 		}
 	},
-	mounted() {
-		catalogiStore.refreshCatalogiList()
-	},
 	methods: {
 		switchCatalogus(catalogus) {
-			if (catalogus.id !== navigationStore.selectedCatalogus) publicationStore.setPublicationItem(false) // for when you switch catalogus
+			if (catalogus.id !== navigationStore.selectedCatalogus) objectStore.clearActiveObject('publication') // for when you switch catalogus
 			navigationStore.setSelected('publication')
-			navigationStore.setSelectedCatalogus(catalogus.id)
-			catalogiStore.setCatalogiItem(catalogus)
+			objectStore.setActiveObject('catalog', catalogus)
+			catalogStore.setActiveCatalog(catalogus)
 		},
 		openLink(url, type = '') {
 			window.open(url, type)

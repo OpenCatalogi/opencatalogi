@@ -1,0 +1,335 @@
+openapi: 3.0.0
+info:
+  title: OpenCatalogi Publiccode API
+  description: API for managing publiccode.yaml files in OpenCatalogi
+  version: 1.0.0
+  contact:
+    name: OpenCatalogi Team
+    url: https://opencatalogi.nl
+    email: info@opencatalogi.nl
+
+servers:
+  - url: https://api.opencatalogi.nl
+    description: Production server
+  - url: https://api.dev.opencatalogi.nl
+    description: Development server
+
+components:
+  schemas:
+    Publiccode:
+      type: object
+      required:
+        - publiccodeYmlVersion
+        - name
+        - url
+      properties:
+        publiccodeYmlVersion:
+          type: string
+          description: Version of the publiccode.yml schema
+          example: "0.2"
+        name:
+          type: string
+          description: Name of the software
+          example: "Medusa"
+        applicationSuite:
+          type: string
+          description: Name of the software suite
+          example: "MegaProductivitySuite"
+        url:
+          type: string
+          format: uri
+          description: URL to the source code repository
+          example: "https://github.com/example/medusa.git"
+        landingURL:
+          type: string
+          format: uri
+          description: URL to the landing page
+          example: "https://example.com/medusa"
+        isBasedOn:
+          type: string
+          format: uri
+          description: URL to the original project if this is a fork"
+          example: "https://github.com/original/medusa.git"
+        softwareVersion:
+          type: string
+          description: Latest stable version number
+          example: "1.0.0"
+        releaseDate:
+          type: string
+          format: date
+          description: Date of the latest release
+          example: "2024-03-14"
+        createdDate:
+          type: string
+          format: date
+          description: Date of creation
+          example: "2024-01-01"
+        logo:
+          type: string
+          description: Path to the logo file
+          example: "img/logo.svg"
+        monochromeLogo:
+          type: string
+          description: Path to the monochrome logo file
+          example: "img/logo-mono.svg"
+        platforms:
+          type: array
+          items:
+            type: string
+            enum: [web, windows, mac, linux, ios, android, haven, kubernetes, azure, aws]
+          description: Platforms the software runs on
+          example: ["web", "linux"]
+        categories:
+          type: array
+          items:
+            type: string
+          description: Categories describing the software
+          example: ["financial-reporting"]
+        usedBy:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: URLs of organizations using this software
+          example: ["https://github.com/Rotterdam"]
+        supportedBy:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: URLs of organizations supporting this software
+          example: ["https://github.com/SupportOrg"]
+        roadmap:
+          type: string
+          format: uri
+          description: URL to the public roadmap
+          example: "https://example.com/medusa/roadmap"
+        developmentStatus:
+          type: string
+          enum: [concept, development, beta, stable, obsolete]
+          description: Current development status
+          example: "stable"
+        softwareType:
+          type: string
+          enum: [
+            standalone/mobile,
+            standalone/iot,
+            standalone/desktop,
+            standalone/web,
+            standalone/backend,
+            standalone/other,
+            addon,
+            library,
+            configurationFiles,
+            api,
+            schema,
+            data,
+            process,
+            model
+          ]
+          description: Type of software
+          example: "standalone/web"
+        description:
+          type: object
+          properties:
+            en:
+              type: object
+              properties:
+                localisedName:
+                  type: string
+                  example: "medusa"
+                shortDescription:
+                  type: string
+                  example: "A short description of the software"
+                longDescription:
+                  type: string
+                  example: "Very long description of this software"
+                features:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Feature 1", "Feature 2"]
+        legal:
+          type: object
+          properties:
+            license:
+              type: string
+              example: "AGPL-3.0-or-later"
+        maintenance:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "community"
+            contacts:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "John Doe"
+        localisation:
+          type: object
+          properties:
+            localisationReady:
+              type: boolean
+              example: true
+            availableLanguages:
+              type: array
+              items:
+                type: string
+              example: ["en", "nl"]
+        dependsOn:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        nl:
+          type: object
+          properties:
+            countryExtensionVersion:
+              type: string
+              example: "1.0"
+            commonground:
+              type: object
+              properties:
+                intendedOrganisations:
+                  type: array
+                  items:
+                    type: string
+                    format: uri
+                  example: ["https://github.com/Rotterdam"]
+                installationType:
+                  type: string
+                  enum: [self, helm, provision]
+                  example: "helm"
+                layerType:
+                  type: string
+                  enum: [interface, integration, data, service, process]
+                  example: "interface"
+            gemma:
+              type: object
+              properties:
+                bedrijfsfuncties:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Financieel beheer"]
+                bedrijfsservices:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Financiële verwerking"]
+                applicatiefunctie:
+                  type: string
+                  example: "referentie component"
+                model:
+                  type: string
+                  enum: [semantic, conceptual, logical, physical]
+                  example: "logical"
+            upl:
+              type: array
+              items:
+                type: string
+              example: ["Product 1", "Product 2"]
+
+paths:
+  /publiccode:
+    get:
+      summary: List all publiccode entries
+      description: Retrieve a list of all publiccode entries
+      operationId: listPubliccode
+      tags:
+        - Publiccode
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Publiccode'
+    post:
+      summary: Create a new publiccode entry
+      description: Create a new publiccode entry
+      operationId: createPubliccode
+      tags:
+        - Publiccode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Publiccode'
+      responses:
+        '201':
+          description: Publiccode entry created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publiccode'
+        '400':
+          description: Invalid input
+        '409':
+          description: Conflict - entry already exists
+
+  /publiccode/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The publiccode entry ID
+    get:
+      summary: Get a publiccode entry by ID
+      description: Retrieve a specific publiccode entry by its ID
+      operationId: getPubliccode
+      tags:
+        - Publiccode
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publiccode'
+        '404':
+          description: Publiccode entry not found
+    put:
+      summary: Update a publiccode entry
+      description: Update an existing publiccode entry
+      operationId: updatePubliccode
+      tags:
+        - Publiccode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Publiccode'
+      responses:
+        '200':
+          description: Publiccode entry updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publiccode'
+        '404':
+          description: Publiccode entry not found
+        '400':
+          description: Invalid input
+    delete:
+      summary: Delete a publiccode entry
+      description: Delete a specific publiccode entry
+      operationId: deletePubliccode
+      tags:
+        - Publiccode
+      responses:
+        '204':
+          description: Publiccode entry deleted
+        '404':
+          description: Publiccode entry not found 

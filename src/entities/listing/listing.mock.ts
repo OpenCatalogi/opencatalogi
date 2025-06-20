@@ -1,55 +1,62 @@
+/**
+ * Listing mock data for testing
+ * @module Entities
+ * @package
+ * @author Ruben Linde
+ * @copyright 2024
+ * @license AGPL-3.0-or-later
+ * @version 1.0.0
+ * @see {@link https://github.com/opencatalogi/opencatalogi}
+ */
+
 import { Listing } from './listing'
 import { TListing } from './listing.types'
 
-export const mockListingsData = (): TListing[] => [
+/**
+ * Mock listing data for testing purposes
+ * @return {TListing[]} Array of mock listing data
+ */
+export const mockListingData = (): TListing[] => [
 	{
 		id: '1',
 		catalogusId: '24',
-		title: 'test 1',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		search: 'https://google.com',
-		directory: 'https://google.com',
-		metadata: ['string'],
+		title: 'Test Listing',
+		summary: 'A test listing',
+		description: 'This is a test listing for testing purposes',
+		search: 'https://example.com/search',
+		directory: 'https://example.com/directory',
+		metadata: ['test', 'metadata'],
 		status: 'active',
 		statusCode: 200,
-		lastSync: '2024-07-25T00:00:00Z',
+		lastSync: new Date().toISOString(),
+		available: true,
 		default: true,
-		available: false,
+		organization: '1',
+		publicationTypes: [],
 	},
 	{
 		id: '2',
 		catalogusId: '24',
-		title: 'test 2',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
+		title: 'Minimal Listing',
+		summary: 'A minimal test listing',
+		description: '',
 		search: '',
 		directory: '',
-		metadata: ['string'],
-		status: 'active',
+		metadata: [],
+		status: 'inactive',
 		statusCode: 200,
 		lastSync: '',
-		default: true,
 		available: false,
-	},
-	{
-		id: '1',
-		catalogusId: '24',
-		title: 'test 1',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		search: 'https://google.com',
-		// directory is supposed to be an URL
-		directory: 'string',
-		// @ts-expect-error -- metadata is supposed to be a array, this is invalid for testing reasons
-		metadata: 'string',
-		status: 'active',
-		// statusCode cannot be below 200
-		statusCode: 199,
-		lastSync: '2024-07-25T00:00:00Z',
-		default: true,
-		available: false,
+		default: false,
+		organization: '1',
+		publicationTypes: [],
 	},
 ]
 
-export const mockListings = (data: TListing[] = mockListingsData()): TListing[] => data.map(item => new Listing(item))
+/**
+ * Creates Listing instances from mock data
+ * @param {TListing[]} data Optional mock data to use instead of default
+ * @return {Listing[]} Array of Listing instances
+ */
+export const mockListings = (data: TListing[] = mockListingData()): Listing[] =>
+	data.map(item => new Listing(item))

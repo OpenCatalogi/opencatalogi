@@ -1,134 +1,88 @@
+/**
+ * EditListingModal.vue
+ * Modal for editing a directory listing
+ * @category Components
+ * @package opencatalogi
+ * @author Ruben Linde
+ * @copyright 2024
+ * @license AGPL-3.0-or-later
+ * @version 1.0.0
+ * @link https://github.com/opencatalogi/opencatalogi
+ */
+
 <script setup>
-import { navigationStore, directoryStore, metadataStore } from '../../store/store.js'
+import { ref, computed } from 'vue'
+import { objectStore, navigationStore } from '../../store/store.js'
+import { NcButton, NcInputField } from '@nextcloud/vue'
+
+/**
+ * Loading state for the component
+ * @type {import('vue').Ref<boolean>}
+ */
+const loading = ref(false)
+
+/**
+ * Get the active directory from the store
+ * @return {object | null}
+ */
+const directory = computed(() => objectStore.getActiveObject('directory'))
+
+/**
+ * Handle save action
+ * @return {Promise<void>}
+ */
+const handleSave = async () => {
+	loading.value = true
+	try {
+		await objectStore.updateObject('directory', directory.value)
+		await objectStore.fetchCollection('publicationType')
+		navigationStore.setModal(false)
+	} catch (error) {
+		console.error('Error saving directory:', error)
+	} finally {
+		loading.value = false
+	}
+}
+
+/**
+ * Handle cancel action
+ * @return {void}
+ */
+const handleCancel = () => {
+	navigationStore.setModal(false)
+}
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'editListing'"
-		ref="modalRef"
-		label-id="editListingModal"
-		@close="navigationStore.setModal(false)">
-		<div class="modal__content">
-			<h2>Directory bewerken</h2>
-			<div v-if="success !== null || error">
-				<NcNoteCard v-if="success" type="success">
-					<p>Listing succesvol bewerkt</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het bewerken van Listing</p>
-				</NcNoteCard>
-				<NcNoteCard v-if="error" type="error">
-					<p>{{ error }}</p>
-				</NcNoteCard>
-			</div>
-			<div v-if="success === null" class="form-group">
-				<NcTextField label="Url" :value.sync="directoryStore.listingItem.url" />
-				<NcTextField label="Status" :value.sync="directoryStore.listingItem.status" />
-				<NcTextField label="Last synchronized" :value.sync="directoryStore.listingItem.lastSync" />
-			</div>
-			<NcButton v-if="success === null"
-				type="primary"
-				@click="editDirectory()">
-				<template #icon>
-					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
-				</template>
-				Bewerken
+	<div class="edit-listing-modal">
+		<NcInputField
+			:value.sync="directory.title"
+			:label="t('opencatalogi', 'Titel')"
+			:disabled="loading" />
+		<NcInputField
+			:value.sync="directory.description"
+			:label="t('opencatalogi', 'Beschrijving')"
+			:disabled="loading" />
+		<div class="edit-listing-modal__actions">
+			<NcButton :disabled="loading" @click="handleCancel">
+				{{ t('opencatalogi', 'Annuleren') }}
+			</NcButton>
+			<NcButton type="primary" :disabled="loading" @click="handleSave">
+				{{ t('opencatalogi', 'Opslaan') }}
 			</NcButton>
 		</div>
-	</NcModal>
+	</div>
 </template>
 
-<script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
-
-export default {
-	name: 'EditListingModal',
-	components: {
-		NcModal,
-		NcTextField,
-		NcButton,
-		NcLoadingIcon,
-		NcNoteCard,
-		// Icons
-		ContentSaveOutline,
-	},
-	data() {
-		return {
-			loading: false,
-			success: null,
-			error: false,
-		}
-	},
-	methods: {
-		fetchData(id) {
-			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${directoryStore.listingItem.id}`,
-				{
-					method: 'GET',
-				},
-			)
-				.then((response) => {
-					response.json().then((data) => {
-						this.listing = data
-						this.loading = false
-					})
-				})
-				.catch((err) => {
-					this.error = err
-					this.loading = false
-				})
-		},
-		editDirectory() {
-			this.loading = true
-			fetch(
-				`/index.php/apps/opencatalogi/api/directory/${directoryStore.listingItem.id}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(this.directory),
-				},
-			).then((response) => {
-				// Set propper modal states
-				this.loading = false
-				this.success = response.ok
-				// Lets refresh the catalogiList
-				metadataStore.refreshMetaDataList()
-				response.json().then((data) => {
-					this.setListingItem(data)
-				})
-				navigationStore.setSelected('directory')
-				// Wait and then close the modal
-				const self = this
-				setTimeout(() => {
-					self.success = null
-					self.closeModal()
-				}, 2500)
-			}).catch((err) => {
-				this.error = err
-				this.loading = false
-			})
-		},
-	},
-}
-</script>
-
-<style>
-.modal__content {
-    margin: var(--OC-margin-50);
-    text-align: center;
+<style scoped>
+.edit-listing-modal {
+	padding: 20px;
 }
 
-.zaakDetailsContainer {
-    margin-block-start: var(--OC-margin-20);
-    margin-inline-start: var(--OC-margin-20);
-    margin-inline-end: var(--OC-margin-20);
-}
-
-.success {
-    color: green;
+.edit-listing-modal__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
 }
 </style>

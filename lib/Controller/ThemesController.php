@@ -2,252 +2,153 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use OCA\OpenCatalogi\Db\ThemeMapper;
-use OCA\OpenCatalogi\Service\ObjectService;
-use OCA\OpenCatalogi\Service\SearchService;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IAppConfig;
 use OCP\IRequest;
+use OCP\IAppConfig;
+use OCP\App\IAppManager;
+use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * Class ThemesController
+ *
+ * Controller for handling theme-related operations in the OpenCatalogi app.
+ *
+ * @category  Controller
+ * @package   opencatalogi
+ * @author    Ruben van der Linde
+ * @copyright 2024
+ * @license   AGPL-3.0-or-later
+ * @version   1.0.0
+ * @link      https://github.com/opencatalogi/opencatalogi
+ */
 class ThemesController extends Controller
 {
-    const TEST_ARRAY = [
-        "354980e5-c967-4ba5-989b-65c2b0cd2ff4" => [
-            "id" => "354980e5-c967-4ba5-989b-65c2b0cd2ff4",
-            "name" => "Input voor OpenCatalogi",
-            "summary" => "Dit is een selectie van high-value datasets in DCAT-AP 2.0 standaard x"
-        ],
-        "2ab0011e-9b4c-4c50-a50d-a16fc0be0178" => [
-            "id" => "2ab0011e-9b4c-4c50-a50d-a16fc0be0178",
-            "title" => "Publication two",
-            "description" => "summary for two"
-        ]
-    ];
 
-    public function __construct
-	(
-		$appName,
-		IRequest $request,
-		private readonly ThemeMapper $themeMapper,
-		private readonly IAppConfig $config,
-	)
-    {
+    /**
+     * ThemesController constructor.
+     *
+     * @param string             $appName       The name of the app
+     * @param IRequest           $request       The request object
+     * @param IAppConfig         $config        App configuration interface
+     * @param ContainerInterface $container     Server container for dependency injection
+     * @param IAppManager        $appManager    App manager for checking installed apps
+     */
+    public function __construct(
+        $appName,
+        IRequest $request,
+        private readonly IAppConfig $config,
+        private readonly ContainerInterface $container,
+        private readonly IAppManager $appManager
+    ) {
         parent::__construct($appName, $request);
-    }
 
-	/**
-	 * This returns the template of the main app's page
-	 * It adds some data to the template (app version)
-	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @return TemplateResponse
-	 */
-	public function page(): TemplateResponse
-	{
-        return new TemplateResponse($this->appName, 'ThemesIndex', []);
-	}
+    }//end __construct()
 
-	/**
-	 * Return (and serach) all objects
-	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @return JSONResponse
-	 */
-	public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
-	{
-        $filters = $this->request->getParams();
-        $fieldsToSearch = ['title', 'description', 'summary'];
 
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
-			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
-			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
-
-			return new JSONResponse(['results' => $this->themeMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
-		}
-
-		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
-		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
-
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
-
-            $filters['_schema'] = 'theme';
-
-            $result = $objectService->findObjects(filters: $filters, config: $dbConfig);
-
-            return new JSONResponse(["results" => $result['documents']]);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
+    /**
+     * Attempts to retrieve the OpenRegister ObjectService from the container.
+     *
+     * @return \OCA\OpenRegister\Service\ObjectService|null The OpenRegister ObjectService if available, null otherwise.
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     */
+    private function getObjectService(): ?\OCA\OpenRegister\Service\ObjectService
+    {
+        if (in_array(needle: 'openregister', haystack: $this->appManager->getInstalledApps()) === true) {
+            return $this->container->get('OCA\OpenRegister\Service\ObjectService');
         }
-	}
 
-	/**
-	 * Read a single object
-	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @return JSONResponse
-	 */
-	public function show(string $id, ObjectService $objectService): JSONResponse
-	{
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			try {
-				return new JSONResponse($this->themeMapper->find(id: (int) $id));
-			} catch (DoesNotExistException $exception) {
-				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
-			}
-		}
+        throw new \RuntimeException('OpenRegister service is not available.');
 
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
+    }//end getObjectService()
 
-            $filters['_id'] = (string) $id;
 
-            $result = $objectService->findObject($filters, $dbConfig);
+    /**
+     * Get the schema and register configuration for themes.
+     *
+     * @return array<string, string> Array containing schema and register configuration
+     */
+    private function getThemeConfiguration(): array
+    {
+        // Get the theme schema and register from configuration
+        $schema   = $this->config->getValueString($this->appName, 'theme_schema', '');
+        $register = $this->config->getValueString($this->appName, 'theme_register', '');
 
-            return new JSONResponse($result);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
+        return [
+            'schema'   => $schema,
+            'register' => $register,
+        ];
+
+    }//end getThemeConfiguration()
+
+
+    /**
+     * Get all themes.
+     *
+     * @return JSONResponse The JSON response containing the list of themes
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
+     */
+    public function index(): JSONResponse
+    {
+        // Get theme configuration from settings
+        $themeConfig = $this->getThemeConfiguration();
+
+        // Build config for findAll to get themes
+        $config = [
+            'filters' => []
+        ];
+
+        // Add schema filter if configured
+        if (!empty($themeConfig['schema'])) {
+            $config['filters']['schema'] = $themeConfig['schema'];
         }
-	}
 
-
-	/**
-	 * Creatue an object
-	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @return JSONResponse
-	 */
-	public function create(ObjectService $objectService): JSONResponse
-	{
-
-		$data = $this->request->getParams();
-
-		foreach ($data as $key => $value) {
-			if (str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			return new JSONResponse($this->themeMapper->createFromArray(object: $data));
-		}
-
-		try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
-
-            $filters['_schema'] = 'organisation';
-
-            $result = $objectService->findObjects(filters: $filters, config: $dbConfig);
-
-            return new JSONResponse(["results" => $result['documents']]);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
+        // Add register filter if configured
+        if (!empty($themeConfig['register'])) {
+            $config['filters']['register'] = $themeConfig['register'];
         }
-	}
 
-	/**
-	 * Update an object
-	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @return JSONResponse
-	 */
-	public function update(string $id, ObjectService $objectService): JSONResponse
-	{
-		$data = $this->request->getParams();
+        $result = $this->getObjectService()->findAll($config);
+        
+        $data = [
+            'results' => array_map(function ($object) {
+                return $object instanceof \OCP\AppFramework\Db\Entity ? $object->jsonSerialize() : $object;
+            }, $result ?? []),
+            'total' => count($result ?? [])
+        ];
 
-		foreach ($data as $key => $value) {
-			if (str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
-		if (isset($data['id'])) {
-			unset($data['id']);
-		}
+        return new JSONResponse($data);
 
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			return new JSONResponse($this->themeMapper->updateFromArray(id: (int) $id, object: $data));
-		}
+    }//end index()
 
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
 
-            $filters['_id'] = (string) $id;
-            $returnData = $objectService->updateObject($filters, $data, $dbConfig);
+    /**
+     * Get a specific theme by its ID.
+     *
+     * @param string|int $id The ID of the theme to retrieve
+     *
+     * @return JSONResponse The JSON response containing the theme details
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
+     */
+    public function show(string|int $id): JSONResponse
+    {
+        $theme = $this->getObjectService()->find($id);
+        
+        $data = $theme instanceof \OCP\AppFramework\Db\Entity ? $theme->jsonSerialize() : $theme;
+        
+        return new JSONResponse($data);
 
-            return new JSONResponse($returnData);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
-        }
-	}
+    }//end show()
 
-	/**
-	 * Delate an object
-	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @return JSONResponse
-	 */
-	public function destroy(string $id, ObjectService $objectService): JSONResponse
-	{
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$this->themeMapper->delete($this->themeMapper->find((int) $id));
 
-			return new JSONResponse([]);
-		}
-
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
-
-            $filters['_id'] = (string) $id;
-            $returnData = $objectService->deleteObject($filters, $dbConfig);
-
-            return new JSONResponse($returnData);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
-        }
-    }
-}
+}//end class

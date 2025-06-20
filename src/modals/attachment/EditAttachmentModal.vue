@@ -1,141 +1,219 @@
+/**
+ * EditAttachmentModal.vue
+ * Modal for editing attachments
+ * @category Components
+ * @package opencatalogi
+ * @author Ruben Linde
+ * @copyright 2024
+ * @license AGPL-3.0-or-later
+ * @version 1.0.0
+ * @link https://github.com/opencatalogi/opencatalogi
+ */
+
+ <!-- It is possible that this modal is redundant. So I will disable eslint for this file. -->
+
 <script setup>
-import { navigationStore, publicationStore } from '../../store/store.js'
+/* eslint-disable */
+import { ref, computed } from 'vue'
+import { objectStore, navigationStore } from '../../store/store.js'
+import { NcButton, NcModal, NcTextField, NcSelectTags, NcCheckboxRadioSwitch, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
+
+/**
+ * Loading state for the component
+ * @type {import('vue').Ref<boolean>}
+ */
+const loading = ref(false)
+
+/**
+ * Success state for the component
+ * @type {import('vue').Ref<boolean|null>}
+ */
+const success = ref(null)
+
+/**
+ * Error state for the component
+ * @type {import('vue').Ref<string|null>}
+ */
+const error = ref(null)
+
+/**
+ * Get the active publication from the store
+ * @returns {Object|null}
+ */
+const publication = computed(() => objectStore.getActiveObject('publication'))
+
+/**
+ * Get the active attachment from the store
+ * @returns {Object|null}
+ */
+const attachment = computed(() => objectStore.getActiveObject('attachment'))
+
+/**
+ * Handle save action
+ * @returns {Promise<void>}
+ */
+const handleSave = async () => {
+	loading.value = true
+	try {
+		await objectStore.updateObject('attachment', attachment.value)
+		success.value = true
+	} catch (error) {
+		console.error('Error updating attachment:', error)
+		success.value = false
+		error.value = error.message
+	} finally {
+		loading.value = false
+	}
+}
+
+/**
+ * Handle cancel action
+ * @returns {void}
+ */
+const handleCancel = () => {
+	navigationStore.setModal(false)
+}
+
+/**
+ * Handle file selection
+ * @param {Event} event - The file input event
+ * @returns {Promise<void>}
+ */
+const handleFileSelect = async (event) => {
+	const file = event.target.files[0]
+	if (file) {
+		await objectStore.uploadFile('attachment', file)
+	}
+}
+
+/**
+ * Get available tags
+ * @returns {Promise<string[]>}
+ */
+const getTags = async () => {
+	try {
+		const response = await objectStore.fetchCollection('tag')
+		return response.results.map(tag => tag.name)
+	} catch (error) {
+		console.error('Error fetching tags:', error)
+		return []
+	}
+}
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'EditAttachment'"
+	<NcModal v-if="navigationStore.modal === 'editAttachment'"
 		ref="modalRef"
-		label-id="EditAttachmentModal"
-		@close="navigationStore.setModal(false)">
+		class="editAttachmentModal"
+		label-id="editAttachmentModal"
+		@close="handleCancel">
 		<div class="modal__content">
 			<h2>Bijlage bewerken</h2>
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
-					<p>Bijlage succesvol bewerkt</p>
+					<p>Bijlage succesvol bijgewerkt</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het bewerken van bijlage</p>
+					<p>Er is iets fout gegaan bij het bijwerken van bijlage</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="error" type="error">
 					<p>{{ error }}</p>
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
+				<NcTextField
+					v-model="attachment.title"
 					label="Titel"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.title"
-					required />
-				<NcTextField :disabled="loading"
-					label="Samenvatting"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.summary" />
-				<NcTextArea :disabled="loading"
+					:disabled="loading"
+					:loading="loading" />
+				<NcTextField
+					v-model="attachment.description"
 					label="Beschrijving"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.description" />
-				<NcTextField :disabled="loading"
-					label="Toegangs URL"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.accessUrl" />
-				<NcTextField :disabled="loading"
-					label="Download URL"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.downloadUrl" />
+					:disabled="loading"
+					:loading="loading" />
+				<NcSelectTags
+					v-model="attachment.tags"
+					label="Tags"
+					:disabled="loading"
+					:loading="loading" />
+				<NcCheckboxRadioSwitch
+					v-model="attachment.published"
+					:disabled="loading"
+					:loading="loading">
+					Gepubliceerd
+				</NcCheckboxRadioSwitch>
 			</div>
-			<NcButton
-				v-if="success === null"
-				:disabled="!publicationStore.attachmentItem.title || loading"
-				type="primary"
-				@click="editAttachment()">
-				<template #icon>
-					<NcLoadingIcon v-if="loading" :size="20" />
-					<ContentSaveOutline v-if="!loading" :size="20" />
-				</template>
-				Opslaan
-			</NcButton>
+
+			<span class="buttonContainer">
+				<NcButton
+					@click="handleCancel">
+					{{ success ? 'Sluiten' : 'Annuleer' }}
+				</NcButton>
+				<NcButton v-if="success === null"
+					:disabled="loading"
+					type="primary"
+					@click="handleSave">
+					<template #icon>
+						<span>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<ContentSave v-if="!loading" :size="20" />
+						</span>
+					</template>
+					Opslaan
+				</NcButton>
+			</span>
 		</div>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcTextArea, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
-import ContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+
+
+// icons
+import ContentSave from 'vue-material-design-icons/ContentSave.vue'
 
 export default {
 	name: 'EditAttachmentModal',
 	components: {
 		NcModal,
 		NcTextField,
-		NcTextArea,
+		NcSelectTags,
+		NcCheckboxRadioSwitch,
 		NcButton,
 		NcNoteCard,
 		NcLoadingIcon,
-		// Icons
-		ContentSaveOutline,
 	},
 	data() {
 		return {
-
 			loading: false,
 			success: null,
-			error: false,
+			error: null
 		}
 	},
 	methods: {
-		editAttachment() {
-			this.loading = true
-			this.error = false
-			fetch(
-				`/index.php/apps/opencatalogi/api/attachments/${publicationStore.attachmentItem.id}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(publicationStore.attachmentItem),
-				},
-			)
-				.then((response) => {
-					this.loading = false
-					this.success = response.ok
-					// Lets refresh the catalogiList
-					if (publicationStore.publicationItem?.id) {
-						publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-						// @todo update the publication item
-					}
-					response.json().then((data) => {
-						publicationStore.setAttachmentItem(data)
-					})
-					// Wait for the user to read the feedback then close the model
-					const self = this
-					setTimeout(function() {
-						self.success = null
-						navigationStore.setModal(false)
-					}, 2000)
-				})
-				.catch((err) => {
-					this.loading = false
-					this.error = err
-				})
-		},
-	},
+		closeModal() {
+			this.navigationStore.setModal(false)
+		}
+	}
 }
 </script>
 
-<style>
+<style scoped>
 .modal__content {
-    margin: var(--OC-margin-50);
-    text-align: center;
+	padding: 20px;
 }
 
-.zaakDetailsContainer {
-    margin-block-start: var(--OC-margin-20);
-    margin-inline-start: var(--OC-margin-20);
-    margin-inline-end: var(--OC-margin-20);
+.buttonContainer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
 }
 
-.success {
-    color: green;
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 20px;
 }
 </style>

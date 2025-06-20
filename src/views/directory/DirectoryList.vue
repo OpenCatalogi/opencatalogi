@@ -1,16 +1,17 @@
 <script setup>
-import { navigationStore, directoryStore } from '../../store/store.js'
+import { navigationStore, objectStore } from '../../store/store.js'
 </script>
 
 <template>
 	<ul>
 		<div class="listHeader">
 			<NcTextField class="searchField"
-				:value.sync="search"
+				:value="objectStore.getSearchTerm('listing')"
 				label="Zoeken"
 				trailing-button-icon="close"
-				:show-trailing-button="search !== ''"
-				@trailing-button-click="search = ''">
+				:show-trailing-button="objectStore.getSearchTerm('listing') !== ''"
+				@update:value="(value) => objectStore.setSearchTerm('listing', value)"
+				@trailing-button-click="objectStore.clearSearch('listing')">
 				<Magnify :size="20" />
 			</NcTextField>
 			<NcActions>
@@ -22,13 +23,15 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 					</template>
 					Help
 				</NcActionButton>
-				<NcActionButton :disabled="loading" @click="refresh">
+				<NcActionButton close-after-click
+					:disabled="objectStore.isLoading('listing')"
+					@click="objectStore.fetchCollection('listing')">
 					<template #icon>
 						<Refresh :size="20" />
 					</template>
 					Ververs
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('addDirectory')">
+				<NcActionButton close-after-click @click="navigationStore.setModal('addDirectory')">
 					<template #icon>
 						<Plus :size="20" />
 					</template>
@@ -37,14 +40,17 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			</NcActions>
 		</div>
 
-		<div v-if="!loading">
-			<NcListItem v-for="(listing, i) in directoryStore.listingList"
+		<div v-if="!objectStore.isLoading('listing')">
+			<NcListItem v-for="(listing, i) in objectStore.getCollection('listing').results"
 				:key="`${listing}${i}`"
 				:name="listing.name ?? listing.title"
-				:active="directoryStore.listingItem?.id === listing?.id"
-				@click="directoryStore.setListingItem(listing)">
+				:active="objectStore.getActiveObject('listing')?.id === listing?.id"
+				:details="listing.organization?.title || 'Geen organisatie'"
+				:counter-number="listing.publicationTypes?.length || '0'"
+				:force-display-actions="true"
+				@click="objectStore.getActiveObject('listing')?.id === listing?.id ? objectStore.clearActiveObject('listing') : objectStore.setActiveObject('listing', listing)">
 				<template #icon>
-					<LayersOutline :class="directoryStore.listingItem?.id === listing?.id && 'selectedIcon'"
+					<LayersOutline :class="objectStore.getActiveObject('listing')?.id === listing?.id && 'selectedIcon'"
 						disable-menu
 						:size="44" />
 				</template>
@@ -54,14 +60,14 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 			</NcListItem>
 		</div>
 
-		<NcLoadingIcon v-if="loading"
+		<NcLoadingIcon v-if="objectStore.isLoading('listing')"
 			class="loadingIcon"
 			:size="64"
 			appearance="dark"
 			name="Listings aan het laden" />
 
 		<NcEmptyContent
-			v-if="!directoryStore.listingList?.length > 0"
+			v-if="!objectStore.getCollection('listing').results.length && !objectStore.isLoading('listing')"
 			class="detailContainer"
 			name="Geen Listings"
 			description="Je directory of zoek opdracht bevat nog geen listings, wil je een externe directory toevoegen?">
@@ -85,11 +91,9 @@ import { navigationStore, directoryStore } from '../../store/store.js'
 		</NcEmptyContent>
 	</ul>
 </template>
-<script>
-import { debounce } from 'lodash'
-import { NcListItem, NcActionButton, NcTextField, NcLoadingIcon, NcActions, NcEmptyContent, NcButton } from '@nextcloud/vue'
 
-// Icons
+<script>
+import { NcListItem, NcActionButton, NcTextField, NcLoadingIcon, NcActions, NcEmptyContent, NcButton } from '@nextcloud/vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import LayersOutline from 'vue-material-design-icons/LayersOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
@@ -113,52 +117,14 @@ export default {
 		Refresh,
 		Plus,
 	},
-	beforeRouteLeave(to, from, next) {
-		search = ''
-		next()
-	},
-	props: {
-		search: {
-			type: String,
-			required: true,
-		},
-	},
-	data() {
-		return {
-			loading: false,
-		}
-	},
-	watch: {
-		search: {
-			handler(search) {
-				this.debouncedFetchData(search)
-			},
-		},
-	},
-	mounted() {
-		this.fetchData()
-	},
 	methods: {
-		refresh(e) {
-			e.preventDefault()
-			this.fetchData()
-		},
-		fetchData(search = null) {
-			this.loading = true
-			directoryStore.refreshListingList(search)
-				.then(() => {
-					this.loading = false
-				})
-		},
-		debouncedFetchData: debounce(function(search) {
-			this.fetchData(search)
-		}, 500),
 		openLink(url, type = '') {
 			window.open(url, type)
 		},
 	},
 }
 </script>
+
 <style>
 .listHeader {
     position: sticky;

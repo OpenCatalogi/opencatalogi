@@ -2,7 +2,8 @@
     "compilerOptions": {
         "sourceMap": true,
         "noImplicitAny": true,
-        "module": "es6",
+        // "module": "es6",
+        "module": "es2022",
         "target": "es5",
         "jsx": "preserve",
         "allowJs": true,
@@ -10,10 +11,7 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "baseUrl": ".",
-        "paths": {
-            "@/*": ["src/*"]
-        },
     },
-    "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+    "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/composables/UseFileSelection.js"],
     "exclude": ["node_modules"]
 }

@@ -1,133 +1,182 @@
+/**
+ * AddDirectoryModal.vue
+ * Modal for adding directories
+ * @category Components
+ * @package opencatalogi
+ * @author Ruben Linde
+ * @copyright 2024
+ * @license AGPL-3.0-or-later
+ * @version 1.0.0
+ * @link https://github.com/opencatalogi/opencatalogi
+ */
+
 <script setup>
-import { navigationStore, directoryStore } from '../../store/store.js'
+import { ref } from 'vue'
+import { objectStore, navigationStore } from '../../store/store.js'
 </script>
 
 <template>
-	<NcModal
-		v-if="navigationStore.modal === 'addDirectory'"
+	<NcModal v-if="navigationStore.modal === 'addDirectory'"
 		ref="modalRef"
-		label-id="addListingModal"
-		@close="navigationStore.setModal(false)">
+		class="addDirectoryModal"
+		label-id="addDirectoryModal"
+		@close="closeModal">
 		<div class="modal__content">
 			<h2>Directory toevoegen</h2>
-			Je directory bevat alle bij jouw installatie bekende catalogi. Om nieuwe catalogi te ontdekken heb je de directory van een andere (externe) installatie nodig. Nadat deze is opgegeven zullen de twee installaties een federatief netwerk vormen en catalogi blijven uitwisselen.
 			<div v-if="success !== null || error">
 				<NcNoteCard v-if="success" type="success">
-					<p>Listing succesvol toegevoegd</p>
+					<p>Directory succesvol toegevoegd</p>
 				</NcNoteCard>
 				<NcNoteCard v-if="!success" type="error">
-					<p>Er is iets fout gegaan bij het toevoegen van Listing</p>
+					<p>Er is iets fout gegaan bij het toevoegen van directory</p>
 				</NcNoteCard>
-				<NcNoteCard v-if="error && !success" type="error">
+				<NcNoteCard v-if="error" type="error">
 					<p>{{ error }}</p>
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField :value.sync="directory.directory" label="Url" />
+				<NcTextField
+					v-model="newDirectory.title"
+					label="Titel"
+					:disabled="loading"
+					:loading="loading" />
+				<NcTextArea
+					v-model="newDirectory.description"
+					label="Beschrijving"
+					:disabled="loading"
+					:loading="loading" />
+				<NcCheckboxRadioSwitch
+					v-model="newDirectory.published"
+					:disabled="loading"
+					:loading="loading">
+					Gepubliceerd
+				</NcCheckboxRadioSwitch>
 			</div>
-			<NcButton
-				v-if="success === null"
-				:disabled="loading || !directory.directory"
-				type="primary"
-				@click="addDirectory">
-				<template #icon>
-					<NcLoadingIcon v-if="loading" :size="20" />
-					<Plus v-if="!loading" :size="20" />
-				</template>
-				Toevoegen
-			</NcButton>
-			<NcButton @click="openLink('https://conduction.gitbook.io/opencatalogi-nextcloud/beheerders/directory', '_blank')">
-				<template #icon>
-					<HelpCircleOutline :size="20" />
-				</template>
-				Meer informatie over de directory
-			</NcButton>
+
+			<span class="buttonContainer">
+				<NcButton
+					@click="navigationStore.setModal(false)">
+					{{ success ? 'Sluiten' : 'Annuleer' }}
+				</NcButton>
+				<NcButton v-if="success === null"
+					:disabled="loading"
+					type="primary"
+					@click="handleSave">
+					<template #icon>
+						<span>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<Plus v-if="!loading" :size="20" />
+						</span>
+					</template>
+					Toevoegen
+				</NcButton>
+			</span>
 		</div>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcModal, NcTextField, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
+import {
+	NcButton,
+	NcModal,
+	NcTextField,
+	NcTextArea,
+	NcCheckboxRadioSwitch,
+	NcNoteCard,
+	NcLoadingIcon,
+} from '@nextcloud/vue'
+
+// icons
 import Plus from 'vue-material-design-icons/Plus.vue'
-import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
+
+/**
+ * Loading state for the component
+ * @type {import('vue').Ref<boolean>}
+ */
+const loading = ref(false)
+
+/**
+ * Success state for the component
+ * @type {import('vue').Ref<boolean|null>}
+ */
+const success = ref(null)
+
+/**
+ * Error state for the component
+ * @type {import('vue').Ref<string|null>}
+ */
+const error = ref(null)
+
+/**
+ * New directory data
+ * @type {import('vue').Ref<object>}
+ */
+const newDirectory = ref({
+	title: '',
+	description: '',
+	published: false,
+})
+
+/**
+ * Handle save action
+ * @return {Promise<void>}
+ */
+const handleSave = async () => {
+	loading.value = true
+	try {
+		await objectStore.createObject('directory', newDirectory.value)
+		success.value = true
+	} catch (error) {
+		console.error('Error saving directory:', error)
+		success.value = false
+		error.value = error.message
+	} finally {
+		loading.value = false
+	}
+}
 
 export default {
 	name: 'AddDirectoryModal',
 	components: {
 		NcModal,
 		NcTextField,
+		NcTextArea,
+		NcCheckboxRadioSwitch,
 		NcButton,
-		NcLoadingIcon,
 		NcNoteCard,
-		// Icons
-		Plus,
-		HelpCircleOutline,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
-			directory: {
-				directory: '',
-			},
 			loading: false,
 			success: null,
-			error: false,
+			error: null,
 		}
 	},
 	methods: {
-		addDirectory() {
-			this.loading = true
-			this.$emit('metadata', this.title)
-			fetch('/index.php/apps/opencatalogi/api/directory', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(this.directory),
-			})
-				.then((response) => {
-					this.loading = false
-					this.success = response.ok
-					directoryStore.refreshListingList()
-					response.json().then((data) => {
-						directoryStore.setListingItem(data)
-					})
-					navigationStore.setSelected('directory')
-					setTimeout(() => {
-						this.success = null
-						this.closeModal()
-					}, 2500)
-
-					this.directory = {
-						directory: '',
-					}
-				})
-				.catch((err) => {
-					this.error = err
-					this.loading = false
-				})
-		},
 		closeModal() {
-			navigationStore.setModal(false)
-		},
-		openLink(url, type = '') {
-			window.open(url, type)
+			this.navigationStore.setModal(false)
 		},
 	},
 }
 </script>
 
-<style>
+<style scoped>
 .modal__content {
-    margin: var(--zaa-margin-50);
-    text-align: center;
+	padding: 20px;
 }
 
-.zaakDetailsContainer {
-    margin-block-start: var(--zaa-margin-20);
-    margin-inline-start: var(--zaa-margin-20);
-    margin-inline-end: var(--zaa-margin-20);
+.buttonContainer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
 }
-.success {
-    color: green;
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 20px;
 }
 </style>

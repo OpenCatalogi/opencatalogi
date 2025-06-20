@@ -2,215 +2,146 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use OCA\OpenCatalogi\Db\ListingMapper;
+use GuzzleHttp\Exception\GuzzleException;
 use OCA\OpenCatalogi\Service\DirectoryService;
-use OCA\OpenCatalogi\Service\ObjectService;
-use OCA\OpenCatalogi\Service\SearchService;
+use OCA\OpenCatalogi\Exception\DirectoryUrlException;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
+use OCP\App\IAppManager;
+use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * Controller for handling directory-related operations
+ */
 class DirectoryController extends Controller
 {
-    const TEST_ARRAY = [
-        "64996753-5109-4396-9f07-17040d7fb137" => [
-            "id" => "64996753-5109-4396-9f07-17040d7fb137",
-			"title" => "Directory test 1",
-			"summary" => "A testing directory",
-			"description" => "A testing directory description",
-			"search" => "string",
-			"metadata" => "string",
-			"status" => "A status",
-			"lastSync" => "string",
-			"default" => "string",
-			"available" => "true"
-
-        ],
-        "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea" =>[
-            "id" => "0dcb7be0-ce06-4453-9ea7-6d66f67aa4ea",
-			"title" => "Directory test 2",
-			"summary" => "A testing directory",
-			"description" => "A testing directory description",
-			"search" => "string",
-			"metadata" => "string",
-			"status" => "A status",
-			"lastSync" => "string",
-			"default" => "string",
-			"available" => "true"
-
-        ]
-    ];
-
+    /**
+     * Constructor for DirectoryController
+     *
+     * @param string $appName The name of the app
+     * @param IRequest $request The request object
+     * @param IAppConfig $config The app configuration
+     * @param ContainerInterface $container Server container for dependency injection
+     * @param IAppManager $appManager App manager for checking installed apps
+     * @param DirectoryService $directoryService The directory service
+     */
     public function __construct(
 		$appName,
 		IRequest $request,
 		private readonly IAppConfig $config,
-		private readonly ListingMapper $listingMapper
+		private readonly ContainerInterface $container,
+		private readonly IAppManager $appManager,
+		private readonly DirectoryService $directoryService
 	)
     {
         parent::__construct($appName, $request);
     }
 
+	/**
+	 * Retrieve all directories
+	 *
+	 * @return JSONResponse The JSON response containing all directories
+	 * @throws DoesNotExistException|MultipleObjectsReturnedException|ContainerExceptionInterface|NotFoundExceptionInterface
+	 *
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 */
+	public function index(): JSONResponse
+	{
+		// Get all directories from the directory service
+        $data = $this->directoryService->getDirectories();
+
+        // Return JSON response with the directory data
+        return new JSONResponse($data);
+	}
+
+	/**
+	 * Update an external directory
+	 *
+	 * @return JSONResponse The JSON response containing the update result
+	 * @throws DoesNotExistException|MultipleObjectsReturnedException|ContainerExceptionInterface|NotFoundExceptionInterface
+	 * @throws GuzzleException
+	 *
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 */
+	public function update(): JSONResponse
+	{
+		// Get the URL from the request parameters
+		$url = $this->request->getParam('directory');
+
+		// Sync the external directory with the provided URL
+		try {
+			$data = $this->directoryService->syncExternalDirectory($url);
+		} catch (DirectoryUrlException $exception) {
+			if($exception->getMessage() === 'URL is required') {
+				$exception->setMessage('Property "directory" is required');
+			}
+
+			return new JSONResponse(data: ['message' => $exception->getMessage()], statusCode: 400);
+		}
+
+		// Return JSON response with the sync result
+		return new JSONResponse($data);
+	}
+
+	/**
+	 * Show a specific directory
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @param string|int $id The ID of the directory to show
+	 * @return JSONResponse The JSON response containing the directory details
+	 */
+	public function show(string|int $id): JSONResponse
+	{
+		// TODO: Implement the logic to retrieve and return the specific directory
+		// This method is currently empty and needs to be implemented
+
+		return new JSONResponse([]);
+	}
+
+	/**
+	 * Get a specific publication type, used by external applications to synchronyse
+	 *
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 * @param string|int $id The ID of the publication type to retrieve
+	 * @return JSONResponse The JSON response containing the publication type details
+	 */
+	public function publicationType(string|int $id): JSONResponse
+	{
+		try {
+			$publicationType = $this->getObjectService()->getObject('publicationType', $id);
+			return new JSONResponse($publicationType);
+		} catch (DoesNotExistException $e) {
+			return new JSONResponse(['error' => 'Publication type not found'], 404);
+		} catch (\Exception $e) {
+			return new JSONResponse(['error' => 'An error occurred while retrieving the publication type'], 500);
+		}
+	}
+
     /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
+     * Attempts to retrieve the OpenRegister ObjectService from the container.
+     *
+     * @return \OCA\OpenRegister\Service\ObjectService|null The OpenRegister ObjectService if available, null otherwise.
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
      */
-    public function page(?string $getParameter)
+    private function getObjectService(): ?\OCA\OpenRegister\Service\ObjectService
     {
-        // The TemplateResponse loads the 'main.php'
-        // defined in our app's 'templates' folder.
-        // We pass the $getParameter variable to the template
-        // so that the value is accessible in the template.
-        return new TemplateResponse(
-            //Application::APP_ID,
-            $this->appName,
-            'DirectoryIndex',
-            []
-        );
-    }
+        if (in_array(needle: 'openregister', haystack: $this->appManager->getInstalledApps()) === true) {
+            return $this->container->get('OCA\OpenRegister\Service\ObjectService');
+        }
 
+        throw new \RuntimeException('OpenRegister service is not available.');
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 */
-	public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
-	{
-		$filters = $this->request->getParams();
-        $fieldsToSearch = ['summary'];
+    }//end getObjectService()
 
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
-			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
-			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
-
-			return new JSONResponse(['results' => $this->listingMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
-		}
-
-		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
-		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
-
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$filters['_schema'] = 'directory';
-
-		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
-
-		$results = ["results" => $result['documents']];
-		return new JSONResponse($results);
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function show(string|int $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
-	{
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			try {
-				return new JSONResponse($this->listingMapper->find(id: (int) $id));
-			} catch (DoesNotExistException $exception) {
-				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
-			}
-		}
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$filters['_id'] = (string) $id;
-
-		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
-
-		return new JSONResponse($result);
-	}
-
-
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 */
-	public function create(string $directory, DirectoryService $directoryService): JSONResponse
-	{
-		$directories = [];
-		$directoryService->registerToExternalDirectory(url: $directory, externalDirectories: $directories);
-
-		return new JSONResponse(['results' => $directories]);
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function update(string|int $id, ObjectService $objectService): JSONResponse
-	{
-
-		$data = $this->request->getParams();
-
-		// Remove fields we should never post
-		unset($data['id']);
-		foreach($data as $key => $value) {
-			if(str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
-
-
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			return new JSONResponse($this->listingMapper->updateFromArray(id: (int) $id, object: $data));
-		}
-
-
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$filters['_id'] = (string) $id;
-		$returnData = $objectService->updateObject(
-			filters: $filters,
-			update: $data,
-			config: $dbConfig
-		);
-
-		// get post from requests
-		return new JSONResponse($returnData);
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function destroy(string|int $id, ObjectService $objectService): JSONResponse
-	{
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$this->listingMapper->delete($this->listingMapper->find((int) $id));
-
-			return new JSONResponse([]);
-		}
-
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$filters['_id'] = (string) $id;
-		$returnData = $objectService->deleteObject(
-			filters: $filters,
-			config: $dbConfig
-		);
-
-		// get post from requests
-		return new JSONResponse($returnData);
-	}
 }

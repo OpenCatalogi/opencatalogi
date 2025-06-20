@@ -1,38 +1,46 @@
-import { Catalogi } from './catalogi'
+/**
+ * Mock data for Catalogi entity testing
+ * @module Entities
+ * @package
+ * @author Ruben Linde
+ * @copyright 2024
+ * @license AGPL-3.0-or-later
+ * @version 1.0.0
+ * @see {@link https://github.com/opencatalogi/opencatalogi}
+ */
+
 import { TCatalogi } from './catalogi.types'
 
-export const mockCatalogiData = (): TCatalogi[] => [
-	{
-		id: '1',
-		title: 'Decat',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		image: 'string',
-		listed: false,
-		organisation: '23',
-		metadata: ['1', '3'],
+export const mockCatalogi: TCatalogi = {
+	id: '1',
+	title: 'Test Catalogi',
+	summary: 'A test catalogi',
+	description: 'This is a test catalogi',
+	image: 'test.jpg',
+	listed: true,
+	organization: '1',
+	registers: ['register1', 'register2'],
+	schemas: ['schema1', 'schema2'],
+	filters: {
+		field1: 'value1',
+		field2: 'value2',
 	},
+}
+
+export const mockCatalogiList: TCatalogi[] = [
+	mockCatalogi,
 	{
 		id: '2',
-		title: 'Woo',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		image: '',
+		title: 'Another Catalogi',
+		summary: 'Another test catalogi',
+		description: 'This is another test catalogi',
+		image: 'test2.jpg',
 		listed: false,
-		organisation: '23',
-		metadata: [],
-	},
-	{
-		id: '3',
-		title: 'Foo',
-		summary: 'a short form summary',
-		description: 'a really really long description about this catalogus',
-		image: 'string',
-		// @ts-expect-error -- listed needs to be a boolean
-		listed: 0.2,
-		organisation: '23',
-		metadata: ['1', '3'],
+		organization: '2',
+		registers: ['register3'],
+		schemas: ['schema3'],
+		filters: {
+			field3: 'value3',
+		},
 	},
 ]
-
-export const mockCatalogi = (data: TCatalogi[] = mockCatalogiData()): TCatalogi[] => data.map(item => new Catalogi(item))

@@ -1,0 +1,463 @@
+{
+  "openapi": "3.0.0",
+  "components": {
+    "registers": {
+      "publication": {
+        "slug": "publication",
+        "title": "Publication",
+        "version": "0.0.3",
+        "description": "The publication register is the core register of the OpenCatalogi application. It manages all content types needed for creating and maintaining a catalog website, including catalogs, listings, organizations, publications, themes, pages, menus, and glossary items. This register enables the creation of rich, navigable catalog websites with proper content organization and user-friendly navigation.",
+        "schemas": ["catalog", "listing", "organization", "publication", "theme", "page", "menu", "glossary"],
+        "tablePrefix": "",
+        "folder": "Open Registers/Publication Register",
+        "updated": "2025-04-17T14:05:34+00:00",
+        "created": "2025-04-14T15:13:10+00:00"
+      }
+    },
+    "schemas": {
+      "publication": {
+        "slug": "publication",
+        "title": "Publication",
+        "version": "0.0.2",
+        "summary": "A single publication entry within the catalog",
+        "description": "A publication represents an individual piece of content within the catalog. It can be associated with themes and schemas, and is the primary unit of content that users can view and interact with. Publications can be linked to specific organizations and can be either public or private.",
+        "icon": null,
+        "required": ["title"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the publication",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief description of the publication",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the publication",
+            "maxLength": 2555
+          },
+          "organization": {
+            "type": "string",
+            "description": "Reference to the organization that owns this publication"
+          },
+          "themes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of themes associated with this publication"
+          }
+        },
+        "hardValidation": false
+      },
+      "catalog": {
+        "slug": "catalog",
+        "title": "Catalog",
+        "version": "0.0.1",
+        "summary": "A collection of publications organized by theme and schema",
+        "description": "A catalog represents a curated collection of publications that can be organized by themes and schemas. It serves as the main organizational unit for content, allowing administrators to group related publications together and make them accessible through a unified interface. Catalogs can be public or private and can be associated with specific organizations.",
+        "icon": null,
+        "required": ["title"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the catalog",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief description of the catalog",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the catalog",
+            "maxLength": 2555
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to the catalog's image",
+            "maxLength": 255
+          },
+          "listed": {
+            "type": "boolean",
+            "description": "Whether the catalog is publicly listed"
+          },
+          "organization": {
+            "type": "string",
+            "description": "Reference to the organization that owns this catalog"
+          },
+          "registers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of register IDs associated with this catalog"
+          },
+          "schemas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of schema IDs associated with this catalog"
+          },
+          "filters": {
+            "type": "object",
+            "description": "Custom filters for the catalog",
+            "additionalProperties": true
+          }
+        },
+        "hardValidation": true
+      },
+      "listing": {
+        "slug": "listing",
+        "title": "Listing",
+        "version": "0.0.1",
+        "summary": "A filtered view of publications within a catalog",
+        "description": "A listing provides a customizable view of publications within a catalog. It allows for the creation of specific publication collections based on filters, sorting, and presentation preferences. Listings can be used to create featured sections, topic-based collections, or any other organized view of publications.",
+        "icon": null,
+        "required": ["catalogusId", "title", "summary"],
+        "properties": {
+          "catalogusId": {
+            "type": "string",
+            "description": "ID of the catalog this listing belongs to"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the listing",
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief description of the listing",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the listing"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search URL for the listing",
+            "format": "url"
+          },
+          "directory": {
+            "type": "string",
+            "description": "Directory URL for the listing",
+            "format": "url"
+          },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Metadata fields for the listing"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the listing"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code of the listing",
+            "minimum": 200
+          },
+          "lastSync": {
+            "type": "string",
+            "description": "Timestamp of the last synchronization",
+            "format": "date-time"
+          },
+          "available": {
+            "type": "boolean",
+            "description": "Whether the listing is available"
+          },
+          "default": {
+            "type": "boolean",
+            "description": "Whether this is the default listing"
+          },
+          "organization": {
+            "type": "object",
+            "description": "An organization object"
+          },
+          "schemas": {
+            "type": "array",
+            "description": "Types of publications in this listing"
+          }
+        },
+        "hardValidation": true
+      },
+      "organization": {
+        "slug": "organization",
+        "title": "Organization",
+        "version": "0.0.1",
+        "summary": "An organization that publishes or manages catalogs",
+        "description": "Organizations represent entities that publish or manage catalogs. They can be government agencies, companies, or other institutions. Each organization can have multiple catalogs and is identified by various standardized identifiers like OIN, RSIN, and PKI certificates.",
+        "icon": null,
+        "required": ["name", "summary"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the organization",
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief description of the organization",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the organization"
+          },
+          "oin": {
+            "type": "string",
+            "description": "Organization Identification Number (OIN)",
+            "pattern": "^0000000\\d{10}000$"
+          },
+          "tooi": {
+            "type": "string",
+            "description": "TOOI identifier for the organization",
+            "pattern": "^\\w{2,}\\d{4}$"
+          },
+          "rsin": {
+            "type": "string",
+            "description": "RSIN number for tax identification",
+            "pattern": "^\\d{9}$"
+          },
+          "pki": {
+            "type": "string",
+            "description": "PKI certificate information",
+            "pattern": "^\\d{1,}$"
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to the organization's logo or image"
+          }
+        },
+        "hardValidation": true
+      },
+      "page": {
+        "slug": "page",
+        "title": "Page",
+        "version": "0.0.1",
+        "summary": "A content page for static information",
+        "description": "Pages are used to create static content within the catalog website. They can contain information about how to use the catalog, contact information, about pages, or any other static content that needs to be accessible through the website. Pages are accessible through their unique slugs and can be organized in the navigation menu.",
+        "icon": null,
+        "required": ["title", "slug"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the page",
+            "minLength": 1
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly version of the page name",
+            "pattern": "^[a-z0-9-]+$",
+            "minLength": 1
+          },
+          "contents": {
+            "type": "array",
+            "description": "Content blocks of the page",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Type of content block",
+                  "minLength": 1
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Identifier for the content block"
+                },
+                "data": {
+                  "type": "object",
+                  "description": "Content block data",
+                  "additionalProperties": true
+                }
+              },
+              "required": ["type"]
+            }
+          }
+        },
+        "hardValidation": true
+      },
+      "theme": {
+        "slug": "theme",
+        "title": "Theme",
+        "version": "0.0.1",
+        "summary": "A category for organizing publications",
+        "description": "Themes are used to categorize publications within catalogs. They provide a way to group related publications together, making it easier for users to find content they're interested in. Themes can be hierarchical and can be used for navigation and filtering purposes.",
+        "icon": null,
+        "required": ["title", "summary"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The name of the theme",
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief description of the theme",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the theme"
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to the theme's image"
+          }
+        },
+        "hardValidation": true
+      },
+      "menu": {
+        "slug": "menu",
+        "title": "Menu",
+        "version": "0.0.1",
+        "summary": "Navigation structure for the catalog website",
+        "description": "Menus define the navigation structure of the catalog website. They allow administrators to organize pages, listings, and other content into a hierarchical navigation system. Multiple menus can be created for different purposes, such as main navigation, footer links, or specialized content groupings.",
+        "icon": null,
+        "required": ["title"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The name of the menu",
+            "minLength": 1
+          },
+          "position": {
+            "type": "number",
+            "description": "Order position of the menu",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "description": "Menu items and their structure",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the menu item",
+                  "minLength": 1
+                },
+                "slug": {
+                  "type": "string",
+                  "description": "URL-friendly version of the item name",
+                  "minLength": 1
+                },
+                "link": {
+                  "type": "string",
+                  "description": "URL or path for the menu item"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the menu item"
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "Icon for the menu item"
+                },
+                "items": {
+                  "type": "array",
+                  "description": "Submenu items",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the submenu item",
+                        "minLength": 1
+                      },
+                      "slug": {
+                        "type": "string",
+                        "description": "URL-friendly version of the submenu item name",
+                        "minLength": 1
+                      },
+                      "link": {
+                        "type": "string",
+                        "description": "URL or path for the submenu item"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Description of the submenu item"
+                      },
+                      "icon": {
+                        "type": "string",
+                        "description": "Icon for the submenu item"
+                      }
+                    },
+                    "required": ["name", "slug"]
+                  }
+                }
+              },
+              "required": ["name", "slug"]
+            }
+          }
+        },
+        "hardValidation": true
+      },
+      "glossary": {
+        "slug": "glossary",
+        "title": "Glossary",
+        "version": "0.0.2",
+        "summary": "Definitions and explanations of terms used in the catalog",
+        "description": "The glossary provides definitions and explanations for terms used throughout the catalog. It helps users understand specialized terminology, acronyms, and concepts. Each glossary entry can include detailed explanations, external references, and related keywords to help users find and understand relevant information.",
+        "icon": null,
+        "required": ["title"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The term being defined",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief definition of the term",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed explanation of the term",
+            "maxLength": 2555
+          },
+          "externalLink": {
+            "type": "string",
+            "description": "URL to external reference or documentation",
+            "format": "url",
+            "maxLength": 255
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Related search terms and synonyms"
+          }
+        },
+        "hardValidation": true
+      }
+    },
+    "endpoints": [],
+    "sources": [],
+    "mappings": [],
+    "jobs": [],
+    "synchronizations": [],
+    "rules": [],
+    "objects": []
+  },
+  "info": {
+    "id": 21,
+    "title": "Publication",
+    "description": "",
+    "version": "0.0.3"
+  }
+}

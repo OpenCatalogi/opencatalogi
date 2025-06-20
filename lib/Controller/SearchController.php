@@ -2,196 +2,149 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use OCA\OpenCatalogi\Service\ElasticSearchService;
-use OCA\OpenCatalogi\Db\PublicationMapper;
-use OCA\OpenCatalogi\Service\SearchService;
-use OCP\AppFramework\ApiController;
+use OCA\OpenCatalogi\Service\PublicationService;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
-use OCP\AppFramework\Http\Attribute\PublicPage;
-use OCP\AppFramework\Http\Response;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IAppConfig;
 use OCP\IRequest;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+
+/**
+ * Class SearchController
+ *
+ * Controller for handling internal search-related operations in the OpenCatalogi app.
+ * This controller is designed for internal/admin use and testing purposes.
+ *
+ * @category  Controller
+ * @package   opencatalogi
+ * @author    Ruben van der Linde
+ * @copyright 2024
+ * @license   AGPL-3.0-or-later
+ * @version   1.0.0
+ * @link      https://github.com/opencatalogi/opencatalogi
+ */
 class SearchController extends Controller
 {
 
+    /**
+     * SearchController constructor.
+     *
+     * @param string             $appName            The name of the app
+     * @param IRequest           $request            The request object
+     * @param PublicationService $publicationService The publication service
+     */
     public function __construct(
         $appName,
         IRequest $request,
-		private readonly PublicationMapper $publicationMapper,
-        private readonly IAppConfig $config,
-		$corsMethods = 'PUT, POST, GET, DELETE, PATCH',
-		$corsAllowedHeaders = 'Authorization, Content-Type, Accept',
-		$corsMaxAge = 1728000
-	) {
-		parent::__construct($appName, $request);
-		$this->corsMethods = $corsMethods;
-		$this->corsAllowedHeaders = $corsAllowedHeaders;
-		$this->corsMaxAge = $corsMaxAge;
+        private readonly PublicationService $publicationService
+    ) {
+        parent::__construct($appName, $request);
     }
 
-	/**
-	 * This method implements a preflighted cors response for you that you can
-	 * link to for the options request
-	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @PublicPage
-	 * @since 7.0.0
-	 */
-	#[NoCSRFRequired]
-	#[PublicPage]
-	public function preflightedCors() {
-		if (isset($this->request->server['HTTP_ORIGIN'])) {
-			$origin = $this->request->server['HTTP_ORIGIN'];
-		} else {
-			$origin = '*';
-		}
-
-		$response = new Response();
-		$response->addHeader('Access-Control-Allow-Origin', $origin);
-		$response->addHeader('Access-Control-Allow-Methods', $this->corsMethods);
-		$response->addHeader('Access-Control-Max-Age', (string)$this->corsMaxAge);
-		$response->addHeader('Access-Control-Allow-Headers', $this->corsAllowedHeaders);
-		$response->addHeader('Access-Control-Allow-Credentials', 'false');
-		return $response;
-	}
-
     /**
+     * Retrieve a list of publications based on all available catalogs.
+     *
+     * This is an internal endpoint for testing and administrative purposes.
+     * Unlike the public publications endpoint, this may include additional data
+     * and is not subject to the same security restrictions.
+     *
+     * @param string|int|null $catalogId Optional ID of a specific catalog to filter by
+     * @return JSONResponse JSON response containing the list of publications and total count
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function page(?string $getParameter)
+    public function index(?string $catalogId = null): JSONResponse
     {
-        // The TemplateResponse loads the 'main.php'
-        // defined in our app's 'templates' folder.
-        // We pass the $getParameter variable to the template
-        // so that the value is accessible in the template.
-        return new TemplateResponse(
-            $this->appName,
-            'SearchIndex',
-            []
-        );
+        return $this->publicationService->index($catalogId);
     }
 
     /**
-     * @PublicPage
-	 * @NoCSRFRequired
+     * Retrieve a specific publication by its ID.
+     *
+     * This is an internal endpoint for testing and administrative purposes.
+     *
+     * @param string $id The ID of the publication to retrieve
+     * @return JSONResponse JSON response containing the requested publication
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
      */
-    public function index(SearchService $searchService): JSONResponse
+    public function show(string $id): JSONResponse
     {
-		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$filters = $this->request->getParams();
-		unset($filters['_route']);
-
-        $fieldsToSearch = ['title', 'description', 'summary'];
-
-		if($this->config->hasKey($this->appName, 'elasticLocation') === false
-			|| $this->config->getValueString($this->appName, 'elasticLocation') === ''
-		) {
-			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
-			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
-
-			$limit = 30;
-			$offset = 0;
-
-			if(isset($filters['_limit']) === true) {
-				$limit = $filters['_limit'];
-			}
-
-			if(isset($filters['_page']) === true) {
-				$offset = ($limit * ($filters['_page'] - 1));
-			}
-
-			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
-
-			$total   = $this->publicationMapper->count($filters);
-			$results = $this->publicationMapper->findAll(limit: $limit, offset: $offset, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams);
-			$pages   = (int) ceil($total / $limit);
-
-			return new JSONResponse([
-				'results' => $results,
-				'facets'  => [],
-				'count' => count($results),
-				'limit' => $limit,
-				'page' => isset($filters['_page']) === true ? $filters['_page'] : 1,
-				'pages' =>  $pages === 0 ? 1 : $pages,
-				'total' => $total
-			]);
-		}
-
-		//@TODO: find a better way to get query params. This fixes it for now.
-		$keys   = array_keys(array: $filters);
-		$values = array_values(array: $filters);
-
-		$keys = str_replace('_', '.', $keys);
-
-		$filters = array_combine(keys: $keys, values: $values);
-
-        $requiredElasticConfig = ['location', 'key', 'index'];
-        $missingFields = null;
-        foreach ($requiredElasticConfig as $key) {
-            if (isset($elasticConfig[$key]) === false || empty($elasticConfig[$key])) {
-                $missingFields .= "$key, ";
-            }
-        }
-
-        if ($missingFields !== null) {
-            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
-            $response = new JSONResponse(data: ['code' => 403, 'message' => $errorMessage], statusCode: 403);
-
-            return $response;
-        }
-
-		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
-
-        return new JSONResponse($data);
+        return $this->publicationService->show(id: $id);
     }
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 */
-	public function show(string|int $id, SearchService $searchService): JSONResponse
-	{
-		$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-		$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-		$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
+    /**
+     * Retrieve attachments/files of a publication.
+     *
+     * This is an internal endpoint for testing and administrative purposes.
+     *
+     * @param string $id Id of publication
+     * @return JSONResponse JSON response containing the requested attachments/files.
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function attachments(string $id): JSONResponse
+    {
+        return $this->publicationService->attachments(id: $id);
+    }
 
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+    /**
+     * Download files of a publication.
+     *
+     * This is an internal endpoint for testing and administrative purposes.
+     *
+     * @param string $id Id of publication
+     * @return JSONResponse JSON response containing the download information.
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function download(string $id): JSONResponse
+    {
+        return $this->publicationService->download(id: $id);
+    }
 
-		$filters = ['_id' => (string) $id];
+    /**
+     * Retrieves all objects that this publication references
+     *
+     * This method returns all objects that this publication uses/references. A -> B means that A (This publication) references B (Another object).
+     * This is an internal endpoint for testing and administrative purposes.
+     *
+     * @param string $id The ID of the publication to retrieve relations for
+     * @return JSONResponse A JSON response containing the related objects
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function uses(string $id): JSONResponse
+    {
+        return $this->publicationService->uses(id: $id);
+    }
 
-        $requiredElasticConfig = ['location', 'key', 'index'];
-        $missingFields = null;
-        foreach ($requiredElasticConfig as $key) {
-            if (isset($elasticConfig[$key]) === false) {
-                $missingFields .= "$key ";
-            }
-        }
+    /**
+     * Retrieves all objects that use this publication
+     *
+     * This method returns all objects that reference (use) this publication. B -> A means that B (Another object) references A (This publication).
+     * This is an internal endpoint for testing and administrative purposes.
+     *
+     * @param string $id The ID of the publication to retrieve uses for
+     * @return JSONResponse A JSON response containing the referenced objects
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function used(string $id): JSONResponse
+    {
+        return $this->publicationService->used(id: $id);
+    }
 
-        if ($missingFields !== null) {
-            $errorMessage = "Missing the following elastic configuration: {$missingFields}please update your elastic connection in application settings.";
-            return new JSONResponse(['message' => $errorMessage], 403);
-        }
-
-		$data = $searchService->search(parameters: $filters, elasticConfig: $elasticConfig, dbConfig: $dbConfig);
-
-		if(count($data['results']) > 0) {
-			return new JSONResponse($data['results'][0]);
-		}
-
-		return new JSONResponse(data: ['error' => ['code' => 404, 'message' => 'the requested resource could not be found']], statusCode: 404);
-	}
-}
+}//end class

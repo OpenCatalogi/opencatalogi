@@ -26,8 +26,8 @@ export class Theme implements TTheme {
 	public validate(): SafeParseReturnType<TTheme, unknown> {
 		// https://conduction.stoplight.io/docs/open-catalogi/hpksgr0u1cwj8-theme
 		const schema = z.object({
-			title: z.string().min(1),
-			summary: z.string().min(1),
+			title: z.string().min(1, 'is verplicht'),
+			summary: z.string().min(1, 'is verplicht'),
 			description: z.string(),
 			image: z.string(),
 		})

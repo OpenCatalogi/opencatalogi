@@ -2,237 +2,154 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use OCA\OpenCatalogi\Db\CatalogMapper;
-use OCA\OpenCatalogi\Service\DirectoryService;
-use OCA\OpenCatalogi\Service\ObjectService;
-use OCA\OpenCatalogi\Service\SearchService;
+use OCA\OpenCatalogi\Service\CatalogiService;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IAppConfig;
 use OCP\IRequest;
+use OCP\IAppConfig;
+use OCP\App\IAppManager;
+use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * Class CatalogiController
+ * Controller for handling catalog-related operations in the OpenCatalogi app.
+ *
+ * @category  Controller
+ * @package   opencatalogi
+ * @author    Ruben Linde
+ * @copyright 2024
+ * @license   AGPL-3.0-or-later
+ * @version   1.0.0
+ * @link      https://github.com/opencatalogi/opencatalogi
+ */
 class CatalogiController extends Controller
 {
+
+    /**
+     * CatalogiController constructor.
+     *
+     * @param string             $appName            The name of the app
+     * @param IRequest           $request            The request object
+     * @param CatalogiService    $catalogiService    The catalogi service
+     * @param IAppConfig         $config             App configuration interface
+     * @param ContainerInterface $container          Server container for dependency injection
+     * @param IAppManager        $appManager         App manager for checking installed apps
+     */
     public function __construct(
         $appName,
         IRequest $request,
+        private readonly CatalogiService $catalogiService,
         private readonly IAppConfig $config,
-		private readonly CatalogMapper $catalogMapper
-    )
-    {
+        private readonly ContainerInterface $container,
+        private readonly IAppManager $appManager
+    ) {
         parent::__construct($appName, $request);
-    }
+
+    }//end __construct()
+
 
     /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
+     * Attempts to retrieve the OpenRegister ObjectService from the container.
+     *
+     * @return \OCA\OpenRegister\Service\ObjectService|null The OpenRegister ObjectService if available, null otherwise.
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
      */
-    public function page(?string $getParameter): TemplateResponse
+    private function getObjectService(): ?\OCA\OpenRegister\Service\ObjectService
     {
-        return new TemplateResponse($this->appName, 'CatalogiIndex', []);
-    }
-
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
-    {
-        $filters = $this->request->getParams();
-        $fieldsToSearch = ['title', 'description', 'summary'];
-
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
-			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
-			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
-
-			return new JSONResponse(['results' => $this->catalogMapper->findAll(limit: null, offset: null, filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams)]);
-		}
-
-		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
-		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
-
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
-
-            $filters['_schema'] = 'catalog';
-
-            $result = $objectService->findObjects(filters: $filters, config: $dbConfig);
-
-            return new JSONResponse(["results" => $result['documents']]);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
+        if (in_array(needle: 'openregister', haystack: $this->appManager->getInstalledApps()) === true) {
+            return $this->container->get('OCA\OpenRegister\Service\ObjectService');
         }
-    }
+
+        throw new \RuntimeException('OpenRegister service is not available.');
+
+    }//end getObjectService()
+
 
     /**
+     * Get the schema and register configuration for catalogs.
+     *
+     * @return array<string, string> Array containing schema and register configuration
+     */
+    private function getCatalogConfiguration(): array
+    {
+        // Get the catalog schema and register from configuration
+        $schema   = $this->config->getValueString($this->appName, 'catalog_schema', '');
+        $register = $this->config->getValueString($this->appName, 'catalog_register', '');
+
+        return [
+            'schema'   => $schema,
+            'register' => $register,
+        ];
+
+    }//end getCatalogConfiguration()
+
+
+    /**
+     * Retrieve a list of publications based on all available catalogs.
+     *
+     * @param  string|int|null $catalogId Optional ID of a specific catalog to filter by
+     * @return JSONResponse JSON response containing the list of publications and total count
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
+     */
+    public function index(): JSONResponse
+    {
+        // Get catalog configuration from settings
+        $catalogConfig = $this->getCatalogConfiguration();
+
+        // Get all catalogs using configuration
+        $config = [
+            'filters' => []
+        ];
+
+        // Add schema filter if configured
+        if (!empty($catalogConfig['schema'])) {
+            $config['filters']['schema'] = $catalogConfig['schema'];
+        }
+
+        // Add register filter if configured
+        if (!empty($catalogConfig['register'])) {
+            $config['filters']['register'] = $catalogConfig['register'];
+        }
+        
+        $result = $this->getObjectService()->findAll($config);
+        
+        // Convert objects to arrays
+        $data = [
+            'results' => array_map(function ($object) {
+                return $object instanceof \OCP\AppFramework\Db\Entity ? $object->jsonSerialize() : $object;
+            }, $result ?? []),
+            'total' => count($result ?? [])
+        ];
+
+        return new JSONResponse($data);
+
+    }//end index()
+
+
+    /**
+     * Retrieve a list of catalogs based on provided filters and parameters.
+     *
+     * @param  string|int $id The ID of the catalog to use as a filter
+     * @return JSONResponse JSON response containing the list of catalogs and total count
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function show(string|int $id, ObjectService $objectService): JSONResponse
+    public function show(string | int $id): JSONResponse
     {
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			try {
-				return new JSONResponse($this->catalogMapper->find(id: (int) $id));
-			} catch (DoesNotExistException $exception) {
-				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
-			}
-		}
+        // Get all objects using the catalog's registers and schemas as filters
+        $objects = $this->catalogiService->index($id);
 
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
+        return $objects;
 
-            $filters['_id'] = (string) $id;
-
-            $result = $objectService->findObject($filters, $dbConfig);
-
-            return new JSONResponse($result);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function create(ObjectService $objectService, DirectoryService $directoryService): JSONResponse
-    {
-		$data = $this->request->getParams();
-
-		// Remove fields we should never post
-		unset($data['id']);
-		foreach ($data as $key => $value) {
-			if (str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
-
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$result = $this->catalogMapper->createFromArray(object: $data);
-
-			$resultArray = $directoryService->listCatalog($result->jsonSerialize());
-
-			$result->hydrate($resultArray);
-			$this->catalogMapper->update($result);
-
-			return new JSONResponse($result);
-		}
-
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
-
-            $data['_schema'] = 'catalog';
-
-            $returnData  = $objectService->saveObject($data, $dbConfig);
-			$resultArray = $directoryService->listCatalog($returnData);
-			$returnData  = $objectService->updateObject(['_id' => $resultArray['_id']], $resultArray, $dbConfig);
-
-            return new JSONResponse($returnData);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function update(string|int $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
-    {
-		$data = $this->request->getParams();
-
-		foreach ($data as $key => $value) {
-			if (str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
-		if (isset($data['id'])) {
-			unset($data['id']);
-		}
-
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$result = $this->catalogMapper->updateFromArray(id: (int) $id, object: $data);
-
-			$resultArray = $directoryService->listCatalog($result->jsonSerialize());
-
-			$result->hydrate($resultArray);
-			$this->catalogMapper->update($result);
-
-			return new JSONResponse($result);
-		}
-
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
-
-            $filters['_id'] = (string) $id;
-            $returnData  = $objectService->updateObject($filters, $data, $dbConfig);
-			$resultArray = $directoryService->listCatalog($returnData);
-			$returnData  = $objectService->updateObject($filters, $resultArray, $dbConfig);
+    }//end show()
 
 
-			return new JSONResponse($returnData);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function destroy(string|int $id, ObjectService $objectService, DirectoryService $directoryService): JSONResponse
-    {
-		$directoryService->listCatalog(['id' => $id, 'listed' => false]);
-
-
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$this->catalogMapper->delete($this->catalogMapper->find((int) $id));
-
-			return new JSONResponse([]);
-		}
-
-        try {
-            $dbConfig = [
-                'base_uri' => $this->config->getValueString($this->appName, 'mongodbLocation'),
-                'headers' => ['api-key' => $this->config->getValueString($this->appName, 'mongodbKey')],
-                'mongodbCluster' => $this->config->getValueString($this->appName, 'mongodbCluster')
-            ];
-
-            $filters['_id'] = (string) $id;
-            $returnData = $objectService->deleteObject($filters, $dbConfig);
-
-            return new JSONResponse($returnData);
-        } catch (\Exception $e) {
-            return new JSONResponse(['error' => $e->getMessage()], 500);
-        }
-    }
-}
+}//end class

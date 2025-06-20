@@ -1,0 +1,104 @@
+name: 🐛 Bug Report
+description: Report a bug in OpenCatalogi
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        Please fill out the form below to help us reproduce and fix the issue.
+        
+  - type: dropdown
+    id: version
+    attributes:
+      label: Nextcloud Version
+      description: What version of Nextcloud are you running?
+      options:
+        - Nextcloud 28
+        - Nextcloud 29
+        - Nextcloud 30
+    validations:
+      required: true
+
+  - type: input
+    id: app_version
+    attributes:
+      label: OpenCatalogi Version
+      description: What version of the OpenCatalogi app are you using?
+      placeholder: "e.g. 0.6.43"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: database
+    attributes:
+      label: Database System
+      description: Which database are you using?
+      options:
+        - MariaDB
+        - PostgreSQL
+        - MySQL
+        - SQLite
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us what you expected to happen
+      placeholder: "Describe the bug and the expected behavior"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## How to access logs
+        You can find the Nextcloud logs in several ways:
+        1. **Web Interface**: Settings > Administration > Logging
+        2. **File System**: `nextcloud/data/nextcloud.log`
+        3. **Docker**: `docker logs nextcloud_container`
+        
+        For detailed logging instructions, visit the [Nextcloud Documentation](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/logging_configuration.html)
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code.
+      render: shell
+
+  - type: textarea
+    id: ui_screenshots
+    attributes:
+      label: UI Screenshots
+      description: Please add screenshots showing the issue in the user interface
+      placeholder: Drag and drop images here, or click to upload
+      value: |
+        ### Current behavior
+        [Add screenshots showing the problem]
+
+        ### Expected behavior (optional)
+        [Add screenshots showing what you expected]
+
+  - type: textarea
+    id: log_screenshots
+    attributes:
+      label: Log Screenshots
+      description: Please add screenshots of relevant log entries
+      placeholder: Drag and drop images here, or click to upload

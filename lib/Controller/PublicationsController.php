@@ -2,359 +2,203 @@
 
 namespace OCA\OpenCatalogi\Controller;
 
-use GuzzleHttp\Exception\GuzzleException;
-use OCA\OpenCatalogi\Db\AttachmentMapper;
-use OCA\opencatalogi\lib\Db\Publication;
-use OCA\OpenCatalogi\Db\PublicationMapper;
-use OCA\OpenCatalogi\Service\ElasticSearchService;
-use OCA\OpenCatalogi\Service\ObjectService;
-use OCA\OpenCatalogi\Service\SearchService;
+use OCA\OpenCatalogi\Service\PublicationService;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IAppConfig;
 use OCP\IRequest;
-use Symfony\Component\Uid\Uuid;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * Class PublicationsController
+ *
+ * Controller for handling publication-related operations in the OpenCatalogi app.
+ *
+ * @category  Controller
+ * @package   opencatalogi
+ * @author    Ruben van der Linde
+ * @copyright 2024
+ * @license   AGPL-3.0-or-later
+ * @version   1.0.0
+ * @link      https://github.com/opencatalogi/opencatalogi
+ */
 class PublicationsController extends Controller
 {
 
-    public function __construct
-	(
-		$appName,
-		IRequest $request,
-		private readonly PublicationMapper $publicationMapper,
-		private readonly AttachmentMapper $attachmentMapper,
-		private readonly IAppConfig $config
-	)
-    {
-        parent::__construct($appName, $request);
-    }
-
-	private function insertNestedObjects(array $object, ObjectService $objectService, array $config): array
-	{
-		//@TODO keep in mind that unpublished objects should not be inserted, and that objects should be updated if a subobject is updated.
-		foreach($object as $key => $value) {
-			try {
-				if(
-					is_string(value: $value)
-					&& $key !== 'id'
-					&& Uuid::isValid(uuid: $value) === true
-					&& $subObject = $objectService->findObject(filters: ['_id' => $value], config: $config)
-				) {
-					$object[$key] = $subObject;
-				}
-
-				if(
-					is_array(value: $value) === true
-					&& array_is_list(array: $value) === true
-				) {
-					$object[$key] = $this->insertNestedObjects(object: $value, objectService: $objectService, config: $config);
-				}
-			} catch (GuzzleException $exception) {
-				continue;
-			}
-		}
-
-		return $object;
-	}
-
-
-	/**
-     * @NoAdminRequired
-     * @NoCSRFRequired
+    /**
+     * @var string Allowed CORS methods
      */
-    public function page(?string $getParameter)
-    {
-        // The TemplateResponse loads the 'main.php'
-        // defined in our app's 'templates' folder.
-        // We pass the $getParameter variable to the template
-        // so that the value is accessible in the template.
-        return new TemplateResponse(
-            $this->appName,
-            'PublicationsIndex',
-            []
-        );
+    private string $corsMethods;
+
+    /**
+     * @var string Allowed CORS headers
+     */
+    private string $corsAllowedHeaders;
+
+    /**
+     * @var int CORS max age
+     */
+    private int $corsMaxAge;
+
+    /**
+     * PublicationsController constructor.
+     *
+     * @param string             $appName            The name of the app
+     * @param IRequest           $request            The request object
+     * @param PublicationService $publicationService The publication service
+     * @param string             $corsMethods        Allowed CORS methods
+     * @param string             $corsAllowedHeaders Allowed CORS headers
+     * @param int                $corsMaxAge         CORS max age
+     */
+    public function __construct(
+        $appName,
+        IRequest $request,
+        private readonly PublicationService $publicationService,
+        string $corsMethods = 'PUT, POST, GET, DELETE, PATCH',
+        string $corsAllowedHeaders = 'Authorization, Content-Type, Accept',
+        int $corsMaxAge = 1728000
+    ) {
+        parent::__construct($appName, $request);
+        $this->corsMethods = $corsMethods;
+        $this->corsAllowedHeaders = $corsAllowedHeaders;
+        $this->corsMaxAge = $corsMaxAge;
     }
 
     /**
-     * Taking it from a catalogue point of view is just adding a filter
+     * Implements a preflighted CORS response for OPTIONS requests.
+     *
+     * @return \OCP\AppFramework\Http\Response The CORS response
      *
      * @NoAdminRequired
      * @NoCSRFRequired
+     * @PublicPage
      */
-    public function catalog(string|int $id): TemplateResponse
-	{
-		// The TemplateResponse loads the 'main.php'
-		// defined in our app's 'templates' folder.
-		// We pass the $getParameter variable to the template
-		// so that the value is accessible in the template.
-		return new TemplateResponse(
-			$this->appName,
-			'PublicationsIndex',
-			[]
-		);
-	}
-
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function index(ObjectService $objectService, SearchService $searchService): JSONResponse
+    public function preflightedCors(): \OCP\AppFramework\Http\Response
     {
-        $filters = $this->request->getParams();
-        $fieldsToSearch = ['title', 'description', 'summary'];
+        // Determine the origin
+        $origin = isset($this->request->server['HTTP_ORIGIN']) ? $this->request->server['HTTP_ORIGIN'] : '*';
 
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$searchParams = $searchService->createMySQLSearchParams(filters: $filters);
-			$searchConditions = $searchService->createMySQLSearchConditions(filters: $filters, fieldsToSearch:  $fieldsToSearch);
-			$sort = $searchService->createSortForMySQL(filters: $filters);
-			$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
+        // Create and configure the response
+        $response = new \OCP\AppFramework\Http\Response();
+        $response->addHeader('Access-Control-Allow-Origin', $origin);
+        $response->addHeader('Access-Control-Allow-Methods', $this->corsMethods);
+        $response->addHeader('Access-Control-Max-Age', (string) $this->corsMaxAge);
+        $response->addHeader('Access-Control-Allow-Headers', $this->corsAllowedHeaders);
+        $response->addHeader('Access-Control-Allow-Credentials', 'false');
 
-			return new JSONResponse(['results'  => $this->publicationMapper->findAll(filters: $filters, searchConditions: $searchConditions, searchParams: $searchParams, sort: $sort)]);
-		}
-
-		$filters = $searchService->createMongoDBSearchFilter(filters: $filters, fieldsToSearch: $fieldsToSearch);
-		$filters = $searchService->unsetSpecialQueryParams(filters: $filters);
-
-		// @todo Fix mongodb sort
-		// $sort = $searchService->createSortForMongoDB(filters: $filters);
-
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$filters['_schema'] = 'publication';
-
-		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
-
-        $results = ["results" => $result['documents']];
-        return new JSONResponse($results);
+        return $response;
     }
 
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function attachments(string|int $id, ObjectService $objectService): JSONResponse
-	{
-		$publication = $this->show($id, $objectService)->getData();
-		if ($this->config->hasKey(app: $this->appName, key: 'mongoStorage') === false
-			|| $this->config->getValueString(app: $this->appName, key: 'mongoStorage') !== '1'
-		) {
-			$publication = $publication->jsonSerialize();
-		}
-
-		$attachments = $publication['attachments'];
-
-		if ($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			return new JSONResponse(['results' => $this->attachmentMapper->findMultiple($attachments)]);
-		}
-
-		$filters = [];
-		$filters['id']['$in'] = $attachments;
-
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-		$filters['_schema'] = 'attachment';
-
-		$result = $objectService->findObjects(filters: $filters, config: $dbConfig);
-
-		return new JSONResponse(['results' => $result['documents']]);
-	}
-
     /**
+     * Retrieve a list of publications based on all available catalogs.
+     *
+     * @param  string|int|null $catalogId Optional ID of a specific catalog to filter by
+     * @return JSONResponse JSON response containing the list of publications and total count
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
      * @NoAdminRequired
      * @NoCSRFRequired
+     * @PublicPage
      */
-    public function show(string|int $id, ObjectService $objectService): JSONResponse
+    public function index(): JSONResponse
     {
-		if ($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			try {
-				return new JSONResponse($this->publicationMapper->find(id: (int) $id));
-			} catch (DoesNotExistException $exception) {
-				return new JSONResponse(data: ['error' => 'Not Found'], statusCode: 404);
-			}
-		}
+        return $this->publicationService->index();
 
-		$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-		$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-		$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
+    }//end index()
 
-		$filters['_id'] = (string) $id;
 
-		$result = $objectService->findObject(filters: $filters, config: $dbConfig);
+    /**
+     * Retrieve a specific publication by its ID.
+     *
+     * @param  string|int|null $catalogId     Optional ID of the catalog to filter by
+     * @param  string          $publicationId The ID of the publication to retrieve
+     * @return JSONResponse JSON response containing the requested publication
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
+     */
+    public function show(string $id): JSONResponse
+    {
+        return $this->publicationService->show(id: $id);
 
-        return new JSONResponse($result);
+    }//end show()
+
+
+    /**
+     * Retrieve attachments/files of a publication.
+     *
+     * @param  string $id Id of publication
+     *
+     * @return JSONResponse JSON response containing the requested attachments/files.
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
+     */
+    public function attachments(string $id): JSONResponse
+    {
+        return $this->publicationService->attachments(id: $id);
+
+    }//end show()
+
+
+    /**
+     * Retrieve attachments/files of a publication.
+     *
+     * @param  string $id Id of publication
+     *
+     * @return JSONResponse JSON response containing the requested attachments/files.
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
+     */
+    public function download(string $id): JSONResponse
+    {
+        return $this->publicationService->download(id: $id);
+
+    }//end show()
+
+
+    /**
+     * Retrieves all objects that this publication references
+     *
+     * This method returns all objects that this publication uses/references. A -> B means that A (This publication) references B (Another object).
+     *
+     * @param string $id The ID of the publication to retrieve relations for
+     * @return JSONResponse A JSON response containing the related objects
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
+     */
+    public function uses(string $id): JSONResponse
+    {
+        return $this->publicationService->uses(id: $id);
     }
 
 
     /**
+     * Retrieves all objects that use this publication
+     *
+     * This method returns all objects that reference (use) this publication. B -> A means that B (Another object) references A (This publication).
+     *
+     * @param string $id The ID of the publication to retrieve uses for
+     * @return JSONResponse A JSON response containing the referenced objects
+     * @throws ContainerExceptionInterface|NotFoundExceptionInterface
+     *
      * @NoAdminRequired
      * @NoCSRFRequired
+     * @PublicPage
      */
-    public function create(ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
+    public function used(string $id): JSONResponse
     {
-		$data = $this->request->getParams();
-
-		// Remove fields we should never post
-		unset($data['id']);
-		foreach($data as $key => $value) {
-			if(str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
-
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$returnData = $this->publicationMapper->createFromArray($data);
-			$returnData = $returnData->jsonSerialize();
-			$dbConfig = [];
-		} else {
-			$data['_schema'] = 'publication';
-
-			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-			$returnData = $objectService->saveObject(
-				data: $data,
-				config: $dbConfig
-			);
-		}
-		if(
-			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticLocation') !== ''
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticKey') !== ''
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticIndex') !== ''
-			&& $returnData['status'] === 'published'
-		) {
-			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-
-			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
-
-			$returnData = $elasticSearchService->addObject(object: $returnData, config: $elasticConfig);
-
-		}
-        // get post from requests
-        return new JSONResponse($returnData);
+        return $this->publicationService->used(id: $id);
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function update(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
-    {
-
-		$data = $this->request->getParams();
-
-		// Remove fields we should never post
-		unset($data['id']);
-		foreach($data as $key => $value) {
-			if(str_starts_with($key, '_')) {
-				unset($data[$key]);
-			}
-		}
-
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$returnData = $this->publicationMapper->updateFromArray(id: (int) $id, object: $data);
-			$returnData = $returnData->jsonSerialize();
-
-			$dbConfig = [];
-		} else {
-			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-			$filters['_id'] = (string) $id;
-			$returnData = $objectService->updateObject(
-				filters: $filters,
-				update: $data,
-				config: $dbConfig
-			);
-		}
-
-		if(
-			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticLocation') !== ''
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticKey') !== ''
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticIndex') !== ''
-			&& $returnData['status'] === 'published'
-		) {
-			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-
-			$returnData = $this->insertNestedObjects($returnData, $objectService, $dbConfig);
-
-			$returnData = $elasticSearchService->updateObject(id: $id, object: $returnData, config: $elasticConfig);
-
-		}
-
-		// get post from requests
-		return new JSONResponse($returnData);
-    }
-
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function destroy(string|int $id, ObjectService $objectService, ElasticSearchService $elasticSearchService): JSONResponse
-    {
-		if($this->config->hasKey($this->appName, 'mongoStorage') === false
-			|| $this->config->getValueString($this->appName, 'mongoStorage') !== '1'
-		) {
-			$this->publicationMapper->delete($this->publicationMapper->find(id: (int) $id));
-
-			$returnData = [];
-		} else {
-			$dbConfig['base_uri'] = $this->config->getValueString(app: $this->appName, key: 'mongodbLocation');
-			$dbConfig['headers']['api-key'] = $this->config->getValueString(app: $this->appName, key: 'mongodbKey');
-			$dbConfig['mongodbCluster'] = $this->config->getValueString(app: $this->appName, key: 'mongodbCluster');
-
-			$filters['_id'] = (string) $id;
-			$returnData = $objectService->deleteObject(
-				filters: $filters,
-				config: $dbConfig
-			);
-		}
-
-		if(
-			$this->config->hasKey(app: $this->appName, key: 'elasticLocation') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticLocation') !== ''
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticKey') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticKey') !== ''
-			&& $this->config->hasKey(app: $this->appName, key: 'elasticIndex') === true
-			&& $this->config->getValueString(app: $this->appName, key: 'elasticIndex') !== ''
-			&& $returnData['status'] === 'published'
-		) {
-			$elasticConfig['location'] = $this->config->getValueString(app: $this->appName, key: 'elasticLocation');
-			$elasticConfig['key'] 	   = $this->config->getValueString(app: $this->appName, key: 'elasticKey');
-			$elasticConfig['index']    = $this->config->getValueString(app: $this->appName, key: 'elasticIndex');
-
-			$returnData = $elasticSearchService->removeObject(id: $id, config: $elasticConfig);
-
-		}
-
-		// get post from requests
-		return new JSONResponse($returnData);
-    }
-}
+}//end class

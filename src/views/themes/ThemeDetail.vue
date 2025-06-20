@@ -1,5 +1,17 @@
+/**
+ * ThemeDetail.vue
+ * Component for displaying theme details
+ * @category Views
+ * @package opencatalogi
+ * @author Ruben Linde
+ * @copyright 2024
+ * @license AGPL-3.0-or-later
+ * @version 1.0.0
+ * @link https://github.com/opencatalogi/opencatalogi
+ */
+
 <script setup>
-import { navigationStore, themeStore } from '../../store/store.js'
+import { navigationStore, objectStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -10,17 +22,17 @@ import { navigationStore, themeStore } from '../../store/store.js'
 			</h1>
 
 			<NcActions
-				:disabled="loading"
+				:disabled="objectStore.isLoading('theme')"
 				:primary="true"
-				:menu-name="loading ? 'Laden...' : 'Acties'"
+				:menu-name="objectStore.isLoading('theme') ? 'Laden...' : 'Acties'"
 				:inline="1"
 				title="Acties die je kan uitvoeren op deze publicatie">
 				<template #icon>
 					<span>
-						<NcLoadingIcon v-if="loading"
+						<NcLoadingIcon v-if="objectStore.isLoading('theme')"
 							:size="20"
 							appearance="dark" />
-						<DotsHorizontal v-if="!loading" :size="20" />
+						<DotsHorizontal v-if="!objectStore.isLoading('theme')" :size="20" />
 					</span>
 				</template>
 				<NcActionButton
@@ -31,19 +43,19 @@ import { navigationStore, themeStore } from '../../store/store.js'
 					</template>
 					Help
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setModal('editTheme')">
+				<NcActionButton close-after-click @click="navigationStore.setModal('theme')">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					Bewerken
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('copyTheme')">
+				<NcActionButton close-after-click @click="navigationStore.setDialog('copyObject', { objectType: 'theme', dialogTitle: 'Theme'})">
 					<template #icon>
 						<ContentCopy :size="20" />
 					</template>
 					Kopiëren
 				</NcActionButton>
-				<NcActionButton @click="navigationStore.setDialog('deleteTheme')">
+				<NcActionButton close-after-click @click="navigationStore.setDialog('deleteObject', { objectType: 'theme', dialogTitle: 'Theme'})">
 					<template #icon>
 						<Delete :size="20" />
 					</template>
@@ -51,16 +63,18 @@ import { navigationStore, themeStore } from '../../store/store.js'
 				</NcActionButton>
 			</NcActions>
 		</div>
-		<div class="container">
-			<div class="detailGrid">
-				<div>
-					<b>Samenvatting:</b>
-					<span>{{ theme.summary }}</span>
-				</div>
-				<div>
-					<b>Beschrijving:</b>
-					<span>{{ theme.description }}</span>
-				</div>
+		<div class="detailDataContainer">
+			<div>
+				<b>Samenvatting:</b>
+				<span>{{ theme.summary }}</span>
+			</div>
+			<div>
+				<b>Beschrijving:</b>
+				<span>{{ theme.description }}</span>
+			</div>
+			<div>
+				<b>Afbeelding:</b>
+				<span>{{ theme.image }}</span>
 			</div>
 		</div>
 	</div>
@@ -91,79 +105,12 @@ export default {
 		ContentCopy,
 		HelpCircleOutline,
 	},
-	props: {
-		themeItem: {
-			type: Object,
-			required: true,
+	computed: {
+		theme() {
+			return objectStore.getActiveObject('theme')
 		},
-	},
-	data() {
-		return {
-			theme: [],
-			prive: false,
-			loading: false,
-			catalogiLoading: false,
-			metaDataLoading: false,
-			hasUpdated: false,
-			userGroups: [
-				{
-					id: '1',
-					label: 'Content Beheerders',
-				},
-			],
-			chart: {
-				options: {
-					chart: {
-						id: 'Aantal bekeken publicaties',
-					},
-					xaxis: {
-						categories: ['7-11', '7-12', '7-13', '7-15', '7-16', '7-17', '7-18'],
-					},
-				},
-				series: [{
-					name: 'Weergaven',
-					data: [0, 0, 0, 0, 0, 0, 15],
-				}],
-			},
-			upToDate: false,
-		}
-	},
-	watch: {
-		themeItem: {
-			handler(newThemeItem, oldThemeItem) {
-				// why this? because when you fetch a new item it changes the reference to said item, which in return causes it to fetch again (a.k.a. infinite loop)
-				// run the fetch only once to update the item
-				if (!this.upToDate || JSON.stringify(newThemeItem) !== JSON.stringify(oldThemeItem)) {
-					this.theme = newThemeItem
-					// check if newCatalogiItem is not false
-					newThemeItem && this.fetchData(newThemeItem?.id)
-					this.upToDate = true
-				}
-			},
-			deep: true,
-		},
-
-	},
-	mounted() {
-
-		this.theme = themeStore.themeItem
-		themeStore.themeItem && this.fetchData(themeStore.themeItem.id)
-
 	},
 	methods: {
-		fetchData(id) {
-			fetch(`/index.php/apps/opencatalogi/api/themes/${id}`, {
-				method: 'GET',
-			})
-				.then((response) => {
-					response.json().then((data) => {
-						this.theme = data
-					})
-				})
-				.catch((err) => {
-					console.error(err)
-				})
-		},
 		openLink(url, type = '') {
 			window.open(url, type)
 		},
@@ -196,11 +143,6 @@ h4 {
   unicode-bidi: isolate !important;
 }
 
-.dataContent {
-  display: flex;
-  flex-direction: column;
-}
-
 .active.themeDetails-actionsDelete {
     background-color: var(--color-error) !important;
 }
@@ -219,5 +161,12 @@ h4 {
 
 .float-right {
     float: right;
+}
+</style>
+<style scoped>
+.detailDataContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 </style>

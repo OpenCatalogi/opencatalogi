@@ -1,12 +1,93 @@
+/**
+ * AddAttachmentModal.vue
+ * Modal for adding attachments
+ * @category Components
+ * @package opencatalogi
+ * @author Ruben Linde
+ * @copyright 2024
+ * @license AGPL-3.0-or-later
+ * @version 1.0.0
+ * @link https://github.com/opencatalogi/opencatalogi
+ */
+ <!-- It is possible that this modal is redundant. So I will disable eslint for this file. -->
+
 <script setup>
-import { navigationStore, publicationStore } from '../../store/store.js'
+/* eslint-disable */
+import { ref, computed } from 'vue'
+import { objectStore, navigationStore } from '../../store/store.js'
+import { NcButton, NcModal, NcTextField, NcSelectTags, NcCheckboxRadioSwitch, NcNoteCard, NcLoadingIcon } from '@nextcloud/vue'
+
+/**
+ * Loading state for the component
+ * @type {import('vue').Ref<boolean>}
+ */
+const loading = ref(false)
+
+/**
+ * Success state for the component
+ * @type {import('vue').Ref<boolean|null>}
+ */
+const success = ref(null)
+
+/**
+ * Error state for the component
+ * @type {import('vue').Ref<string|null>}
+ */
+const error = ref(null)
+
+/**
+ * New attachment data
+ * @type {import('vue').Ref<Object>}
+ */
+const newAttachment = ref({
+	title: '',
+	description: '',
+	tags: [],
+	published: false
+})
+
+/**
+ * Get the active publication from the store
+ * @returns {Object|null}
+ */
+const publication = computed(() => objectStore.getActiveObject('publication'))
+
+/**
+ * Handle save action
+ * @returns {Promise<void>}
+ */
+const handleSave = async () => {
+	loading.value = true
+	try {
+		await objectStore.createObject('attachment', {
+			...newAttachment.value,
+			publicationId: publication.value?.id
+		})
+		success.value = true
+	} catch (error) {
+		console.error('Error creating attachment:', error)
+		success.value = false
+		error.value = error.message
+	} finally {
+		loading.value = false
+	}
+}
+
+/**
+ * Handle cancel action
+ * @returns {void}
+ */
+const handleCancel = () => {
+	navigationStore.setModal(false)
+}
 </script>
 
 <template>
-	<NcModal v-if="navigationStore.modal === 'AddAttachment'"
+	<NcModal v-if="navigationStore.modal === 'addAttachment'"
 		ref="modalRef"
-		label-id="AddAttachmentModal"
-		@close="navigationStore.setModal(false)">
+		class="addAttachmentModal"
+		label-id="addAttachmentModal"
+		@close="handleCancel">
 		<div class="modal__content">
 			<h2>Bijlage toevoegen</h2>
 			<div v-if="success !== null || error">
@@ -21,160 +102,98 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</NcNoteCard>
 			</div>
 			<div v-if="success === null" class="form-group">
-				<NcTextField :disabled="loading"
+				<NcTextField
+					v-model="newAttachment.title"
 					label="Titel"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.title"
-					required />
-				<NcTextField :disabled="loading"
-					label="Samenvatting"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.summary" />
-				<NcTextArea :disabled="loading"
+					:disabled="loading"
+					:loading="loading" />
+				<NcTextField
+					v-model="newAttachment.description"
 					label="Beschrijving"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.description" />
-				<NcTextField :disabled="loading"
-					label="Toegangs URL"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.accessUrl" />
-				<NcTextField :disabled="loading"
-					label="Download URL"
-					maxlength="255"
-					:value.sync="publicationStore.attachmentItem.downloadUrl" />
-				<div class="addFileButtonGroup">
-					<NcButton v-if="success === null && !files"
-						:disabled="loading"
-						type="primary"
-						@click="openFileUpload()">
-						<template #icon>
-							<Plus :size="20" />
-						</template>
-						Bestand toevoegen
-					</NcButton>
+					:disabled="loading"
+					:loading="loading" />
+				<NcSelectTags
+					v-model="newAttachment.tags"
+					label="Tags"
+					:disabled="loading"
+					:loading="loading" />
+				<NcCheckboxRadioSwitch
+					v-model="newAttachment.published"
+					:disabled="loading"
+					:loading="loading">
+					Gepubliceerd
+				</NcCheckboxRadioSwitch>
+			</div>
 
-					<NcButton v-if="success === null && files"
-						:disabled="loading"
-						type="primary"
-						@click="reset()">
-						<template #icon>
-							<Minus :size="20" />
-						</template>
-						<span v-for="file of files" :key="file.name">{{ file.name }}</span>
-					</NcButton>
-				</div>
+			<span class="buttonContainer">
+				<NcButton
+					@click="handleCancel">
+					{{ success ? 'Sluiten' : 'Annuleer' }}
+				</NcButton>
 				<NcButton v-if="success === null"
-					:disabled="!publicationStore.attachmentItem.title || !files || loading"
+					:disabled="loading"
 					type="primary"
-					@click="addAttachment()">
+					@click="handleSave">
 					<template #icon>
-						<NcLoadingIcon v-if="loading" :size="20" />
-						<Plus v-if="!loading" :size="20" />
+						<span>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<Plus v-if="!loading" :size="20" />
+						</span>
 					</template>
 					Toevoegen
 				</NcButton>
-			</div>
+			</span>
 		</div>
 	</NcModal>
 </template>
 
 <script>
-import { NcButton, NcLoadingIcon, NcModal, NcNoteCard, NcTextArea, NcTextField } from '@nextcloud/vue'
-import { useFileDialog } from '@vueuse/core'
 
-import Minus from 'vue-material-design-icons/Minus.vue'
+// icons
 import Plus from 'vue-material-design-icons/Plus.vue'
-
-import axios from 'axios'
-
-const { files, open: openFileUpload, reset } = useFileDialog()
 
 export default {
 	name: 'AddAttachmentModal',
 	components: {
 		NcModal,
 		NcTextField,
-		NcTextArea,
+		NcSelectTags,
+		NcCheckboxRadioSwitch,
 		NcButton,
-		NcLoadingIcon,
 		NcNoteCard,
-		// Icons
-		Plus,
+		NcLoadingIcon,
 	},
 	data() {
 		return {
 			loading: false,
 			success: null,
-			error: false,
+			error: null
 		}
-	},
-	mounted() {
-		publicationStore.setAttachmentItem([])
 	},
 	methods: {
 		closeModal() {
-			navigationStore.modal = false
-		},
-		addAttachment() {
-			this.loading = true
-			this.errorMessage = false
-
-			axios.post('/index.php/apps/opencatalogi/api/attachments', {
-				...(publicationStore.attachmentItem),
-				_file: files.value ? files.value[0] : '',
-			}, {
-				headers: {
-					'Content-Type': 'multipart/form-data',
-					// These headers are used to pass along some publication info to use as name for a Folder,
-					// to store (attachments/) files in for that specific publication,
-					'Publication-Id': publicationStore.publicationItem.id,
-					'Publication-Title': publicationStore.publicationItem.title,
-				},
-			}).then((response) => {
-				this.loading = false
-				this.success = true
-				// Lets refresh the attachment list
-				if (publicationStore.publicationItem?.id) {
-					publicationStore.getPublicationAttachments(publicationStore.publicationItem.id)
-					// @todo update the publication item
-				}
-				// store.refreshCatalogiList()
-
-				publicationStore.setAttachmentItem(response)
-
-				// Wait for the user to read the feedback then close the model
-				const self = this
-				setTimeout(function() {
-					self.success = null
-					navigationStore.setModal(false)
-				}, 2000)
-			})
-				.catch((err) => {
-					this.error = err
-					this.loading = false
-				})
-		},
-	},
+			this.navigationStore.setModal(false)
+		}
+	}
 }
 </script>
 
-<style>
+<style scoped>
 .modal__content {
-    margin: var(--OC-margin-50);
-    text-align: center;
+	padding: 20px;
 }
 
-.addFileButtonGroup{
-	margin-block-end: var(--OC-margin-20);
+.buttonContainer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
 }
 
-.zaakDetailsContainer {
-    margin-block-start: var(--OC-margin-20);
-    margin-inline-start: var(--OC-margin-20);
-    margin-inline-end: var(--OC-margin-20);
-}
-
-.success {
-    color: green;
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 20px;
 }
 </style>

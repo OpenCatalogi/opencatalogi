@@ -1,5 +1,5 @@
 <script setup>
-import { navigationStore, publicationStore } from '../../store/store.js'
+import { navigationStore, objectStore, catalogStore } from '../../store/store.js'
 </script>
 
 <template>
@@ -7,11 +7,12 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 		<ul>
 			<div class="listHeader">
 				<NcTextField class="searchField"
-					:value.sync="advancedSearch"
+					:value="objectStore.getSearchTerm('publication')"
 					label="Zoeken"
 					trailing-button-icon="close"
-					:show-trailing-button="advancedSearch !== ''"
-					@trailing-button-click="advancedSearch = ''">
+					:show-trailing-button="objectStore.getSearchTerm('publication') !== ''"
+					@update:value="objectStore.setSearchTerm('publication', $event)"
+					@trailing-button-click="objectStore.clearSearch('publication')">
 					<Magnify :size="20" />
 				</NcTextField>
 				<NcActions>
@@ -64,13 +65,13 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 						</template>
 						Help
 					</NcActionButton>
-					<NcActionButton :disabled="loading" @click="refresh">
+					<NcActionButton close-after-click :disabled="catalogStore.isLoading" @click="catalogStore.fetchPublications">
 						<template #icon>
 							<Refresh :size="20" />
 						</template>
 						Ververs
 					</NcActionButton>
-					<NcActionButton @click="navigationStore.setModal('publicationAdd')">
+					<NcActionButton close-after-click @click="objectStore.clearActiveObject('publication'); navigationStore.setModal('objectModal')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
@@ -78,69 +79,55 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 					</NcActionButton>
 				</NcActions>
 			</div>
-			<div v-if="!loading">
-				<NcListItem v-for="(publication, i) in filteredPublications"
+			<div v-if="!catalogStore.isLoading || !objectStore.isLoading('publication')">
+				<NcListItem v-for="(publication, i) in publicationsResults"
 					:key="`${publication}${i}`"
-					:name="publication.title"
+					:name="publication.title || publication.name || publication.titel || publication.naam || publication.id"
 					:bold="false"
 					:force-display-actions="true"
-					:active="publicationStore.publicationItem.id === publication.id"
+					:active="objectStore.getActiveObject('publication')?.id === publication.id"
 					:details="publication?.status"
-					:counter-number="publication?.attachmentCount.toString()"
-					@click="publicationStore.setPublicationItem(publication)">
+					@click="toggleActive(publication)">
 					<template #icon>
-						<ListBoxOutline v-if="publication.status === 'published'" :size="44" />
-						<ArchiveOutline v-if="publication.status === 'archived'" :size="44" />
-						<Pencil v-if="publication.status === 'concept'" :size="44" />
-						<AlertOutline v-if="publication.status === 'retracted'" :size="44" />
+						<ListBoxOutline v-if="publication['@self']?.published" :size="44" />
+						<Pencil v-if="!publication['@self']?.published && !publication['@self']?.depublished" :size="44" />
+						<AlertOutline v-if="publication['@self']?.depublished" :size="44" />
 					</template>
 					<template #subname>
 						{{ publication?.summary }}
 					</template>
 					<template #actions>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('editPublication')">
+						<NcActionButton close-after-click @click="objectStore.setActiveObject('publication', publication); navigationStore.setModal('objectModal')">
 							<template #icon>
 								<Pencil :size="20" />
 							</template>
 							Bewerken
 						</NcActionButton>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('copyPublication')">
+						<NcActionButton close-after-click @click="objectStore.setActiveObject('publication', publication); navigationStore.setDialog('copyPublication')">
 							<template #icon>
 								<ContentCopy :size="20" />
 							</template>
 							Kopiëren
 						</NcActionButton>
-						<NcActionButton v-if="publication.status !== 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('publishPublication')">
+						<NcActionButton v-if="publication['@self'].published === null" close-after-click @click="objectStore.setActiveObject('publication', publication); publishPublication('publish')">
 							<template #icon>
 								<Publish :size="20" />
 							</template>
 							Publiceren
 						</NcActionButton>
-						<NcActionButton v-if="publication.status === 'published'" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('depublishPublication')">
+						<NcActionButton v-if="publication['@self'].published" close-after-click @click="objectStore.setActiveObject('publication', publication); publishPublication('depublish')">
 							<template #icon>
 								<PublishOff :size="20" />
 							</template>
 							Depubliceren
 						</NcActionButton>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('archivePublication')">
-							<template #icon>
-								<ArchivePlusOutline :size="20" />
-							</template>
-							Archiveren
-						</NcActionButton>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('addPublicationData')">
-							<template #icon>
-								<FileTreeOutline :size="20" />
-							</template>
-							Eigenschap toevoegen
-						</NcActionButton>
-						<NcActionButton @click="publicationStore.setPublicationItem(publication); navigationStore.setModal('AddAttachment')">
+						<NcActionButton close-after-click @click="objectStore.setActiveObject('publication', publication); navigationStore.setModal('AddAttachment')">
 							<template #icon>
 								<FilePlusOutline :size="20" />
 							</template>
 							Bijlage toevoegen
 						</NcActionButton>
-						<NcActionButton class="publicationsList-actionsDelete" @click="publicationStore.setPublicationItem(publication); navigationStore.setDialog('deletePublication')">
+						<NcActionButton close-after-click class="publicationsList-actionsDelete" @click="objectStore.setActiveObject('publication', publication); navigationStore.setDialog('deleteObject', { objectType: 'publication', dialogTitle: 'Publicatie' })">
 							<template #icon>
 								<Delete :size="20" />
 							</template>
@@ -150,17 +137,20 @@ import { navigationStore, publicationStore } from '../../store/store.js'
 				</NcListItem>
 			</div>
 
-			<NcLoadingIcon v-if="loading"
+			<NcLoadingIcon v-if="catalogStore.isLoading"
 				:size="64"
 				class="loadingIcon"
 				appearance="dark"
 				name="Publicaties aan het laden" />
+
+			<div v-if="!publicationsResults?.length" class="emptyListHeader">
+				Er zijn nog geen publicaties gedefinieerd.
+			</div>
 		</ul>
 	</NcAppContentList>
 </template>
 <script>
 import { NcListItem, NcActionButton, NcAppContentList, NcTextField, NcLoadingIcon, NcActionRadio, NcActionCheckbox, NcActionInput, NcActionCaption, NcActionSeparator, NcActions } from '@nextcloud/vue'
-import { debounce } from 'lodash'
 
 // Icons
 import Magnify from 'vue-material-design-icons/Magnify.vue'
@@ -171,12 +161,9 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import PublishOff from 'vue-material-design-icons/PublishOff.vue'
 import FilePlusOutline from 'vue-material-design-icons/FilePlusOutline.vue'
-import FileTreeOutline from 'vue-material-design-icons/FileTreeOutline.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import ArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import AlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import Publish from 'vue-material-design-icons/Publish.vue'
-import ArchivePlusOutline from 'vue-material-design-icons/ArchivePlusOutline.vue'
 import HelpCircleOutline from 'vue-material-design-icons/HelpCircleOutline.vue'
 
 export default {
@@ -199,73 +186,44 @@ export default {
 		Refresh,
 		Plus,
 		FilePlusOutline,
-		FileTreeOutline,
 		ContentCopy,
-		ArchiveOutline,
 		AlertOutline,
 		Pencil,
 		Publish,
-		ArchivePlusOutline,
 		HelpCircleOutline,
-	},
-	beforeRouteLeave(to, from, next) {
-		this.advancedSearch = ''
-		next()
 	},
 	data() {
 		return {
-			loading: false,
 			sortField: '',
 			sortDirection: 'desc',
-			normalSearch: [],
-			advancedSearch: '',
 			conceptChecked: false,
 			gepubliceerdChecked: false,
 		}
 	},
+
 	computed: {
-		filteredPublications() {
-			if (!publicationStore?.publicationList) return []
-			return publicationStore.publicationList.filter((publication) => {
-				return publication.catalogi.toString() === navigationStore.selectedCatalogus.toString()
-			})
+		publicationsResults() {
+			return objectStore.getCollection('publication').results
 		},
 	},
-	watch: {
-		advancedSearch: 'debouncedFetchData',
-		sortField: 'fetchData',
-		sortDirection: 'fetchData',
-		normalSearch: 'fetchData',
-	},
-	mounted() {
-		this.fetchData()
-	},
+
 	methods: {
-		refresh(e) {
-			e.preventDefault()
-			this.fetchData()
-		},
-		fetchData(search = null) {
-			this.loading = true
-			publicationStore.refreshPublicationList(this.normalSearch, this.advancedSearch, this.sortField, this.sortDirection)
-				.then(() => {
-					this.loading = false
-				})
-		},
-		debouncedFetchData: debounce(function() {
-			this.fetchData()
-		}, 500),
 		updateSortOrder(value) {
 			this.sortDirection = value
 		},
-		updateNormalSearch() {
-			this.normalSearch = []
-			if (this.conceptChecked) {
-				this.normalSearch.push({ key: 'status', value: 'concept' })
-			}
-			if (this.gepubliceerdChecked) {
-				this.normalSearch.push({ key: 'status', value: 'published' })
-			}
+		publishPublication(mode) {
+			const publication = objectStore.getActiveObject('publication')
+			fetch(`/index.php/apps/openregister/api/objects/${publication['@self'].register}/${publication['@self'].schema}/${publication.id}/${mode}`, {
+				method: 'POST',
+			}).then((response) => {
+				catalogStore.fetchPublications()
+				response.json().then((data) => {
+					objectStore.setActiveObject('publication', { ...data, id: data.id || data['@self'].id })
+				})
+			})
+		},
+		toggleActive(publication) {
+			objectStore.getActiveObject('publication')?.id === publication?.id ? objectStore.clearActiveObject('publication') : objectStore.setActiveObject('publication', publication)
 		},
 		handleCheckboxChange(key, event) {
 			const checked = event.target.checked
@@ -275,17 +233,19 @@ export default {
 			} else if (key === 'gepubliceerd') {
 				this.gepubliceerdChecked = checked
 			}
-			this.updateNormalSearch()
+		},
+		openLink(url, target) {
+			window.open(url, target)
 		},
 	},
 }
 </script>
 <style>
-.listHeader{
+.listHeader {
 	display: flex;
 }
 
-.refresh{
+.refresh {
 	margin-block-start: 11px !important;
     margin-block-end: 11px !important;
     margin-inline-end: 10px;
